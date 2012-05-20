@@ -1,0 +1,208 @@
+/*
+	COLORS
+ 
+	Dark Blue 		#222438
+	Medium Blue		#69697A
+	Light Blue	 	#C5C3DE
+	Yellow			#FFB000
+	Red				#D92B00
+	
+*/
+
+body {
+	background: #222438;
+	font-family: Georgia, Times New Roman, Times, serif;
+	font-weight: bold;
+	font-size: 20px;
+	text-align: center;
+}
+
+h1 {
+	font-size: 120px;
+	font-weight: normal;
+	margin: 0;
+	font-family: 'Luckiest Guy',Impact,Haettenschweiler,"Franklin Gothic Bold",Charcoal,Gadget,sans-serif;
+	text-transform: uppercase;
+	color: #FFB000;
+	text-shadow: 0 2px 1px #000;
+	line-height: .8;
+}
+
+h2 {
+	font-size: 150px;
+	font-weight: normal;
+	margin: 0;
+	color: #FFB000;
+	padding: 60px;
+	text-shadow: 0 2px 1px #000;
+	font-family: 'Luckiest Guy',Impact,Haettenschweiler,"Franklin Gothic Bold",Charcoal,Gadget,sans-serif;
+	text-transform: uppercase;
+}
+
+p {	width: 80%; margin: 20px auto; text-shadow: 0 2px 1px #000; color: #C5C3DE; }
+a, a:visited { color: #D92B00; font-weight: bold; font-style: italic; }
+ul { list-style: none; }
+
+.download { padding: 10px; }
+
+pre { font-size: 15px; }
+code { font-style: normal; }
+blockquote {
+	text-align: left;
+	width: 720px;
+	margin: 10px auto;
+	background: #C5C3DE;
+	border: solid 2px #69697A;
+	padding: 0 40px;
+}
+
+#console {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 15px;
+	width: 500px;
+	margin: 0;
+	font-size: 14px;
+	font-style: italic;
+	background-color: #69697A;
+	text-shadow: none;
+	text-align: left;
+	padding: 3px 10px;
+	border-radius: 0 0 10px 10px;
+	z-index: 99;
+	opacity: .8;
+}
+
+#title {
+	overflow: hidden;
+	font-size: 180px;
+	margin: 0 auto -580px;
+	width: 100%;
+	height: 1000px;
+	position: relative;
+	padding-top: 30px;
+	z-index: 99;
+}
+
+.title-line { position: relative; display: block; margin: auto; width: 300%; left: -100%; }
+#title-line2 { top: -60px; }
+#title-line3 { top: -120px; }
+.title-line span { display: inline-block; line-height: 1.1; position: relative; }
+
+.credit {
+	font-size: 20px;
+	margin: 10px auto;
+	text-align: center;
+	font-style: italic;
+	color: #D92B00;
+	z-index:100;
+}
+
+.twitter-follow-button {
+	position: relative;
+	top: 8px;
+	left: 4px;
+}
+
+#download {
+	margin: 50px auto;
+	font-size: 18px;
+	width: 100%;
+	line-height: 1.8;
+}
+
+#download a { color: #69697A; }
+
+#examples-1 { overflow: hidden; }
+#fly-it { position: relative; }
+#scale-it { width: 500%; margin: 0px -200%; padding: 0; }
+
+#examples-pin { position: relative; width: 100%; height: 600px; overflow: hidden; margin-bottom: -200px; }
+.pin-frame { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+.pin-frame h2 { margin-top: 120px; }
+#pin-frame-slide { background: #D92B00; margin-left:-100%; }
+#pin-frame-wipe  { background: #FFB000; top:100%; }
+#pin-frame-wipe h2  { color: #D92B00; }
+#pin-frame-bounce  { background: #222438; }
+#pin-frame-color  { background: #222438; }
+#pin-frame-unpin  { top:100%; }
+
+#examples-2 { z-index: 9999; width: 100%; height: 100%; overflow: hidden; }
+#fling-it, #move-it { position: relative; }
+#examples-parallax {
+	padding-top: 200px;
+	height: 800px;
+	margin-bottom: -600px;
+	overflow: hidden;
+}
+#parallax-it {
+	padding: 0;
+	font-size: 80px;
+	position: relative;
+}
+
+#parallax-it-left {
+	position: relative;
+	font-size: 120px;
+	left: -160px;
+	color: #C5C3DE;
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter:alpha(opacity=5);
+	overflow: hidden;
+}
+
+#parallax-it-right {
+	position: relative;
+	font-size: 160px;
+	left: 80px;
+	color: #C5C3DE;
+	opacity: 0.25;
+	-moz-opacity: 0.25;
+	filter:alpha(opacity=2.5);
+	overflow: hidden;
+	width: 900px;
+}
+
+#howtouse { padding-top: 200px; }
+
+.divider { font-size: 14px; padding-top: 20px; }
+
+.disclaimer {
+	font-size: 18px;
+	font-style: italic;
+	font-weight: normal;
+	margin: 0 auto;
+}
+
+#instructions { padding-top: 40px; }
+
+#instructions p { margin: 0px auto 20px; }
+
+#instructions-animation { padding-top: 40px; }
+
+.param-list {
+	color: #C5C3DE;
+	font-size: 18px;
+	line-height: 1.4;
+	padding: 0 18px;
+}
+
+.param-list li {
+	padding-bottom: 20px;
+	text-shadow: 0 2px 1px #000;
+}
+
+.param {
+	display: block;
+	color: #69697A;
+}
+
+.param-def small {
+	display: block;
+	font-weight: normal;
+	font-style: italic;
+}
+
+#credits { padding: 80px 0; }

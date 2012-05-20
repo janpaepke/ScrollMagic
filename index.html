@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<title>SUPERSCROLLORAMA</title>
+	
+	<link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css">	
+</head>
+<body>
+	<a href="https://github.com/johnpolacek/superscrollorama">
+		<img style="position: fixed; top: 0; right: 0; border: 0; z-index: 11;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" alt="Fork me on GitHub" />
+	</a>
+	
+	<div id="intro">
+		<h1 id="title">
+			<span id="title-line1" class="title-line">Super</span>
+			<span id="title-line2" class="title-line">scroll</span>
+			<span id="title-line3" class="title-line">orama</span>
+		</h1>
+		<div id="title-info">
+			<p id="desc">The jQuery plugin for supercool scroll animation</p>
+			<p class="credit">powered by <a href="http://www.greensock.com">Greensock</a></p>
+			<p class="credit">
+				created by <a href="http://twitter.com/johnpolacek">John Polacek</a>
+			</p>
+			<p class="credit">
+				<a href="https://twitter.com/johnpolacek" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @johnpolacek</a>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</p>
+		</div>
+		<p id="download">
+			<span class="accent">&#9733;</span> DOWNLOAD <span class="accent">&#9733;</span><br /> 
+			<a class="download" href="https://github.com/johnpolacek/scrollorama/zipball/master">zip</a>
+			<a class="download" href="https://github.com/johnpolacek/scrollorama/tarball/master">tar</a>
+		</p>
+	</div>
+
+	<div id="content-wrapper">
+
+		<div id="examples-1">
+			<h2 id="fade-it">Fade It</h2>
+			<h2 id="fly-it">Fly It</h2>
+			<h2 id="spin-it">Spin It</h2>
+			<h2 id="scale-it">Scale It</h2>
+			<h2 id="smush-it">Smush It</h2>
+		</div>
+		
+		<div id="examples-pin">
+			<div id="pin-frame-pin" class="pin-frame"><h2>Pin It</h2></div>
+			<div id="pin-frame-slide" class="pin-frame"><h2>Slide It</h2></div>
+			<div id="pin-frame-wipe" class="pin-frame"><h2>Wipe It</h2></div>
+			<div id="pin-frame-bounce" class="pin-frame"><h2>Bounce It</h2></div>
+			<div id="pin-frame-color" class="pin-frame"><h2>Color It</h2></div>
+			<div id="pin-frame-unpin" class="pin-frame"><h2>Unpin It</h2></div>
+		</div>
+		
+		<div id="examples-2">
+			<h2 id="fling-it">Fling It</h2>
+			<h2 id="move-it">Move It</h2>
+		</div>
+		
+		<div id="examples-parallax">
+			<h2 id="parallax-it">Parallax It</h2>
+			<h2 id="parallax-it-left">Parallax It</h2>
+			<h2 id="parallax-it-right">Parallax It</h2>
+		</div>
+		
+		<h2 id="bring-it">Bring It</h2>
+
+		<div id="howtouse">
+			<h1>How To Use</h1>
+			<div id="caution">
+				<p class="disclaimer">Please note, this is a powerful tool, and with great power comes great responsibility. <br />Use wisely. A little subtlety can go a long way.</p>
+			</div>
+			<p class="divider">&#9733; &#9733; &#9733;</p>
+			<div id="instructions">
+				<p>Superscrollorama is powered by TweenMax and the Greensock Tweening Engine. Go to <a href="http://www.greensock.com/get-started-js/" target="_blank">greensock.com</a> for documentation on how to use it. Why Greensock/TweenMax? Great performance, ease-of-use, expandibility and basically because it is awesome.</p>
+				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
+				<p>In the example below, the animation fades in when scrolled into view.</p>
+				<p><blockquote><pre>
+	$(document).ready(function() {
+	  var controller = $.superscrollorama();
+	  controller.addTween('#fade', 
+	    TweenLite.from($('#fade'), .5, {css:{opacity:0}}));
+	});</pre></blockquote></p>
+
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>The default duration is 0, which means the tween plays through completely when its scroll point is reached. You can add a duration which will instead sync the tween progress to the scrollbar position. Instead of one tween, you can create a timeline of multiple tweens.</p>
+				<p><blockquote><pre>
+	// parallax example
+	controller.addTween(
+	  '#examples-parallax',
+	  (new TimelineLite())
+	    .append([
+	      TweenLite.fromTo($('#parallax-it-left'), 1, 
+	        {css:{top: 200}, immediateRender:true}, 
+	        {css:{top: -600}}),
+	      TweenLite.fromTo($('#parallax-it-right'), 1, 
+	        {css:{top: 500}, immediateRender:true}, 
+	        {css:{top: -1250}})
+	    ]),
+	  1000 // scroll duration of tween
+	);</pre></blockquote></p>
+
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>Pass in a function for when the animation is complete.</p>
+				<p><blockquote><pre>
+controller.addTween('#fade', 
+  TweenLite.from($('#fade'),.5,{
+    css:{opacity:0}, 
+    onComplete: function(){alert('test')}
+  }));</pre></blockquote></p>
+				
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>You can pin an element, do a series of animations and then unpin it.</p>
+				<p><blockquote><pre>
+	controller.pin($('#examples-2'), 3000, {
+	  anim: (new TimelineLite())
+	    .append(
+	      TweenLite.fromTo($('#move-it'), .5, 
+	        {css:{left: -200, top: 500}, immediateRender:true}, 
+	        {css:{top: -400}})
+	    )
+	    .append(
+	      TweenLite.to($('#move-it'), .5, 
+	        {css:{left: 200}})
+	    )
+	    .append(
+	      TweenLite.to($('#move-it'), .5, 
+	        {css:{top: -200}})
+	    )
+	    .append(
+	      TweenLite.to($('#move-it'), .5, 
+	        {css:{left: 0}})
+	    )
+	})</pre></blockquote></p>
+
+			</div>
+
+			<div id="credits">
+				<h1>Credits</h1>
+				<p>Superscrollorama by <a href="http://twitter.com/johnpolacek">John Polacek</a></p>
+				<p><a href="http://greensock.com">Greensock Tweening Engine &amp; TweenLite</a> by <a href="http://greensock.com">Greensock</a></p>
+				<p><a href="http://letteringjs.com">Lettering.js</a> by <a href="http://daverupert.com">Dave Rupert</a></p>
+				<p><a href="http://code.google.com/webfonts/specimen/Luckiest+Guy">Luckiest Guy Font</a> by <a href="https://profiles.google.com/astigmaticfonts/about">Astigmatic Fonts</a></p>
+			</div>
+
+		</div>
+	</div>
+	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  	<script>window.jQuery || document.write('<script src="_/js/jquery-1.7.2.min.js"><\/script>')</script>
+  	<script src="js/jquery.lettering-0.6.1.min.js"></script>
+	<script src="js/jquery.superscrollorama.js"></script>
+	<script>
+		$(document).ready(function() {
+
+			// hide content until after title animation
+			$('#content-wrapper').css('display','none');
+			
+			// lettering.js to split up letters for animation
+			$('#title-line1').lettering();
+			$('#title-line2').lettering();
+			$('#title-line3').lettering();
+			
+			// TimelineLite for title animation, then start up superscrollorama when complete
+			(new TimelineLite())
+				.from( $('#title-line1 span'), .5, {delay: 1, css:{right:'1000px'}, ease:Back.easeOut})
+				.from( $('#title-line2'), .5, {css:{top:'1000px',opacity:'0'}, ease:Expo.easeOut})
+				.append([
+					TweenLite.from( $('#title-line3 .char1'), .5+Math.random(), {css:{top: '-200px', right:'1000px'}, ease:Elastic.easeOut}),
+					TweenLite.from( $('#title-line3 .char2'), .5+Math.random(), {css:{top: '300px', right:'1000px'}, ease:Elastic.easeOut}),
+					TweenLite.from( $('#title-line3 .char3'), .5+Math.random(), {css:{top: '-400px', right:'1000px'}, ease:Elastic.easeOut}),
+					TweenLite.from( $('#title-line3 .char4'), .5+Math.random(), {css:{top: '-200px', left:'1000px'}, ease:Elastic.easeOut}),
+					TweenLite.from( $('#title-line3 .char5'), .5+Math.random(), {css:{top: '200px', left:'1000px'}, ease:Elastic.easeOut})
+				])
+				.from( $('#title-info'), 1, {css:{opacity:0, 'margin-top':40}, delay:-1, ease:Quad.easeOut, onComplete:initScrollAnimations});
+			
+			function initScrollAnimations() {
+				$('#content-wrapper').css('display','block');
+				var controller = $.superscrollorama();
+			
+				// title tweens
+				$('.title-line span').each(function() {
+					controller.addTween(10, TweenLite.to(this, .75, {css:{top: Math.random()*-200-600, left: (Math.random()*1000)-500, rotation:Math.random()*720-360, 'font-size': Math.random()*300+150}, ease:Quad.easeOut}));
+				});
+				controller.addTween(10, TweenLite.to($('#title-line1'), .75, {css:{top: 600}, ease:Quad.easeOut}));
+				controller.addTween(10, TweenLite.to($('#title-line2'), .75, {css:{top: 200}, ease:Quad.easeOut}));
+				controller.addTween(10, TweenLite.to($('#title-line3'), .75, {css:{top: -200}, ease:Quad.easeOut}));
+				
+				// individual element tween examples
+				controller.addTween('#fade-it', TweenLite.from( $('#fade-it'), .5, {css:{opacity: 0}}));
+				controller.addTween('#fly-it', TweenLite.from( $('#fly-it'), .25, {css:{right:'1000px'}, ease:Quad.easeInOut}));
+				controller.addTween('#spin-it', TweenLite.from( $('#spin-it'), .25, {css:{opacity:0, rotation: 720}, ease:Quad.easeOut}));
+				controller.addTween('#scale-it', TweenLite.fromTo( $('#scale-it'), .25, {css:{opacity:0, fontSize:'20px'}, immediateRender:true, ease:Quad.easeInOut}, {css:{opacity:1, fontSize:'240px'}, ease:Quad.easeInOut}));
+				controller.addTween('#smush-it', TweenLite.fromTo( $('#smush-it'), .25, {css:{opacity:0, 'letter-spacing':'30px'}, immediateRender:true, ease:Quad.easeInOut}, {css:{opacity:1, 'letter-spacing':'-10px'}, ease:Quad.easeInOut}), 0, 100); // 100 px offset for better timing
+				
+				// set duration, in pixels scrolled, for pinned element
+				var pinDur = 4000;
+				// create animation timeline for pinned element
+				var pinAnimations = new TimelineLite();
+				pinAnimations
+					.append(TweenLite.from($('#pin-frame-pin h2'), .5, {css:{marginTop:0}, ease: Quad.easeInOut}))
+					.append([
+						TweenLite.to($('#pin-frame-slide'), .5, {css:{marginLeft:0}}),
+						TweenLite.to($('#pin-frame-pin'), .5, {css:{marginLeft:'100%'}})
+					], .5)
+					.append([
+						TweenLite.to($('#pin-frame-wipe'), .5, {css:{top:0}}),
+						TweenLite.from($('#pin-frame-wipe h2'), .5, {css:{marginTop:'-600px'}})
+					], .5)
+					.append(TweenLite.from($('#pin-frame-bounce'), 5, {css:{marginTop:'-100%'}, ease:Bounce.easeOut}), .5)
+					.append(TweenLite.from($('#pin-frame-color'), .25, {css:{opacity:0}}), .5)
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'blue'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'orange'}})
+					])
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'green'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'red'}})
+					])
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'yellow'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'purple'}})
+					])
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'orange'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'blue'}})
+					])
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'red'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'green'}})
+					])
+					.append([
+						TweenLite.to($('#pin-frame-color'), .25, {css:{backgroundColor:'#222438'}}),
+						TweenLite.to($('#pin-frame-color h2'), .25, {css:{color:'#FFB000'}})
+					])
+					.append(TweenLite.to($('#pin-frame-unpin'), .5, {css:{top:'100px'}}));
+				
+				// pin element, use onPin and onUnpin to adjust the height of the element
+				controller.pin($('#examples-pin'), pinDur, {
+					anim:pinAnimations, 
+					onPin: function() {
+						$('#examples-pin').css('height','100%');
+					}, 
+					onUnpin: function() {
+						$('#examples-pin').css('height','600px');
+					}
+				});
+
+				// another pinning example
+				controller.pin($('#examples-2'), 3000, {
+					anim: (new TimelineLite())
+						.append(
+							TweenLite.fromTo($('#fling-it'), 2, 
+								{css:{left:-1000, top: 500, rotation: -360}, immediateRender:true}, 
+								{css:{left:2000, top: -600, rotation: 360}})
+						)
+						.append(
+							TweenLite.fromTo($('#move-it'), .75, 
+								{css:{left: -200, top: 800}, immediateRender:true}, 
+								{css:{top: -200}}),
+								-1.5 // offset for better timing
+						)
+						.append(
+							TweenLite.to($('#move-it'), .5, 
+								{css:{left: 200}})
+						)
+						.append(
+							TweenLite.to($('#move-it'), .5, 
+								{css:{top: 0}})
+						)
+						.append(
+							TweenLite.to($('#move-it'), .5, 
+								{css:{left: 0}})
+						)
+				})
+
+				// parallax example, setting duration ties animation to scroll position
+				// you can target a scroll position instead of an element (whose position can change)
+				controller.addTween(
+					'#examples-parallax',
+					(new TimelineLite())
+						.append([
+							TweenLite.fromTo($('#parallax-it-left'), 1, 
+								{css:{top: 200}, immediateRender:true}, 
+								{css:{top: -600}}),
+							TweenLite.fromTo($('#parallax-it-right'), 1, 
+								{css:{top: 500}, immediateRender:true}, 
+								{css:{top: -1250}})
+						]),
+					1000 // scroll duration of tween
+				);
+
+				$('#bring-it').lettering();
+				controller.addTween(
+					'#bring-it',
+					(new TimelineLite())
+						.append([
+							TweenLite.from($('#bring-it .char1'), 1, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char2'), .6, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char3'), 1.1, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char4'), .7, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char5'), .9, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char6'), 1.2, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char7'), .6, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut}),
+							TweenLite.from($('#bring-it .char8'), .8, 
+								{css:{fontSize: 0}, immediateRender:true, ease:Elastic.easeOut})
+						])
+						,
+					1200,
+					-100 // offset for better timing
+				);
+
+			}
+		});
+	</script>
+
+</body></html>
