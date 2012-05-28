@@ -90,6 +90,8 @@ blockquote {
 #title-line2 { top: -60px; }
 #title-line3 { top: -120px; }
 .title-line span { display: inline-block; line-height: 1.1; position: relative; }
+.twitter-follow-button { position: relative; top: 8px; left: 4px; }
+#title-info { position: relative; z-index:99998; }
 
 .credit {
 	font-size: 20px;
@@ -100,17 +102,13 @@ blockquote {
 	z-index:100;
 }
 
-.twitter-follow-button {
-	position: relative;
-	top: 8px;
-	left: 4px;
-}
-
 #download {
+	position: relative;
 	margin: 50px auto;
 	font-size: 18px;
 	width: 100%;
 	line-height: 1.8;
+	z-index: 99999;
 }
 
 #download a { color: #69697A; }
