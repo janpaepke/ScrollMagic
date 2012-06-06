@@ -4,6 +4,7 @@
 	
 	Powered by the Greensock Tweening Platform
 	http://www.greensock.com
+	Greensock License info at http://www.greensock.com/licensing/
 	
 	Dual licensed under MIT and GPL.
 */
