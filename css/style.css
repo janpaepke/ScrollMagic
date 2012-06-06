@@ -18,6 +18,15 @@ body {
 	visibility: hidden;
 }
 
+.simple-demo {
+	visibility: visible;
+}
+
+.simple-demo #content-wrapper {
+	height: 1600px;
+	padding-top: 400px;
+}
+
 h1 {
 	font-size: 120px;
 	font-weight: normal;
