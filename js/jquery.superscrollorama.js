@@ -68,23 +68,19 @@
 				
 				if ((currScrollPoint > startPoint && currScrollPoint < endPoint) && animObj.state !== 'TWEENING') {
 					// if it should be TWEENING and isn't..
-					console.log('TWEEN');
 					animObj.state = 'TWEENING';
 					animObj.start = startPoint;
 					animObj.end = endPoint;
 					animObj.tween.progress((currScrollPoint - animObj.start)/(animObj.end - animObj.start)).pause();
 				} else if (currScrollPoint < startPoint && animObj.state !== 'BEFORE') {
-					console.log('BEFORE');
 					// if it should be at the BEFORE tween state and isn't..
 					animObj.tween.reverse();
 					animObj.state = 'BEFORE';
 				} else if (currScrollPoint > endPoint && animObj.state !== 'AFTER') {
-					console.log('AFTER');
 					// if it should be at the AFTER tween state and isn't..
 					animObj.tween.play();
 					animObj.state = 'AFTER';
 				} else if (animObj.state === 'TWEENING') {
-					console.log('TWEENING');
 					// if it is TWEENING..
 					animObj.tween.progress((currScrollPoint - animObj.start)/(animObj.end - animObj.start)).pause();
 				}
