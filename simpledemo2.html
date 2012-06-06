@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-	<title>SUPERSCROLLORAMA - Simple Demo</title>
+	<title>SUPERSCROLLORAMA - Simple Demo #2</title>
 	
 	<link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="css/normalize.css" type="text/css">
@@ -27,8 +27,13 @@
   	<script src="js/jquery.superscrollorama.js"></script>
 	<script>
 		$(document).ready(function() {
+			// This example adds a duration to the tweens so they are synced to the scroll position
+
 			var controller = $.superscrollorama();
-			var scrollDuration = 200; // amount of scrolling over which the tween takes place (in pixels)
+			
+			// amount of scrolling over which the tween takes place (in pixels)
+			var scrollDuration = 200; 
+
 			// individual element tween examples
 			controller.addTween('#fade-it', TweenMax.from( $('#fade-it'), .5, {css:{opacity: 0}}), scrollDuration);
 			controller.addTween('#fly-it', TweenMax.from( $('#fly-it'), .25, {css:{right:'1000px'}, ease:Quad.easeInOut}), scrollDuration);
