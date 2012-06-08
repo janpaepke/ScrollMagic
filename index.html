@@ -81,6 +81,16 @@
 			<div id="instructions">
 				<p>Superscrollorama is powered by TweenMax and the Greensock Tweening Engine. Go to <a href="http://www.greensock.com/get-started-js/" target="_blank">greensock.com</a> for documentation on how to use it. Why Greensock/TweenMax? Great performance, ease-of-use, expandibility and basically because it is awesome.</p>
 				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
+				<p>Use the addTween method to build your scroll animations.</p>
+				<div class="documentation">
+					<span class="documentation-method">.addTween(target, tween, duration, offset)</span>
+					<ul class="param-list">
+						<li><span class="param">target:</span> scroll position (number) or element (string or object)</li>
+						<li><span class="param">tween:</span> a Greensock animation tween object</li>
+						<li><span class="param">duration:</span> scroll duration of tween in pixels (0 means autoplay)</li>
+						<li><span class="param">offset:</span> adjust the animation start point</li>
+					</ul>
+				</div>
 				<p>In the example below, the animation fades in when scrolled into view.</p>
 				<p><blockquote><pre>
 	$(document).ready(function() {
@@ -108,7 +118,16 @@
 	);</pre></blockquote></p>
 
 				<p class="divider">&#9733; &#9733; &#9733;</p>
-				<p>Pass in a function for when the animation is complete.</p>
+				<p>The 4th parameter is offset, which you can use to adjust the scroll point at which the animation is triggered.</p>
+				<p><blockquote><pre>
+controller.addTween('#fade', 
+  TweenMax.from($('#fade'),.5,{
+    css:{opacity:0}}),
+    0, // scroll duration of tween (0 means autoplay)
+    200); // offset the start of the tween by 200 pixels</pre></blockquote></p>
+
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>Pass in a function to the tween for when the animation is complete.</p>
 				<p><blockquote><pre>
 controller.addTween('#fade', 
   TweenMax.from($('#fade'),.5,{
@@ -117,7 +136,23 @@ controller.addTween('#fade',
   }));</pre></blockquote></p>
 				
 				<p class="divider">&#9733; &#9733; &#9733;</p>
-				<p>You can pin an element, do a series of animations and then unpin it.</p>
+				<p>You can use the pin method to pin an element, do a series of animations and then unpin it.</p>
+				<div class="documentation">
+					<span class="documentation-method">.pin(el, dur, vars)</span>
+					<ul class="param-list">
+						<li><span class="param">el:</span> element being pinned(string or object)</li>
+						<li><span class="param">dur:</span> scroll duration of pin (in pixels)</li>
+						<li><span class="param">vars:</span> optional properties for the pin method (object):
+							<ul class="param-list param-list-sub">
+								<li><span class="param">anim:</span> tween animation object that occurs during the pin</li>
+								<li><span class="param">offset:</span> adjust the pin start point</li>
+								<li><span class="param">onPin:</span> callback function for start of pin</li>
+								<li><span class="param">onUnpin:</span> callback function for end of pin</li>
+							</ul>
+						<li> 
+					</ul>
+				</div>
+				<p>Example:</p>
 				<p><blockquote><pre>
 	controller.pin($('#examples-2'), 3000, {
 	  anim: (new TimelineLite())
@@ -154,7 +189,7 @@ controller.addTween('#fade',
 	</div>
 	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  	<script>window.jQuery || document.write('<script src="_/js/jquery-1.7.2.min.js"><\/script>')</script>
+  	<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
   	<script src="js/jquery.lettering-0.6.1.min.js"></script>
 	<script src="js/jquery.superscrollorama.js"></script>
 	<script>

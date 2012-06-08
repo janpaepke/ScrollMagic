@@ -190,24 +190,39 @@ blockquote {
 
 #instructions-animation { padding-top: 40px; }
 
-.param-list {
-	color: #C5C3DE;
+#instructions .documentation {
+	font-size: 16px;
+	text-align: left;
+	width: 720px;
+	margin: 10px auto 30px;
+	padding: 20px 40px;
+	text-shadow: none;
+	border: solid 1px #69697A;
+	color:#C5C3DE;
+}
+
+#instructions .param-list {
 	font-size: 18px;
 	line-height: 1.4;
 	padding: 0 18px;
+	margin: 1em 0 0;
 }
 
-.param-list li {
+#instructions .param-list-sub {
+	padding-left: 36px;
+	font-size: 15px;
+}
+
+#instructions .param-list li {
+	font-weight: normal;
 	padding-bottom: 20px;
 	text-shadow: 0 2px 1px #000;
 }
-
 .param {
-	display: block;
-	color: #69697A;
+	font-style:italic;
 }
 
-.param-def small {
+.param-list small {
 	display: block;
 	font-weight: normal;
 	font-style: italic;
