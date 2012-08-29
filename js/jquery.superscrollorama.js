@@ -103,7 +103,8 @@
 					startPoint += pinObj.offset;
 					endPoint = startPoint + pinObj.dur;
 					
-					if (currScrollPoint > startPoint && currScrollPoint < endPoint && pinObj.state !== 'PINNED') {
+					if (currScrollPoint > startPoint && currScrollPoint < endPoint) {
+						
 						// pin it
 						pinObj.state = 'PINNED';
 						
@@ -135,9 +136,10 @@
 				} else {
 					
 					if (currScrollPoint < pinObj.pinStart || currScrollPoint > pinObj.pinEnd) {
+						
 						// unpin it
 						pinObj.state = currScrollPoint < pinObj.pinStart ? 'BEFORE' : 'AFTER';
-
+						
 						// revert to original position value
 						el.css('position',pinObj.origPosition);
 						if (superscrollorama.settings.isVertical)
@@ -172,7 +174,7 @@
 				state:'BEFORE'
 			});
       
-      return superscrollorama;
+     		return superscrollorama;
 		};
 		
 		superscrollorama.pin = function(el, dur, vars) {
@@ -198,7 +200,7 @@
 				onUnpin:vars.onUnpin
 			});
       
-      return superscrollorama;
+     		return superscrollorama;
 		};
 		
 		
