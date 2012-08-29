@@ -11,7 +11,7 @@
 
 (function($) {
 
-  $.superscrollorama = function(options) {
+	$.superscrollorama = function(options) {
 		
 		var superscrollorama = this;
 		var defaults = {isVertical:true};
@@ -92,6 +92,7 @@
 			for (i=0; i<numPinned; i++) {
 				var pinObj = pinnedObjects[i];
 				var el = pinObj.el;
+				var elHeight = el.outerHeight();
 				
 				// should object be pinned?
 				if (pinObj.state != 'PINNED') {
@@ -101,10 +102,16 @@
 						superscrollorama.settings.isVertical ? el.offset().top : el.offset().left;
 					
 					startPoint += pinObj.offset;
-					endPoint = startPoint + pinObj.dur;
+
+					if (pinObj.state === 'AFTER') {
+						startPoint -= elHeight;
+						endPoint = startPoint + elHeight;
+						
+					} else {
+						endPoint = startPoint + pinObj.dur;
+					}
 					
 					if (currScrollPoint > startPoint && currScrollPoint < endPoint) {
-						
 						// pin it
 						pinObj.state = 'PINNED';
 						
@@ -126,7 +133,7 @@
 						pinObj.pinEnd = endPoint;
 
 						if (pinObj.spacer)
-							pinObj.spacer.css('height', pinObj.dur + el.outerHeight());
+							pinObj.spacer.css('height', pinObj.dur + elHeight);
 
 						if (pinObj.onPin)
 							pinObj.onPin();
@@ -159,6 +166,7 @@
 					}
 				}
 			}
+
 		}
 		
 		// PUBLIC FUNCTIONS
@@ -174,7 +182,7 @@
 				state:'BEFORE'
 			});
       
-     		return superscrollorama;
+			return superscrollorama;
 		};
 		
 		superscrollorama.pin = function(el, dur, vars) {
@@ -200,7 +208,7 @@
 				onUnpin:vars.onUnpin
 			});
       
-     		return superscrollorama;
+			return superscrollorama;
 		};
 		
 		
@@ -208,6 +216,6 @@
 		init();
 		
 		return superscrollorama;
-  }
+  };
      
 })(jQuery);
