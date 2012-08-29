@@ -10,7 +10,8 @@
 */
 
 (function($) {
-    $.superscrollorama = function(options) {
+
+  $.superscrollorama = function(options) {
 		
 		var superscrollorama = this;
 		var defaults = {isVertical:true};
@@ -170,6 +171,8 @@
 				dur: dur || 0,
 				state:'BEFORE'
 			});
+      
+      return superscrollorama;
 		};
 		
 		superscrollorama.pin = function(el, dur, vars) {
@@ -194,6 +197,8 @@
 				onPin:vars.onPin,
 				onUnpin:vars.onUnpin
 			});
+      
+      return superscrollorama;
 		};
 		
 		
@@ -201,6 +206,6 @@
 		init();
 		
 		return superscrollorama;
-    };
+  }
      
 })(jQuery);
