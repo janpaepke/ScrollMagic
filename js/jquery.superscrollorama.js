@@ -34,12 +34,13 @@
 			$(window).scroll(function() {
 				didScrollCheck = true;
 			});
-			setInterval(function() {
-				if (didScrollCheck) {
+			(function loop() {
+                if (didScrollCheck) {
 					checkScrollAnim();
 					didScrollCheck = false;
 				}
-			}, 50);
+                setTimeout(loop, 100); // loop calls itself and runs, then waits 100 miliseconds and runs again
+            }());
 		}
 		
 		function checkScrollAnim() {
