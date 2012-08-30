@@ -103,13 +103,7 @@
 					
 					startPoint += pinObj.offset;
 
-					if (pinObj.state === 'AFTER') {
-						startPoint -= elHeight;
-						endPoint = startPoint + elHeight;
-						
-					} else {
-						endPoint = startPoint + pinObj.dur;
-					}
+					endPoint = startPoint + pinObj.dur;
 					
 					if (currScrollPoint > startPoint && currScrollPoint < endPoint) {
 						// pin it
