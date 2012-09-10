@@ -120,9 +120,9 @@
 						// change to fixed position
 						el.css('position','fixed');
 						if (superscrollorama.settings.isVertical)
-							el.css('top', 0);
+							el.css('top', -pinObj.offset);
 						else
-							el.css('left', 0);
+							el.css('left', -pinObj.offset);
 						
 						pinObj.pinStart = startPoint;
 						pinObj.pinEnd = endPoint;
