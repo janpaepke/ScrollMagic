@@ -141,7 +141,11 @@
 						
 						// unpin it
 						pinObj.state = currScrollPoint < pinObj.pinStart ? 'BEFORE' : 'AFTER';
-						
+						if(pinObj.anim&&pinObj.state === 'BEFORE'){
+							pinObj.anim.progress(0);
+						}else if(pinObj.anim&&pinObj.state === 'AFTER'){
+							pinObj.anim.progress(1);
+						}
 						// revert to original position value
 						el.css('position',pinObj.origPosition);
 						if (superscrollorama.settings.isVertical)
