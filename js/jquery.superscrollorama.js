@@ -22,8 +22,7 @@
 		
 		var animObjects = [],
 			pinnedObjects = [],
-			didScrollCheck = false,
-			timeline = new TimelineLite();
+			didScrollCheck = false;
 		
 		// PRIVATE FUNCTIONS
 
@@ -215,6 +214,6 @@
 		init();
 		
 		return superscrollorama;
-  };
+	};
      
 })(jQuery);
