@@ -33,13 +33,14 @@
 			$(window).scroll(function() {
 				didScrollCheck = true;
 			});
-			(function loop() {
-                if (didScrollCheck) {
-					checkScrollAnim();
-					didScrollCheck = false;
-				}
-                setTimeout(loop, 100); // loop calls itself and runs, then waits 100 miliseconds and runs again
-            }());
+			TweenLite.ticker.addEventListener("tick", tickHandler);
+		}
+
+		function tickHandler() {
+			if (didScrollCheck) {
+				checkScrollAnim();
+				didScrollCheck = false;
+			}
 		}
 		
 		function checkScrollAnim() {
@@ -140,9 +141,9 @@
 						
 						// unpin it
 						pinObj.state = currScrollPoint < pinObj.pinStart ? 'BEFORE' : 'AFTER';
-						if(pinObj.anim&&pinObj.state === 'BEFORE'){
+						if (pinObj.anim&&pinObj.state === 'BEFORE') {
 							pinObj.anim.progress(0);
-						}else if(pinObj.anim&&pinObj.state === 'AFTER'){
+						} else if (pinObj.anim && pinObj.state === 'AFTER'){
 							pinObj.anim.progress(1);
 						}
 						// revert to original position value
