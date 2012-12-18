@@ -215,7 +215,7 @@ controller.addTween('#fade',
 					TweenMax.from( $('#title-line3 .char4'), .5+Math.random(), {css:{top: '-200px', left:'1000px'}, ease:Elastic.easeOut}),
 					TweenMax.from( $('#title-line3 .char5'), .5+Math.random(), {css:{top: '200px', left:'1000px'}, ease:Elastic.easeOut})
 				])
-				.from( $('#title-info'), 1, {css:{opacity:0, 'margin-top':40}, delay:-1, ease:Quad.easeOut});
+				.to( $('#title-info'), .5, {css:{opacity:.99, 'margin-top':0}, delay:-1, ease:Quad.easeOut});
 			
 			function initScrollAnimations() {
 				$('#content-wrapper').css('display','block');

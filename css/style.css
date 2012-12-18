@@ -100,7 +100,7 @@ blockquote {
 #title-line3 { top: -120px; }
 .title-line span { display: inline-block; line-height: 1.1; position: relative; }
 .twitter-follow-button { position: relative; top: 8px; left: 4px; }
-#title-info { position: relative; z-index:99998; }
+#title-info { position: relative; z-index:99998; margin-top: 40px; opacity: 0; }
 
 .credit {
 	font-size: 20px;
