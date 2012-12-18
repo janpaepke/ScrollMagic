@@ -8,7 +8,7 @@
 
 	Dual licensed under MIT and GPL.
 
-	Thanks to Jan Paepke (@janpaepke) for making various improvements
+	Thanks to Jan Paepke (@janpaepke) for making some nice improvements
 */
 
 (function($) {
