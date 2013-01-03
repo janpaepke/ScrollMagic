@@ -4,7 +4,7 @@ The jQuery plugin for doing supercool scroll animation.
 
 Check out the [Project Page](http://johnpolacek.github.com/superscrollorama) for more information.
 
-[Follow me on Twitter}(http://twitter.com/johnpolacek)
+[Follow me on Twitter](http://twitter.com/johnpolacek)
 
 ## License
 
