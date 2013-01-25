@@ -4,6 +4,8 @@ The jQuery plugin for doing supercool scroll animation.
 
 Check out the [Project Page](http://johnpolacek.github.com/superscrollorama) for more information.
 
+[Follow me on Twitter](http://twitter.com/johnpolacek)
+
 ## License
 
 SuperScrollorama is dual licensed under the MIT license (below) and [GPL license](http://www.gnu.org/licenses/gpl-3.0.html).
