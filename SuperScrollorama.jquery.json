@@ -1,0 +1,30 @@
+{
+    "name": "SuperScrollorama",
+    "title": "SuperScrollorama",
+    "description": "The jQuery plugin for supercool scroll animation",
+    "keywords": [
+        "scroll",
+        "scrolling",
+        "animation"
+    ],
+    "version": "1.0.0",
+    "author": {
+        "name": "John Polacek",
+        "url": "http://johnpolacek.com"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/johnpolacek/superscrollorama/blob/master/README.md"
+        },
+        {
+            "url":"http://www.greensock.com/licensing/"
+        }
+    ],
+    "homepage": "http://johnpolacek.github.com/superscrollorama/",
+    "demo": "http://johnpolacek.github.com/superscrollorama/",
+    "dependencies": {
+        "jquery": ">=1.5",
+        "greensock":">=1.8"
+    }
+}
