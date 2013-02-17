@@ -80,7 +80,7 @@
 			<p class="divider">&#9733; &#9733; &#9733;</p>
 			<div id="instructions">
 				<p>Superscrollorama is powered by TweenMax and the Greensock Tweening Engine. Go to <a href="http://www.greensock.com/get-started-js/" target="_blank">greensock.com</a> for documentation on how to use it. Why Greensock/TweenMax? Great performance, ease-of-use, expandibility and basically because it is awesome.</p>
-				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
+				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
 				<p>Use the addTween method to build your scroll animations.</p>
 				<div class="documentation">
 					<span class="documentation-method">.addTween(target, tween, duration, offset)</span>
@@ -188,8 +188,8 @@ controller.addTween('#fade',
 		</div>
 	</div>
 	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  	<script>window.jQuery || document.write('<script src="js/jquery-1.7.2.min.js"><\/script>')</script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  	<script>window.jQuery || document.write('<script src="js/jquery-1.9.1.min.js"><\/script>')</script>
   	<script src="js/jquery.lettering-0.6.1.min.js"></script>
 	<script src="js/jquery.superscrollorama.js"></script>
 	<script>
@@ -243,8 +243,8 @@ controller.addTween('#fade',
 				pinAnimations
 					.append(TweenMax.from($('#pin-frame-pin h2'), .5, {css:{marginTop:0}, ease: Quad.easeInOut}))
 					.append([
-						TweenMax.to($('#pin-frame-slide'), .5, {css:{marginLeft:0}}),
-						TweenMax.to($('#pin-frame-pin'), .5, {css:{marginLeft:'100%'}})
+						TweenMax.to($('#pin-frame-slide'), 1, {css:{marginLeft:0}}),
+						TweenMax.to($('#pin-frame-pin'), 1, {css:{marginLeft:'100%'}})
 					], .5)
 					.append([
 						TweenMax.to($('#pin-frame-wipe'), .5, {css:{top:0}}),
