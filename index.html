@@ -84,12 +84,13 @@
 				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
 				<p>Use the addTween method to build your scroll animations.</p>
 				<div class="documentation">
-					<span class="documentation-method">.addTween(target, tween, duration, offset)</span>
+					<span class="documentation-method">.addTween(target, tween, duration, offset, reverse)</span>
 					<ul class="param-list">
 						<li><span class="param">target:</span> scroll position (number) or element (string or object)</li>
 						<li><span class="param">tween:</span> a Greensock animation tween object</li>
 						<li><span class="param">duration:</span> scroll duration of tween in pixels (0 means autoplay)</li>
 						<li><span class="param">offset:</span> adjust the animation start point</li>
+						<li><span class="param">reverse:</span> disable reverse animation on up scrolling</li>
 					</ul>
 				</div>
 				<p>In the example below, the animation fades in when scrolled into view.</p>
@@ -126,6 +127,15 @@ controller.addTween('#fade',
     css:{opacity:0}}),
     0, // scroll duration of tween (0 means autoplay)
     200); // offset the start of the tween by 200 pixels</pre></blockquote></p>
+
+    				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>The 5th parameter is reverse, which you can use to disable reverse animation.</p>
+				<p><blockquote><pre>
+controller.addTween('#fade', 
+  TweenMax.from($('#fade'),.5,{
+    css:{opacity:0}}),
+    200, 
+    false); // prevent backwards animation of the element</pre></blockquote></p>
 
 				<p class="divider">&#9733; &#9733; &#9733;</p>
 				<p>Pass in a function to the tween for when the animation is complete.</p>

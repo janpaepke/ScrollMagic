@@ -97,7 +97,7 @@
 					animObj.start = startPoint;
 					animObj.end = endPoint;
 					setTweenProgress(animObj.tween, (currScrollPoint - animObj.start)/(animObj.end - animObj.start));
-				} else if (currScrollPoint < startPoint && animObj.state !== 'BEFORE') {
+				} else if (currScrollPoint < startPoint && animObj.state !== 'BEFORE' && animObj.reverse) {
 					// if it should be at the BEFORE tween state and isn't..
 					if (superscrollorama.settings.playoutAnimations) {
 						animObj.tween.reverse();
@@ -207,7 +207,7 @@
 		}
 
 		// PUBLIC FUNCTIONS
-		superscrollorama.addTween = function(target, tween, dur, offset) {
+		superscrollorama.addTween = function(target, tween, dur, offset, reverse) {
 
 			tween.pause();
 
@@ -216,6 +216,7 @@
 				tween: tween,
 				offset: offset || 0,
 				dur: dur || 0,
+				reverse: reverse || true, // determine if reverse animation has been disabled
 				state:'BEFORE'
 			});
 
