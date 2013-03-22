@@ -19,7 +19,8 @@
 		var defaults = {
 			isVertical:true,		// are we scrolling vertically or horizontally?
 			triggerAtCenter: true,	// the animation triggers when the respective Element's origin is in the center of the scrollarea. This can be changed here to be at the edge (-> false)
-			playoutAnimations: true	// when scrolling past the animation should they be played out (true) or just be jumped to the respective last frame (false)?
+			playoutAnimations: true,	// when scrolling past the animation should they be played out (true) or just be jumped to the respective last frame (false)?
+			reverse: true // make reverse configurable so you don't have to pass it in for every tween to reverse globally
 		};
 		superscrollorama.settings = $.extend({}, defaults, options);
 
@@ -216,7 +217,7 @@
 				tween: tween,
 				offset: offset || 0,
 				dur: dur || 0,
-				reverse: reverse || true, // determine if reverse animation has been disabled
+				reverse: reverse || superscrollorama.settings.reverse, // determine if reverse animation has been disabled
 				state:'BEFORE'
 			});
 
