@@ -320,6 +320,7 @@
 		};
 
 		superscrollorama.pin = function(el, dur, vars) {
+			if (typeof(el) === 'string') el = $(el);
 			var defaults = {
 				offset: 0,
 				pushFollowers: true		// if true following elements will be "pushed" down, if false the pinned element will just scroll past them
