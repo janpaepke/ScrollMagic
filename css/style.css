@@ -18,7 +18,7 @@ body {
 	visibility: hidden;
 }
 
-.simple-demo {
+.simple-demo, .mobile-demo {
 	visibility: visible;
 }
 
@@ -229,3 +229,32 @@ blockquote {
 }
 
 #credits { padding: 80px 0; }
+
+/* mobile demo */
+
+.mobile-demo #fade-it {
+	margin: 400px 0 500px 0;
+}
+.mobile-demo #examples-1 {
+	margin-bottom: 200px;
+}
+.mobile-demo #instructions {
+	width: 800px;
+	text-align: left;
+	margin: auto;
+}
+.mobile-demo ul {
+	list-style: disc;
+	color:#FFFFFF;
+	margin: 20px 80px 100px 80px;
+}
+.mobile-demo #content-wrapper {
+	margin-bottom: 100px;
+	width: 100%;
+}
+.mobile-demo h2 {
+	width: 90%;
+}
+.mobile-demo h3 {
+	color:#C5C3DE;
+}

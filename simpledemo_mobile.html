@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<title>SUPERSCROLLORAMA - Mobile Demo</title>
+	
+	<link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<style>
+		/* make overflow hidden from viewport on touch devices */
+		.touch #viewport-wrapper {
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body class="mobile-demo">
+<div id="viewport-wrapper">
+	<div id="content-wrapper">
+
+		<h3>Try this page on a touch device!</h3>
+		<div id="examples-1">
+			<h2 id="fade-it">Fade It</h2>
+			<h2 id="pin-it">Pin It</h2>
+		</div>
+		
+		<div id="howtouse">
+			<h1>Go mobile!</h1>
+			<div id="caution">
+				<p class="disclaimer">Please note, this is a very recent addition to superscrollorama.<br>It is not fully tested accross all browsers and has its limitations. But it's a start.</p>
+			</div>
+			<p class="divider">&#9733; &#9733; &#9733;</p>
+			<div id="instructions">
+				<p>If we want to get superscrollorama working on touch devices we have to face several difficulties.</p>
+				<p>The biggest problem with mobile superscrollorama applications is that the “onScroll” event on touch devices is interpreted quite differently: It is only triggered once the smooth scrolling animation is finished.<br>
+					Add the fact that all intervals seem to be paused during scroll and we face quite a challenge.</p>
+				<p>Luckily other people have come across these problems as well and there are now several mobile scrolling frameworks. Noteworthy are: <a href="http://cubiq.org/iscroll-4" target="_blank">iScroll</a>, <a href="joehewitt.github.com/scrollability/" target="_blank">Scrollability</a> and <a href="http://zynga.github.com/scroller/" target="_blank">Zynga Scroller</a>. Basically how they all work is they make a wrapper around the content, and put that into another (outer) wrapper. The outer wrapper is resized to the viewport and the inner wrapper is then moved, when the user swipes. This way they all try to mimic the native scroll functionality but have more control over it.</p>
+				<p>Now because the body itself is not moving anymore we need to tell superscrollorama the offset of the inner content div within its viewport parent. This is achieved using the function “setScrollContainerOffset”. For documentation see the <a href="index.html">main documentation file</a>.</p>
+				<p>Now we got the proper position, but one last problem remains: All the libraries still have no “onScroll” event. So why use them then you ask? Well they enable us to use a nice tweak well explained by <a href="http://www.youtube.com/watch?&v=Ii5AkRNSVHg" target="_blank">Mark Dalgleish</a>:<br>
+					The requestAnimationFrame method.<br>
+					This in turn isn’t supported by all browsers, but not to worry: There’s a <a href="http://paulirish.com/2011/requestanimationframe-for-smart-animating/">polyfill</a> to ensure compatibility.</p>
+				<p>In this example we also use <a href="http://modernizr.com/" target="_blank">Modernizr</a> to target mobile users and then initialize iScroll explicitly for them. Then we use the requestAnimationFrame loop to update the position of the scrollcontainer.<br>
+					This all may sound like a lot of hoops to jump through but that’s the price you'll have to pay if you want to brag about your site being mobile friendly…</p>
+				<p>
+				So to wrap up – here’s how to achieve mobile compatibility:
+				</p>
+				<ul>
+					<li>get a mobile scroll framework and get it to work with your dom</li>
+					<li>get modernizr and wrap your scoller initiation into a “if (Modernizr.touch)” clause to target mobile users only</li>
+					<li>include the requestAnimationFrame polyfill</li>
+					<li>use requestAnimationFrame to continually update the scrollcontainer’s position inside the viewport</li>
+					<li>enjoy</li>
+				</ul>
+				<p>
+				Issues:
+				</p>
+				<p>Sadly even this solution has it’s limitations. The biggest setback concerns only pinned elements and exists due to a <a href="http://code.google.com/p/chromium/issues/detail?id=20574" target="_blank">bug in webkit</a>. The problem is that fixed elements inside wrappers that are positioned using -webkit-transform are positioned in relation to their parent instead of the body (as one might expect). The scroll libraries use -webkit-transform to move the scrollwrapper inside the viewport. They do this for the significant performance increase this offers in comparison to changing the top (or left) position.</p>
+				<p>To get our project to work for pinned elements we sadly have no other choice than to tell the scroll framework to avoid using -webkit-transform. In iScroll4 this is done using the option “useTransform: false”. Additionally we’ll have to add an eventlistener that updates superscrollorama on touchmove, as requestAnimationFrame is otherwise not triggered during touch.</p>
+				<p>So this will make pinned elements work but at the cost of performance. If you have only a small application like this example this might still work for you.</p>
+				<p>If you don’t need pinned elements you should be fine! Set “useTransform: true” in iScroll and ignore the touchmove eventlistener from the example sourcecode.</p>
+			</div>
+			<p class="divider">&#9733; &#9733; &#9733;</p>
+			<p>Happy mobile scrolling!</p>
+		</div>
+
+	</div>
+</div>
+	<script type="text/javascript" src="http://modernizr.com/downloads/modernizr-latest.js"></script>
+	<script type="text/javascript" src="js/iscroll.js"></script>
+	<script type="text/javascript" src="js/polyfill.requestAnimationFrame.js"></script>
+	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  	<script>window.jQuery || document.write('<script src="_/js/jquery-1.9.1.min.js"><\/script>')</script>
+  	<script src="js/jquery.superscrollorama.js"></script>
+	<script>
+		$(document).ready(function() {
+			
+			/* INIT SUPERSCROLLORAMA LIKE USUAL */
+			
+			var controller = $.superscrollorama();
+			var tweenFade = TweenMax.to( $('#fade-it'), .5, {css:{opacity: 0}});
+			var tweenColor = TweenMax.to( $('#pin-it'), .5, {css:{color: "#FF0000"}});
+			controller.addTween('#fade-it', tweenFade, 450);
+			controller.pin('#pin-it', 500, {offset: -100, anim: tweenColor});
+			
+			/* MOBILE IMPLEMENTATION OF SUPERSCROLLORAMA */
+			
+			if (Modernizr.touch) {
+				var scrollPos = 0;
+				// using iScroll but deacting -webkit-transform because pin wouldn't work becasue of a webkit bug: https://code.google.com/p/chromium/issues/detail?id=20574
+				var myScroll = new iScroll('viewport-wrapper', {vScrollbar: true, hScroll: false, vScroll: true, bounce: false, useTransform: false, useTransition: false});
+				function animationLoop () {
+					// make sure to have the requestAnimationFrame polyfill by Paul Irish: https://gist.github.com/paulirish/1579671
+					window.requestAnimationFrame(animationLoop);
+					if (myScroll.y != scrollPos) { // if position has changed
+						scrollPos = myScroll.y;
+						// udate scrollcontainer position
+						controller.setScrollContainerOffset(0, -myScroll.y);
+						// force an immediate update
+						controller.triggerCheckAnim(true);
+					}
+				}
+				// when deactivating transform in iScroll (useTransform:false) requestAnimationFrame is not triggered during touchmove
+				$("#viewport-wrapper").get(0).addEventListener("touchmove", function() {
+					animationLoop ();
+				});
+				
+				animationLoop ();
+			}
+		});
+	</script>
+
+</body></html>
