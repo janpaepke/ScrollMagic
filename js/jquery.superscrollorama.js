@@ -95,14 +95,14 @@
 					offset = animObj.offset;
 
 				if (typeof(target) === 'string') {
-					startPoint = superscrollorama.settings.isVertical ? $(target).offset().top : $(target).offset().left;
+					startPoint = superscrollorama.settings.isVertical ? $(target).offset().top + scrollContainerOffset.y : $(target).offset().left + scrollContainerOffset.x;
 					offset += offsetAdjust;
 				} else if (typeof(target) === 'number')	{
 					startPoint = target;
 				} else if ($.isFunction(target)) {
 					startPoint = target.call(this);
 				} else {
-					startPoint = superscrollorama.settings.isVertical ? target.offset().top : target.offset().left;
+					startPoint = superscrollorama.settings.isVertical ? target.offset().top + scrollContainerOffset.y : target.offset().left + scrollContainerOffset.x;
 					offset += offsetAdjust;
 				}
 
