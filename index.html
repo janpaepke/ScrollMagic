@@ -82,6 +82,30 @@
 			<div id="instructions">
 				<p>Superscrollorama is powered by TweenMax and the Greensock Tweening Engine. Go to <a href="http://www.greensock.com/get-started-js/" target="_blank">greensock.com</a> for documentation on how to use it. Why Greensock/TweenMax? Great performance, ease-of-use, expandibility and basically because it is awesome.</p>
 				<p>First, link to the <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" target="_blank">jQuery CDN</a> and then embed TweenMax.js and Superscrollorama. Next, start up Superscrollorama. Think of it as a controller for animation. You add tweens and timelines to it, targeting when an element appears in the viewport or at a specific scroll point.</p>
+				<p>When initializing superscrollorama there are several options you might want to change.</p>
+				<div class="documentation">
+					<span class="documentation-method">$.superscrollorama({options})</span>
+					<ul class="param-list">
+						<li><span class="param">vars:</span> optional properties for the pin method (object):
+							<ul class="param-list param-list-sub">
+								<li><span class="param">isVertical</span> Are we scrolling vertically (true) or horizontally (false)? - default: true</li>
+								<li><span class="param">triggerAtCenter:</span> The animation triggers when the respective Element's origin is in the center of the scrollarea (true). This can be changed here to be at the top/left edge (false) - default: true</li>
+								<li><span class="param">playoutAnimations:</span> When scrolling past the animation should they be played out (true) or just be jumped to the respective last frame (false)?<br>(Does not affect animations where duration = 0) - default: true</li>
+								<li><span class="param">reverse:</span> Global flag do set if animations should be reversed (true) when scrolling back or not (false) - default: true</li>
+							</ul>
+						<li>
+					</ul>
+				</div>
+				<p>Example</p>
+				<p><blockquote><pre>
+	$(document).ready(function() {
+		var controller = $.superscrollorama({
+			triggerAtCenter: false,
+			playoutAnimations: true
+		});
+	});</pre></blockquote></p>
+
+				<p class="divider">&#9733; &#9733; &#9733;</p>
 				<p>Use the addTween method to build your scroll animations.</p>
 				<div class="documentation">
 					<span class="documentation-method">.addTween(target, tween, duration, offset, reverse)</span>
@@ -95,14 +119,11 @@
 				</div>
 				<p>In the example below, the animation fades in when scrolled into view.</p>
 				<p><blockquote><pre>
-	$(document).ready(function() {
-	  var controller = $.superscrollorama();
-	  controller.addTween('#fade', 
-	    TweenMax.from($('#fade'), .5, {css:{opacity:0}}));
-	});</pre></blockquote></p>
+	controller.addTween('#fade', 
+	    TweenMax.from($('#fade'), .5, {css:{opacity:0}}));</pre></blockquote></p>
 
 				<p class="divider">&#9733; &#9733; &#9733;</p>
-				<p>The default duration is 0, which means the tween plays through completely when its scroll point is reached. You can add a duration which will instead sync the tween progress to the scrollbar position. Instead of one tween, you can create a timeline of multiple tweens.</p>
+				<p>The default duration is 0, which means the tween plays through completely when its scroll point is reached. You can add a duration which will instead sync the tween progress to the scrollbar position. Instead of one tween, you can create a timeline of multiple tweens.<br>If you use the TweenMax or TimelineMax option {repeat: -1} the animation will loop indefinetly for the set duration.</p>
 				<p><blockquote><pre>
 	// parallax example
 	controller.addTween(
@@ -148,6 +169,7 @@ controller.addTween('#fade',
 				
 				<p class="divider">&#9733; &#9733; &#9733;</p>
 				<p>You can use the pin method to pin an element, do a series of animations and then unpin it.</p>
+				<p>The callback functions will be called with a boolean parameter, true if triggered at end (bottom) of pin, false, if triggered at he beginning (top point).</p>
 				<div class="documentation">
 					<span class="documentation-method">.pin(el, dur, vars)</span>
 					<ul class="param-list">
@@ -159,6 +181,7 @@ controller.addTween('#fade',
 								<li><span class="param">offset:</span> adjust the pin start point</li>
 								<li><span class="param">onPin:</span> callback function for start of pin</li>
 								<li><span class="param">onUnpin:</span> callback function for end of pin</li>
+								<li><span class="param">pushFollowers:</span> Decide if following elements should be pushed down (true) or scrolled past (false), default: true</li>
 							</ul>
 						<li> 
 					</ul>
@@ -184,7 +207,56 @@ controller.addTween('#fade',
 	      TweenMax.to($('#move-it'), .5, 
 	        {css:{left: 0}})
 	    )
-	})</pre></blockquote></p>
+	});</pre></blockquote></p>
+
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>You can use the updatePin method if you want to change options for pinned elements at runtime. For example when the window size or the size of your pin Item have changed. It Expects the same parameters as the .pin method, except all but the element is optional.</p>
+				<div class="documentation">
+					<span class="documentation-method">.updatePin(el, dur, vars)</span>
+					<ul class="param-list">
+						<li><span class="param">el:</span> element being pinned(string or object)</li>
+						<li><span class="param">dur:</span> scroll duration of pin (in pixels) (optional)</li>
+						<li><span class="param">vars:</span> optional properties for the pin method (object):
+							<ul class="param-list param-list-sub">
+								<li><span class="param">anim:</span> tween animation object that occurs during the pin</li>
+								<li><span class="param">offset:</span> adjust the pin start point</li>
+								<li><span class="param">onPin:</span> callback function for start of pin</li>
+								<li><span class="param">onUnpin:</span> callback function for end of pin</li>
+								<li><span class="param">pushFollowers:</span> Decide if following elements should be pushed down (true) or scrolled past (false), default: true</li>
+							</ul>
+						<li> 
+					</ul>
+				</div>
+				<p>Example:</p>
+				<p><blockquote><pre>
+	controller.updatePin($('#examples-2'), null, {
+		offset: 200
+	});</pre></blockquote></p>
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>Sometimes you might want to tell superscrollorama to update all elements, for example when the window is resized. Here the method triggerCheckAnim comes in handy.</p>
+				<div class="documentation">
+					<span class="documentation-method">.triggerCheckAnim(immediately)</span>
+					<ul class="param-list">
+						<li><span class="param">immediately:</span> if true the update will be done immediately, if false it will wait for the next tickEvent of TweenMax (to save performance)<br>(boolean, optional, default: false)</li>
+					</ul>
+				</div>
+				<p>Example:</p>
+				<p><blockquote><pre>
+	$(window).resize(function () {
+		controller.triggerCheckAnim();
+	});</pre></blockquote></p>
+	<p class="divider">&#9733; &#9733; &#9733;</p>
+	<p>If you go the extra mile to make your superscrollorama application accessible to mobile users you'll need the method setScrollContainerOffset. For more details see <a href="simpledemo_mobile.html">simpledemo_mobile.html</a></p>
+				<div class="documentation">
+					<span class="documentation-method">.setScrollContainerOffset(x, y)</span>
+					<ul class="param-list">
+						<li><span class="param">x:</span> the x offset of the scrollcontainer</li>
+						<li><span class="param">y:</span> the x offset of the scrollcontainer</li>
+					</ul>
+				</div>
+				<p>Example:</p>
+				<p><blockquote><pre>
+	controller.setScrollContainerOffset(0, 200);</pre></blockquote></p>
 
 			</div>
 
