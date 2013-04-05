@@ -48,7 +48,7 @@
 			var obj = {
 				top: parseFloat($elem.css("top")),
 				left: parseFloat($elem.css("left"))
-			}
+			};
 			if (isNaN(obj.top)) {
 				obj.top = 0;
 			}
@@ -57,7 +57,7 @@
 			}
 			return obj;
 		}
-		
+
 		function tickHandler() {
 			if (doUpdateOnNextTick) {
 				checkScrollAnim();
@@ -117,7 +117,7 @@
 				}
 				if (currScrollPoint < startPoint && animObj.state !== 'BEFORE' && animObj.reverse) {
 					// if it should be at the BEFORE tween state and isn't..
-					if (superscrollorama.settings.playoutAnimations || animObj.dur == 0) {
+					if (superscrollorama.settings.playoutAnimations || animObj.dur === 0) {
 						animObj.tween.reverse();
 					} else {
 						setTweenProgress(animObj.tween, 0);
@@ -125,7 +125,7 @@
 					animObj.state = 'BEFORE';
 				} else if (currScrollPoint > endPoint && animObj.state !== 'AFTER') {
 					// if it should be at the AFTER tween state and isn't..
-					if (superscrollorama.settings.playoutAnimations || animObj.dur == 0) {
+					if (superscrollorama.settings.playoutAnimations || animObj.dur === 0) {
 						animObj.tween.play();
 					} else {
 						setTweenProgress(animObj.tween, 1);
@@ -136,10 +136,10 @@
 					var repeatIndefinitely = false;
 					if (animObj.tween.repeat) // does the tween even have the repeat option (TweenMax / TimelineMax)
 						repeatIndefinitely = (animObj.tween.repeat() == -1);
-					
+
 					if (repeatIndefinitely) { // if the animation loops indefinitely it will just play for the time of the duration
 						var playheadPosition = animObj.tween.totalProgress(); // there is no "isPlaying" value so we need to save the playhead to determin wether the animation is running
-						if (animObj.playeadLastPosition == null || playheadPosition == animObj.playeadLastPosition) {
+						if (animObj.playeadLastPosition === null || playheadPosition === animObj.playeadLastPosition) {
 							if (playheadPosition == 1) {
 								if (animObj.tween.yoyo()) // reverse Playback with infinitely looped tweens only works with yoyo true
 									animObj.tween.reverse();
@@ -191,15 +191,14 @@
 						pinObj.fixedPositioning = {
 							top: superscrollorama.settings.isVertical ? -pinObj.offset : pinObj.spacer.offset().top,
 							left: superscrollorama.settings.isVertical ? pinObj.spacer.offset().left : -pinObj.offset
-						}
+						};
 						el.css('position','fixed');
 						el.css('top', pinObj.fixedPositioning.top);
 						el.css('left', pinObj.fixedPositioning.left);
-						
+
 						// save values
 						pinObj.pinStart = startPoint;
 						pinObj.pinEnd = endPoint;
-
 
 						// If we want to push down following Items we need a spacer to do it, while and after our element is fixed.
 						if (pinObj.pushFollowers) {
@@ -226,7 +225,7 @@
 							if (pinObj.anim)
 								setTweenProgress(pinObj.anim, 0); // reset the progress, otherwise the animation won't be updated to the new position
 						} else if (pinObj.onPin) {
-						    pinObj.onPin(pinObj.state === "AFTER");
+							pinObj.onPin(pinObj.state === "AFTER");
 						}
 
 						// pin it!
@@ -243,7 +242,6 @@
 						// set Animation to end or beginning
 						setTweenProgress(pinObj.anim, before ? 0 : 1);
 
-						// TODO: when refreshing the page the spacer heights of passed pins need to be set
 						var spacerSize = before ? 0 : pinObj.dur;
 
 						if (superscrollorama.settings.isVertical) {
@@ -251,11 +249,11 @@
 						} else {
 							pinObj.spacer.width(pinObj.pushFollowers ? spacerSize : 0);
 						}
-						
+
 						// correct values if pin Object was moved (animated) during PIN (pinObj.el.css values will never be auto as they are set by the class)
 						var deltay = pinObj.fixedPositioning.top - cssNumericPosition(pinObj.el).top;
 						var deltax = pinObj.fixedPositioning.left - cssNumericPosition(pinObj.el).left;
-						
+
 						// first revert to start values
 						resetPinObj(pinObj);
 
@@ -265,32 +263,31 @@
 
 							if (pinObj.origPositioning.pos == "relative") { // position relative and pushFollowers = false
 								pinOffset = superscrollorama.settings.isVertical ?
-										  parseFloat(pinObj.origPositioning.top) :
-										  parseFloat(pinObj.origPositioning.left);
+											parseFloat(pinObj.origPositioning.top) :
+											parseFloat(pinObj.origPositioning.left);
 								if (isNaN(pinOffset)) { // if Position was "auto" parseFloat will result in NaN
 									pinOffset = 0;
 								}
 							} else {
 								pinOffset = superscrollorama.settings.isVertical ?
-										  pinObj.spacer.position().top :
-										  pinObj.spacer.position().left;
+											pinObj.spacer.position().top :
+											pinObj.spacer.position().left;
 							}
 
 							var direction = superscrollorama.settings.isVertical ?
-										 "top" :
-										 "left";
+											"top" :
+											"left";
 
 							pinObj.el.css(direction, pinOffset + spacerSize);
 						} // if position relative and pushFollowers is true the element remains untouched.
-						
+
 						// now correct values if they have been changed during pin
-						if (deltay != 0) {
+						if (deltay !== 0) {
 							pinObj.el.css("top", cssNumericPosition(pinObj.el).top - deltay);
 						}
-						if (deltax != 0) {
+						if (deltax !== 0) {
 							pinObj.el.css("left", cssNumericPosition(pinObj.el).left - deltax);
 						}
-						
 
 						if (pinObj.onUnpin)
 							pinObj.onUnpin(!before);
@@ -328,7 +325,7 @@
 			vars = $.extend({}, defaults, vars);
 			if (vars.anim) vars.anim.pause();
 
-			var spacer = $('<div class="superscrollorama-pin-spacer"></div>')
+			var spacer = $('<div class="superscrollorama-pin-spacer"></div>');
 			spacer.css("position", "relative");
 			spacer.css("top", el.css("top"));
 			spacer.css("left", el.css("left"));
