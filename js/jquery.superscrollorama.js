@@ -309,7 +309,7 @@
 				tween: tween,
 				offset: offset || 0,
 				dur: dur || 0,
-				reverse: reverse || superscrollorama.settings.reverse, // determine if reverse animation has been disabled
+				reverse: (typeof reverse !== "undefined") ? reverse : superscrollorama.settings.reverse, // determine if reverse animation has been disabled
 				state:'BEFORE'
 			});
 
