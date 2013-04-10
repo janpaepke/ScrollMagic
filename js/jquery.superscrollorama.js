@@ -371,10 +371,53 @@
 
 			return superscrollorama;
 		};
+		
+		superscrollorama.removeTween = function (target, tween, reset) {
+			var count = animObjects.length;
+			if (typeof reset === "undefined") reset = true;
+			for (var index = 0; index < count; index++) {
+				var value = animObjects[index];
+				if (value.target == target &&
+					(!tween || value.tween == tween)) { // tween is optional. if not set just remove element
+					animObjects.splice(index,1);
+					if (reset) {
+						setTweenProgress(value.tween, 0);
+					}
+					count--;
+					index--;
+				}
+			}
+			
+			return superscrollorama;
+		}
+		
+		superscrollorama.removePin = function (el, reset) {
+			if (typeof(el) === 'string') el = $(el);
+			if (typeof reset === "undefined") reset = true;
+			var count = pinnedObjects.length;
+			for (var index = 0; index < count; index++) {
+				var value = pinnedObjects[index];
+				if (value.el.is(el)) {
+					pinnedObjects.splice(index,1);
+					if (reset) {
+						value.spacer.remove();
+						resetPinObj(value);
+						if (value.anim) {
+							setTweenProgress(value.anim, 0);
+						}
+					}
+					count--;
+					index--;
+				}
+			}
+			
+			return superscrollorama;
+		}
 
 		superscrollorama.setScrollContainerOffset = function (x, y) {
 			scrollContainerOffset.x = x;
 			scrollContainerOffset.y = y;
+			return superscrollorama;
 		};
 
 		superscrollorama.triggerCheckAnim = function (immediately) { // if immedeately is true it will be updated right now, if false it will wait until next tweenmax tick. default is false

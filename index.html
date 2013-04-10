@@ -117,7 +117,7 @@
 						<li><span class="param">tween:</span> a Greensock animation tween object</li>
 						<li><span class="param">duration:</span> scroll duration of tween in pixels (0 means autoplay)</li>
 						<li><span class="param">offset:</span> adjust the animation start point</li>
-						<li><span class="param">reverse:</span> disable reverse animation on up scrolling</li>
+						<li><span class="param">reverse:</span> disable reverse animation on up scrolling (optional)</li>
 					</ul>
 				</div>
 				<p>In the example below, the animation fades in when scrolled into view.</p>
@@ -169,14 +169,26 @@ controller.addTween('#fade',
     css:{opacity:0}, 
     onComplete: function(){alert('test')}
   }));</pre></blockquote></p>
-				
+				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>You can remove any previously added Tweens using the removeTween method.</p>
+				<div class="documentation">
+					<span class="documentation-method">.removeTween(target, tween, reset)</span>
+					<ul class="param-list">
+						<li><span class="param">target:</span> scroll position (number) or element (string or object)</li>
+						<li><span class="param">tween:</span> a Greensock animation tween object; if not set, all Tweens for the target will be removed. (optional, default: null)</li>
+						<li><span class="param">reset:</span> if true the tween will be reset to the starting position. (optional, default: true)</li>
+					</ul>
+				</div>
+				<p>In the example below, all tweens from the "#fade" element are removed and reset.</p>
+				<p><blockquote><pre>
+	controller.removeTween('#fade');</pre></blockquote></p>
 				<p class="divider">&#9733; &#9733; &#9733;</p>
 				<p>You can use the pin method to pin an element, do a series of animations and then unpin it.</p>
 				<p>The callback functions will be called with a boolean parameter, true if triggered at end (bottom) of pin, false, if triggered at he beginning (top point).</p>
 				<div class="documentation">
 					<span class="documentation-method">.pin(el, dur, vars)</span>
 					<ul class="param-list">
-						<li><span class="param">el:</span> element being pinned(string or object)</li>
+						<li><span class="param">el:</span> element being pinned (string or object)</li>
 						<li><span class="param">dur:</span> scroll duration of pin (in pixels)</li>
 						<li><span class="param">vars:</span> optional properties for the pin method (object):
 							<ul class="param-list param-list-sub">
@@ -218,7 +230,7 @@ controller.addTween('#fade',
 					<span class="documentation-method">.updatePin(el, dur, vars)</span>
 					<ul class="param-list">
 						<li><span class="param">el:</span> element being pinned(string or object)</li>
-						<li><span class="param">dur:</span> scroll duration of pin (in pixels) (optional)</li>
+						<li><span class="param">dur:</span> scroll duration of pin (in pixels) (optional, default: 0)</li>
 						<li><span class="param">vars:</span> optional properties for the pin method (object):
 							<ul class="param-list param-list-sub">
 								<li><span class="param">anim:</span> tween animation object that occurs during the pin</li>
@@ -236,11 +248,24 @@ controller.addTween('#fade',
 		offset: 200
 	});</pre></blockquote></p>
 				<p class="divider">&#9733; &#9733; &#9733;</p>
+				<p>You can remove any previously added Pins using the removePin method.</p>
+				<div class="documentation">
+					<span class="documentation-method">.removePin(el, reset)</span>
+					<ul class="param-list">
+						<li><span class="param">el:</span> element being pinned(string or object)</li>
+						<li><span class="param">reset:</span> if true the element will be unpinned and the tween will be reset to the starting position. (optional, default: true)</li>
+					</ul>
+				</div>
+				<p>In the example below, the pin is removed, but not reset.<br>
+					reset=false will also mean that if you call it during pin, the element will stay pinned.</p>
+				<p><blockquote><pre>
+	controller.removePin('#examples-2', false);</pre></blockquote></p>
+				<p class="divider">&#9733; &#9733; &#9733;</p>
 				<p>Sometimes you might want to tell SuperScrollorama to update all elements, for example when the window is resized. Here the method triggerCheckAnim comes in handy.</p>
 				<div class="documentation">
 					<span class="documentation-method">.triggerCheckAnim(immediately)</span>
 					<ul class="param-list">
-						<li><span class="param">immediately:</span> if true the update will be done immediately, if false it will wait for the next tickEvent of TweenMax (to save performance)<br>(boolean, optional, default: false)</li>
+						<li><span class="param">immediately:</span> if true the update will be done immediately, if false it will wait for the next tickEvent of TweenMax (to save performance)<br>(optional, default: false)</li>
 					</ul>
 				</div>
 				<p>Example:</p>
