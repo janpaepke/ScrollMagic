@@ -35,9 +35,7 @@
 		// PRIVATE FUNCTIONS
 
 		function init() {
-			// scroll to top of page
-			$('html, body').animate({ scrollTop: 0 }, 0);
-
+			// set event handlers
 			$(window).scroll(function() {
 				doUpdateOnNextTick = true;
 			});
