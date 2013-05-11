@@ -53,6 +53,8 @@ p {	width: 80%; margin: 20px auto; text-shadow: 0 2px 1px #000; color: #C5C3DE; 
 a, a:visited { color: #D92B00; font-weight: bold; font-style: italic; }
 ul { list-style: none; }
 
+figcaption { text-shadow: 0 2px 1px #000; color: #C5C3DE; }
+
 .download { padding: 10px; }
 
 pre { font-size: 15px; }
@@ -172,6 +174,10 @@ blockquote {
 	overflow: hidden;
 	width: 900px;
 }
+
+#showcase { padding: 60px 0; }
+.gallery { width: 960px; margin: 0 auto; }
+.gallery figure { text-align: center; float: left; margin: 10px; }
 
 #howtouse { padding-top: 200px; }
 
