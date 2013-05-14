@@ -23,7 +23,7 @@
 			reverse: true			// make reverse configurable so you don't have to pass it in for every tween to reverse globally
 		};
 		superscrollorama.settings = $.extend({}, defaults, options);
-
+        var $window = $(window);
 
 		// PRIVATE VARS
 
@@ -36,7 +36,7 @@
 
 		function init() {
 			// set event handlers
-			$(window).scroll(function() {
+			$window.scroll(function() {
 				doUpdateOnNextTick = true;
 			});
 			TweenLite.ticker.addEventListener("tick", tickHandler);
@@ -81,8 +81,8 @@
 		}
 
 		function checkScrollAnim() {
-			var currScrollPoint = superscrollorama.settings.isVertical ? $(window).scrollTop() + scrollContainerOffset.y :  $(window).scrollLeft() + scrollContainerOffset.x;
-			var offsetAdjust = superscrollorama.settings.triggerAtCenter ? (superscrollorama.settings.isVertical ? -$(window).height()/2 : -$(window).width()/2) : 0;
+			var currScrollPoint = superscrollorama.settings.isVertical ? $window.scrollTop() + scrollContainerOffset.y :  $window.scrollLeft() + scrollContainerOffset.x;
+			var offsetAdjust = superscrollorama.settings.triggerAtCenter ? (superscrollorama.settings.isVertical ? -$window.height()/2 : -$window.width()/2) : 0;
 			var i, startPoint, endPoint;
 
 			// check all animObjects
@@ -93,14 +93,16 @@
 					offset = animObj.offset;
 
 				if (typeof(target) === 'string') {
-					startPoint = superscrollorama.settings.isVertical ? $(target).offset().top + scrollContainerOffset.y : $(target).offset().left + scrollContainerOffset.x;
+                    var targetOffset = $(target).offset();
+					startPoint = superscrollorama.settings.isVertical ? targetOffset.top + scrollContainerOffset.y : targetOffset.left + scrollContainerOffset.x;
 					offset += offsetAdjust;
 				} else if (typeof(target) === 'number')	{
 					startPoint = target;
 				} else if ($.isFunction(target)) {
 					startPoint = target.call(this);
 				} else {
-					startPoint = superscrollorama.settings.isVertical ? target.offset().top + scrollContainerOffset.y : target.offset().left + scrollContainerOffset.x;
+                    var targetOffset = target.offset();
+                    startPoint = superscrollorama.settings.isVertical ? targetOffset.top + scrollContainerOffset.y : targetOffset.left + scrollContainerOffset.x;
 					offset += offsetAdjust;
 				}
 
