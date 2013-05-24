@@ -8,7 +8,7 @@
 
 	Dual licensed under MIT and GPL.
 
-	Thanks to Jan Paepke (@janpaepke) for making some nice improvements
+	Thanks to Jan Paepke (@janpaepke) for making many nice improvements
 */
 
 (function($) {
@@ -83,8 +83,9 @@
 		}
 
 		function checkScrollAnim() {
+
 			var currScrollPoint = superscrollorama.settings.isVertical ? $window.scrollTop() + scrollContainerOffset.y :  $window.scrollLeft() + scrollContainerOffset.x;
-			var offsetAdjust = superscrollorama.settings.triggerAtCenter ? (superscrollorama.settings.isVertical ? -$window.height()/2 : -$window.width()/2) : 0;
+			var offsetAdjust = superscrollorama.settings.triggerAtCenter ? (superscrollorama.settings.isVertical ? - $window.height()/2 : - $window.width()/2) : 0;
 			var i, startPoint, endPoint;
 
 			// check all animObjects
@@ -137,12 +138,12 @@
 					// if it is TWEENING..
 					var repeatIndefinitely = false;
 					if (animObj.tween.repeat) {
-						// does the tween even have the repeat option (TweenMax / TimelineMax)
+						// does the tween have the repeat option (TweenMax / TimelineMax)
 						repeatIndefinitely = (animObj.tween.repeat() === -1);
 					}
 
 					if (repeatIndefinitely) { // if the animation loops indefinitely it will just play for the time of the duration
-						var playheadPosition = animObj.tween.totalProgress(); // there is no "isPlaying" value so we need to save the playhead to determin wether the animation is running
+						var playheadPosition = animObj.tween.totalProgress(); // there is no "isPlaying" value so we need to save the playhead to determine whether the animation is running
 						if (animObj.playeadLastPosition === null || playheadPosition === animObj.playeadLastPosition) {
 							if (playheadPosition === 1) {
 								if (animObj.tween.yoyo()) {
@@ -171,13 +172,14 @@
 				// should object be pinned (or updated)?
 				if (pinObj.state !== 'PINNED') {
 
+                    var pinObjSpacerOffset = pinObj.spacer.offset();
+
 					if (pinObj.state === 'UPDATE') {
 						resetPinObj(pinObj); // revert to original Position so startPoint and endPoint will be calculated to the correct values
 					}
 
-					startPoint = superscrollorama.settings.isVertical ? pinObj.spacer.offset().top + scrollContainerOffset.y : pinObj.spacer.offset().left + scrollContainerOffset.x;
+					startPoint = superscrollorama.settings.isVertical ? pinObjSpacerOffset.top + scrollContainerOffset.y : pinObjSpacerOffset.left + scrollContainerOffset.x;
 					startPoint += pinObj.offset;
-
 					endPoint = startPoint + pinObj.dur;
 
 					var jumpedPast = ((currScrollPoint > endPoint && pinObj.state === 'BEFORE') || (currScrollPoint < startPoint && pinObj.state === 'AFTER')); // if we jumped past a pinarea (i.e. when refreshing or using a function) we need to temporarily pin the element so it gets positioned to start or end respectively
@@ -195,8 +197,8 @@
 						};
 						// change to fixed position
 						pinObj.fixedPositioning = {
-							top: superscrollorama.settings.isVertical ? -pinObj.offset : pinObj.spacer.offset().top,
-							left: superscrollorama.settings.isVertical ? pinObj.spacer.offset().left : -pinObj.offset
+							top: superscrollorama.settings.isVertical ? -pinObj.offset : pinObjSpacerOffset.top,
+							left: superscrollorama.settings.isVertical ? pinObjSpacerOffset.left : -pinObj.offset
 						};
 						el.css('position','fixed');
 						el.css('top', pinObj.fixedPositioning.top);
