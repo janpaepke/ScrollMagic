@@ -176,8 +176,8 @@ blockquote {
 }
 
 #showcase { padding: 60px 0; }
-.gallery { width: 960px; margin: 0 auto; }
-.gallery figure { text-align: center; float: left; margin: 10px; }
+.gallery { width: 960px; margin: 0 auto; text-align: center; }
+.gallery figure { text-align: center; float: left; margin: 10px; height: 270px; display: inline-block; }
 
 #howtouse { padding-top: 200px; }
 
