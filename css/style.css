@@ -48,6 +48,15 @@ h2 {
 	font-family: 'Luckiest Guy',Impact,Haettenschweiler,"Franklin Gothic Bold",Charcoal,Gadget,sans-serif;
 	text-transform: uppercase;
 }
+h3 {
+	font-size: 60px;
+	font-weight: normal;
+	margin: 0;
+	color: #FFB000;
+	text-shadow: 0 2px 1px #000;
+	font-family: 'Luckiest Guy',Impact,Haettenschweiler,"Franklin Gothic Bold",Charcoal,Gadget,sans-serif;
+	text-transform: uppercase;	
+}
 
 p {	width: 80%; margin: 20px auto; text-shadow: 0 2px 1px #000; color: #C5C3DE; }
 a, a:visited { color: #D92B00; font-weight: bold; font-style: italic; }
@@ -121,6 +130,7 @@ blockquote {
 	line-height: 1.8;
 	z-index: 99999;
 }
+#hire { margin-bottom: 80px; }
 
 #download a { color: #69697A; }
 

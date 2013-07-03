@@ -115,6 +115,11 @@
 		</div>
 	</div>
 
+	<div id="hire">
+		<h3>Scrollorama For Hire</h3>
+		<p>Need help building your website? <a href="http://johnpolacek.com/contact/">Contact us</a>.</p>
+	</div>
+
 	<div id="content-wrapper">
 
 		<div id="examples-1">
@@ -405,11 +410,24 @@ controller.addTween('#fade',
 			
 				// title tweens
 				$('.title-line span').each(function() {
-					controller.addTween(10, TweenMax.to(this, .5, {css:{top: Math.random()*-200-600, left: (Math.random()*1000)-500, rotation:Math.random()*720-360, 'font-size': Math.random()*300+150}, ease:Quad.easeOut}));
+					controller.addTween(10, TweenMax.to(this, .5, {css:{top: Math.random()*-200-600, left: (Math.random()*1000)-500, rotation:Math.random()*720-360, 'font-size': Math.random()*300+150}, ease:Quad.easeOut}),200);
 				});
-				controller.addTween(10, TweenMax.to($('#title-line1'), .75, {css:{top: 600}, ease:Quad.easeOut}));
-				controller.addTween(10, TweenMax.to($('#title-line2'), .75, {css:{top: 200}, ease:Quad.easeOut}));
-				controller.addTween(10, TweenMax.to($('#title-line3'), .75, {css:{top: -200}, ease:Quad.easeOut}));
+				controller.addTween(10, TweenMax.to($('#title-line1'), .75, {css:{top: 600}, ease:Quad.easeOut}),200);
+				controller.addTween(10, TweenMax.to($('#title-line2'), .75, {css:{top: 200}, ease:Quad.easeOut}),200);
+				controller.addTween(10, TweenMax.to($('#title-line3'), .75, {css:{top: -100}, ease:Quad.easeOut},200));
+
+				// showcase tweens
+				controller.addTween('#showcase h1', TweenMax.from( $('#showcase h1'), .75, {css:{letterSpacing:20,opacity:0}, ease:Quad.easeOut}));
+				controller.addTween('#showcase p', TweenMax.from( $('#showcase p'), 1, {css:{opacity:0}, ease:Quad.easeOut}));
+				$('#showcase .gallery figure').css('position','relative').each(function() {
+					controller.addTween('#showcase .gallery', TweenMax.from( $(this), 1, {delay:Math.random()*.2,css:{left:Math.random()*200-100,top:Math.random()*200-100,opacity:0}, ease:Back.easeOut}));
+				});
+
+				// hire tweens
+				$('#hire h3').lettering().find('span').css('position','relative').each(function() {
+					controller.addTween('#hire h3', TweenMax.from( $(this), .25, {delay:Math.random()*.2,css:{left:Math.random()*1200-600,top:Math.random()*600-300,opacity:0}, ease:Expo.easeOut}),200);
+				});
+				controller.addTween('#hire p', TweenMax.from( $('#hire p'), .5, {css:{opacity:0}}));
 				
 				// individual element tween examples
 				controller.addTween('#fade-it', TweenMax.from( $('#fade-it'), .5, {css:{opacity: 0}}));
