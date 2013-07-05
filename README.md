@@ -6,6 +6,8 @@ Check out the [Project Page](http://johnpolacek.github.com/superscrollorama) for
 
 [Follow me on Twitter](http://twitter.com/johnpolacek)
 
+Need help building your website? [Contact us](http://johnpolacek.com/contact/)
+
 ## License
 
 SuperScrollorama is dual licensed under the MIT license (below) and [GPL license](http://www.gnu.org/licenses/gpl-3.0.html).
