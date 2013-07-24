@@ -96,7 +96,7 @@
 					offset = animObj.offset;
 
 				if (typeof(target) === 'string') {
-                    targetOffset = $(target).offset();
+                    targetOffset = $(target).offset() || {};
 					startPoint = superscrollorama.settings.isVertical ? targetOffset.top + scrollContainerOffset.y : targetOffset.left + scrollContainerOffset.x;
 					offset += offsetAdjust;
 				} else if (typeof(target) === 'number')	{
