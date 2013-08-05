@@ -10,6 +10,6 @@
   "main": ["js/jquery.superscrollorama.js"],
   "dependencies": {
     "jquery": "~1.9.1",
-    "greensock": "http://www.greensock.com/dl/greensock-v12-js.zip"
+    "tweenMax": "latest"
   }
 }
