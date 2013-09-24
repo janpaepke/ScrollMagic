@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<title>ScrollMagic - Simple Demo #1</title>
+	
+	<link href='http://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css">	
+	<style type="text/css">
+		body	
+		.spacer {
+			min-height: 100px;
+			border-bottom: 1px dotted #7a7fac;
+		}
+		#ani {
+			color: #FFFFFF;
+			position: relative;
+			display: inline-block;
+			padding-top: 40px;
+			margin-top: 30px;
+			padding-bottom: 100px;
+		}
+		body, html {
+			/*height: 100%;
+			width: 100%;
+			position: absolute;
+			overflow-x: hidden;
+			overflow-y: scroll;*/
+		}
+		.superscrollorama-pin-spacer {
+			background-color: #7a7fFF
+		}
+		.simple-demo #content-wrapper {
+			padding: 0;/*
+			position: absolute;
+			top: 100px;
+			width: 100%;
+			height: 400px;
+			overflow-x: hidden;
+			overflow-y: scroll;*/
+		}
+	</style>
+</head>
+<body class="simple-demo">
+	<div id="content-wrapper">
+
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer" id="trigger">
+			<div id="ani">
+				TEST
+			</div>
+		</div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+		<div class="spacer"></div>
+
+	</div>
+	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  	<script>window.jQuery || document.write('<script src="_/js/jquery-1.9.1.min.js"><\/script>')</script>
+  	<script src="js/jquery.scrollmagic.js"></script>
+	<script>
+		$(document).ready(function($) {
+			var controller = new ScrollMagic();
+			// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
+			var scene = controller.addScene("#trigger", 400, {offset: -200, triggerPosition: "onEnter"})
+						// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
+						.setTween(TweenMax.to("#ani", 1, {color: "red" }))
+						.setPin("#ani");
+
+			// console.log(scene);
+			$("#ani").click(function () {
+				scene.removePin();
+				// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
+				// 	 .duration(600)
+				// 	 .setOption({triggerPosition: function () {return .5}, offset: 0, smoothTweening: true})
+					 // .removeTween();
+				controller.updateScenes();
+			});
+		});
+	</script>
+
+</body></html>

@@ -1,22 +1,20 @@
-#SuperScrollorama
+#ScrollMagic
 
-The jQuery plugin for doing supercool scroll animation.
+The jQuery plugin for doing magical scroll animations.
 
-Check out the [Project Page](http://johnpolacek.github.com/superscrollorama) for more information.
+Check out the [Project Page](http://janpaepke.github.com/ScrollMagic) for more information.
 
-[Follow me on Twitter](http://twitter.com/johnpolacek)
-
-Need help building your website? [Contact us](http://johnpolacek.com/contact/)
+[Follow me on Twitter](http://twitter.com/janpaepke)
 
 ## License
 
-SuperScrollorama is dual licensed under the MIT license (below) and [GPL license](http://www.gnu.org/licenses/gpl-3.0.html).
+ScrollMagic is dual licensed under the MIT license (below) and [GPL license](http://www.gnu.org/licenses/gpl-3.0.html).
 The Greensock Animation Platform (GSAP) is used with permission per its license agreement (see below). For more information, go to http://www.greensock.com/licensing/
 
 <small>
 MIT License
 
-Copyright (c) 2012 John Polacek
+Copyright (c) 2013 Jan Paepke
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

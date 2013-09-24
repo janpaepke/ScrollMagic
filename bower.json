@@ -1,13 +1,13 @@
 {
-  "name": "SuperScrollorama",
-  "description": "The jQuery plugin for supercool scroll animation",
-  "version": "1.0.1",
-  "homepage": "http://johnpolacek.github.io/superscrollorama/",
+  "name": "ScrollMagic",
+  "description": "The jQuery plugin for magical scroll animations.",
+  "version": "0.8",
+  "homepage": "http://janpaepke.github.io/ScrollMagic/",
   "author": {
-    "name": "John Polacek",
-    "url": "http://johnpolacek.com"
+    "name": "Jan Paepke",
+    "url": "http://www.janpaepke.de"
   },
-  "main": ["js/jquery.superscrollorama.js"],
+  "main": ["js/jquery.scrollmagic.js"],
   "dependencies": {
     "jquery": "~1.9.1",
     "tweenMax": "latest"
