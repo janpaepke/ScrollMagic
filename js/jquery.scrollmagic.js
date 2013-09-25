@@ -1,6 +1,7 @@
 /*
+	@overview
 	ScrollMagic - The jQuery plugin for doing magical scroll animations
-	by Jan Paepke (@janpaepke)
+	by Jan Paepke 2013 (@janpaepke)
 
 	Inspired by and partially based on the one and only SUPERSCROLLORAMA by John Polacek (@johnpolacek)
 	johnpolacek.github.com/superscrollorama/
@@ -10,6 +11,7 @@
 	Greensock License info at http://www.greensock.com/licensing/
 
 	Dual licensed under MIT and GPL.
+	@author Jan Paepke, e-mail@janpaepke.de
 */
 
 // TODO: add Event Listeners
@@ -39,16 +41,17 @@ if (!console['warn']) {
 	};
 }
 
-	/**
+     /**
      * CLASS ScrollMagic (main controller)
      *
      * (TODO: Description)
      *
      * @constructor
      *
-	 * @param {String|Object} [settings.scrollContainer=$(window)] A selector or a jQuery object that references the main container for scrolling.
-     * @param {Boolean} [settings.isVertical=true] Defines if the controller reacts to vertical (<code>true</code>) or horizontal (<code>false</code>) scrolling.
-	 * @param {Boolean} [settings.reverse=true] Global setting to prevent Scenes from reversing, when scrolling back up. Can be set globally here or individually for each scene.
+	 * @param {object} [settings] - An object containing one or more settings for the controller.
+	 * @param {(string|object)} [settings.scrollContainer=$(window)] - A selector or a jQuery object that references the main container for scrolling.
+     * @param {boolean} [settings.isVertical=true] - Defines if the controller reacts to vertical (<code>true</code>) or horizontal (<code>false</code>) scrolling.
+	 * @param {boolean} [settings.reverse=true] - Global setting to prevent Scenes from reversing, when scrolling back up. Can be set globally here or individually for each scene.
      *
      */
 	ScrollMagic = function(settings) {
@@ -153,7 +156,7 @@ if (!console['warn']) {
 	     * Update a specific scene according to the scroll position of the container.
 	     * @private
 	     *
-	     * @param {ScrollScene} scene The ScollScene object that is supposed to be updated.
+	     * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
 	     */
 		var updateScene = function (scene) {
 			var
@@ -200,9 +203,9 @@ if (!console['warn']) {
 	     * @public
 	     *
 	     * @param {ScrollScene} scene The ScollScene to be added.
-	     * @return {ScrollMagic} 
+	     * @return {ScrollMagic} Parent object for chaining.
 	     */
-		ScrollMagic.add = function (ScrollScene) {
+		this.add = function (ScrollScene) {
 			_sceneObjects.push(ScrollScene);
 			if (!_settings.reverse) {
 				ScrollScene.options.reverse = false;	
@@ -217,17 +220,18 @@ if (!console['warn']) {
 	     * Shorthand function to add a scene to support easier chaining.
 	     * @public
 	     *
-	     * @param {String|Object} trigger The ScollScene object that is supposed to be updated.
-	     * @param {Number} [duration=0] The ScollScene object that is supposed to be updated.
-	     * @param {Number} [options.offset=0] Offset Value for the Trigger Position
-	     * @param {Float|String|Function} [options.triggerPosition="onEnter"] Can be string <code>"onCenter", "onEnter", "onLeave"</code> or float (<code>0 - 1</code>), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
-	     * @param {Boolean} [options.reverse=true] Should the scene reverse, when scrolling up?
-	     * @param {Boolean} [options.smoothTweening=false] Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where <code>duration==0</code>
-	     * @return {ScrollScene}
+	     * @param {(string|object)} trigger - The ScollScene object that is supposed to be updated.
+	     * @param {number} [duration=0] - The ScollScene object that is supposed to be updated.
+	     * @param {object} [options] - Options for the Scene. (Can be changed lateron)
+	     * @param {number} [options.offset=0] - Offset Value for the Trigger Position
+	     * @param {(float|string|function)} [options.triggerPosition="onEnter"] - Can be string <code>"onCenter", "onEnter", "onLeave"</code> or float (<code>0 - 1</code>), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
+	     * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
+	     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where <code>duration==0</code>
 	     * 
+	     * @return {ScrollScene} New ScrollScene object for chaining.
 	     * @see ScrollScene
 	     */
-		ScrollMagic.addScene = function (trigger, duration, options) {
+		this.addScene = function (trigger, duration, options) {
 			var newScene = new ScrollScene(trigger, duration, options);
 			ScrollMagic.add(newScene);
 			return newScene;
@@ -239,10 +243,10 @@ if (!console['warn']) {
 	     * Force an update of all Scenes.
 	     * @public
 	     *
-	     * @param {Boolean} [immediately=false] If <code>true</code> it will be updated right now, if <code>false</code> it will wait until next tweenmax tick
-	     * @return {ScrollMagic} 
+	     * @param {boolean} [immediately=false] - If <code>true</code> it will be updated right now, if <code>false</code> it will wait until next tweenmax tick
+	     * @return {ScrollMagic} Parent object for chaining.
 	     */
-		ScrollMagic.updateScenes = function (immediately) {
+		this.updateScenes = function (immediately) {
 			if (immediately) {
 				updateScenes();
 			} else {
@@ -260,17 +264,20 @@ if (!console['warn']) {
 	/**
      * CLASS ScrollScene (scene controller)
      *
-     * @param {String|Object} trigger The ScollScene object that is supposed to be updated.
-     * @param {Number} [duration=0] The ScollScene object that is supposed to be updated.
-     * @param {Number} [options.offset=0] Offset Value for the Trigger Position
-     * @param {Float|String|Function} [options.triggerPosition="onEnter"] Can be string <code>"onCenter", "onEnter", "onLeave"</code> or float (<code>0 - 1</code>), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
-     * @param {Boolean} [options.reverse=true] Should the scene reverse, when scrolling up?
-     * @param {Boolean} [options.smoothTweening=false] Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where <code>duration==0</code>
-     * @return {ScrollScene}
+     * @constructor
+     *
+     * @param {(string|object)} trigger - The ScollScene object that is supposed to be updated.
+     * @param {number} [duration=0] - The ScollScene object that is supposed to be updated.
+     * @param {object} [options] - Options for the Scene. (Can be changed lateron)
+     * @param {number} [options.offset=0] - Offset Value for the Trigger Position
+     * @param {(float|string|function)} [options.triggerPosition="onEnter"] - Can be string <code>"onCenter", "onEnter", "onLeave"</code> or float (<code>0 - 1</code>), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
+     * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
+     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where <code>duration==0</code>
      * 
      */
 	ScrollScene = function (trigger, duration, options) {
 		// TODO: Add event handlers: onChange, onEnter, onLeave, onUpdate, onTween
+		// TODO: consider integrating duration into options
 
 		var defaultOptions = {
 			offset: 0,
@@ -345,8 +352,8 @@ if (!console['warn']) {
 	     * Update the tween progress.
 	     * @private
 	     *
-	     * @param {Number} [to] If not set the scene Progress will be used. (most cases)
-	     * @return {Boolean} <code>true</code> if the Tween was updated. 
+	     * @param {number} [to] - If not set the scene Progress will be used. (most cases)
+	     * @return {boolean} <code>true</code> if the Tween was updated. 
 	     */
 		var updateTweenProgress = function (to) {
 			var
@@ -451,15 +458,15 @@ if (!console['warn']) {
 		 * Get trigger.
 		 * @public
 		 *
-		 * @returns {Number|Object}
+		 * @returns {(number|object)}
 		 *//**
 		 * Set trigger.
 		 * @public
 		 *
-		 * @param {Number|Object} newTrigger The new trigger of the scene.
-		 * @returns {ScrollScene}
+		 * @param {(number|object)} newTrigger - The new trigger of the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.trigger = function (newTrigger) {
+		this.trigger = function (newTrigger) {
 			if (!arguments.length) { // get
 				return _trigger;
 			} else { // set
@@ -473,15 +480,15 @@ if (!console['warn']) {
 		 * Get duration.
 		 * @public
 		 *
-		 * @returns {Number}
+		 * @returns {number}
 		 *//**
 		 * Set duration.
 		 * @public
 		 *
-		 * @param {Number} newDuration The new duration of the scene.
-		 * @returns {ScrollScene}
+		 * @param {number} newDuration - The new duration of the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.duration = function (newDuration) {
+		this.duration = function (newDuration) {
 			if (!arguments.length) { // get
 				return _duration;
 			} else { // set
@@ -496,11 +503,11 @@ if (!console['warn']) {
 		 * Can also be achieved using scene.options.key = value; but included for easier chaining
 		 * @public
 		 *
-		 * @param {Object} options One or more new Option(s) to be changed for the scene.
-		 * @returns {ScrollScene}
+		 * @param {object} options - One or more new Option(s) to be changed for the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 * @see ScrollScene
 		 */
-		ScrollScene.setOption = function (options) {
+		this.setOption = function (options) {
 			ScrollScene.options = $.extend({}, ScrollScene.options, options);
 			checkOptionsValidity();
 			return ScrollScene;
@@ -510,15 +517,15 @@ if (!console['warn']) {
 		 * Get Scene progress (<code>0 - 1</code>). 
 		 * @public
 		 *
-		 * @returns {Number}
+		 * @returns {number}
 		 *//**
 		 * Set Scene progress.
 		 * @public
 		 *
-		 * @param {Number} progress The new progress value of the scene (<code>0 - 1</code>).
-		 * @returns {ScrollScene}
+		 * @param {number} progress - The new progress value of the scene (<code>0 - 1</code>).
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.progress = function (progress) {
+		this.progress = function (progress) {
 			if (!arguments.length) { // get
 				return _progress;
 			} else { // set
@@ -558,10 +565,10 @@ if (!console['warn']) {
 		 * Add a tween to the scene (one TweenMax object per scene!).
 		 * @public
 		 *
-		 * @param {object} TweenMaxObject A TweenMax object that should be animated during the scene.
-		 * @returns {ScrollScene}
+		 * @param {object} TweenMaxObject - A TweenMax object that should be animated during the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.setTween = function (TweenMaxObject) {
+		this.setTween = function (TweenMaxObject) {
 			if (_tween) { // kill old tween?
 				ScrollScene.removeTween();
 			}
@@ -579,10 +586,10 @@ if (!console['warn']) {
 		 * Remove the tween from the scene.
 		 * @public
 		 *
-		 * @param {Boolean} [reset=false] If <code>true</code> the tween weill be reset to start values.
-		 * @returns {ScrollScene}
+		 * @param {boolean} [reset=false] - If <code>true</code> the tween weill be reset to start values.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.removeTween = function (reset) {
+		this.removeTween = function (reset) {
 			if (_tween) {
 				if (reset) {
 					updateTweenProgress(0);
@@ -598,12 +605,12 @@ if (!console['warn']) {
 		 * Pin an element for the duration of the tween.
 		 * @public
 		 *
-		 * @param {String|object} element
-		 * @param {object} [settings.pushFollowers=true] If true following elements will be "pushed" down, if false the pinned element will just scroll past them
-		 * @param {object} [settings.spacerClass="superscrollorama-pin-spacer"] Classname of the pin spacer element
-		 * @returns {ScrollScene}
+		 * @param {(string|object)} element - A Selctor or a jQuery object for the object that is supposed to be pinned.
+		 * @param {object} [settings.pushFollowers=true] - If true following elements will be "pushed" down, if false the pinned element will just scroll past them
+		 * @param {object} [settings.spacerClass="superscrollorama-pin-spacer"] - Classname of the pin spacer element
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.setPin = function (element, settings) {
+		this.setPin = function (element, settings) {
 			var defaultSettings = {
 				pushFollowers: true,
 				spacerClass: "superscrollorama-pin-spacer"
@@ -685,10 +692,10 @@ if (!console['warn']) {
 		 * Remove the pin from the scene.
 		 * @public
 		 *
-		 * @param {Boolean} [reset=false] If <code>false</code> the spacer will not be removed and the element's position will not be reset.
-		 * @returns {ScrollScene}
+		 * @param {boolean} [reset=false] - If <code>false</code> the spacer will not be removed and the element's position will not be reset.
+		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		ScrollScene.removePin = function (reset) {
+		this.removePin = function (reset) {
 			if (_pin) {
 				var spacer = _pin.parent();
 				if (reset) {
@@ -709,12 +716,11 @@ if (!console['warn']) {
 
 		/**
 		 * Get the viewport trigger.
-		 * Returns a number from 0 to 1 that defines where on the viewport the offset and startPosition should be related to.
 		 * @public
 		 *
-		 * @returns {Number}
+		 * @returns {number} A number from 0 to 1 that defines where on the viewport the offset and startPosition should be related to.
 		 */
-		ScrollScene.getViewportTrigger = function () {
+		this.getViewportTrigger = function () {
 			// TODO => move to main class (ScrollMagic)? Not sure...
 			var triggerPoint,
 				opt = ScrollScene.options;
@@ -740,13 +746,13 @@ if (!console['warn']) {
 		};
 		
 		/**
-		 * Return the trigger Offset.
-		 * (always numerical, whereas trigger can also be a jquery object)
+		 * Return the trigger offset.
+		 * (always numerical, whereas trigger can also be a jQuery object)
 		 * @public
 		 *
-		 * @returns {Number}
+		 * @returns {number} Numeric trigger offset, regardless if the trigger is an offset value or a jQuery object.
 		 */
-		ScrollScene.getTriggerOffset = function () {
+		this.getTriggerOffset = function () {
 			if (typeof(_trigger) === 'number') {
 				// numeric point as trigger
                 startPoint = trigger;
