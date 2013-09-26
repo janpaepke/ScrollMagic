@@ -503,13 +503,17 @@ if (!console['warn']) {
 
 
 		/**
-		 * Add an event handler to the class.
+		 * Creates an event to store callbacks for the class.
 		 * @private
 		 *
-		 * @param {string} id - The name of the event.
+		 * @param {string} id - The name of the new event.
 		 */
-		var addEventHandler = function (id) {
-			//TODO: document
+		var addEvent = function (id) {
+			/**
+			 * Fire or add callbacks for the respective Event.
+			 *
+			 * @param {(object|function)} opt - If is a function it will be added to the callback list for the event and executed, when it fires. If an object the event will be fired and the object will be passed to all callbacks.
+			 */
 			var handleEvent = function (opt) {
 				var name = "ScrollScene." + id;
 				var defaultEvent = {
@@ -527,6 +531,7 @@ if (!console['warn']) {
 						event = defaultEvent;
 					}
 					// fire all callbacks of the event
+					console.log('fire event '+name);
 					$.each(_events[name], function (index, callback) {
 						callback(event);
 					});
@@ -536,7 +541,11 @@ if (!console['warn']) {
 			return handleEvent;
 		}
 
-		// TODO: document
+		/**
+		 * Update the pin spacer size.
+		 * The size of the spacer needs to be updated whenever the duration of the scene changes, if it is to push down following elements.
+		 * @private
+		 */
 		var updatePinSpacerSize = function () {
 			if (_pin && ScrollScene.parent) {
 				if (_pin.data("pushFollowers")) {
@@ -566,6 +575,7 @@ if (!console['warn']) {
 		 * Set trigger.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {(number|object)} newTrigger - The new trigger of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -588,6 +598,7 @@ if (!console['warn']) {
 		 * Set duration option value.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {number} newDuration - The new duration of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -611,6 +622,7 @@ if (!console['warn']) {
 		 * Set offset option value.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {number} newOffset - The new offset of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -634,6 +646,7 @@ if (!console['warn']) {
 		 * Set triggerPosition option value.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {(float|string|function)} newTriggerPosition - The new triggerPosition of the scene. See ScrollScene parameter description for value options.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -677,6 +690,7 @@ if (!console['warn']) {
 		 * Set reverse option value.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {boolean} newReverse - The new reverse setting of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -700,6 +714,7 @@ if (!console['warn']) {
 		 * Set smoothTweening option value.
 		 * @public
 		 *
+		 * @fires ScrollScene#onChange
 		 * @param {boolean} newSmoothTweening - The new smoothTweening setting of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -724,6 +739,9 @@ if (!console['warn']) {
 		 * Set Scene progress.
 		 * @public
 		 *
+		 * @fires ScrollScene#onStart
+		 * @fires ScrollScene#onEnd
+		 * @fires ScrollScene#onProgress
 		 * @param {number} progress - The new progress value of the scene (0 - 1).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -731,7 +749,9 @@ if (!console['warn']) {
 			if (!arguments.length) { // get
 				return _progress;
 			} else { // set
-				var doUpdate = false;
+				var
+					doUpdate = false,
+					oldState = _state;
 				if (progress <= 0 && _state !== 'BEFORE' && (_state !== 'AFTER' || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
@@ -747,9 +767,16 @@ if (!console['warn']) {
 					_state = 'DURING';
 				}
 				if (doUpdate) {
+					if (_state != oldState) {
+						if (_state === 'DURING' || (oldState === 'BEFORE' && _options.duration == 0)) {
+							ScrollScene.onStart({oldState: oldState}); // fire event
+						} else {
+							ScrollScene.onEnd({newState: _state}); // fire event
+						}
+					}
 					updateTweenProgress();
 					updatePinProgress();
-					ScrollScene.onUpdate({progress: _progress}); // fire event
+					ScrollScene.onProgress({progress: _progress}); // fire event
 				}
 
 				if (_options.loglevel >= 3)
@@ -955,18 +982,51 @@ if (!console['warn']) {
 		 * ----------------------------------------------------------------
 		 */
 
+		 // TODO: Properly document events.
 
-		// TODO: document
-		this.onStart = addEventHandler("onStart");
 
-		// TODO: document
-		this.onChange = addEventHandler("onChange");
+		/**
+	     * Scene start event.
+	     * Fires whenever the scene enters the "DURING" state.
+	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
+	     *
+	     * @event ScrollScene#onStart
+	     * @property {string} name - The unique name of the Event.
+	     * @property {string} oldState - Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)
+	     */
+		this.onStart = addEvent("onStart");
 
-		// TODO: document
-		this.onUpdate = addEventHandler("onUpdate");
+		/**
+	     * Scene change event.
+	     * Fires whenvever a property of the scene is changed.
+	     *
+	     * @event ScrollScene#onChange
+	     * @property {string} name - The unique name of the Event.
+	     * @property {string} what - Indicates what value has been changed.
+	     */
+		this.onChange = addEvent("onChange");
 
-		// TODO: document
-		this.onEnd = addEventHandler("onEnd");
+		/**
+	     * Scene progress event.
+	     * Fires whenever the progress of the scene changes.
+	     *
+	     * @event ScrollScene#onProgress
+	     * @property {string} name - The unique name of the Event.
+	     * @property {number} progress - Reflects the current progress of the scene.
+	     */
+		this.onProgress = addEvent("onProgress");
+
+		
+		/**
+	     * Scene end event.
+	     * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
+	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+	     *
+	     * @event ScrollScene#onEnd
+	     * @property {string} name - The unique name of the Event.
+	     * @property {string} newState - Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)
+	     */
+		this.onEnd = addEvent("onEnd");
 
 
 		// INIT
