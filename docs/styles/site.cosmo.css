@@ -5829,7 +5829,7 @@ a.thumbnail:hover {
 #toc .toc-active a:active,
 #toc .toc-active a:visited {
   background-color: transparent;
-  color: #ffffff;
+  color: #007fff;
 }
 .toc-shim {
   padding-top: 56px;
@@ -5890,21 +5890,28 @@ code {
   background-color: #007fff;
   color: #ffffff;
 }
+.member-collapsed a {
+  color: #ffffff;
+}
 .member-open {
   background-color: inherit;
   color: inherit;
+  font-weight: bold;
+}
+.member-open .signature, .member .signature {
+  font-weight: normal;
+  margin-left: 4px;
 }
 .member {
-  -webkit-transition: background-color 0.5s linear;
-  -moz-transition: background-color 0.5s linear;
-  -o-transition: background-color 0.5s linear;
-  transition: background-color 0.5s linear;
-  -webkit-transition: color 0.5s linear;
-  -moz-transition: color 0.5s linear;
-  -o-transition: color 0.5s linear;
-  transition: color 0.5s linear;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 10px;
+}
+#toc {
+  display: none;
+}
+.row-fluid .span8 {
+  width: 100%;
+  *width: 100%;
 }

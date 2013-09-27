@@ -220,7 +220,7 @@ if (!console['warn']) {
 			}
 			ScrollScene.parent = ScrollMagic;
 			// TODO: update this scene immediately? (might not be desired)
-			ScrollScene.onChange(function () {
+			ScrollScene.on("change", function () {
 				updateScene(ScrollScene);
 			});
 			return ScrollMagic;
@@ -314,7 +314,6 @@ if (!console['warn']) {
      * 
      */
 	ScrollScene = function (trigger, options) {
-		// TODO: fire events (at The moment only onChange is fired properly)
 
 		var defaultOptions = {
 			duration: 0,
@@ -364,12 +363,12 @@ if (!console['warn']) {
 		var construct = function () {
 			checkOptionsValidity();
 			// add Event listener to change spacer size on duration change
-			ScrollScene.onChange(function (e) {
+			ScrollScene.on("change", function (e) {
 				if (e.what == "duration") {
-					if (_state == "AFTER") {
-						_state = "DURING"; // Force an update in case the pin zone got smaller, otherwise the pin would stick.
-					}
 					updatePinSpacerSize();
+					if (_state == "AFTER") {
+						updatePinProgress(); // Force an update in case the pin zone got smaller, otherwise the pin would stick.
+					}
 				}
 			});
 		};
@@ -501,46 +500,6 @@ if (!console['warn']) {
 			}
 		};
 
-
-		/**
-		 * Creates an event to store callbacks for the class.
-		 * @private
-		 *
-		 * @param {string} id - The name of the new event.
-		 */
-		var addEvent = function (id) {
-			/**
-			 * Fire or add callbacks for the respective Event.
-			 *
-			 * @param {(object|function)} opt - If is a function it will be added to the callback list for the event and executed, when it fires. If an object the event will be fired and the object will be passed to all callbacks.
-			 */
-			var handleEvent = function (opt) {
-				var name = "ScrollScene." + id;
-				var defaultEvent = {
-					name: name
-				}
-				if (!_events[name]) { _events[name] = []; } // create if non-existent
-				// add callback or fire all?
-				if (typeof opt === 'function') {
-					// add new callback
-					_events[name].push(opt);
-				} else {
-					if (typeof opt === 'object') {
-						event = $.extend({}, defaultEvent, opt);
-					} else {
-						event = defaultEvent;
-					}
-					// fire all callbacks of the event
-					console.log('fire event '+name);
-					$.each(_events[name], function (index, callback) {
-						callback(event);
-					});
-				}
-				return ScrollScene;
-			};
-			return handleEvent;
-		}
-
 		/**
 		 * Update the pin spacer size.
 		 * The size of the spacer needs to be updated whenever the duration of the scene changes, if it is to push down following elements.
@@ -575,7 +534,7 @@ if (!console['warn']) {
 		 * Set trigger.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {(number|object)} newTrigger - The new trigger of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -584,7 +543,7 @@ if (!console['warn']) {
 				return _trigger;
 			} else { // set
 				_trigger = typeof newTrigger === "string" ? $(newTrigger).first() : newTrigger;
-				ScrollScene.onChange({what: "trigger"}); // fire event
+				ScrollScene.dispatch("change", {what: "trigger"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -598,7 +557,7 @@ if (!console['warn']) {
 		 * Set duration option value.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {number} newDuration - The new duration of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -608,7 +567,7 @@ if (!console['warn']) {
 			} else { // set
 				_options.duration = newDuration;
 				checkOptionsValidity();
-				ScrollScene.onChange({what: "duration"}); // fire event
+				ScrollScene.dispatch("change", {what: "duration"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -622,7 +581,7 @@ if (!console['warn']) {
 		 * Set offset option value.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {number} newOffset - The new offset of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -632,7 +591,7 @@ if (!console['warn']) {
 			} else { // set
 				_options.offset = newOffset;
 				checkOptionsValidity();
-				ScrollScene.onChange({what: "offset"}); // fire event
+				ScrollScene.dispatch("change", {what: "offset"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -646,7 +605,7 @@ if (!console['warn']) {
 		 * Set triggerPosition option value.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {(float|string|function)} newTriggerPosition - The new triggerPosition of the scene. See ScrollScene parameter description for value options.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -676,7 +635,7 @@ if (!console['warn']) {
 			} else { // set
 				_options.triggerPosition = newTriggerPosition;
 				checkOptionsValidity();
-				ScrollScene.onChange({what: "triggerPosition"}); // fire event
+				ScrollScene.dispatch("change", {what: "triggerPosition"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -690,7 +649,7 @@ if (!console['warn']) {
 		 * Set reverse option value.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {boolean} newReverse - The new reverse setting of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -700,7 +659,7 @@ if (!console['warn']) {
 			} else { // set
 				_options.reverse = newReverse;
 				checkOptionsValidity();
-				ScrollScene.onChange({what: "reverse"}); // fire event
+				ScrollScene.dispatch("change", {what: "reverse"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -714,7 +673,7 @@ if (!console['warn']) {
 		 * Set smoothTweening option value.
 		 * @public
 		 *
-		 * @fires ScrollScene#onChange
+		 * @fires ScrollScene.change
 		 * @param {boolean} newSmoothTweening - The new smoothTweening setting of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -724,7 +683,7 @@ if (!console['warn']) {
 			} else { // set
 				_options.smoothTweening = newSmoothTweening;
 				checkOptionsValidity();
-				ScrollScene.onChange({what: "smoothTweening"}); // fire event
+				ScrollScene.dispatch("change", {what: "smoothTweening"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -739,9 +698,9 @@ if (!console['warn']) {
 		 * Set Scene progress.
 		 * @public
 		 *
-		 * @fires ScrollScene#onStart
-		 * @fires ScrollScene#onEnd
-		 * @fires ScrollScene#onProgress
+		 * @fires ScrollScene.start
+		 * @fires ScrollScene.end
+		 * @fires ScrollScene.progress
 		 * @param {number} progress - The new progress value of the scene (0 - 1).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -769,14 +728,14 @@ if (!console['warn']) {
 				if (doUpdate) {
 					if (_state != oldState) {
 						if (_state === 'DURING' || (oldState === 'BEFORE' && _options.duration == 0)) {
-							ScrollScene.onStart({oldState: oldState}); // fire event
+							ScrollScene.dispatch("start", {oldState: oldState}); // fire event
 						} else {
-							ScrollScene.onEnd({newState: _state}); // fire event
+							ScrollScene.dispatch("end", {newState: _state}); // fire event
 						}
 					}
 					updateTweenProgress();
 					updatePinProgress();
-					ScrollScene.onProgress({progress: _progress}); // fire event
+					ScrollScene.dispatch("progress", {progress: _progress}); // fire event
 				}
 
 				if (_options.loglevel >= 3)
@@ -981,52 +940,100 @@ if (!console['warn']) {
 		 * events
 		 * ----------------------------------------------------------------
 		 */
-
-		 // TODO: Properly document events.
-
-
+		
+		// TODO: Properly document events.
 		/**
 	     * Scene start event.
 	     * Fires whenever the scene enters the "DURING" state.
 	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
 	     *
-	     * @event ScrollScene#onStart
-	     * @property {string} name - The unique name of the Event.
-	     * @property {string} oldState - Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)
-	     */
-		this.onStart = addEvent("onStart");
-
-		/**
-	     * Scene change event.
-	     * Fires whenvever a property of the scene is changed.
+	     * @event ScrollScene.start
 	     *
-	     * @event ScrollScene#onChange
-	     * @property {string} name - The unique name of the Event.
-	     * @property {string} what - Indicates what value has been changed.
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {string} event.oldState - Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)
 	     */
-		this.onChange = addEvent("onChange");
-
-		/**
-	     * Scene progress event.
-	     * Fires whenever the progress of the scene changes.
-	     *
-	     * @event ScrollScene#onProgress
-	     * @property {string} name - The unique name of the Event.
-	     * @property {number} progress - Reflects the current progress of the scene.
-	     */
-		this.onProgress = addEvent("onProgress");
-
-		
 		/**
 	     * Scene end event.
 	     * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
 	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
 	     *
-	     * @event ScrollScene#onEnd
-	     * @property {string} name - The unique name of the Event.
-	     * @property {string} newState - Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)
+	     * @event ScrollScene.end
+	     *
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {string} event.newState - Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)
 	     */
-		this.onEnd = addEvent("onEnd");
+		/**
+	     * Scene change event.
+	     * Fires whenvever a property of the scene is changed.
+	     *
+	     * @event ScrollScene.change
+	     *
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {string} event.what - Indicates what value has been changed.
+	     */
+		/**
+	     * Scene progress event.
+	     * Fires whenever the progress of the scene changes.
+	     *
+	     * @event ScrollScene.progress
+	     *
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {number} event.progress - Reflects the current progress of the scene.
+	     */
+		 
+	     /**
+		 * Add an event listener.
+		 * The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.
+		 * @public
+		 *
+		 * @param {string} name - The name of the event the callback should be attached to.
+		 * @param {function} callback - A function that should be executed, when the event is dispatched. An event object will be passed to the callback.
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		 this.on = function (name, callback) {
+			if (typeof callback === 'function') {
+				 // create if non-existent
+		 		if (!_events[name]) { _events[name] = []; }
+				// add new callback
+				_events[name].push(callback);
+			} else {
+				if (_options.loglevel >= 1)
+					console.error("ERROR: Supplied argument is not a valid callback!");
+			}
+			return ScrollScene;
+		 }
+
+	     /**
+		 * Trigger an event.
+		 * @public
+		 *
+		 * @param {string} name - The name of the event that should be fired.
+		 * @param {object} [vars] - An object containing info that should be passed to the callback.
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		 this.dispatch = function (name, vars) {
+			if (_options.loglevel >= 3)
+				console.log('Event Fired: ScrollScene.'+name);
+		 	if (_events[name]) {
+				var event = {
+					name: name
+				}
+		 		if (typeof vars === 'object') {
+					event = $.extend({}, event, vars);
+				}
+				// fire all callbacks of the event
+				$.each(_events[name], function (index, callback) {
+					callback(event);
+				});
+		 	}
+			return ScrollScene;
+		 }
+
+
 
 
 		// INIT
