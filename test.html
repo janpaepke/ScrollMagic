@@ -69,11 +69,15 @@
   	<script src="js/jquery.scrollmagic.js"></script>
 	<script>
 		$(document).ready(function($) {
-			var controller = new ScrollMagic({loglevel: 1});
+			var controller = new ScrollMagic({loglevel: 2});
 			// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
-			var scene = controller.addScene("#trigger", {duration: 400, offset: -200, triggerPosition: "onEnter", loglevel: 3})
+			var scene = controller.addScene("#trigger", {duration: 400, offset: -200, triggerHook: "onEnter", loglevel: 2})
 						// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
-						// .onUpdate(function (e) { console.log (e.progress); })
+						// .on("progress", function (e) { console.log (e); })
+						.on("start", function (e) { console.log (e); })
+						.on("end", function (e) { console.log (e); })
+						.on("enter", function (e) { console.log (e); })
+						.on("leave", function (e) { console.log (e); })
 						.setTween(TweenMax.to("#ani", .5, {color: "red" }))
 						.setPin("#ani");
 
@@ -82,7 +86,7 @@
 				scene.duration(600);
 				// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
 				// 	 .duration(600)
-				// 	 .setOption({triggerPosition: function () {return .5}, offset: 0, smoothTweening: true})
+				// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
 					 // .removeTween();
 				// controller.updateScenes();
 			});

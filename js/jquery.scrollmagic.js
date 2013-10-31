@@ -14,11 +14,17 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: consider if the controller needs Events
+// TODO: add reverseDefault option to controller
+// TODO: add triggerHookDefault option to controller
 // TODO: test what happens if triggers ar tweened or pinned
 // TODO: test / implement mobile capabilities
-// TODO: make better logs for debugging. (consider what to log and where)
-// TODO: Consider how the scene should behave, if you start scrolling back up DURING the scene and revers is false (ATM it will animate backwards)
+// TODO: test successive pins (animate, pin for a while, animate, pin...)
+// TODO: make examples
+// TODO: consider how the scene should behave, if you start scrolling back up DURING the scene and revers is false (ATM it will animate backwards)
+// TODO: consider if the controller needs Events
+// TODO: consider how to better control forward/backward animations (for example have different animations, when scrolling up, than when scrolling down)
+// TODO: consider using 0, -1 and 1 for the scrollDirection instead of "PAUSED", "FORWARD" and "BACKWARD"
+// TODO: consider logs - what should be logged and where
 
 (function($) {
 
@@ -51,9 +57,9 @@ if (!console['warn']) {
      *
 	 * @param {object} [options] - An object containing one or more options for the controller.
 	 * @param {(string|object)} [options.scrollContainer=$(window)] - A selector or a jQuery object that references the main container for scrolling.
-     * @param {boolean} [options.isVertical=true] - Defines if the controller reacts to vertical (true) or horizontal (false) scrolling.
+     * @param {boolean} [options.isVertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
 	 * @param {boolean} [options.reverse=true] - Global setting to prevent Scenes from reversing, when scrolling back up. Can be set globally here or individually for each scene.
-	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
+	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: silent | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
      *
      */
 	ScrollMagic = function(options) {
@@ -77,6 +83,7 @@ if (!console['warn']) {
 			_sceneObjects = [],
 			_doUpdateOnNextTick = false,
 			_currScrollPoint = 0,
+			_scrollDirection = "PAUSED",
 			_containerInnerOffset = 0,
 			_viewPortSize = 0;
 
@@ -98,8 +105,7 @@ if (!console['warn']) {
 				if (_options.scrollContainer.length == 0)
 					throw "No valid scroll container supplied";
 			} catch (e) {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: " + e);
+				log(1, "ERROR: " + e, "error");
 				return; // cancel
 			}
 			// set event handlers
@@ -133,10 +139,14 @@ if (!console['warn']) {
 			var
 				vertical = _options.isVertical,
 				$container = _options.scrollContainer,
-				offset = $container.offset() || {top: 0, left: 0};
-
-			_currScrollPoint = vertical ? $container.scrollTop() : $container.scrollLeft();
+				offset = $container.offset() || {top: 0, left: 0},
+				oldScrollPoint = _currScrollPoint;
+			
 			_viewPortSize = vertical ? $container.height() : $container.width();
+			_currScrollPoint = vertical ? $container.scrollTop() : $container.scrollLeft();
+			var deltaScroll = _currScrollPoint - oldScrollPoint;
+			_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+
 			// TODO: check usage of inner offset. Not very elegant atm. How to make better?
 			if (offset.top != 0 || offset.left != 0) { // the container is not the window or document, but a div container
 				// calculate the inner offset of the container, if the scrollcontainer is not at the top left position
@@ -178,7 +188,7 @@ if (!console['warn']) {
 			startPoint -= _containerInnerOffset;
 
 			// calculate start point in relation to viewport trigger point
-			startPoint -= _viewPortSize*scene.triggerPosition();
+			startPoint -= _viewPortSize*scene.triggerHook();
 
 			// where will the scene end?
 			endPoint = startPoint + scene.duration();
@@ -192,13 +202,31 @@ if (!console['warn']) {
 			// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
 			scene.startPoint = startPoint;
 
-			if (_options.loglevel >= 3)
-				console.log({"scene" : $.inArray(scene, _sceneObjects)+1, "startPoint" : startPoint, "endPoint" : endPoint,"curScrollPoint" : _currScrollPoint});
+			log(3, {"scene" : $.inArray(scene, _sceneObjects)+1, "startPoint" : startPoint, "endPoint" : endPoint,"curScrollPoint" : _currScrollPoint});
 
 			// TODO: consider setting startPoint and currScrollpoint instead of progress (startPoint won't have to be a public var anymore)
 			scene.progress(newProgress);
 		};
 
+		/**
+	     * Send a debug message to the console.
+	     * @private
+	     *
+	     * @param {number} loglevel - The loglevel required to initiate output for the message.
+	     * @param {mixed} output - A String or an object that is supposed to be logged.
+	     * @param {ScrollScene} [method='log'] - The method used for output. Can be 'log', 'error' or 'warn'
+	     */
+		var log = function (loglevel, output, method) {
+			if (_options.loglevel >= loglevel) {
+				if (typeof console[method] === "undefined") {
+					method = "log";
+				}
+				var now = new Date(),
+					time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
+					func = console[method];
+				func.call(console, time + " (ScrollContainer) ->", output);
+			}
+		}
 
 		/*
 		 * ----------------------------------------------------------------
@@ -252,7 +280,7 @@ if (!console['warn']) {
 	     * @param {object} [options] - Options for the Scene. (Can be changed lateron)
 	     * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.
 	     * @param {number} [options.offset=0] - Offset Value for the Trigger Position
-	     * @param {(float|string|function)} [options.triggerPosition="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
+	     * @param {(float|string|function)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
 	     * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
 	     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0
 	     * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
@@ -283,13 +311,23 @@ if (!console['warn']) {
 		};
 
 		/**
-		 * Get the scroll direction.
+		 * Get the scroll mode.
 		 * @public
 		 *
 		 * @returns {boolean} - true if vertical scrolling, false if horizontal.
 		 */
 		this.vertical = function () {
 			return _options.isVertical;
+		};
+
+		/**
+		 * Get the scroll direction.
+		 * @public
+		 *
+		 * @returns {string} - "FORWARD", "REVERSE" or "PAUSED", depending on current scroll direction
+		 */
+		this.scrollDirection = function () {
+			return _scrollDirection;
 		};
 
 		// INIT
@@ -307,7 +345,7 @@ if (!console['warn']) {
      * @param {object} [options] - Options for the Scene. (Can be changed lateron)
      * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.
      * @param {number} [options.offset=0] - Offset Value for the Trigger Position
-     * @param {(float|string|function)} [options.triggerPosition="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
+     * @param {(float|string|function)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
      * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
      * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0
      * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
@@ -318,7 +356,7 @@ if (!console['warn']) {
 		var defaultOptions = {
 			duration: 0,
 			offset: 0,
-			triggerPosition: "onEnter",
+			triggerHook: "onEnter",
 			reverse: true,
 			smoothTweening: false,
 			loglevel: 2
@@ -379,24 +417,22 @@ if (!console['warn']) {
 	     */
 		var checkOptionsValidity = function () {
 			if (_options.duration < 0) {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: Invalid value for ScrollScene option \"duration\": " + _options.duration);
+				log(1, "ERROR: Invalid value for ScrollScene option \"duration\": " + _options.duration, "error");
 				_options.duration = 0;
 			}
 			if (typeof _options.offset !== "number") {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset);
+				log(1, "ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset, "error");
 				_options.offset = 0;
 			}
-			if (typeof _options.triggerPosition !== "number" && $.inArray(_options.triggerPosition, ["onEnter", "onCenter", "onLeave"]) == -1) {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: Invalid value for ScrollScene option \"triggerPosition\": " + _options.triggerPosition);
-				_options.triggerPosition = "onCenter";
+			// TODO: define possible values for triggerHook centrally
+			if (typeof _options.triggerHook !== "number" && $.inArray(_options.triggerHook, ["onEnter", "onCenter", "onLeave"]) == -1) {
+				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
+				// TODO: when trigger hook array is defined, set to first element
+				_options.triggerHook = "onCenter";
 			}
 			if (_tween) {
 				if (_options.smoothTweening && !_tween.tweenTo) {
-					if (_options.loglevel >= 2)
-						console.warn("WARNING: ScrollScene option \"smoothTweening = true\" only works with TimelineMax objects!");
+					log(2, "WARNING: ScrollScene option \"smoothTweening = true\" only works with TimelineMax objects!", "warn");
 				}
 			}
 		};
@@ -518,6 +554,25 @@ if (!console['warn']) {
 			}
 		}
 
+		/**
+	     * Send a debug message to the console.
+	     * @private
+	     *
+	     * @param {number} loglevel - The loglevel required to initiate output for the message.
+	     * @param {mixed} output - A String or an object that is supposed to be logged.
+	     * @param {ScrollScene} [method='log'] - The method used for output. Can be 'log', 'error' or 'warn'
+	     */
+		var log = function (loglevel, output, method) {
+			if (_options.loglevel >= loglevel) {
+				if (typeof console[method] === "undefined") {
+					method = "log";
+				}
+				var now = new Date(),
+					time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
+					func = console[method];
+				func.call(console, time + " (ScrollScene) ->", output);
+			}
+		}
 
 		/*
 		 * ----------------------------------------------------------------
@@ -597,28 +652,28 @@ if (!console['warn']) {
 		};
 
 		/**
-		 * Get triggerPosition relative to viewport.
+		 * Get triggerHook relative to viewport.
 		 * @public
 		 *
 		 * @returns {number} A number from 0 to 1 that defines where on the viewport the offset and startPosition should be related to.
 		 *//**
-		 * Set triggerPosition option value.
+		 * Set triggerHook option value.
 		 * @public
 		 *
 		 * @fires ScrollScene.change
-		 * @param {(float|string|function)} newTriggerPosition - The new triggerPosition of the scene. See ScrollScene parameter description for value options.
+		 * @param {(float|string|function)} newTriggerHook - The new triggerHook of the scene. See ScrollScene parameter description for value options.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.triggerPosition = function (newTriggerPosition) {
+		this.triggerHook = function (newTriggerHook) {
 			if (!arguments.length) { // get
 				var triggerPoint;
 				// TODO: decide if really neccessary that it can be a function. After all it can also be set at will.
-				if (typeof _options.triggerPosition === 'function') {
-					triggerPoint = _options.triggerPosition();
-				} else if (typeof _options.triggerPosition === 'number') {
-					triggerPoint = _options.triggerPosition;
+				if (typeof _options.triggerHook === 'function') {
+					triggerPoint = _options.triggerHook();
+				} else if (typeof _options.triggerHook === 'number') {
+					triggerPoint = _options.triggerHook;
 				} else {
-					switch(_options.triggerPosition) {
+					switch(_options.triggerHook) {
 						case "onCenter":
 							triggerPoint = 0.5;
 							break;
@@ -633,9 +688,9 @@ if (!console['warn']) {
 				}
 				return triggerPoint;
 			} else { // set
-				_options.triggerPosition = newTriggerPosition;
+				_options.triggerHook = newTriggerHook;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "triggerPosition"}); // fire event
+				ScrollScene.dispatch("change", {what: "triggerHook"}); // fire event
 				return ScrollScene;
 			}
 		};
@@ -710,7 +765,9 @@ if (!console['warn']) {
 			} else { // set
 				var
 					doUpdate = false,
-					oldState = _state;
+					oldState = _state,
+					// TODO: check for errors on ALL scene methods when not yet added to a controller
+					scrollDirection = ScrollScene.parent.scrollDirection();
 				if (progress <= 0 && _state !== 'BEFORE' && (_state !== 'AFTER' || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
@@ -726,20 +783,32 @@ if (!console['warn']) {
 					_state = 'DURING';
 				}
 				if (doUpdate) {
-					if (_state != oldState) {
-						if (_state === 'DURING' || (oldState === 'BEFORE' && _options.duration == 0)) {
-							ScrollScene.dispatch("start", {oldState: oldState}); // fire event
-						} else {
-							ScrollScene.dispatch("end", {newState: _state}); // fire event
+					if (_state != oldState) { // fire state change events
+						if (_state === 'DURING' || _options.duration == 0) {
+							ScrollScene.dispatch("enter", {scrollDirection: scrollDirection});
+						}
+						if ((_state === 'DURING' && scrollDirection === 'FORWARD')|| _state === 'BEFORE') {
+							ScrollScene.dispatch("start", {scrollDirection: scrollDirection});
+						} else if (_options.duration == 0) {
+							ScrollScene.dispatch((_state === 'AFTER') ? "start" : "end", {scrollDirection: scrollDirection});
 						}
 					}
 					updateTweenProgress();
 					updatePinProgress();
-					ScrollScene.dispatch("progress", {progress: _progress}); // fire event
+					ScrollScene.dispatch("progress", {progress: _progress, scrollDirection: scrollDirection});
+					if (_state != oldState) { // fire state change events
+						if ((_state === 'DURING' && scrollDirection === 'REVERSE')|| _state === 'AFTER') {
+							ScrollScene.dispatch("end", {scrollDirection: scrollDirection});
+						} else if (_options.duration == 0) {
+							ScrollScene.dispatch((_state === 'AFTER') ? "start" : "end", {scrollDirection: scrollDirection});
+						}
+						if (_state !== 'DURING' || _options.duration == 0) {
+							ScrollScene.dispatch("leave", {scrollDirection: scrollDirection});
+						}
+					}
 				}
 
-				if (_options.loglevel >= 3)
-					console.log({"progress" : _progress, "state" : _state, "reverse" : _options.reverse});
+				log(3, {"progress" : _progress, "state" : _state, "reverse" : _options.reverse});
 
 				return ScrollScene;
 			}
@@ -759,8 +828,7 @@ if (!console['warn']) {
 			try {
 				_tween = TweenMaxObject.pause();
 			} catch (e) {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: Supplied argument is not a valid TweenMaxObject");
+				log(1, "ERROR: Supplied argument is not a valid TweenMaxObject", "error");
 			} finally {
 				checkOptionsValidity();
 				return ScrollScene;
@@ -808,8 +876,7 @@ if (!console['warn']) {
 				if (element.length == 0)
 					throw "Invalid pin element supplied.";
 			} catch (e) {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: " + e);
+				log(1, "ERROR: " + e, "error");
 				return ScrollScene; // cancel
 			}
 
@@ -941,38 +1008,53 @@ if (!console['warn']) {
 		 * ----------------------------------------------------------------
 		 */
 		
-		// TODO: Properly document events.
 		/**
 	     * Scene start event.
-	     * Fires whenever the scene enters the "DURING" state.
-	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
+	     * Fires whenever the scroll position its the starting point of the scene.
+	     * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 	     *
 	     * @event ScrollScene.start
 	     *
 	     * @property {object} event - The event Object passed to each callback.
 	     * @property {string} event.name - The unique name of the event.
-	     * @property {string} event.oldState - Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)
+	     * @property {string} event.state - The new state of the scene. Will be "DURING" or "BEFORE"
+	     * @property {string} event.scrollDirection - Indicates wether we hit the start position into the scene ("FORWARD") or backing up and scrolling out of it ("REVERSE").
 	     */
 		/**
 	     * Scene end event.
-	     * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
-	     * Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+	     * Fires whenever the scroll position its the ending point of the scene.
+	     * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 	     *
 	     * @event ScrollScene.end
 	     *
 	     * @property {object} event - The event Object passed to each callback.
 	     * @property {string} event.name - The unique name of the event.
-	     * @property {string} event.newState - Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)
+	     * @property {string} event.state - The new state of the scene. Will be "AFTER" or "DURING"
+	     * @property {string} event.scrollDirection - Indicates wether we hit the end position scrolling out of the scene ("FORWARD") or backing up into it ("REVERSE").
 	     */
 		/**
-	     * Scene change event.
-	     * Fires whenvever a property of the scene is changed.
+	     * Scene enter event.
+	     * Fires whenever the scene enters the "DURING" state.
+	     * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
 	     *
-	     * @event ScrollScene.change
+	     * @event ScrollScene.enter
 	     *
 	     * @property {object} event - The event Object passed to each callback.
 	     * @property {string} event.name - The unique name of the event.
-	     * @property {string} event.what - Indicates what value has been changed.
+	     * @property {string} event.state - The new state of the scene. Will always be "DURING" (only included for consistency)
+	     * @property {string} event.scrollDirection - Indicates from what side we enter the Scene. ("FORWARD") => from the top/left, ("REVERSE") => from the bottom/right.
+	     */
+		/**
+	     * Scene leave event.
+	     * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
+	     * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+	     *
+	     * @event ScrollScene.leave
+	     *
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {string} event.state - The new state of the scene. Will be "AFTER" or "BEFORE"
+	     * @property {string} event.scrollDirection - Indicates towards which side we leave the Scene. ("FORWARD") => going to state "BEFORE", ("REVERSE") => going to state "AFTER"
 	     */
 		/**
 	     * Scene progress event.
@@ -983,6 +1065,16 @@ if (!console['warn']) {
 	     * @property {object} event - The event Object passed to each callback.
 	     * @property {string} event.name - The unique name of the event.
 	     * @property {number} event.progress - Reflects the current progress of the scene.
+	     */
+		/**
+	     * Scene change event.
+	     * Fires whenvever a property of the scene is changed.
+	     *
+	     * @event ScrollScene.change
+	     *
+	     * @property {object} event - The event Object passed to each callback.
+	     * @property {string} event.name - The unique name of the event.
+	     * @property {string} event.what - Indicates what value has been changed.
 	     */
 		 
 	     /**
@@ -996,13 +1088,13 @@ if (!console['warn']) {
 		 */
 		 this.on = function (name, callback) {
 			if (typeof callback === 'function') {
+				name = $.trim(name.toLowerCase());
 				 // create if non-existent
 		 		if (!_events[name]) { _events[name] = []; }
 				// add new callback
 				_events[name].push(callback);
 			} else {
-				if (_options.loglevel >= 1)
-					console.error("ERROR: Supplied argument is not a valid callback!");
+				log(1, "ERROR: Supplied argument is not a valid callback!", "error");
 			}
 			return ScrollScene;
 		 }
@@ -1016,8 +1108,7 @@ if (!console['warn']) {
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.dispatch = function (name, vars) {
-			if (_options.loglevel >= 3)
-				console.log('Event Fired: ScrollScene.'+name);
+			log(3, 'Event Fired: ScrollScene.'+name);
 		 	if (_events[name]) {
 				var event = {
 					name: name
