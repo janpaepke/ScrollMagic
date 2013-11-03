@@ -65,25 +65,29 @@
 	</div>
 	<script type="text/javascript" src="js/greensock/TweenMax.min.js"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  	<script>window.jQuery || document.write('<script src="_/js/jquery-1.9.1.min.js"><\/script>')</script>
+  	<script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
   	<script src="js/jquery.scrollmagic.js"></script>
 	<script>
 		$(document).ready(function($) {
-			var controller = new ScrollMagic({loglevel: 2});
+			var controller = new ScrollMagic({loglevel: 2, globalSceneOptions: {triggerHook: "onEnter"}});
 			// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
-			var scene = controller.addScene("#trigger", {duration: 400, offset: -200, triggerHook: "onEnter", loglevel: 2})
+			var scene = controller.addNewScene("#trigger", {duration: 400, offset: -200, loglevel: 2})
 						// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
 						// .on("progress", function (e) { console.log (e); })
-						.on("start", function (e) { console.log (e); })
-						.on("end", function (e) { console.log (e); })
-						.on("enter", function (e) { console.log (e); })
-						.on("leave", function (e) { console.log (e); })
+						.on("change", function (e) { console.log (e); })
+						// .on("start", function (e) { console.log (e); })
+						// .on("end", function (e) { console.log (e); })
+						// .on("enter", function (e) { console.log (e); })
+						// .on("leave", function (e) { console.log (e); })
 						.setTween(TweenMax.to("#ani", .5, {color: "red" }))
 						.setPin("#ani");
 
 			// console.log(scene);
 			$("#ani").click(function () {
-				scene.duration(600);
+				// scene.duration(scene.duration() - 100);
+				// console.log(controller.scrollDirection());
+				// scene.unbind("change");
+				// scene.duration(1000);
 				// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
 				// 	 .duration(600)
 				// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
