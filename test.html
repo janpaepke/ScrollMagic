@@ -87,13 +87,17 @@
 				// scene.duration(scene.duration() - 100);
 				// console.log(controller.scrollDirection());
 				// scene.unbind("change");
-				// scene.duration(1000);
+				// scene.remove();
+				scene.duration(scene.duration() - 200);
 				// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
 				// 	 .duration(600)
 				// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
 					 // .removeTween();
 				// controller.updateScenes();
 			});
+			$(document).keypress (function () {
+				scene.addTo(controller);
+			})
 		});
 	</script>
 

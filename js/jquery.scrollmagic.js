@@ -211,10 +211,15 @@ if (!console['warn']) {
 	     * @return {ScrollMagic} - Parent object for chaining.
 	     */
 		this.addScene = function (ScrollScene) {
-			if (ScrollScene.parent) {
-				ScrollScene.parent.removeScene(ScrollScene);
+			if (ScrollScene.parent()) {
+				if (ScrollScene.parent() == ScrollMagic) {
+					// if it's me, do nothing.
+					return ScrollMagic;
+				} else {
+					ScrollScene.parent().removeScene(ScrollScene);	
+				}
 			}
-			ScrollScene.parent = ScrollMagic;
+			ScrollScene.parent(ScrollMagic);
 			_sceneObjects.push(ScrollScene);
 			ScrollMagic.updateScene(ScrollScene, true);
 			return ScrollMagic;
@@ -250,7 +255,7 @@ if (!console['warn']) {
 			var index = $.inArray(ScrollScene, _sceneObjects);
 			if (index > -1) {
 				_sceneObjects.splice(index, 1);
-				ScrollScene.parent = null;
+				ScrollScene.parent(null);
 				ScrollScene.startPoint = 0;
 			}
 			return ScrollMagic;
@@ -401,6 +406,7 @@ if (!console['warn']) {
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
+			_parent = null,
 			_tween,
 			_pin;
 
@@ -410,8 +416,7 @@ if (!console['warn']) {
 		 * ----------------------------------------------------------------
 		 */
 
-		 // not documented, because they should not be touched by user.
-		 ScrollScene.parent = null;
+		 // not documented, because this should not be touched by user.
 		 ScrollScene.startPoint = 0;
 
 		/*
@@ -509,7 +514,7 @@ if (!console['warn']) {
 	     */
 		var updatePinProgress = function () {
 			// TODO: check/test functionality – especially for horizontal scrolling
-			if (_pin && ScrollScene.parent) {
+			if (_pin && _parent) {
 				var 
 					css,
 					spacer =  _pin.parent();
@@ -534,7 +539,7 @@ if (!console['warn']) {
 						spacerOffset = spacer.offset(),
 						fixedPosTop,
 						fixedPosLeft;
-					if (ScrollScene.parent.vertical()) {
+					if (_parent.vertical()) {
 						fixedPosTop = spacerOffset.top - ScrollScene.startPoint;
 						fixedPosLeft = spacerOffset.left;
 					} else {
@@ -558,14 +563,16 @@ if (!console['warn']) {
 		 * @private
 		 */
 		var updatePinSpacerSize = function () {
-			if (_pin && ScrollScene.parent) {
+			if (_pin && _parent) {
 				if (_pin.data("pushFollowers")) {
-					if (ScrollScene.parent.vertical()) {
-						var spacer = _pin.parent();
+					var spacer = _pin.parent();
+					if (_parent.vertical()) {
 						spacer.height(_pin.data("startHeight") + _options.duration);
 					} else {
 						spacer.width(_pin.data("startWidth") + _options.duration);
 					}
+					// UPDATE progress, because when the spacer size is changed it may affect the pin state
+					updatePinProgress();
 				}
 			}
 		}
@@ -595,6 +602,24 @@ if (!console['warn']) {
 		 * public functions
 		 * ----------------------------------------------------------------
 		 */
+
+		/**
+		 * Get parent controller.
+		 * @public
+		 *
+		 * @returns {(number|object)}
+		 */
+		 // Set function is not documented, because it should NOT be used, as this would break some stuff. Users should use addTo.
+		this.parent = function (newParent) {
+			if (!arguments.length) { // get
+				return _parent;
+			} else { // set
+				_parent = newParent;
+				updatePinSpacerSize();
+				return ScrollScene;
+			}
+		};
+
 
 		/**
 		 * Get trigger.
@@ -642,11 +667,7 @@ if (!console['warn']) {
 				ScrollScene.dispatch("change", {what: "duration"}); // fire event
 				// update some shit
 				updatePinSpacerSize();
-				var oldstate = _state;
 				ScrollScene.update();
-				if (_state == oldstate && _state == "AFTER") {
-					updatePinProgress(); // If the current state is "AFTER" we must force an update to the pin Progress, otherwise it would get stuck if the state doesnt change
-				}
 				return ScrollScene;
 			}
 		};
@@ -794,7 +815,7 @@ if (!console['warn']) {
 				var
 					doUpdate = false,
 					oldState = _state,
-					scrollDirection = ScrollScene.parent ? ScrollScene.parent.scrollDirection() : "PAUSED";
+					scrollDirection = _parent ? _parent.scrollDirection() : "PAUSED";
 				if (progress <= 0 && _state !== 'BEFORE' && (_state !== 'AFTER' || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
@@ -859,6 +880,7 @@ if (!console['warn']) {
 				log(1, "ERROR: Supplied argument is not a valid TweenMaxObject", "error");
 			} finally {
 				checkOptionsValidity();
+				updateTweenProgress();
 				return ScrollScene;
 			}
 		};
@@ -927,7 +949,7 @@ if (!console['warn']) {
 						left: _pin.css("left"),
 						bottom: _pin.css("bottom"),
 						right: _pin.css("right")
-					})
+					});
 
 			if (_pin.css("position") == "absolute") {
 				// well this is easy.
@@ -959,6 +981,7 @@ if (!console['warn']) {
 					});
 
 			// update the size of the pin Spacer.
+			// this also calls updatePinProgress
 			updatePinSpacerSize();
 
 			return ScrollScene;
@@ -975,12 +998,12 @@ if (!console['warn']) {
 		this.removePin = function (reset) {
 			if (_pin) {
 				var spacer = _pin.parent();
-				if (reset || !ScrollScene.parent) { // if there's no parent no progress was made anyway...
+				if (reset || !_parent) { // if there's no parent no progress was made anyway...
 					_pin.insertBefore(spacer)
 						.attr("style", _pin.data("style"));
 					spacer.remove();
 				} else {
-					var vertical = ScrollScene.parent.vertical();
+					var vertical = _parent.vertical();
 					_pin.css({
 						position: "absolute",
 						top: vertical ? _options.duration * _progress : 0,
@@ -1001,8 +1024,8 @@ if (!console['warn']) {
 		 * @returns {ScrollScene}
 		 */
 		this.update = function (immediately) {
-			if (ScrollScene.parent) {
-				ScrollScene.parent.updateScene(ScrollScene, immediately);
+			if (_parent) {
+				_parent.updateScene(ScrollScene, immediately);
 			}
 			return ScrollScene;
 		};
@@ -1016,8 +1039,8 @@ if (!console['warn']) {
 		 * @returns {null}
 		 */
 		this.remove = function () {
-			if (ScrollScene.parent) {
-				ScrollScene.parent.removeScene(ScrollScene);
+			if (_parent) {
+				_parent.removeScene(ScrollScene);
 			}
 			return null;
 		};
@@ -1047,10 +1070,10 @@ if (!console['warn']) {
 				// numeric offset as trigger
                 return _trigger
 			} else {
-				if (ScrollScene.parent) {
+				if (_parent) {
 					// jQuery Object as trigger
 					var targetOffset = _trigger.offset();
-					return ScrollScene.parent.vertical() ? targetOffset.top : targetOffset.left;	
+					return _parent.vertical() ? targetOffset.top : targetOffset.left;	
 				} else {
 					// if there's no parent yet we don't know if we're scrolling horizontally or vertically
 					return 0;
