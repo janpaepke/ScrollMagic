@@ -10,6 +10,6 @@
   "main": ["js/jquery.scrollmagic.js"],
   "dependencies": {
     "jquery": "~1.9.1",
-    "tweenMax": "latest"
+    "tweenMax": "git@github.com:greensock/GreenSock-JS.git#latest"
   }
 }
