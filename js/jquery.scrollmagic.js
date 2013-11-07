@@ -802,9 +802,12 @@ if (!console['warn']) {
 		 * Set Scene progress.
 		 * @public
 		 *
+		 * @fires ScrollScene.enter
 		 * @fires ScrollScene.start
-		 * @fires ScrollScene.end
 		 * @fires ScrollScene.progress
+		 * @fires ScrollScene.end
+		 * @fires ScrollScene.leave
+		 *
 		 * @param {number} progress - The new progress value of the scene (0 - 1).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
