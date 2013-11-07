@@ -110,7 +110,7 @@ if (!console['warn']) {
 		var construct = function () {
 			// check ScrolContainer
 			try {
-				if (typeof _options.scrollContainer == "string")
+				if ($.type(_options.scrollContainer) === "string")
 					_options.scrollContainer = $(_options.scrollContainer).first();
 				if (_options.scrollContainer.length == 0)
 					throw "No valid scroll container supplied";
@@ -137,14 +137,14 @@ if (!console['warn']) {
 		var onTick = function () {
 			updateContainer();
 			if (_updateScenesOnNextTick) {
-				if (typeof _updateScenesOnNextTick === "boolean") {
-					// update all scenes
-					ScrollMagic.updateAllScenes(true);
-				} else {
+				if ($.isArray(_updateScenesOnNextTick)) {
 					// update specific scenes
 					$.each(_updateScenesOnNextTick, function (index, scene) {
 							ScrollMagic.updateScene(scene, true);
 					});
+				} else {
+					// update all scenes
+					ScrollMagic.updateAllScenes(true);
 				}
 				_updateScenesOnNextTick = false;
 			}
@@ -185,7 +185,7 @@ if (!console['warn']) {
 	     */
 		var log = function (loglevel, output, method) {
 			if (_options.loglevel >= loglevel) {
-				if (typeof console[method] === "undefined") {
+				if (!$.isFunction(console[method])) {
 					method = "log";
 				}
 				var now = new Date(),
@@ -306,7 +306,7 @@ if (!console['warn']) {
 
 				scene.progress(newProgress);
 			} else {
-				if (typeof _updateScenesOnNextTick != "array") {
+				if (!$.isArray(_updateScenesOnNextTick)) {
 					_updateScenesOnNextTick = [];
 				}
 				if ($.inArray(scene, _updateScenesOnNextTick) == -1) {
@@ -369,7 +369,7 @@ if (!console['warn']) {
      * @param {object} [options] - Options for the Scene. (Can be changed lateron)
      * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.
      * @param {number} [options.offset=0] - Offset Value for the Trigger Position
-     * @param {(float|string|function)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)
+     * @param {(float|string)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
      * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
      * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0
      * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
@@ -402,7 +402,7 @@ if (!console['warn']) {
 
 		var
 			ScrollScene = this,
-			_trigger = typeof trigger === "string" ? $(trigger).first() : trigger,
+			_trigger = $.type(trigger) === "string" ? $(trigger).first() : trigger,
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
@@ -442,11 +442,11 @@ if (!console['warn']) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"duration\": " + _options.duration, "error");
 				_options.duration = 0;
 			}
-			if (typeof _options.offset !== "number") {
+			if (!$.isNumeric(_options.offset)) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset, "error");
 				_options.offset = 0;
 			}
-			if (typeof _options.triggerHook !== "number" && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
+			if ($.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
@@ -587,7 +587,7 @@ if (!console['warn']) {
 	     */
 		var log = function (loglevel, output, method) {
 			if (_options.loglevel >= loglevel) {
-				if (typeof console[method] === "undefined") {
+				if (!$.isFunction(console[method])) {
 					method = "log";
 				}
 				var now = new Date(),
@@ -638,7 +638,7 @@ if (!console['warn']) {
 			if (!arguments.length) { // get
 				return _trigger;
 			} else { // set
-				_trigger = typeof newTrigger === "string" ? $(newTrigger).first() : newTrigger;
+				_trigger = $.type(newTrigger) === "string" ? $(newTrigger).first() : newTrigger;
 				ScrollScene.dispatch("change", {what: "trigger"}); // fire event
 				ScrollScene.update();
 				return ScrollScene;
@@ -707,16 +707,13 @@ if (!console['warn']) {
 		 * @public
 		 *
 		 * @fires ScrollScene.change
-		 * @param {(float|string|function)} newTriggerHook - The new triggerHook of the scene. @see {@link ScrollScene) parameter description for value options.
+		 * @param {(float|string)} newTriggerHook - The new triggerHook of the scene. @see {@link ScrollScene) parameter description for value options.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.triggerHook = function (newTriggerHook) {
 			if (!arguments.length) { // get
 				var triggerPoint;
-				// TODO: decide if really neccessary that it can be a function. After all it can also be set at will.
-				if (typeof _options.triggerHook === 'function') {
-					triggerPoint = _options.triggerHook();
-				} else if (typeof _options.triggerHook === 'number') {
+				if ($.isNumeric(_options.triggerHook)) {
 					triggerPoint = _options.triggerHook;
 				} else {
 					switch(_options.triggerHook) {
@@ -924,7 +921,7 @@ if (!console['warn']) {
 
 			// validate Element
 			try {
-				if (typeof(element) === 'string')
+				if ($.type(element) === "string")
 					element = $(element).first();
 				if (element.length == 0)
 					throw "Invalid pin element supplied.";
@@ -1069,7 +1066,7 @@ if (!console['warn']) {
 		 * @returns {number} Numeric trigger offset, regardless if the trigger is an offset value or a jQuery object.
 		 */
 		this.getTriggerOffset = function () {
-			if (typeof(_trigger) === 'number') {
+			if ($.isNumeric(_trigger)) {
 				// numeric offset as trigger
                 return _trigger
 			} else {
@@ -1171,7 +1168,7 @@ if (!console['warn']) {
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.on = function (name, callback) {
-			if (typeof callback === 'function') {
+			if ($.isFunction(callback)) {
 		 		$(document).on($.trim(name.toLowerCase()) + ".ScrollScene", callback);
 			} else {
 				log(1, "ERROR: Supplied argument is not a valid callback!", "error");
@@ -1207,7 +1204,7 @@ if (!console['warn']) {
 				type: $.trim(name.toLowerCase()) + ".ScrollScene",
 				target: ScrollScene
 			}
-	 		if (typeof vars === 'object') {
+	 		if ($.isPlainObject(vars)) {
 				event = $.extend({}, vars, event);
 			}
 			// fire all callbacks of the event
