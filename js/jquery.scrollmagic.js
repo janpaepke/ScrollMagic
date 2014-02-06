@@ -19,7 +19,8 @@
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
 // TODO: make examples
-// TODO: consider if and how globalSceneOptions should be set, if addScene is used instead of addNewScene
+// TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
+// TODO: consider neccessity of a Scene.destroy method, that kills and resets everything
 // TODO: consider how the scene should behave, if you start scrolling back up DURING the scene and reverse is false (ATM it will animate backwards)
 // TODO: consider if the controller needs Events
 // TODO: consider how to better control forward/backward animations (for example have different animations, when scrolling up, than when scrolling down)
@@ -203,44 +204,26 @@ if (!console['warn']) {
 
 		/**
 	     * Add a Scene to the controller.
-	     * Usually this should not be used when adding the scene for the first time, because the globalSceneOptions will not be applied.
-	     * This method should be used when a scene was removed from the controller and than should be re-added.
 	     * @public
 	     *
 	     * @param {ScrollScene} scene - The ScollScene to be added.
 	     * @return {ScrollMagic} - Parent object for chaining.
 	     */
 		this.addScene = function (ScrollScene) {
-			if (ScrollScene.parent()) {
-				if (ScrollScene.parent() == ScrollMagic) {
-					// if it's me, do nothing.
-					return ScrollMagic;
-				} else {
-					ScrollScene.parent().removeScene(ScrollScene);	
-				}
+			if (ScrollScene.parent() != ScrollMagic) {
+				ScrollScene.addTo(ScrollMagic);
+			} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
+				// new scene
+				_sceneObjects.push(ScrollScene);
+				// insert Global defaults.
+				$.each(_options.globalSceneOptions, function (key, value) {
+					if (ScrollScene[key]) {
+						ScrollScene[key].call(ScrollScene, value);
+					}
+				})
+				ScrollMagic.updateScene(ScrollScene, true);
 			}
-			ScrollScene.parent(ScrollMagic);
-			_sceneObjects.push(ScrollScene);
-			ScrollMagic.updateScene(ScrollScene, true);
 			return ScrollMagic;
-		};
-		
-		/**
-	     * Shorthand function to add a scene to support easier chaining.
-	     * Basically it's the same as doing controller.addScene(new ScrollScene(options));
-	     * There is one big difference though: The globalSceneOptions will only be set, if this method is used.
-	     * @see {@link ScrollScene}
-	     * @public
-	     *
-	     * @param {object} [options] - @see {@link ScrollScene}
-	     * 
-	     * @return {ScrollScene} New ScrollScene object for chaining.
-	     */
-		this.addNewScene = function (options) {
-			options = $.extend({}, _options.globalSceneOptions, options);
-			var newScene = new ScrollScene(options);
-			ScrollMagic.addScene(newScene);
-			return newScene;
 		};
 
 		/**
@@ -254,8 +237,7 @@ if (!console['warn']) {
 			var index = $.inArray(ScrollScene, _sceneObjects);
 			if (index > -1) {
 				_sceneObjects.splice(index, 1);
-				ScrollScene.parent(null);
-				ScrollScene.startPoint = 0;
+				ScrollScene.remove();
 			}
 			return ScrollMagic;
 		};
@@ -459,7 +441,7 @@ if (!console['warn']) {
 				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found: " + _options.triggerElement, "error");
 				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
 			}
-			if ($.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
+			if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
@@ -618,41 +600,10 @@ if (!console['warn']) {
 		 *
 		 * @returns {(number|object)}
 		 */
-		 // Set function is not documented, because it should NOT be used, as this would break some stuff. Users should use addTo.
-		this.parent = function (newParent) {
-			if (!arguments.length) { // get
-				return _parent;
-			} else { // set
-				_parent = newParent;
-				updatePinSpacerSize();
-				return ScrollScene;
-			}
+		this.parent = function () {
+			return _parent;
 		};
 
-
-		/**
-		 * Get triggerElement.
-		 * @public
-		 *
-		 * @returns {(number|object)}
-		 *//**
-		 * Set triggerElement.
-		 * @public
-		 *
-		 * @fires ScrollScene.change
-		 * @param {(number|object)} newTriggerElement - The new trigger element for the scene.
-		 * @returns {ScrollScene} Parent object for chaining.
-		 */
-		this.triggerElement = function (newTriggerElement) {
-			if (!arguments.length) { // get
-				return _options.triggerElement;
-			} else { // set
-				_options.triggerElement = newTriggerElement;
-				ScrollScene.dispatch("change", {what: "trigger"}); // fire event
-				ScrollScene.update();
-				return ScrollScene;
-			}
-		};
 
 		/**
 		 * Get duration option value.
@@ -670,15 +621,15 @@ if (!console['warn']) {
 		this.duration = function (newDuration) {
 			if (!arguments.length) { // get
 				return _options.duration;
-			} else { // set
+			} else if (_options.duration != newDuration) { // set
 				_options.duration = newDuration;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "duration"}); // fire event
 				// update some shit
 				updatePinSpacerSize();
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
 		};
 
 		/**
@@ -697,13 +648,38 @@ if (!console['warn']) {
 		this.offset = function (newOffset) {
 			if (!arguments.length) { // get
 				return _options.offset;
-			} else { // set
+			} else if (_options.offset != newOffset) { // set
 				_options.offset = newOffset;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "offset"}); // fire event
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
+		};
+
+		/**
+		 * Get triggerElement.
+		 * @public
+		 *
+		 * @returns {(number|object)}
+		 *//**
+		 * Set triggerElement.
+		 * @public
+		 *
+		 * @fires ScrollScene.change
+		 * @param {(number|object)} newTriggerElement - The new trigger element for the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		this.triggerElement = function (newTriggerElement) {
+			if (!arguments.length) { // get
+				return _options.triggerElement;
+			} else if (_options.triggerElement != newTriggerElement) { // set
+				_options.triggerElement = newTriggerElement;
+				checkOptionsValidity();
+				ScrollScene.dispatch("change", {what: "triggerElement"}); // fire event
+				ScrollScene.update();
+			}
+			return ScrollScene;
 		};
 
 		/**
@@ -739,13 +715,13 @@ if (!console['warn']) {
 					}
 				}
 				return triggerPoint;
-			} else { // set
+			} else if (_options.triggerHook != newTriggerHook) { // set
 				_options.triggerHook = newTriggerHook;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "triggerHook"}); // fire event
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
 		};
 
 		/**
@@ -764,13 +740,13 @@ if (!console['warn']) {
 		this.reverse = function (newReverse) {
 			if (!arguments.length) { // get
 				return _options.reverse;
-			} else { // set
+			} else if (_options.reverse != newReverse) { // set
 				_options.reverse = newReverse;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "reverse"}); // fire event
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
 		};
 
 		/**
@@ -789,13 +765,38 @@ if (!console['warn']) {
 		this.smoothTweening = function (newSmoothTweening) {
 			if (!arguments.length) { // get
 				return _options.smoothTweening;
-			} else { // set
+			} else if (_options.smoothTweening != newSmoothTweening) { // set
 				_options.smoothTweening = newSmoothTweening;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "smoothTweening"}); // fire event
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
+		};
+
+		/**
+		 * Get loglevel option value.
+		 * @public
+		 *
+		 * @returns {number}
+		 *//**
+		 * Set loglevel option value.
+		 * @public
+		 *
+		 * @fires ScrollScene.change
+		 * @param {number} newLoglevel - The new loglevel setting of the scene.
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		this.loglevel = function (newLoglevel) {
+			if (!arguments.length) { // get
+				return _options.loglevel;
+			} else if (_options.loglevel != newLoglevel) { // set
+				_options.loglevel = newLoglevel;
+				checkOptionsValidity();
+				ScrollScene.dispatch("change", {what: "loglevel"}); // fire event
+				// no need to update the scene with this param...
+			}
+			return ScrollScene;
 		};
 
 
@@ -1054,13 +1055,14 @@ if (!console['warn']) {
 		 * To remove the pin and/or pin spacer you need to call removePin
 		 * @public
 		 *
-		 * @returns {null}
+		 * @returns {ScrollScene}
 		 */
 		this.remove = function () {
 			if (_parent) {
 				_parent.removeScene(ScrollScene);
+				_parent = null;
 			}
-			return null;
+			return ScrollScene;
 		};
 
 		/**
@@ -1072,8 +1074,16 @@ if (!console['warn']) {
 		 * @returns {ScrollScene}
 		 */
 		this.addTo = function (controller) {
-			controller.addScene(ScrollScene);
-			return ScrollScene;
+			if (_parent != controller) {
+				// new parent
+				if (_parent) { // I had a parent before, so remove it...
+					_parent.removeScene(ScrollScene);
+				}
+				_parent = controller;
+				updatePinSpacerSize();
+				controller.addScene(ScrollScene);
+				return ScrollScene;
+			}
 		};
 		
 		/**
