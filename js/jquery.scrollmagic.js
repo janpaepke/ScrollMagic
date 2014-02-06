@@ -227,19 +227,18 @@ if (!console['warn']) {
 		
 		/**
 	     * Shorthand function to add a scene to support easier chaining.
-	     * Basically it's the same as doing controller.addScene(new ScrollScene(trigger, options));
+	     * Basically it's the same as doing controller.addScene(new ScrollScene(options));
 	     * There is one big difference though: The globalSceneOptions will only be set, if this method is used.
 	     * @see {@link ScrollScene}
 	     * @public
 	     *
-	     * @param {(string|object)} trigger - @see {@link ScrollScene}
 	     * @param {object} [options] - @see {@link ScrollScene}
 	     * 
 	     * @return {ScrollScene} New ScrollScene object for chaining.
 	     */
-		this.addNewScene = function (trigger, options) {
+		this.addNewScene = function (options) {
 			options = $.extend({}, _options.globalSceneOptions, options);
-			var newScene = new ScrollScene(trigger, options);
+			var newScene = new ScrollScene(options);
 			ScrollMagic.addScene(newScene);
 			return newScene;
 		};
@@ -287,7 +286,7 @@ if (!console['warn']) {
 				// account for the possibility that the parent is a div, not the document
 				startPoint -= _containerInnerOffset;
 
-				// calculate start point in relation to viewport trigger point
+				// calculate start point in relation to viewport
 				startPoint -= _viewPortSize*scene.triggerHook();
 
 				// where will the scene end?
@@ -354,6 +353,16 @@ if (!console['warn']) {
 			return _scrollDirection;
 		};
 
+		/**
+		 * Get the viewport size.
+		 * @public
+		 *
+		 * @returns {float} - The height or width of the viewport (depending wether we're in horizontal or vertical mode)
+		 */
+		this.viewPortSize = function () {
+			return _viewPortSize;
+		};
+
 		// INIT
 		construct();
 		return ScrollMagic;
@@ -365,17 +374,17 @@ if (!console['warn']) {
      *
      * @constructor
      *
-     * @param {(string|object)} trigger - The ScollScene object that is supposed to be updated.
      * @param {object} [options] - Options for the Scene. (Can be changed lateron)
-     * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.
+     * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
      * @param {number} [options.offset=0] - Offset Value for the Trigger Position
+     * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
      * @param {(float|string)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
      * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
-     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0
+     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
      * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
      * 
      */
-	ScrollScene = function (trigger, options) {
+	ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -388,6 +397,7 @@ if (!console['warn']) {
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
+				triggerElement: null,
 				triggerHook: TRIGGER_HOOK_STRINGS[0],
 				reverse: true,
 				smoothTweening: false,
@@ -402,7 +412,6 @@ if (!console['warn']) {
 
 		var
 			ScrollScene = this,
-			_trigger = $.type(trigger) === "string" ? $(trigger).first() : trigger,
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
@@ -445,6 +454,10 @@ if (!console['warn']) {
 			if (!$.isNumeric(_options.offset)) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset, "error");
 				_options.offset = 0;
+			}
+			if (_options.triggerElement != null && $(_options.triggerElement).length == 0) {
+				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found: " + _options.triggerElement, "error");
+				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
 			}
 			if ($.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
@@ -618,23 +631,23 @@ if (!console['warn']) {
 
 
 		/**
-		 * Get trigger.
+		 * Get triggerElement.
 		 * @public
 		 *
 		 * @returns {(number|object)}
 		 *//**
-		 * Set trigger.
+		 * Set triggerElement.
 		 * @public
 		 *
 		 * @fires ScrollScene.change
-		 * @param {(number|object)} newTrigger - The new trigger of the scene.
+		 * @param {(number|object)} newTriggerElement - The new trigger element for the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.trigger = function (newTrigger) {
+		this.triggerElement = function (newTriggerElement) {
 			if (!arguments.length) { // get
-				return _trigger;
+				return _options.triggerElement;
 			} else { // set
-				_trigger = $.type(newTrigger) === "string" ? $(newTrigger).first() : newTrigger;
+				_options.triggerElement = newTriggerElement;
 				ScrollScene.dispatch("change", {what: "trigger"}); // fire event
 				ScrollScene.update();
 				return ScrollScene;
@@ -1065,24 +1078,24 @@ if (!console['warn']) {
 		
 		/**
 		 * Return the trigger offset.
-		 * (always numerical, whereas trigger can also be a jQuery object)
+		 * (always numerical, whereas triggerElement can be a jQuery/HTML object or nothing)
 		 * @public
 		 *
-		 * @returns {number} Numeric trigger offset, regardless if the trigger is an offset value or a jQuery object.
+		 * @returns {number} Numeric trigger offset, in relation to scroll direction
 		 */
 		this.getTriggerOffset = function () {
-			if ($.isNumeric(_trigger)) {
-				// numeric offset as trigger
-                return _trigger
-			} else {
-				if (_parent) {
-					// jQuery Object as trigger
-					var targetOffset = _trigger.offset();
-					return _parent.vertical() ? targetOffset.top : targetOffset.left;	
+			if (_parent) {
+				if (_options.triggerElement === null) {
+					// start where the trigger hook starts
+					return _parent.viewPortSize()*ScrollScene.triggerHook();
 				} else {
-					// if there's no parent yet we don't know if we're scrolling horizontally or vertically
-					return 0;
+					// Element as trigger
+					var targetOffset = $(_options.triggerElement).offset();
+					return _parent.vertical() ? targetOffset.top : targetOffset.left;
 				}
+			} else {
+				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
+				return 0;
 			}
 		};
 
