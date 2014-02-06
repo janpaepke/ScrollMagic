@@ -68,12 +68,15 @@
   	<script src="js/jquery.scrollmagic.js"></script>
 	<script>
 		$(document).ready(function($) {
-			var myTween = TweenMax.to("#ani", .5, {color: "red" , delay: 3});
+			var myTween = TweenMax.to("#ani", 0.5, {color: "red", delay: 0.5 });
+			// myTween.pause(-2).play();
 			// var myTimeline = new TimelineMax().add(myTween);
+			// myTimeline.pause();
+			// myTimeline.progress(0.7);
 			// console.log(myTimeline.duration());
 			var controller = new ScrollMagic({loglevel: 2, globalSceneOptions: {triggerHook: "onEnter"}});
 			// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
-			var scene = controller.addNewScene("#trigger", {duration: 0, offset: -300, loglevel: 2})
+			var scene = controller.addNewScene("#trigger", {duration: 200, offset: -300, loglevel: 2, smoothTweening: true})
 						// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
 						.on("progress", function (e) { console.log (e); })
 						.on("change", function (e) { console.log (e); })

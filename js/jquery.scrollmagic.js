@@ -470,9 +470,8 @@ if (!console['warn']) {
 				progress = (to === undefined) ? _progress : to;
 			if (_tween) {
 				updated = true;
-				// check if the tween is an infinite loop (possible with TweenMax / TimelineMax)
-				var infiniteLoop = _tween.repeat ? (_tween.repeat() === -1) : false;
-				if (infiniteLoop) {
+				if (_tween.repeat() === -1) {
+					// infinite loop, so not in relation to progress
 					if ((_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) && _tween.paused()) {
 						_tween.play();
 						// TODO: optional: think about running the animation in reverse (.reverse()) when starting scene from bottom. Desired behaviour? Might require tween.yoyo() to be true
@@ -492,15 +491,12 @@ if (!console['warn']) {
 						}
 					} else {
 						// go to a specific point in time
-						if (_options.smoothTweening && _tween.tweenTo) {
-							// only works for TimelineMax
-							_tween.tweenTo(progress);
-						} else if (_tween.totalProgress) {
-							// use totalProgress for TweenMax and TimelineMax to include repeats
-							_tween.totalProgress(progress).pause();
+						if (_options.smoothTweening) {
+							// go smooth
+							_tween.tweenTo(progress * _tween.duration());
 						} else {
-							// everything else
-							_tween.pause(progress);
+							// just hard set it
+							_tween.progress(progress).pause();
 						}
 					}
 				}
@@ -875,7 +871,16 @@ if (!console['warn']) {
 				ScrollScene.removeTween();
 			}
 			try {
-				_tween = TweenMaxObject.pause();
+				// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
+				_tween = new TimelineMax()
+					.add(TweenMaxObject)
+					.pause();
+				if (TweenMaxObject.repeat) {
+					if (TweenMaxObject.repeat() === -1) {
+						// if the tween Object has an infinite loop we need to transfer it to the wrapper, otherwise it would get lost.
+						_tween.repeat(-1);
+					}
+				}
 			} catch (e) {
 				log(1, "ERROR: Supplied argument is not a valid TweenMaxObject", "error");
 			} finally {
