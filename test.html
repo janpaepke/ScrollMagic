@@ -68,7 +68,7 @@
   	<script src="js/jquery.scrollmagic.js"></script>
 	<script>
 		$(document).ready(function($) {
-			var myTween = TweenMax.to("#ani", 0.5, {color: "red", delay: 0.5 });
+			var myTween = TweenMax.to("#ani", 0.5, {color: "red" });
 			// myTween.pause(-2).play();
 			// var myTimeline = new TimelineMax().add(myTween);
 			// myTimeline.pause();
@@ -76,24 +76,26 @@
 			// console.log(myTimeline.duration());
 			var controller = new ScrollMagic({loglevel: 2, globalSceneOptions: {triggerHook: "onEnter"}});
 			// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
-			var scene = controller.addNewScene({triggerElement: "#trigger", duration: 200, offset: -300, loglevel: 2, smoothTweening: true})
+			var scene = new ScrollScene({triggerElement: "#trigger", duration: 200, offset: -300, loglevel: 2})
+						.addTo(controller)
 						// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
-						.on("progress", function (e) { console.log (e); })
+						// .on("progress", function (e) { console.log (e); })
 						.on("change", function (e) { console.log (e); })
 						// .on("start", function (e) { console.log (e); })
 						// .on("end", function (e) { console.log (e); })
 						// .on("enter", function (e) { console.log (e); })
 						// .on("leave", function (e) { console.log (e); })
 						.setTween(myTween)
-						// .setPin("#ani");
+						.setPin("#ani");
 
 			// console.log(scene);
 			$("#ani").click(function () {
+				scene.remove();
 				// scene.duration(scene.duration() - 100);
 				// console.log(controller.scrollDirection());
 				// scene.unbind("change");
 				// scene.remove();
-				scene.duration(scene.duration() + 200);
+				// scene.duration(scene.duration() + 200);
 				// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
 				// 	 .duration(600)
 				// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
@@ -101,7 +103,7 @@
 				// controller.updateScenes();
 			});
 			$(document).keypress (function () {
-				scene.addTo(controller);
+				scene.setPin("#ani").addTo(controller);
 			})
 		});
 	</script>

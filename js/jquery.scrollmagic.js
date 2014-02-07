@@ -939,28 +939,29 @@ if (!console['warn']) {
 			};
 
 			// validate Element
-			try {
-				if ($.type(element) === "string")
-					element = $(element).first();
-				if (element.length == 0)
-					throw "Invalid pin element supplied.";
-			} catch (e) {
-				log(1, "ERROR: " + e, "error");
+			element = $(element).first();
+			if (element.length == 0) {
+				log(1, "ERROR: Invalid pin element supplied.", "error");
 				return ScrollScene; // cancel
 			}
 
-			if (_pin) { // kill old pin?
-				ScrollScene.removePin();
+			if (_pin) { // preexisting pin?
+				if (_pin === element) {
+					// same pin we already have -> do nothing
+					return ScrollScene; // cancel
+				} else {
+					// kill old pin
+					ScrollScene.removePin();
+				}
+				
 			}
 			_pin = element;
 
-
+			_pin.parent().hide(); // hack start to force jQuery css to return percentage values instead of calculated ones.
 			var
-				settings = $.extend({}, defaultSettings, settings);
-
-
-			// create spacer
-			var spacer = $("<div>&nbsp;</div>") // for some reason a completely empty div can cause layout changes sometimes.
+				settings = $.extend({}, defaultSettings, settings),				
+				// create spacer
+				spacer = $("<div>&nbsp;</div>") // for some reason a completely empty div can cause layout changes sometimes.
 					.addClass(settings.spacerClass)
 					.css({
 						position: "relative",
@@ -969,6 +970,7 @@ if (!console['warn']) {
 						bottom: _pin.css("bottom"),
 						right: _pin.css("right")
 					});
+			_pin.parent().show(); // hack end.
 
 			if (_pin.css("position") == "absolute") {
 				// well this is easy.
@@ -978,11 +980,11 @@ if (!console['warn']) {
 						height: 0
 					});
 			} else {
-				// a little more challenging.
+				// copy size so element will replace pinned element in DOM
 				spacer.css({
 						display: _pin.css("display"),
-						width: parseFloat(_pin.css("width")) + parseFloat(_pin.css("border-left")) + parseFloat(_pin.css("border-right")) + parseFloat(_pin.css("padding-left")) + parseFloat(_pin.css("padding-right")) + parseFloat(_pin.css("margin-left")) + parseFloat(_pin.css("margin-right")),
-						height: parseFloat(_pin.css("height")) + parseFloat(_pin.css("border-top")) + parseFloat(_pin.css("border-bottom")) + parseFloat(_pin.css("padding-top")) + parseFloat(_pin.css("padding-bottom")) + parseFloat(_pin.css("margin-top")) + parseFloat(_pin.css("margin-bottom"))
+						width: _pin.outerWidth(true),
+						height: _pin.outerHeight(true)
 					});
 			}
 
@@ -1100,7 +1102,7 @@ if (!console['warn']) {
 					return _parent.viewPortSize()*ScrollScene.triggerHook();
 				} else {
 					// Element as trigger
-					var targetOffset = $(_options.triggerElement).offset();
+					var targetOffset = $(_options.triggerElement).first().offset();
 					return _parent.vertical() ? targetOffset.top : targetOffset.left;
 				}
 			} else {
