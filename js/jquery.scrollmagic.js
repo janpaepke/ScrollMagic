@@ -15,11 +15,11 @@
 */
 
 // TODO: test adding and removing scenes multiple times. (remove, then add back in, etc.)
-// TODO: test what happens if triggers are tweened or pinned
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
 // TODO: make examples
 // TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
+// TODO: fix pin when reverse=false and scrolling back up mid-scene
 // TODO: consider neccessity of a Scene.destroy method, that kills and resets everything
 // TODO: consider how the scene should behave, if you start scrolling back up DURING the scene and reverse is false (ATM it will animate backwards)
 // TODO: consider if the controller needs Events
@@ -109,14 +109,10 @@ if (!console['warn']) {
 	     * @private
 	     */
 		var construct = function () {
+			_options.scrollContainer = $(_options.scrollContainer).first()
 			// check ScrolContainer
-			try {
-				if ($.type(_options.scrollContainer) === "string")
-					_options.scrollContainer = $(_options.scrollContainer).first();
-				if (_options.scrollContainer.length == 0)
-					throw "No valid scroll container supplied";
-			} catch (e) {
-				log(1, "ERROR: " + e, "error");
+			if (_options.scrollContainer.length == 0) {
+				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied", "error");
 				return; // cancel
 			}
 			// update container vars immediately
@@ -429,13 +425,13 @@ if (!console['warn']) {
 	     * @private
 	     */
 		var checkOptionsValidity = function () {
-			if (_options.duration < 0) {
+			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"duration\": " + _options.duration, "error");
-				_options.duration = 0;
+				_options.duration = DEFAULT_OPTIONS.duration;
 			}
 			if (!$.isNumeric(_options.offset)) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset, "error");
-				_options.offset = 0;
+				_options.offset = DEFAULT_OPTIONS.offset;
 			}
 			if (_options.triggerElement != null && $(_options.triggerElement).length == 0) {
 				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found: " + _options.triggerElement, "error");
@@ -445,11 +441,22 @@ if (!console['warn']) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
-			if (_tween) {
-				if (_options.smoothTweening && !_tween.tweenTo) {
-					log(2, "WARNING: ScrollScene option \"smoothTweening = true\" only works with TimelineMax objects!", "warn");
-				}
+			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
+				// check if there are position tweens defined for the trigger and warn about it :)
+				var
+					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
+					vertical = _parent.vertical();
+				$.each(triggerTweens, function (index, value) {
+					var
+						tweenvars = value.vars.css || value.vars,
+						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
+					if (condition) {
+						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!", "warn");
+						return false;
+					}
+				});
 			}
+
 		};
 
 		/**
@@ -460,11 +467,8 @@ if (!console['warn']) {
 	     * @return {boolean} true if the Tween was updated. 
 	     */
 		var updateTweenProgress = function (to) {
-			var
-				updated = false;
-				progress = (to === undefined) ? _progress : to;
+			var progress = (to > 0 && to < 1) ? to : _progress;
 			if (_tween) {
-				updated = true;
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
 					if ((_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) && _tween.paused()) {
@@ -473,9 +477,9 @@ if (!console['warn']) {
 					} else if (_state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
 					} else {
-						updated = false;
+						return false;
 					}
-				} else {
+				} else if (progress != _tween.progress()) { // do we even need to update the progress?
 					// no infinite loop - so should we just play or go to a specific point in time?
 					if (_options.duration == 0) {
 						// play the animation
@@ -494,8 +498,12 @@ if (!console['warn']) {
 							_tween.progress(progress).pause();
 						}
 					}
+				} else {
+					return false;
 				}
-				return updated;
+				return true;
+			} else {
+				return false;
 			}
 		};
 
@@ -826,19 +834,19 @@ if (!console['warn']) {
 					doUpdate = false,
 					oldState = _state,
 					scrollDirection = _parent ? _parent.scrollDirection() : "PAUSED";
-				if (progress <= 0 && _state !== 'BEFORE' && (_state !== 'AFTER' || _options.reverse)) {
+				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
 					doUpdate = true;
 					_state = 'BEFORE';
+				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
+					_progress = progress;
+					doUpdate = true;
+					_state = 'DURING';
 				} else if (progress >= 1 && _state !== 'AFTER') {
 					_progress = 1;
 					doUpdate = true;
 					_state = 'AFTER';
-				} else if (progress > 0 && progress < 1 && (_state !== 'AFTER' || _options.reverse)) {
-					_progress = progress;
-					doUpdate = true;
-					_state = 'DURING';
 				}
 				if (doUpdate) {
 					var eventVars = {scrollDirection: scrollDirection, state: _state};
@@ -889,15 +897,15 @@ if (!console['warn']) {
 				_tween = new TimelineMax()
 					.add(TweenMaxObject)
 					.pause();
+			} catch (e) {
+				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject", "error");
+			} finally {
 				if (TweenMaxObject.repeat) {
 					if (TweenMaxObject.repeat() === -1) {
 						// if the tween Object has an infinite loop we need to transfer it to the wrapper, otherwise it would get lost.
 						_tween.repeat(-1);
 					}
 				}
-			} catch (e) {
-				log(1, "ERROR: Supplied argument is not a valid TweenMaxObject", "error");
-			} finally {
 				checkOptionsValidity();
 				updateTweenProgress();
 				return ScrollScene;
@@ -941,7 +949,7 @@ if (!console['warn']) {
 			// validate Element
 			element = $(element).first();
 			if (element.length == 0) {
-				log(1, "ERROR: Invalid pin element supplied.", "error");
+				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.", "error");
 				return ScrollScene; // cancel
 			}
 
@@ -991,14 +999,20 @@ if (!console['warn']) {
 
 			// now place the pin element inside the spacer	
 			_pin.wrap(spacer)
-					.data("style", _pin.attr("style") || "") // save old styles (for reset)
+					// save old styles (for reset)
+					// TODO: check if implemented. Maybe only save position, top, left, bottom, right?
+					.data("style", _pin.attr("style") || "")
+					// save some data for (re-)calculating pin spacer size
 					.data("pushFollowers", settings.pushFollowers)
 					.data("startWidth", spacer.width())
 					.data("startHeight", spacer.height())
-					.css({									// set new css
+					// set new css
+					.css({
 						position: "absolute",
 						top: 0,
-						left: 0
+						left: 0,
+						bottom: "auto",
+						right: "auto"
 					});
 
 			// update the size of the pin Spacer.
@@ -1082,6 +1096,7 @@ if (!console['warn']) {
 					_parent.removeScene(ScrollScene);
 				}
 				_parent = controller;
+				checkOptionsValidity();
 				updatePinSpacerSize();
 				controller.addScene(ScrollScene);
 				return ScrollScene;
@@ -1102,8 +1117,11 @@ if (!console['warn']) {
 					return _parent.viewPortSize()*ScrollScene.triggerHook();
 				} else {
 					// Element as trigger
-					var targetOffset = $(_options.triggerElement).first().offset();
-					return _parent.vertical() ? targetOffset.top : targetOffset.left;
+					var
+						element = $(_options.triggerElement).first(),
+						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
+						offset = (pin.get(0) === element.get(0)) ? pin.parent().offset() : element.offset(); // if  pin == trigger -> use spacer instead.
+					return _parent.vertical() ? offset.top : offset.left;
 				}
 			} else {
 				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
@@ -1201,7 +1219,7 @@ if (!console['warn']) {
 			if ($.isFunction(callback)) {
 		 		$(document).on($.trim(name.toLowerCase()) + ".ScrollScene", callback);
 			} else {
-				log(1, "ERROR: Supplied argument is not a valid callback!", "error");
+				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!", "error");
 			}
 			return ScrollScene;
 		 }
