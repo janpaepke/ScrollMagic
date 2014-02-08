@@ -32,27 +32,6 @@
 // TODO: consider making public ScrollScene variables private
 
 (function($) {
-
-/*
- * ----------------------------------------------------------------
- * avoid errors when using console
- * ----------------------------------------------------------------
- */
-var console = (window.console = window.console || {});
-if (!console['log']) {
-	console.log = function () {};
-}
-if (!console['error']) {
-	console.error = function (msg) {
-		console.log(msg);
-	};
-}
-if (!console['warn']) {
-	console.warn = function (msg) {
-		console.log(msg);
-	};
-}
-
      /**
      * CLASS ScrollMagic (main controller)
      *
@@ -112,7 +91,7 @@ if (!console['warn']) {
 			_options.scrollContainer = $(_options.scrollContainer).first()
 			// check ScrolContainer
 			if (_options.scrollContainer.length == 0) {
-				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied", "error");
+				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
 				return; // cancel
 			}
 			// update container vars immediately
@@ -177,18 +156,16 @@ if (!console['warn']) {
 	     * @private
 	     *
 	     * @param {number} loglevel - The loglevel required to initiate output for the message.
-	     * @param {mixed} output - A String or an object that is supposed to be logged.
-	     * @param {ScrollScene} [method='log'] - The method used for output. Can be 'log', 'error' or 'warn'
+	     * @param {...mixed} output - One or more variables that should be passed to the console.
 	     */
-		var log = function (loglevel, output, method) {
+		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
-				if (!$.isFunction(console[method])) {
-					method = "log";
-				}
-				var now = new Date(),
-					time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
-					func = console[method];
-				func.call(console, time + " (ScrollContainer) ->", output);
+				var
+					prefix = "(ScrollContainer) ->",
+					args = Array.prototype.splice.call(arguments, 1),
+					func = Function.prototype.bind.call(debug, window);
+				args.unshift(loglevel, prefix);
+				func.apply(window, args);
 			}
 		}
 
@@ -426,19 +403,19 @@ if (!console['warn']) {
 	     */
 		var checkOptionsValidity = function () {
 			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"duration\": " + _options.duration, "error");
+				log(1, "ERROR: Invalid value for ScrollScene option \"duration\":", _options.duration);
 				_options.duration = DEFAULT_OPTIONS.duration;
 			}
 			if (!$.isNumeric(_options.offset)) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"offset\": " + _options.offset, "error");
+				log(1, "ERROR: Invalid value for ScrollScene option \"offset\":", _options.offset);
 				_options.offset = DEFAULT_OPTIONS.offset;
 			}
 			if (_options.triggerElement != null && $(_options.triggerElement).length == 0) {
-				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found: " + _options.triggerElement, "error");
+				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found:", _options.triggerElement);
 				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
 			}
 			if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": " + _options.triggerHook, "error");
+				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": ", _options.triggerHook);
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
 			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
@@ -451,7 +428,7 @@ if (!console['warn']) {
 						tweenvars = value.vars.css || value.vars,
 						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
 					if (condition) {
-						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!", "warn");
+						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
 						return false;
 					}
 				});
@@ -581,18 +558,16 @@ if (!console['warn']) {
 	     * @private
 	     *
 	     * @param {number} loglevel - The loglevel required to initiate output for the message.
-	     * @param {mixed} output - A String or an object that is supposed to be logged.
-	     * @param {ScrollScene} [method='log'] - The method used for output. Can be 'log', 'error' or 'warn'
+	     * @param {...mixed} output - One or more variables that should be passed to the console.
 	     */
-		var log = function (loglevel, output, method) {
+		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
-				if (!$.isFunction(console[method])) {
-					method = "log";
-				}
-				var now = new Date(),
-					time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
-					func = console[method];
-				func.call(console, time + " (ScrollScene) ->", output);
+				var
+					prefix = "(ScrollScene) ->",
+					args = Array.prototype.splice.call(arguments, 1),
+					func = Function.prototype.bind.call(debug, window);
+				args.unshift(loglevel, prefix);
+				func.apply(window, args);
 			}
 		}
 
@@ -898,7 +873,7 @@ if (!console['warn']) {
 					.add(TweenMaxObject)
 					.pause();
 			} catch (e) {
-				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject", "error");
+				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject");
 			} finally {
 				if (TweenMaxObject.repeat) {
 					if (TweenMaxObject.repeat() === -1) {
@@ -949,7 +924,7 @@ if (!console['warn']) {
 			// validate Element
 			element = $(element).first();
 			if (element.length == 0) {
-				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.", "error");
+				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 				return ScrollScene; // cancel
 			}
 
@@ -1219,7 +1194,7 @@ if (!console['warn']) {
 			if ($.isFunction(callback)) {
 		 		$(document).on($.trim(name.toLowerCase()) + ".ScrollScene", callback);
 			} else {
-				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!", "error");
+				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
 			}
 			return ScrollScene;
 		 }
@@ -1267,5 +1242,39 @@ if (!console['warn']) {
 		construct();
 		return ScrollScene;
 	}
+
+
+	/*
+	 * ----------------------------------------------------------------
+	 * global logging functions and making sure no console errors occur
+	 * ----------------------------------------------------------------
+	 */
+	var
+		console = (window.console = window.console || {}),
+	    loglevels = [
+			"error",
+			"warn",
+			"log"
+		];
+	if (!console['log']) {
+		console.log = $.noop; // no console log, well - do nothing then...
+	}
+	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
+		if (!console[method]) {
+            console[method] = console.log; // prefer .log over nothing
+        }
+	});
+	// global debugging function
+	var debug = function (loglevel) {
+		if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
+		var now = new Date(),
+			time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
+			method = loglevels[loglevel-1],
+			args = Array.prototype.splice.call(arguments, 1),
+			func = Function.prototype.bind.call(console[method], console);
+
+		args.unshift(time);
+		func.apply(console, args);
+	};
 
 })(jQuery);
