@@ -77,7 +77,9 @@
 				$triggerHook = indicators.children(".hook"),
 				$start = indicators.children(".start"),
 				$end = indicators.children(".end"),
-				pos = (controller.info("size") * scene.triggerHook()) - scene.offset(),
+				hookPos = controller.info("size") * scene.triggerHook(),
+				startPos = scene.getTriggerOffset() + scene.offset(),
+				endPos = startPos + scene.duration(),
 				resetCSS = {
 					"border": "none",
 					top: "auto",
@@ -96,14 +98,14 @@
 					"border-top": "1px solid blue",
 					padding: "0 8px 2px 8px",
 					width: 40,
-					top: pos,
+					top: hookPos,
 					right: 15,
 				});
 				// correct if too far down
-				if (pos > controller.info("size")*0.8) {
+				if (hookPos > controller.info("size")*0.8) {
 					$triggerHook
 						.css("border-bottom", "1px solid blue")
-						.css("top", pos - $triggerHook.outerHeight(true))
+						.css("top", hookPos - $triggerHook.outerHeight(true))
 						.css("border-top", "none");
 				}
 				// start
@@ -111,14 +113,14 @@
 					"border-top": "1px solid green",
 					right: 71,
 					padding: "0 8px 0 8px",
-					top: scene.getTriggerOffset()
+					top: startPos
 				})
 				// end
 				$end.css({
 					"border-top": "1px solid red",
 					right: 71,
 					padding: "0 8px 0 8px",
-					top: scene.getTriggerOffset() + scene.duration()
+					top: endPos
 				})
 
 			} else {
@@ -126,14 +128,14 @@
 					"border-left": "1px solid blue",
 					height: 20,
 					padding: "5px 5px 0 5px",
-					left: pos,
+					left: hookPos,
 					bottom: 15
 				});
 				// correct if too far right
-				if (pos > controller.info("size")*0.8) {
+				if (hookPos > controller.info("size")*0.8) {
 					$triggerHook
 						.css("border-right", "1px solid blue")
-						.css("left", pos - $triggerHook.width() - parseFloat($triggerHook.css("padding-left")))
+						.css("left", hookPos - $triggerHook.width() - parseFloat($triggerHook.css("padding-left")))
 						.css("border-left", "none");
 				}
 
@@ -142,14 +144,14 @@
 					"border-left": "1px solid green",
 					bottom: 40,
 					padding: "0 8px 0 8px",
-					left: scene.getTriggerOffset()
+					left: startPos
 				})
 				// end
 				$end.css({
 					"border-left": "1px solid red",
 					bottom: 40,
 					padding: "0 8px 0 8px",
-					left: scene.getTriggerOffset() + scene.duration()
+					left: endPos
 				})
 			}
 		}

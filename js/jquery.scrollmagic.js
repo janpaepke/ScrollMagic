@@ -458,8 +458,8 @@
 					// position after pin
 					css = {
 						position: "absolute",
-						top: _options.duration,
-						left: 0
+						top: _parent.info("vertical") ? _options.duration : 0,
+						left: _parent.info("vertical") ? 0 : _options.duration
 					}
 				} else {
 					// position during pin
@@ -467,7 +467,7 @@
 						spacerOffset = spacer.offset(),
 						fixedPosTop,
 						fixedPosLeft,
-						startPoint = ScrollScene.getTriggerOffset() - _options.offset - (_parent.info("size") * ScrollScene.triggerHook()); // TOTO: make better (when redoing position calculations)
+						startPoint = ScrollScene.getTriggerOffset() + _options.offset - (_parent.info("size") * ScrollScene.triggerHook()); // TOTO: make better (when redoing position calculations)
 
 					if (_parent.info("vertical")) {
 						fixedPosTop = spacerOffset.top - startPoint; // - ScrollScene.startPoint;
@@ -1007,12 +1007,12 @@
 					startPoint = ScrollScene.getTriggerOffset();
 
 					// add optional offset
-					startPoint -= _options.offset;
+					startPoint += _options.offset;
 
 					// TODO: account for the possibility that the parent is a div, not the document
 					// startPoint -= _containerInnerOffset;
 
-					// calculate start point in relation to viewport
+					// take triggerHook into account
 					startPoint -= containerInfo.size * ScrollScene.triggerHook();
 
 					// where will the scene end?

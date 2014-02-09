@@ -63,7 +63,7 @@ section#titlechart #description:after {
 }
 
 .spacer {
-	height: 99px;
+	min-height: 99px;
 	border-top: 1px dotted #7a7fac;
 }
 .horizontal .spacer {
@@ -71,7 +71,7 @@ section#titlechart #description:after {
 	margin-bottom: 0;
 	min-height: auto;
 	border-left: 1px dotted #7a7fac;
-	width: 199px;
+	min-width: 199px;
 	height: 100%;
 	display: inline-block;
 	vertical-align: top;
