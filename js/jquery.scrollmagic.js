@@ -1,7 +1,7 @@
 /*
 	@overview
 	ScrollMagic - The jQuery plugin for doing magical scroll animations
-	by Jan Paepke 2013 (@janpaepke)
+	by Jan Paepke 2014 (@janpaepke)
 
 	Inspired by and partially based on the one and only SUPERSCROLLORAMA by John Polacek (@johnpolacek)
 	johnpolacek.github.com/superscrollorama/
@@ -14,21 +14,21 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: test adding and removing scenes multiple times. (remove, then add back in, etc.)
+// TODO: Add functionality for containers that are not the window and have an offset position (mind pins and containerInnerOffset and the former public var ScrollScene.startPoint)
+// TODO: position calculations: Replace all .offset() usages with custom get bounds (relative to container) <- do this together with functionality
+// TODO: put _curScrollPos update in function and call it on tick, too?
+// TODO: fix pin when reverse=false and scrolling back up mid-scene
+// TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
 // TODO: make examples
-// TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
-// TODO: fix pin when reverse=false and scrolling back up mid-scene
 // TODO: consider neccessity of a Scene.destroy method, that kills and resets everything
 // TODO: consider how the scene should behave, if you start scrolling back up DURING the scene and reverse is false (ATM it will animate backwards)
-// TODO: consider if the controller needs Events
+// TODO: consider if the controller needs Events (like resize)
 // TODO: consider how to better control forward/backward animations (for example have different animations, when scrolling up, than when scrolling down)
 // TODO: consider using 0, -1 and 1 for the scrollDirection instead of "PAUSED", "FORWARD" and "BACKWARD"
 // TODO: consider logs - what should be logged and where
 // TODO: consider if updating Scene immediately, when added to controller may cause problems or might not be desired in some cases
-// TODO: consider better call circumstances for updateContainer. ATM. it's called onTick, but this may not be necessary (performance)
-// TODO: consider setting startPoint and currScrollpoint instead of progress for ScrollScenes (startPoint won't have to be a public var anymore)
 // TODO: consider making public ScrollScene variables private
 
 (function($) {
@@ -72,7 +72,7 @@
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_sceneObjects = [],
 			_updateScenesOnNextTick = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
-			_currScrollPoint = 0,
+			_currScrollPos = 0,
 			_scrollDirection = "PAUSED",
 			_containerInnerOffset = 0,
 			_viewPortSize = 0;
@@ -94,16 +94,39 @@
 				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
 				return; // cancel
 			}
-			// update container vars immediately
-			updateContainer();
+			// update container size immediately
+			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
 			_options.scrollContainer.scroll(function() {
+				var
+					// offset = _options.scrollContainer.offset() || {top: 0, left: 0}, // TODO: kill when containerinneroffset is gone?
+					oldScrollPos = _currScrollPos;
+				_currScrollPos = _options.isVertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
+				var deltaScroll = _currScrollPos - oldScrollPos;
+				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+				// TODO: check usage of inner offset. Not very elegant atm. How to make better? (ineffective anyway atm.)
+				// if (offset.top != 0 || offset.left != 0) { // the container is not the window or document, but a div container
+					// calculate the inner offset of the container, if the scrollcontainer is not at the top left position
+				// 	_containerInnerOffset = (_options.isVertical ? offset.top : offset.left) - _currScrollPos;
+				// } else {
+				// 	_containerInnerOffset = 0;
+				// }
+
 				_updateScenesOnNextTick = true;
 			});
 			_options.scrollContainer.resize(function() {
+				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 				_updateScenesOnNextTick = true;
 			});
-			TweenLite.ticker.addEventListener("tick", onTick);
+
+			// prefer on Ticker, but don't rely on TweenMax for basic functionality
+			try {
+				TweenLite.ticker.addEventListener("tick", onTick);
+			}
+			catch (e) {}
+			finally {
+				window.setInterval(onTick, 30);
+			}
 		};
 
 		/**
@@ -111,7 +134,6 @@
 	     * @private
 	     */
 		var onTick = function () {
-			updateContainer();
 			if (_updateScenesOnNextTick) {
 				if ($.isArray(_updateScenesOnNextTick)) {
 					// update specific scenes
@@ -123,31 +145,6 @@
 					ScrollMagic.updateAllScenes(true);
 				}
 				_updateScenesOnNextTick = false;
-			}
-		};
-
-		/**
-	     * Update container params.
-	     * @private
-	     */
-		var updateContainer = function () {
-			var
-				vertical = _options.isVertical,
-				$container = _options.scrollContainer,
-				offset = $container.offset() || {top: 0, left: 0},
-				oldScrollPoint = _currScrollPoint;
-			
-			_viewPortSize = vertical ? $container.height() : $container.width();
-			_currScrollPoint = vertical ? $container.scrollTop() : $container.scrollLeft();
-			var deltaScroll = _currScrollPoint - oldScrollPoint;
-			_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
-
-			// TODO: check usage of inner offset. Not very elegant atm. How to make better?
-			if (offset.top != 0 || offset.left != 0) { // the container is not the window or document, but a div container
-				// calculate the inner offset of the container, if the scrollcontainer is not at the top left position
-				_containerInnerOffset = (vertical ? offset.top : offset.left) - _currScrollPoint;
-			} else {
-				_containerInnerOffset = 0;
 			}
 		};
 
@@ -227,38 +224,7 @@
 	     */
 		this.updateScene = function (scene, immediately) {
 			if (immediately) {
-				var
-					startPoint,
-					endPoint,
-					newProgress;
-
-				// get the start position
-				startPoint = scene.getTriggerOffset();
-
-				// add optional offset
-				startPoint -= scene.offset();
-
-				// account for the possibility that the parent is a div, not the document
-				startPoint -= _containerInnerOffset;
-
-				// calculate start point in relation to viewport
-				startPoint -= _viewPortSize*scene.triggerHook();
-
-				// where will the scene end?
-				endPoint = startPoint + scene.duration();
-
-				if (scene.duration() > 0) {
-					newProgress = (_currScrollPoint - startPoint)/(endPoint - startPoint);
-				} else {
-					newProgress = _currScrollPoint > startPoint ? 1 : 0;
-				}
-				
-				// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
-				scene.startPoint = startPoint;
-
-				log(3, {"scene" : $.inArray(scene, _sceneObjects)+1, "startPoint" : startPoint, "endPoint" : endPoint,"curScrollPoint" : _currScrollPoint});
-
-				scene.progress(newProgress);
+				scene.update(true);
 			} else {
 				if (!$.isArray(_updateScenesOnNextTick)) {
 					_updateScenesOnNextTick = [];
@@ -289,33 +255,26 @@
 		};
 
 		/**
-		 * Get the scroll mode.
-		 * @public
-		 *
-		 * @returns {boolean} - true if vertical scrolling, false if horizontal.
-		 */
-		this.vertical = function () {
-			return _options.isVertical;
-		};
-
-		/**
-		 * Get the scroll direction.
-		 * @public
-		 *
-		 * @returns {string} - "FORWARD", "REVERSE" or "PAUSED", depending on current scroll direction
-		 */
-		this.scrollDirection = function () {
-			return _scrollDirection;
-		};
-
-		/**
 		 * Get the viewport size.
 		 * @public
 		 *
 		 * @returns {float} - The height or width of the viewport (depending wether we're in horizontal or vertical mode)
 		 */
-		this.viewPortSize = function () {
-			return _viewPortSize;
+		this.info = function (about) {
+			var values = {
+				size: _viewPortSize, // contains height or width (in regard to orientation);
+				scrollPos: _currScrollPos,
+				vertical: _options.isVertical,
+				scrollDirection: _scrollDirection
+			}
+			if (!arguments.length) { // get all as an object
+				return values;
+			} else if (values[about] !== undefined) {
+				return values[about];
+			} else {
+				log(1, "ERROR: option \"" + about + "\" is not available");
+				return;
+			}
 		};
 
 		// INIT
@@ -374,14 +333,6 @@
 			_tween,
 			_pin;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * public vars
-		 * ----------------------------------------------------------------
-		 */
-
-		 // not documented, because this should not be touched by user.
-		 ScrollScene.startPoint = 0;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -422,7 +373,7 @@
 				// check if there are position tweens defined for the trigger and warn about it :)
 				var
 					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
-					vertical = _parent.vertical();
+					vertical = _parent.info("vertical");
 				$.each(triggerTweens, function (index, value) {
 					var
 						tweenvars = value.vars.css || value.vars,
@@ -488,7 +439,7 @@
 	     * Update the pin progress.
 	     * @private
 	     */
-		var updatePinProgress = function () {
+		var updatePinState = function () {
 			// TODO: check/test functionality – especially for horizontal scrolling
 			if (_pin && _parent) {
 				var 
@@ -514,13 +465,15 @@
 					var
 						spacerOffset = spacer.offset(),
 						fixedPosTop,
-						fixedPosLeft;
-					if (_parent.vertical()) {
-						fixedPosTop = spacerOffset.top - ScrollScene.startPoint;
+						fixedPosLeft,
+						startPoint = ScrollScene.getTriggerOffset() - _options.offset - (_parent.info("size") * ScrollScene.triggerHook()); // TOTO: make better (when redoing position calculations)
+
+					if (_parent.info("vertical")) {
+						fixedPosTop = spacerOffset.top - startPoint; // - ScrollScene.startPoint;
 						fixedPosLeft = spacerOffset.left;
 					} else {
 						fixedPosTop = spacerOffset.top;
-						fixedPosLeft = spacerOffset.left - ScrollScene.startPoint;
+						fixedPosLeft = spacerOffset.left - startPoint;// - ScrollScene.startPoint;
 					}
 					// TODO: make sure calculation is correct for all scenarios.
 					css = {
@@ -542,13 +495,13 @@
 			if (_pin && _parent) {
 				if (_pin.data("pushFollowers")) {
 					var spacer = _pin.parent();
-					if (_parent.vertical()) {
+					if (_parent.info("vertical")) {
 						spacer.height(_pin.data("startHeight") + _options.duration);
 					} else {
 						spacer.width(_pin.data("startWidth") + _options.duration);
 					}
 					// UPDATE progress, because when the spacer size is changed it may affect the pin state
-					updatePinProgress();
+					updatePinState();
 				}
 			}
 		}
@@ -808,7 +761,7 @@
 				var
 					doUpdate = false,
 					oldState = _state,
-					scrollDirection = _parent ? _parent.scrollDirection() : "PAUSED";
+					scrollDirection = _parent ? _parent.info("scrollDirection") : "PAUSED";
 				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
@@ -824,6 +777,7 @@
 					_state = 'AFTER';
 				}
 				if (doUpdate) {
+					// fire events
 					var eventVars = {scrollDirection: scrollDirection, state: _state};
 					if (_state != oldState) { // fire state change events
 						if (_state === 'DURING' || _options.duration == 0) {
@@ -835,8 +789,14 @@
 							ScrollScene.dispatch((_state === 'AFTER') ? "start" : "end", eventVars);
 						}
 					}
+
+					// do actual updates
 					updateTweenProgress();
-					updatePinProgress();
+					if (_state != oldState) { // update pins only if something changes
+						updatePinState();
+					}
+
+					// fire some more events
 					ScrollScene.dispatch("progress", {progress: _progress, scrollDirection: scrollDirection});
 					if (_state != oldState) { // fire state change events
 						if ((_state === 'DURING' && scrollDirection === 'REVERSE')|| _state === 'AFTER') {
@@ -850,7 +810,7 @@
 					}
 				}
 
-				log(3, {"progress" : _progress, "state" : _state, "reverse" : _options.reverse});
+				log(3, "Scene Progress", {"progress" : _progress, "state" : _state, "reverse" : _options.reverse});
 
 				return ScrollScene;
 			}
@@ -991,7 +951,7 @@
 					});
 
 			// update the size of the pin Spacer.
-			// this also calls updatePinProgress
+			// this also calls updatePinState
 			updatePinSpacerSize();
 
 			return ScrollScene;
@@ -1013,7 +973,7 @@
 						.attr("style", _pin.data("style"));
 					spacer.remove();
 				} else {
-					var vertical = _parent.vertical();
+					var vertical = _parent.info("vertical");
 					_pin.css({
 						position: "absolute",
 						top: vertical ? _options.duration * _progress : 0,
@@ -1035,7 +995,43 @@
 		 */
 		this.update = function (immediately) {
 			if (_parent) {
-				_parent.updateScene(ScrollScene, immediately);
+				if (immediately) {
+					var
+						containerInfo = _parent.info(),
+						startPoint,
+						endPoint,
+						newProgress;
+
+					// get the start position
+					startPoint = ScrollScene.getTriggerOffset();
+
+					// add optional offset
+					startPoint -= _options.offset;
+
+					// TODO: account for the possibility that the parent is a div, not the document
+					// startPoint -= _containerInnerOffset;
+
+					// calculate start point in relation to viewport
+					startPoint -= containerInfo.size * ScrollScene.triggerHook();
+
+					// where will the scene end?
+					endPoint = startPoint + _options.duration;
+
+					if (_options.duration > 0) {
+						newProgress = (containerInfo.scrollPos - startPoint)/(endPoint - startPoint);
+					} else {
+						newProgress = containerInfo.scrollPos > startPoint ? 1 : 0;
+					}
+					
+					// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
+					// ScrollScene.startPoint = startPoint;
+
+					log(3, "Scene Update", {"startPoint" : startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
+
+					ScrollScene.progress(newProgress);
+				} else {
+					_parent.updateScene(ScrollScene, false);
+				}
 			}
 			return ScrollScene;
 		};
@@ -1089,14 +1085,14 @@
 			if (_parent) {
 				if (_options.triggerElement === null) {
 					// start where the trigger hook starts
-					return _parent.viewPortSize()*ScrollScene.triggerHook();
+					return _parent.info("size") * ScrollScene.triggerHook();
 				} else {
 					// Element as trigger
 					var
 						element = $(_options.triggerElement).first(),
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
 						offset = (pin.get(0) === element.get(0)) ? pin.parent().offset() : element.offset(); // if  pin == trigger -> use spacer instead.
-					return _parent.vertical() ? offset.top : offset.left;
+					return _parent.info("vertical") ? offset.top : offset.left;
 				}
 			} else {
 				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
