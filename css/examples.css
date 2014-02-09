@@ -1,0 +1,134 @@
+body {
+	font-family: "Source Sans Pro", Arial, sans-serif;
+	background-color: #c7e1ff;
+	font-size: 13px;
+}
+body, html {
+	height: 100%
+}
+
+h1, h2, h3, h4 {
+	font-family: "Josefin Slab", serif;
+}
+h1 {
+	font-style: italic;
+	font-weight: bold;
+	font-size: 40px;
+}
+h2 {
+	font-size: 20px;
+}
+
+#content-wrapper {
+	height: 100%;
+}
+#example-wrapper {
+	height: 100%;
+}
+#example-wrapper.horizontal {
+	white-space: nowrap;
+	font-size: 0;  /* fix for spaces between inline block divs */
+}
+#example-wrapper.horizontal div {
+	font-size: 13px;
+}
+#example-wrapper section {
+	min-height: 100%;
+	min-width: 100%;
+}
+
+section#titlechart {
+	text-align: center;
+	position: relative;
+}
+.horizontal section {
+	display: inline-block;
+	vertical-align: top;
+	height: 100%;
+}
+section#titlechart #description {
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	width: 600px;
+	height: 200px;
+	margin: -100px auto auto -300px;
+}
+section#titlechart #description:after {
+	content: "↧";
+	font-size: 40px;
+}
+.horizontal section#titlechart #description:after {
+	content: "↦";
+}
+
+.spacer {
+	height: 99px;
+	border-top: 1px dotted #7a7fac;
+}
+.horizontal .spacer {
+	border-bottom: none;
+	margin-bottom: 0;
+	min-height: auto;
+	border-left: 1px dotted #7a7fac;
+	width: 199px;
+	height: 100%;
+	display: inline-block;
+	vertical-align: top;
+}
+.spacer {
+	text-align: center;
+}
+
+.spacer h1 {
+	padding-top: 26px;
+}
+
+.box1, .box2, .box3 {
+	display: inline-block;
+	position: relative;
+}
+.box1 {
+	width: 100px;
+	height: 100px;
+}
+.box2 {
+	width: 50px;
+	height: 50px;
+}
+.box3 {
+	width: 26px;
+	height: 26px;
+}
+.spacer .box1.center {
+	margin: 0 auto 0 auto;
+}
+.spacer .box2.center {
+	margin: 25px auto 25px auto;
+}
+.spacer .box3.center {
+	margin: 37px auto 37px auto;
+}
+.horizontal .spacer .box1.center {
+	top: 50%;
+	margin: -50px auto auto auto;
+}
+.horizontal .spacer .box2.center {
+	top: 50%;
+	margin: -25px auto auto auto;
+}
+.horizontal .spacer .box3.center {
+	top: 50%;
+	margin: -13px auto auto auto;
+}
+
+
+.red {
+	background-color: #cf3535;
+}
+.green {
+	background-color: #00af10;
+}
+.blue {
+	background-color: #3b3d97;
+}

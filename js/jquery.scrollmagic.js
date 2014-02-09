@@ -32,20 +32,20 @@
 // TODO: consider making public ScrollScene variables private
 
 (function($) {
-     /**
-     * CLASS ScrollMagic (main controller)
-     *
-     * (TODO: Description)
-     *
-     * @constructor
-     *
+	/**
+	 * CLASS ScrollMagic (main controller)
+	 *
+	 * (TODO: Description)
+	 *
+	 * @constructor
+	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
 	 * @param {(string|object)} [options.scrollContainer=$(window)] - A selector or a jQuery object that references the main container for scrolling.
-     * @param {boolean} [options.isVertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
+	 * @param {boolean} [options.isVertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
 	 * @param {object} [options.globalSceneOptions=true] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options @see {@link ScrollScene)
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: silent | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
-     *
-     */
+	 *
+	 */
 	ScrollMagic = function(options) {
 
 		/*
@@ -84,9 +84,9 @@
 		 */
 
 		/**
-	     * Internal constructor function of ScrollMagic
-	     * @private
-	     */
+		 * Internal constructor function of ScrollMagic
+		 * @private
+		 */
 		var construct = function () {
 			_options.scrollContainer = $(_options.scrollContainer).first()
 			// check ScrolContainer
@@ -130,9 +130,9 @@
 		};
 
 		/**
-	     * Handle updates on tick instad of on scroll (performance)
-	     * @private
-	     */
+		* Handle updates on tick instad of on scroll (performance)
+		* @private
+		*/
 		var onTick = function () {
 			if (_updateScenesOnNextTick) {
 				if ($.isArray(_updateScenesOnNextTick)) {
@@ -149,12 +149,12 @@
 		};
 
 		/**
-	     * Send a debug message to the console.
-	     * @private
-	     *
-	     * @param {number} loglevel - The loglevel required to initiate output for the message.
-	     * @param {...mixed} output - One or more variables that should be passed to the console.
-	     */
+		 * Send a debug message to the console.
+		 * @private
+		 *
+		 * @param {number} loglevel - The loglevel required to initiate output for the message.
+		 * @param {...mixed} output - One or more variables that should be passed to the console.
+		 */
 		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
 				var
@@ -173,12 +173,12 @@
 		 */
 
 		/**
-	     * Add a Scene to the controller.
-	     * @public
-	     *
-	     * @param {ScrollScene} scene - The ScollScene to be added.
-	     * @return {ScrollMagic} - Parent object for chaining.
-	     */
+		 * Add a Scene to the controller.
+		 * @public
+		 *
+		 * @param {ScrollScene} scene - The ScollScene to be added.
+		 * @return {ScrollMagic} - Parent object for chaining.
+		 */
 		this.addScene = function (ScrollScene) {
 			if (ScrollScene.parent() != ScrollMagic) {
 				ScrollScene.addTo(ScrollMagic);
@@ -215,13 +215,13 @@
 
 
 		/**
-	     * Update a specific scene according to the scroll position of the container.
-	     * @public
-	     *
-	     * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
-	     * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
-	     * @return {ScrollMagic} Parent object for chaining.
-	     */
+		 * Update a specific scene according to the scroll position of the container.
+		 * @public
+		 *
+		 * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
+		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
+		 * @return {ScrollMagic} Parent object for chaining.
+		 */
 		this.updateScene = function (scene, immediately) {
 			if (immediately) {
 				scene.update(true);
@@ -237,12 +237,12 @@
 		};
 
 		/**
-	     * Update all scenes according to their scroll position within the container.
-	     * @public
-	     *
-	     * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
-	     * @return {ScrollMagic} Parent object for chaining.
-	     */
+		 * Update all scenes according to their scroll position within the container.
+		 * @public
+		 *
+		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
+		 * @return {ScrollMagic} Parent object for chaining.
+		 */
 		this.updateAllScenes = function (immediately) {
 			if (immediately) {
 				$.each(_sceneObjects, function (index, scene) {
@@ -265,7 +265,8 @@
 				size: _viewPortSize, // contains height or width (in regard to orientation);
 				scrollPos: _currScrollPos,
 				vertical: _options.isVertical,
-				scrollDirection: _scrollDirection
+				scrollDirection: _scrollDirection,
+				container: _options.scrollContainer
 			}
 			if (!arguments.length) { // get all as an object
 				return values;
@@ -284,20 +285,20 @@
 
 
 	/**
-     * CLASS ScrollScene (scene controller)
-     *
-     * @constructor
-     *
-     * @param {object} [options] - Options for the Scene. (Can be changed lateron)
-     * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
-     * @param {number} [options.offset=0] - Offset Value for the Trigger Position
-     * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
-     * @param {(float|string)} [options.triggerHook="onCenter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
-     * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
-     * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
-     * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
-     * 
-     */
+	 * CLASS ScrollScene (scene controller)
+	 *
+	 * @constructor
+	 *
+	 * @param {object} [options] - Options for the Scene. (Can be changed lateron)
+	 * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
+	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position
+	 * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
+	 * @param {(float|string)} [options.triggerHook="onCenter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
+	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
+	 * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
+	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
+	 * 
+	 */
 	ScrollScene = function (options) {
 
 		/*
@@ -341,17 +342,17 @@
 		 */
 
 		/**
-	     * Internal constructor function of ScrollMagic
-	     * @private
-	     */
+		 * Internal constructor function of ScrollMagic
+		 * @private
+		 */
 		var construct = function () {
 			checkOptionsValidity();
 		};
 
 		/**
-	     * Check the validity of all options and reset to default if neccessary.
-	     * @private
-	     */
+		 * Check the validity of all options and reset to default if neccessary.
+		 * @private
+		 */
 		var checkOptionsValidity = function () {
 			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"duration\":", _options.duration);
@@ -388,12 +389,12 @@
 		};
 
 		/**
-	     * Update the tween progress.
-	     * @private
-	     *
-	     * @param {number} [to] - If not set the scene Progress will be used. (most cases)
-	     * @return {boolean} true if the Tween was updated. 
-	     */
+		 * Update the tween progress.
+		 * @private
+		 *
+		 * @param {number} [to] - If not set the scene Progress will be used. (most cases)
+		 * @return {boolean} true if the Tween was updated. 
+		 */
 		var updateTweenProgress = function (to) {
 			var progress = (to > 0 && to < 1) ? to : _progress;
 			if (_tween) {
@@ -436,9 +437,9 @@
 		};
 
 		/**
-	     * Update the pin progress.
-	     * @private
-	     */
+		 * Update the pin progress.
+		 * @private
+		 */
 		var updatePinState = function () {
 			// TODO: check/test functionality – especially for horizontal scrolling
 			if (_pin && _parent) {
@@ -507,12 +508,12 @@
 		}
 
 		/**
-	     * Send a debug message to the console.
-	     * @private
-	     *
-	     * @param {number} loglevel - The loglevel required to initiate output for the message.
-	     * @param {...mixed} output - One or more variables that should be passed to the console.
-	     */
+		 * Send a debug message to the console.
+		 * @private
+		 *
+		 * @param {number} loglevel - The loglevel required to initiate output for the message.
+		 * @param {...mixed} output - One or more variables that should be passed to the console.
+		 */
 		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
 				var
@@ -534,7 +535,7 @@
 		 * Get parent controller.
 		 * @public
 		 *
-		 * @returns {(number|object)}
+		 * @returns {ScrollMagic} Parent controller or null
 		 */
 		this.parent = function () {
 			return _parent;
@@ -1108,76 +1109,76 @@
 		 */
 		
 		/**
-	     * Scene start event.
-	     * Fires whenever the scroll position its the starting point of the scene.
-	     * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
-	     *
-	     * @event ScrollScene.start
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {string} event.state - The new state of the scene. Will be "DURING" or "BEFORE"
-	     * @property {string} event.scrollDirection - Indicates wether we hit the start position into the scene ("FORWARD") or backing up and scrolling out of it ("REVERSE").
-	     */
+		 * Scene start event.
+		 * Fires whenever the scroll position its the starting point of the scene.
+		 * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
+		 *
+		 * @event ScrollScene.start
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {string} event.state - The new state of the scene. Will be "DURING" or "BEFORE"
+		 * @property {string} event.scrollDirection - Indicates wether we hit the start position into the scene ("FORWARD") or backing up and scrolling out of it ("REVERSE").
+		 */
 		/**
-	     * Scene end event.
-	     * Fires whenever the scroll position its the ending point of the scene.
-	     * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
-	     *
-	     * @event ScrollScene.end
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {string} event.state - The new state of the scene. Will be "AFTER" or "DURING"
-	     * @property {string} event.scrollDirection - Indicates wether we hit the end position scrolling out of the scene ("FORWARD") or backing up into it ("REVERSE").
-	     */
+		 * Scene end event.
+		 * Fires whenever the scroll position its the ending point of the scene.
+		 * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
+		 *
+		 * @event ScrollScene.end
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {string} event.state - The new state of the scene. Will be "AFTER" or "DURING"
+		 * @property {string} event.scrollDirection - Indicates wether we hit the end position scrolling out of the scene ("FORWARD") or backing up into it ("REVERSE").
+		 */
 		/**
-	     * Scene enter event.
-	     * Fires whenever the scene enters the "DURING" state.
-	     * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
-	     *
-	     * @event ScrollScene.enter
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {string} event.state - The new state of the scene. Will always be "DURING" (only included for consistency)
-	     * @property {string} event.scrollDirection - Indicates from what side we enter the Scene. ("FORWARD") => from the top/left, ("REVERSE") => from the bottom/right.
-	     */
+		 * Scene enter event.
+		 * Fires whenever the scene enters the "DURING" state.
+		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
+		 *
+		 * @event ScrollScene.enter
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {string} event.state - The new state of the scene. Will always be "DURING" (only included for consistency)
+		 * @property {string} event.scrollDirection - Indicates from what side we enter the Scene. ("FORWARD") => from the top/left, ("REVERSE") => from the bottom/right.
+		 */
 		/**
-	     * Scene leave event.
-	     * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
-	     * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
-	     *
-	     * @event ScrollScene.leave
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {string} event.state - The new state of the scene. Will be "AFTER" or "BEFORE"
-	     * @property {string} event.scrollDirection - Indicates towards which side we leave the Scene. ("FORWARD") => going to state "BEFORE", ("REVERSE") => going to state "AFTER"
-	     */
+		 * Scene leave event.
+		 * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".
+		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+		 *
+		 * @event ScrollScene.leave
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {string} event.state - The new state of the scene. Will be "AFTER" or "BEFORE"
+		 * @property {string} event.scrollDirection - Indicates towards which side we leave the Scene. ("FORWARD") => going to state "BEFORE", ("REVERSE") => going to state "AFTER"
+		 */
 		/**
-	     * Scene progress event.
-	     * Fires whenever the progress of the scene changes.
-	     *
-	     * @event ScrollScene.progress
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {number} event.progress - Reflects the current progress of the scene.
-	     * @property {string} event.scrollDirection - Indicates which way we are scrolling "FORWARD" or "REVERSE"
-	     */
+		 * Scene progress event.
+		 * Fires whenever the progress of the scene changes.
+		 *
+		 * @event ScrollScene.progress
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {number} event.progress - Reflects the current progress of the scene.
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "FORWARD" or "REVERSE"
+		 */
 		/**
-	     * Scene change event.
-	     * Fires whenvever a property of the scene is changed.
-	     *
-	     * @event ScrollScene.change
-	     *
-	     * @property {object} event - The event Object passed to each callback.
-	     * @property {string} event.type - The unique name of the event.
-	     * @property {string} event.what - Indicates what value has been changed.
-	     */
+		 * Scene change event.
+		 * Fires whenvever a property of the scene is changed.
+		 *
+		 * @event ScrollScene.change
+		 *
+		 * @property {object} event - The event Object passed to each callback.
+		 * @property {string} event.type - The unique name of the event.
+		 * @property {string} event.what - Indicates what value has been changed.
+		 */
 		 
-	     /**
+		 /**
 		 * Add an event listener.
 		 * The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.
 		 * @public
@@ -1209,7 +1210,7 @@
 		 	return ScrollScene;
 		 }
 
-	     /**
+		 /**
 		 * Trigger an event.
 		 * @public
 		 *
@@ -1237,7 +1238,7 @@
 		// INIT
 		construct();
 		return ScrollScene;
-	}
+	};
 
 
 	/*
@@ -1247,7 +1248,7 @@
 	 */
 	var
 		console = (window.console = window.console || {}),
-	    loglevels = [
+		loglevels = [
 			"error",
 			"warn",
 			"log"
@@ -1257,8 +1258,8 @@
 	}
 	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
 		if (!console[method]) {
-            console[method] = console.log; // prefer .log over nothing
-        }
+			console[method] = console.log; // prefer .log over nothing
+		}
 	});
 	// global debugging function
 	var debug = function (loglevel) {
