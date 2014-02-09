@@ -292,7 +292,7 @@
      * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
      * @param {number} [options.offset=0] - Offset Value for the Trigger Position
      * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
-     * @param {(float|string)} [options.triggerHook="onEnter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
+     * @param {(float|string)} [options.triggerHook="onCenter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
      * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
      * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
      * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
@@ -307,7 +307,7 @@
 		 */
 
 		var
-			TRIGGER_HOOK_STRINGS = ["onEnter", "onCenter", "onLeave"],
+			TRIGGER_HOOK_STRINGS = ["onCenter", "onEnter", "onLeave"],
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
