@@ -14,7 +14,7 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: fix pin when reverse=false and scrolling back up mid-scene
+// TODO: Check Pin Positioning with scrollcontainers with offsets
 // TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
@@ -27,6 +27,7 @@
 // TODO: consider logs - what should be logged and where
 // TODO: consider if updating Scene immediately, when added to controller may cause problems or might not be desired in some cases
 // TODO: consider making public ScrollScene variables private
+// TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 
 (function($) {
 	/**
@@ -383,7 +384,7 @@
 		 * @return {boolean} true if the Tween was updated. 
 		 */
 		var updateTweenProgress = function (to) {
-			var progress = (to > 0 && to < 1) ? to : _progress;
+			var progress = (to >= 0 && to <= 1) ? to : _progress;
 			if (_tween) {
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
@@ -424,49 +425,45 @@
 		};
 
 		/**
-		 * Update the pin progress.
+		 * Update the pin state.
 		 * @private
 		 */
-		var updatePinState = function () {
-			// TODO: check/test functionality – especially for horizontal scrolling
+		var updatePinState = function (to) {
+			var state = ($.type(to) === "string") ? to : _state;
 			if (_pin && _parent) {
 				var 
 					css,
-					spacer =  _pin.parent();
+					spacer =  _pin.parent(),
+					vertical = _parent.info("vertical");
 
-				if (_state === "BEFORE") {
-					// original position
-					css = {
-						position: "absolute",
-						top: 0,
-						left: 0
-					}
-				} else if (_state === "AFTER" && _options.duration > 0) { // if duration is 0 - we just never unpin
-					// position after pin
-					css = {
-						position: "absolute",
-						top: _parent.info("vertical") ? _options.duration : 0,
-						left: _parent.info("vertical") ? 0 : _options.duration
-					}
-				} else {
-					// position during pin
+				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
+					// pinned
 					var
 						spacerOffset = spacer.offset(),
 						fixedPosTop,
 						fixedPosLeft;
 
-					if (_parent.info("vertical")) {
+					if (vertical) {
 						fixedPosTop = spacerOffset.top - _startPoint;
 						fixedPosLeft = spacerOffset.left;
 					} else {
 						fixedPosTop = spacerOffset.top;
 						fixedPosLeft = spacerOffset.left - _startPoint;
 					}
-					// TODO: make sure calculation is correct for all scenarios.
+
 					css = {
 						position: "fixed",
 						top: fixedPosTop,
 						left: fixedPosLeft
+					}
+				} else {
+					// unpinned
+					var
+						pos = (state === "BEFORE") ? 0 : _options.duration;
+					css = {
+						position: "absolute",
+						top: vertical ? pos : 0,
+						left: vertical ? 0 : pos
 					}
 				}
 				_pin.css(css);
@@ -752,16 +749,18 @@
 				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
-					doUpdate = true;
 					_state = 'BEFORE';
+					doUpdate = true;
 				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
 					_progress = progress;
-					doUpdate = true;
 					_state = 'DURING';
+					doUpdate = true;
 				} else if (progress >= 1 && _state !== 'AFTER') {
 					_progress = 1;
-					doUpdate = true;
 					_state = 'AFTER';
+					doUpdate = true;
+				} else if (_state === "DURING") { // WORKAROUND (see TODOs): only occurs when reverse is false, otherwise it would be cought above.
+					updatePinState(progress <= 0 ? "BEFORE" : "DURING"); // do a hard update of the pin
 				}
 				if (doUpdate) {
 					// fire events
