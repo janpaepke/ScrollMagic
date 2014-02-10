@@ -14,9 +14,6 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: Add functionality for containers that are not the window and have an offset position (mind pins and containerInnerOffset and the former public var ScrollScene.startPoint)
-// TODO: position calculations: Replace all .offset() usages with custom get bounds (relative to container) <- do this together with functionality
-// TODO: put _curScrollPos update in function and call it on tick, too?
 // TODO: fix pin when reverse=false and scrolling back up mid-scene
 // TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
 // TODO: test / implement mobile capabilities
@@ -74,7 +71,6 @@
 			_updateScenesOnNextTick = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 			_currScrollPos = 0,
 			_scrollDirection = "PAUSED",
-			_containerInnerOffset = 0,
 			_viewPortSize = 0;
 
 		/*
@@ -97,24 +93,14 @@
 			// update container size immediately
 			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
-			_options.scrollContainer.scroll(function() {
-				var
-					// offset = _options.scrollContainer.offset() || {top: 0, left: 0}, // TODO: kill when containerinneroffset is gone?
-					oldScrollPos = _currScrollPos;
+			_options.scrollContainer.on("scroll", function(e) {
+				var oldScrollPos = _currScrollPos;
 				_currScrollPos = _options.isVertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
 				var deltaScroll = _currScrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
-				// TODO: check usage of inner offset. Not very elegant atm. How to make better? (ineffective anyway atm.)
-				// if (offset.top != 0 || offset.left != 0) { // the container is not the window or document, but a div container
-					// calculate the inner offset of the container, if the scrollcontainer is not at the top left position
-				// 	_containerInnerOffset = (_options.isVertical ? offset.top : offset.left) - _currScrollPos;
-				// } else {
-				// 	_containerInnerOffset = 0;
-				// }
-
 				_updateScenesOnNextTick = true;
 			});
-			_options.scrollContainer.resize(function() {
+			_options.scrollContainer.on("resize", function(e) {
 				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 				_updateScenesOnNextTick = true;
 			});
@@ -330,6 +316,7 @@
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
+			_startPoint = 0, // recalculated on update
 			_parent = null,
 			_tween,
 			_pin;
@@ -466,15 +453,14 @@
 					var
 						spacerOffset = spacer.offset(),
 						fixedPosTop,
-						fixedPosLeft,
-						startPoint = ScrollScene.getTriggerOffset() + _options.offset - (_parent.info("size") * ScrollScene.triggerHook()); // TOTO: make better (when redoing position calculations)
+						fixedPosLeft;
 
 					if (_parent.info("vertical")) {
-						fixedPosTop = spacerOffset.top - startPoint; // - ScrollScene.startPoint;
+						fixedPosTop = spacerOffset.top - _startPoint;
 						fixedPosLeft = spacerOffset.left;
 					} else {
 						fixedPosTop = spacerOffset.top;
-						fixedPosLeft = spacerOffset.left - startPoint;// - ScrollScene.startPoint;
+						fixedPosLeft = spacerOffset.left - _startPoint;
 					}
 					// TODO: make sure calculation is correct for all scenarios.
 					css = {
@@ -999,35 +985,34 @@
 				if (immediately) {
 					var
 						containerInfo = _parent.info(),
-						startPoint,
 						endPoint,
 						newProgress;
 
 					// get the start position
-					startPoint = ScrollScene.getTriggerOffset();
+					_startPoint = ScrollScene.getTriggerOffset();
 
 					// add optional offset
-					startPoint += _options.offset;
+					_startPoint += _options.offset;
 
 					// TODO: account for the possibility that the parent is a div, not the document
 					// startPoint -= _containerInnerOffset;
 
 					// take triggerHook into account
-					startPoint -= containerInfo.size * ScrollScene.triggerHook();
+					_startPoint -= containerInfo.size * ScrollScene.triggerHook();
 
 					// where will the scene end?
-					endPoint = startPoint + _options.duration;
+					endPoint = _startPoint + _options.duration;
 
 					if (_options.duration > 0) {
-						newProgress = (containerInfo.scrollPos - startPoint)/(endPoint - startPoint);
+						newProgress = (containerInfo.scrollPos - _startPoint)/(endPoint - _startPoint);
 					} else {
-						newProgress = containerInfo.scrollPos > startPoint ? 1 : 0;
+						newProgress = containerInfo.scrollPos > _startPoint ? 1 : 0;
 					}
 					
 					// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
 					// ScrollScene.startPoint = startPoint;
 
-					log(3, "Scene Update", {"startPoint" : startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
+					log(3, "Scene Update", {"startPoint" : _startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
 
 					ScrollScene.progress(newProgress);
 				} else {
@@ -1092,8 +1077,21 @@
 					var
 						element = $(_options.triggerElement).first(),
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
-						offset = (pin.get(0) === element.get(0)) ? pin.parent().offset() : element.offset(); // if  pin == trigger -> use spacer instead.
-					return _parent.info("vertical") ? offset.top : offset.left;
+						containerOffset = _parent.info("container").offset() || {top: 0, left: 0},
+						triggerOffset;
+
+					if (pin.get(0) === element.get(0)) { // if  pin == trigger -> use spacer instead.	
+						triggerOffset = pin.parent().offset(); // spacer
+					} else {
+						triggerOffset = element.offset(); // trigger element
+					}
+
+					if ($.contains(document, _parent.info("container").get(0))) { // not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+						containerOffset.top -= _parent.info("scrollPos");
+						containerOffset.left -= _parent.info("scrollPos");
+					}
+
+					return _parent.info("vertical") ? triggerOffset.top - containerOffset.top : triggerOffset.left - containerOffset.left;
 				}
 			} else {
 				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
@@ -1273,5 +1271,62 @@
 		args.unshift(time);
 		func.apply(console, args);
 	};
+
+	/*
+	 * ----------------------------------------------------------------
+	 * helpers
+	 * ----------------------------------------------------------------
+	 */
+
+	// TODO: Kill?
+	function getBounds ($obj, inViewport) {
+		var 
+			bounds = {
+				width: 0,
+				height: 0,
+				top: 0,
+				left: 0,
+				bottom: 0,
+				right: 0
+			};
+
+		if ($obj.length > 0) {
+			var
+				obj = $obj.get(0),
+				scrollTop = Math.max(window.pageYOffset || 0, document.documentElement.scrollTop || 0, window.scrollY || 0, document.body.scrollTop || 0),
+				scrollLeft = Math.max(window.pageXOffset || 0, document.documentElement.scrollLeft || 0, window.scrollX || 0, document.body.scrollLeft || 0);
+
+			if (obj.getBoundingClientRect) { // check if available
+				var
+					rect = obj.getBoundingClientRect();
+
+				bounds = {
+					top: rect.top + scrollTop,
+					left: rect.left + scrollLeft,
+					width: rect.width,
+					height: rect.height
+				};
+			} else { // fall back to jquery
+				bounds = $obj.offset();
+			}
+			// add width and hight (fallback for stupid IE8)
+			if (!bounds.width) {
+				bounds.width = $obj.width();
+			}
+			if (!bounds.height) {
+				bounds.height = $obj.height();
+			}
+
+			if (inViewport) { // correct if should be in relation to viewport
+				bounds.top = bounds.top - scrollTop;
+				bounds.left = bounds.left - scrollLeft;
+			}
+
+			// add bottom / right bounds
+			bounds.bottom = bounds.top + bounds.height;
+			bounds.right = bounds.left + bounds.width;
+		}
+		return bounds;
+	}
 
 })(jQuery);

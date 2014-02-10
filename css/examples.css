@@ -19,10 +19,28 @@ h2 {
 	font-size: 20px;
 }
 
-#content-wrapper {
+#content-wrapper, #example-wrapper {
 	height: 100%;
 }
-#example-wrapper {
+#example-wrapper.scrollContainer {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 100%
+}
+#example-wrapper .scrollContent {
+	height: 100%;
+}
+
+#example-wrapper.horizontal.scrollContainer {
+	overflow-y: hidden;
+	overflow-x: scroll;
+}
+#example-wrapper.scrollContainer .scrollContent {
+	width: 100%;
+	height: auto;
+}
+#example-wrapper.scrollContainer.horizontal .scrollContent {
+	width: auto;
 	height: 100%;
 }
 #example-wrapper.horizontal {
@@ -33,7 +51,8 @@ h2 {
 	font-size: 13px;
 }
 #example-wrapper section {
-	min-height: 100%;
+	height: 100%;
+	min-height: 500px;
 	min-width: 100%;
 }
 
