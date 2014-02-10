@@ -193,8 +193,6 @@
 			return ScrollMagic;
 		};
 
-
-
 		/**
 		 * Update a specific scene according to the scroll position of the container.
 		 * @public
@@ -332,6 +330,24 @@
 		};
 
 		/**
+		 * Send a debug message to the console.
+		 * @private
+		 *
+		 * @param {number} loglevel - The loglevel required to initiate output for the message.
+		 * @param {...mixed} output - One or more variables that should be passed to the console.
+		 */
+		var log = function (loglevel, output) {
+			if (_options.loglevel >= loglevel) {
+				var
+					prefix = "(ScrollScene) ->",
+					args = Array.prototype.splice.call(arguments, 1),
+					func = Function.prototype.bind.call(debug, window);
+				args.unshift(loglevel, prefix);
+				func.apply(window, args);
+			}
+		}
+
+		/**
 		 * Check the validity of all options and reset to default if neccessary.
 		 * @private
 		 */
@@ -367,7 +383,6 @@
 					}
 				});
 			}
-
 		};
 
 		/**
@@ -484,27 +499,9 @@
 			}
 		}
 
-		/**
-		 * Send a debug message to the console.
-		 * @private
-		 *
-		 * @param {number} loglevel - The loglevel required to initiate output for the message.
-		 * @param {...mixed} output - One or more variables that should be passed to the console.
-		 */
-		var log = function (loglevel, output) {
-			if (_options.loglevel >= loglevel) {
-				var
-					prefix = "(ScrollScene) ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
-				args.unshift(loglevel, prefix);
-				func.apply(window, args);
-			}
-		}
-
 		/*
 		 * ----------------------------------------------------------------
-		 * public functions
+		 * public functions (getters/setters)
 		 * ----------------------------------------------------------------
 		 */
 
@@ -712,7 +709,98 @@
 			}
 			return ScrollScene;
 		};
+		
+		/**
+		 * Get the trigger offset.
+		 * (always numerical, whereas triggerElement can be a jQuery/HTML object or nothing)
+		 * @public
+		 *
+		 * @returns {number} Numeric trigger offset, in relation to scroll direction
+		 */
+		this.triggerOffset = function () {
+			if (_parent) {
+				if (_options.triggerElement === null) {
+					// start where the trigger hook starts
+					return _parent.info("size") * ScrollScene.triggerHook();
+				} else {
+					// Element as trigger
+					var
+						element = $(_options.triggerElement).first(),
+						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
+						containerOffset = _parent.info("container").offset() || {top: 0, left: 0},
+						elementOffset;
 
+					if (pin.get(0) === element.get(0)) { // if  pin == trigger -> use spacer instead.	
+						elementOffset = pin.parent().offset(); // spacer
+					} else {
+						elementOffset = element.offset(); // trigger element
+					}
+
+					if ($.contains(document, _parent.info("container").get(0))) { // not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+						containerOffset.top -= _parent.info("scrollPos");
+						containerOffset.left -= _parent.info("scrollPos");
+					}
+
+					return _parent.info("vertical") ? elementOffset.top - containerOffset.top : elementOffset.left - containerOffset.left;
+				}
+			} else {
+				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
+				return 0;
+			}
+		};
+
+		/*
+		 * ----------------------------------------------------------------
+		 * public functions (scene modification)
+		 * ----------------------------------------------------------------
+		 */
+
+		/**
+		 * Update the Scene in the parent Controller
+		 * Can also be achieved using controller.update(scene);
+		 * @public
+		 *
+		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
+		 * @returns {ScrollScene}
+		 */
+		this.update = function (immediately) {
+			if (_parent) {
+				if (immediately) {
+					var
+						containerInfo = _parent.info(),
+						endPoint,
+						newProgress;
+
+					// get the start position
+					_startPoint = ScrollScene.triggerOffset();
+
+					// add optional offset
+					_startPoint += _options.offset;
+
+					// take triggerHook into account
+					_startPoint -= containerInfo.size * ScrollScene.triggerHook();
+
+					// where will the scene end?
+					endPoint = _startPoint + _options.duration;
+
+					if (_options.duration > 0) {
+						newProgress = (containerInfo.scrollPos - _startPoint)/(endPoint - _startPoint);
+					} else {
+						newProgress = containerInfo.scrollPos > _startPoint ? 1 : 0;
+					}
+					
+					// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
+					// ScrollScene.startPoint = startPoint;
+
+					log(3, "Scene Update", {"startPoint" : _startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
+
+					ScrollScene.progress(newProgress);
+				} else {
+					_parent.updateScene(ScrollScene, false);
+				}
+			}
+			return ScrollScene;
+		};
 
 		/**
 		 * Get Scene progress (0 - 1). 
@@ -846,7 +934,6 @@
 			return ScrollScene;
 		};
 
-
 		/**
 		 * Pin an element for the duration of the tween.
 		 * @public
@@ -964,54 +1051,29 @@
 			}
 			return ScrollScene;
 		};
-		
+
 		/**
-		 * Update the Scene in the parent Controller
-		 * Can also be achieved using controller.update(scene);
+		 * Add the scene to a controller.
+		 * Can also be achieved using controller.addScene(scene);
 		 * @public
 		 *
-		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
+		 * @param {ScrollMagic} controller - The controller to which the scene should be added.
 		 * @returns {ScrollScene}
 		 */
-		this.update = function (immediately) {
-			if (_parent) {
-				if (immediately) {
-					var
-						containerInfo = _parent.info(),
-						endPoint,
-						newProgress;
-
-					// get the start position
-					_startPoint = ScrollScene.getTriggerOffset();
-
-					// add optional offset
-					_startPoint += _options.offset;
-
-					// take triggerHook into account
-					_startPoint -= containerInfo.size * ScrollScene.triggerHook();
-
-					// where will the scene end?
-					endPoint = _startPoint + _options.duration;
-
-					if (_options.duration > 0) {
-						newProgress = (containerInfo.scrollPos - _startPoint)/(endPoint - _startPoint);
-					} else {
-						newProgress = containerInfo.scrollPos > _startPoint ? 1 : 0;
-					}
-					
-					// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
-					// ScrollScene.startPoint = startPoint;
-
-					log(3, "Scene Update", {"startPoint" : _startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
-
-					ScrollScene.progress(newProgress);
-				} else {
-					_parent.updateScene(ScrollScene, false);
+		this.addTo = function (controller) {
+			if (_parent != controller) {
+				// new parent
+				if (_parent) { // I had a parent before, so remove it...
+					_parent.removeScene(ScrollScene);
 				}
+				_parent = controller;
+				checkOptionsValidity();
+				updatePinSpacerSize();
+				controller.addScene(ScrollScene);
+				return ScrollScene;
 			}
-			return ScrollScene;
 		};
-		
+
 		/**
 		 * Remove the scene from its parent controller.
 		 * Can also be achieved using controller.removeScene(scene);
@@ -1042,68 +1104,6 @@
 			this.off("start end enter leave progress change")
 			return null;
 		};
-
-		/**
-		 * Add the scene to a controller.
-		 * Can also be achieved using controller.addScene(scene);
-		 * @public
-		 *
-		 * @param {ScrollMagic} controller - The controller to which the scene should be added.
-		 * @returns {ScrollScene}
-		 */
-		this.addTo = function (controller) {
-			if (_parent != controller) {
-				// new parent
-				if (_parent) { // I had a parent before, so remove it...
-					_parent.removeScene(ScrollScene);
-				}
-				_parent = controller;
-				checkOptionsValidity();
-				updatePinSpacerSize();
-				controller.addScene(ScrollScene);
-				return ScrollScene;
-			}
-		};
-		
-		/**
-		 * Return the trigger offset.
-		 * (always numerical, whereas triggerElement can be a jQuery/HTML object or nothing)
-		 * @public
-		 *
-		 * @returns {number} Numeric trigger offset, in relation to scroll direction
-		 */
-		this.getTriggerOffset = function () {
-			if (_parent) {
-				if (_options.triggerElement === null) {
-					// start where the trigger hook starts
-					return _parent.info("size") * ScrollScene.triggerHook();
-				} else {
-					// Element as trigger
-					var
-						element = $(_options.triggerElement).first(),
-						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
-						containerOffset = _parent.info("container").offset() || {top: 0, left: 0},
-						triggerOffset;
-
-					if (pin.get(0) === element.get(0)) { // if  pin == trigger -> use spacer instead.	
-						triggerOffset = pin.parent().offset(); // spacer
-					} else {
-						triggerOffset = element.offset(); // trigger element
-					}
-
-					if ($.contains(document, _parent.info("container").get(0))) { // not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-						containerOffset.top -= _parent.info("scrollPos");
-						containerOffset.left -= _parent.info("scrollPos");
-					}
-
-					return _parent.info("vertical") ? triggerOffset.top - containerOffset.top : triggerOffset.left - containerOffset.left;
-				}
-			} else {
-				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
-				return 0;
-			}
-		};
-
 
 		/*
 		 * ----------------------------------------------------------------
@@ -1235,9 +1235,6 @@
 			return ScrollScene;
 		 }
 
-
-
-
 		// INIT
 		construct();
 		return ScrollScene;
@@ -1256,7 +1253,7 @@
 			"warn",
 			"log"
 		];
-	if (!console['log']) {
+	if (!console.log) {
 		console.log = $.noop; // no console log, well - do nothing then...
 	}
 	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
