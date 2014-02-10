@@ -250,8 +250,8 @@
 		this.info = function (about) {
 			var values = {
 				size: _viewPortSize, // contains height or width (in regard to orientation);
-				scrollPos: _currScrollPos,
 				vertical: _options.isVertical,
+				scrollPos: _currScrollPos,
 				scrollDirection: _scrollDirection,
 				container: _options.scrollContainer
 			}
@@ -282,7 +282,7 @@
 	 * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
 	 * @param {(float|string)} [options.triggerHook="onCenter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
-	 * @param {boolean} [options.smoothTweening=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
+	 * @param {boolean} [options.tweenProgress=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
 	 * 
 	 */
@@ -302,7 +302,7 @@
 				triggerElement: null,
 				triggerHook: TRIGGER_HOOK_STRINGS[0],
 				reverse: true,
-				smoothTweening: false,
+				tweenProgress: false,
 				loglevel: 2
 			};
 
@@ -390,7 +390,6 @@
 					// infinite loop, so not in relation to progress
 					if ((_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) && _tween.paused()) {
 						_tween.play();
-						// TODO: optional: think about running the animation in reverse (.reverse()) when starting scene from bottom. Desired behaviour? Might require tween.yoyo() to be true
 					} else if (_state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
 					} else {
@@ -406,13 +405,14 @@
 							_tween.reverse();
 						}
 					} else {
+						var TweenProgress = progress * _tween.duration();
 						// go to a specific point in time
-						if (_options.smoothTweening) {
+						if (_options.tweenProgress) {
 							// go smooth
-							_tween.tweenTo(progress * _tween.duration());
+							_tween.tweenTo(TweenProgress);
 						} else {
 							// just hard set it
-							_tween.progress(progress).pause();
+							_tween.pause(TweenProgress);
 						}
 					}
 				} else {
@@ -670,25 +670,25 @@
 		};
 
 		/**
-		 * Get smoothTweening option value.
+		 * Get tweenProgress option value.
 		 * @public
 		 *
 		 * @returns {boolean}
 		 *//**
-		 * Set smoothTweening option value.
+		 * Set tweenProgress option value.
 		 * @public
 		 *
 		 * @fires ScrollScene.change
-		 * @param {boolean} newSmoothTweening - The new smoothTweening setting of the scene.
+		 * @param {boolean} newTweenProgress - The new tweenProgress setting of the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.smoothTweening = function (newSmoothTweening) {
+		this.tweenProgress = function (newTweenProgress) {
 			if (!arguments.length) { // get
-				return _options.smoothTweening;
-			} else if (_options.smoothTweening != newSmoothTweening) { // set
-				_options.smoothTweening = newSmoothTweening;
+				return _options.tweenProgress;
+			} else if (_options.tweenProgress != newTweenProgress) { // set
+				_options.tweenProgress = newTweenProgress;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "smoothTweening"}); // fire event
+				ScrollScene.dispatch("change", {what: "tweenProgress"}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -821,10 +821,11 @@
 			} catch (e) {
 				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject");
 			} finally {
-				if (TweenMaxObject.repeat) {
+				// some propertties need to be transfered it to the wrapper, otherwise they would get lost.
+				if (TweenMaxObject.repeat) { // TweenMax or TimelineMax Object?
 					if (TweenMaxObject.repeat() === -1) {
-						// if the tween Object has an infinite loop we need to transfer it to the wrapper, otherwise it would get lost.
 						_tween.repeat(-1);
+						_tween.yoyo(TweenMaxObject.yoyo());
 					}
 				}
 				checkOptionsValidity();
@@ -903,7 +904,6 @@
 
 			if (_pin.css("position") == "absolute") {
 				// well this is easy.
-				// TODO: Testing
 				spacer.css({
 						width: 0,
 						height: 0
@@ -921,7 +921,7 @@
 			// now place the pin element inside the spacer	
 			_pin.wrap(spacer)
 					// save old styles (for reset)
-					// TODO: check if implemented. Maybe only save position, top, left, bottom, right?
+					// TODO: check if needed. Maybe only save position, top, left, bottom, right?
 					.data("style", _pin.attr("style") || "")
 					// save some data for (re-)calculating pin spacer size
 					.data("pushFollowers", settings.pushFollowers)
@@ -992,9 +992,6 @@
 
 					// add optional offset
 					_startPoint += _options.offset;
-
-					// TODO: account for the possibility that the parent is a div, not the document
-					// startPoint -= _containerInnerOffset;
 
 					// take triggerHook into account
 					_startPoint -= containerInfo.size * ScrollScene.triggerHook();
@@ -1270,62 +1267,5 @@
 		args.unshift(time);
 		func.apply(console, args);
 	};
-
-	/*
-	 * ----------------------------------------------------------------
-	 * helpers
-	 * ----------------------------------------------------------------
-	 */
-
-	// TODO: Kill?
-	function getBounds ($obj, inViewport) {
-		var 
-			bounds = {
-				width: 0,
-				height: 0,
-				top: 0,
-				left: 0,
-				bottom: 0,
-				right: 0
-			};
-
-		if ($obj.length > 0) {
-			var
-				obj = $obj.get(0),
-				scrollTop = Math.max(window.pageYOffset || 0, document.documentElement.scrollTop || 0, window.scrollY || 0, document.body.scrollTop || 0),
-				scrollLeft = Math.max(window.pageXOffset || 0, document.documentElement.scrollLeft || 0, window.scrollX || 0, document.body.scrollLeft || 0);
-
-			if (obj.getBoundingClientRect) { // check if available
-				var
-					rect = obj.getBoundingClientRect();
-
-				bounds = {
-					top: rect.top + scrollTop,
-					left: rect.left + scrollLeft,
-					width: rect.width,
-					height: rect.height
-				};
-			} else { // fall back to jquery
-				bounds = $obj.offset();
-			}
-			// add width and hight (fallback for stupid IE8)
-			if (!bounds.width) {
-				bounds.width = $obj.width();
-			}
-			if (!bounds.height) {
-				bounds.height = $obj.height();
-			}
-
-			if (inViewport) { // correct if should be in relation to viewport
-				bounds.top = bounds.top - scrollTop;
-				bounds.left = bounds.left - scrollLeft;
-			}
-
-			// add bottom / right bounds
-			bounds.bottom = bounds.top + bounds.height;
-			bounds.right = bounds.left + bounds.width;
-		}
-		return bounds;
-	}
 
 })(jQuery);
