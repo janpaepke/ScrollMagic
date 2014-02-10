@@ -15,18 +15,12 @@
 */
 
 // TODO: Check Pin Positioning with scrollcontainers with offsets
-// TODO: when removing a scene add an option to reset the pin to how it would have looked if the scene was never added to a controller
+// TODO: consider logs - what should be logged and where
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
 // TODO: make examples
-// TODO: consider neccessity of a Scene.destroy method, that kills and resets everything
-// TODO: consider how the scene should behave, if you start scrolling back up DURING the scene and reverse is false (ATM it will animate backwards)
-// TODO: consider if the controller needs Events (like resize)
-// TODO: consider how to better control forward/backward animations (for example have different animations, when scrolling up, than when scrolling down)
-// TODO: consider using 0, -1 and 1 for the scrollDirection instead of "PAUSED", "FORWARD" and "BACKWARD"
-// TODO: consider logs - what should be logged and where
-// TODO: consider if updating Scene immediately, when added to controller may cause problems or might not be desired in some cases
-// TODO: consider making public ScrollScene variables private
+// TODO: finish Docs
+// TODO: feature: have different tweens, when scrolling up, than when scrolling down
 // TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 
 (function($) {
@@ -106,7 +100,7 @@
 				_updateScenesOnNextTick = true;
 			});
 
-			// prefer on Ticker, but don't rely on TweenMax for basic functionality
+			// prefer TweenMax Ticker, but don't rely on it for basic functionality
 			try {
 				TweenLite.ticker.addEventListener("tick", onTick);
 			}
@@ -1021,7 +1015,7 @@
 		/**
 		 * Remove the scene from its parent controller.
 		 * Can also be achieved using controller.removeScene(scene);
-		 * To remove the pin and/or pin spacer you need to call removePin
+		 * To remove the pin or the tween you need to call removeTween() or removePin() respectively
 		 * @public
 		 *
 		 * @returns {ScrollScene}
@@ -1032,6 +1026,21 @@
 				_parent = null;
 			}
 			return ScrollScene;
+		};
+
+		/**
+		 * Destroy the scene and everything.
+		 * @public
+		 *
+		 * @param {boolean} [reset=false] - If true the pin and tween (if existent) will be reset.
+		 * @returns {null}
+		 */
+		this.destroy = function (reset) {
+			this.removeTween(reset);
+			this.removePin(reset);
+			this.remove();
+			this.off("start end enter leave progress change")
+			return null;
 		};
 
 		/**
@@ -1198,7 +1207,7 @@
 		 * @param {object} [callback] - A specific callback function that should be removed. If none is passed all callbacks to the event listener will be removed.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		 this.unbind = function (name, callback) {
+		 this.off = function (name, callback) {
 		 	// console.log(_events);
 		 	$(document).off($.trim(name.toLowerCase()) + ".ScrollScene", callback)
 		 	return ScrollScene;

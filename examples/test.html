@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<title>TEST - ScrollMagic</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="../css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="../css/examples.css" type="text/css">
+	
+	<script type="text/javascript" src="../js/_dependent/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../js/_dependent/jquery-1.11.0.min.js"></script>
+  	<script type="text/javascript" src="../js/jquery.scrollmagic.js"></script>
+  	<script type="text/javascript" src="../js/jquery.scrollmagic.debug.js"></script>
+	
+</head>
+<body>
+	<div id="content-wrapper">
+		<div id="example-wrapper">
+			<div class="scrollContent">
+				<section id="titlechart">
+					<div id="description">
+						<h1>Test kram</h1>
+						<h2>scrolllln!</h2>
+					</div>
+				</section>
+				<section id="demo">
+					<div class="spacer" id="trigger"></div>
+					<div class="spacer">
+						<div class="animated box2 red center"></div>
+					</div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+				</section>
+			</div>
+			
+			<script>
+			var scene;
+				$(document).ready(function($) {
+					var vertical = true;
+					var useScrollContainer = false;
+					
+					$("#example-wrapper").addClass(vertical ? "vertical" : "horizontal");
+					$("#example-wrapper").addClass(useScrollContainer ? "scrollContainer" : "");
+
+					var myTween = TweenMax.to(".animated", 2, {
+						backgroundColor: "green",
+						rotation: 360,
+						// repeat: -1,
+						// yoyo: true
+					});
+
+					var controller = new ScrollMagic({
+						loglevel: 2,
+						scrollContainer: useScrollContainer ? ".scrollContainer" : window,
+						isVertical: vertical,
+						globalSceneOptions: {triggerHook: "onCenter"}
+					});
+					// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
+					scene = new ScrollScene({
+									triggerElement: "#trigger",
+									duration: 300,
+									offset: 50,
+									// tweenProgress: true,
+									// reverse: false,
+									loglevel: 2
+								})
+								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
+								// .on("progress", function (e) { console.log (e); })
+								.on("change", function (e) { console.log (e); })
+								// .on("start", function (e) { console.log (e); })
+								// .on("end", function (e) { console.log (e); })
+								// .on("enter", function (e) { console.log (e); })
+								// .on("leave", function (e) { console.log (e); })
+								.setTween(myTween)
+								.setPin(".animated")
+								.addTo(controller)
+								.addIndicators();
+
+					// console.log(scene);
+					$(".animated").click(function () {
+						// scene = scene.destroy(true);
+						// scene.duration(scene.duration() - 100);
+						// console.log(controller.scrollDirection());
+						// scene.unbind("change");
+						// scene.remove();
+						// scene.duration(scene.duration() + 200);
+						// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
+						// 	 .duration(600)
+						// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
+							 // .removeTween();
+						// controller.updateScenes();
+					});
+					$(document).keypress (function () {
+						// scene.setPin(".animated").addTo(controller);
+					})
+				});
+			</script>
+			
+		</div>
+	</div>
+</body>
+</html>

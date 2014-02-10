@@ -83,10 +83,10 @@
 		var
 			scene = this,
 			controller = scene.parent(),
-			cParams = controller.info(),
 			indicators = scene.indicators;
 		if (indicators && controller) {
 			var
+				cParams = controller.info(),
 				$triggerHook = indicators.children(".hook"),
 				$start = indicators.children(".start"),
 				$end = indicators.children(".end"),
