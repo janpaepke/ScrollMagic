@@ -81,6 +81,14 @@
 								.addTo(controller)
 								.addIndicators();
 
+					new ScrollScene({triggerElement: "#trigger", offset: 370, duration: 200})
+						.setTween(TweenMax.to(".animated", 2, {
+							backgroundColor: "blue",
+							rotation: -180
+						}))
+						.addTo(controller)
+						.addIndicators();
+
 					// console.log(scene);
 					$(".animated").click(function () {
 						// scene = scene.destroy(true);

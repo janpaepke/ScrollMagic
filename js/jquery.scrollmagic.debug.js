@@ -28,7 +28,7 @@
 		if (controller) {
 			var
 				cParams = controller.info(),
-				$container = ($.contains(document, cParams.container.get(0))) ? cParams.container : $("body"), // check if window element (then use body)
+				$container = (cParams.isDocument) ? $("body") : cParams.container, // check if window element (then use body)
 				$triggerHook = $("<div>trigger</div>")
 								.css({
 									position: "fixed",
@@ -55,27 +55,33 @@
 				$container.css("position", "relative"); // positioning needed for correct display of indicators
 			}
 
-			if (scene.duration() != 0) {
+			if ($container.find("div.ScrollSceneIndicators div.hook").length == 0) { // only one needed
+
+				$wrap.append($triggerHook);
+			}
+
+			if (scene.duration() != 0) { // no end indicator
 				$wrap.append($end);
 			}
 			scene.indicators = $wrap
-				    			.append($triggerHook)
 				    			.append($start)
 				    			.appendTo($container);
 
 			scene.updateIndicators();
 			function callUpdate(e) {
 				if (e.type == "scroll") {
-					if ($.contains(document, cParams.container.get(0))) { // if document is scrolled and container is not the document.
+					if (!cParams.isDocument) { // if document is scrolled and container is not the document.
 						scene.updateIndicators(true);
 					}
 				} else {
-					scene.updateIndicators(e.type == "resize");
+					scene.updateIndicators();
 				}
 			}
 			scene.on("change", callUpdate)
 			cParams.container.on("resize", callUpdate);
 			$(window).on("scroll", callUpdate);
+		} else {
+			console.log("ERROR: Please add Scene to controller before adding indicators.")
 		}
 		return scene;
 	};
@@ -100,7 +106,7 @@
 					left: "auto",
 					right: "auto"
 				};
-				if ($.contains(document, cParams.container.get(0))) {
+				if (!cParams.isDocument) {
 					hookPos -=  cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
 				}
 			

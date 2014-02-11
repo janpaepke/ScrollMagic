@@ -42,60 +42,21 @@
 			</div>
 			
 			<script>
-			var scene;
 				$(document).ready(function($) {
-					var vertical = true;
-					
-					$("#example-wrapper").addClass(vertical ? "vertical" : "horizontal");
-
-					var myTween = TweenMax.to(".animated", 0.5, {backgroundColor: "green", rotation: 360});
-					// myTween.pause(-2).play();
-					// var myTimeline = new TimelineMax().add(myTween);
-					// myTimeline.pause();
-					// myTimeline.progress(0.7);
-					// console.log(myTimeline.duration());
 					var controller = new ScrollMagic({
-						loglevel: 2,
 						scrollContainer: ".scrollContainer",
-						isVertical: vertical,
-						globalSceneOptions: {triggerHook: "onCenter"}
 					});
-					// var controller = new ScrollMagic({scrollContainer: "#content-wrappers"});
-					scene = new ScrollScene({
-									triggerElement: "#trigger",
-									duration: 300,
-									offset: 50,
-									loglevel: 2
-								})
-								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
-								// .on("progress", function (e) { console.log (e); })
-								.on("change", function (e) { console.log (e); })
-								// .on("start", function (e) { console.log (e); })
-								// .on("end", function (e) { console.log (e); })
-								// .on("enter", function (e) { console.log (e); })
-								// .on("leave", function (e) { console.log (e); })
-								.setTween(myTween)
-								// .setPin(".animated")
-								.addTo(controller)
-								.addIndicators();
 
-					// console.log(scene);
-					$(".animated").click(function () {
-						scene.remove();
-						// scene.duration(scene.duration() - 100);
-						// console.log(controller.scrollDirection());
-						// scene.unbind("change");
-						// scene.remove();
-						// scene.duration(scene.duration() + 200);
-						// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
-						// 	 .duration(600)
-						// 	 .setOption({triggerHook: function () {return .5}, offset: 0, smoothTweening: true})
-							 // .removeTween();
-						// controller.updateScenes();
-					});
-					$(document).keypress (function () {
-						// scene.setPin(".animated").addTo(controller);
-					})
+					new ScrollScene({
+							triggerElement: "#trigger",
+							duration: 300,
+							offset: 50
+						})
+						.addTo(controller)
+						.setTween(TweenMax.to(".animated", 0.5, {backgroundColor: "green", rotation: 360}))
+						.setPin(".animated")
+						.addIndicators();
+
 				});
 			</script>
 			

@@ -14,7 +14,6 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: Check Pin Positioning with scrollcontainers with offsets
 // TODO: consider logs - what should be logged and where
 // TODO: test / implement mobile capabilities
 // TODO: test successive pins (animate, pin for a while, animate, pin...)
@@ -66,6 +65,7 @@
 			_updateScenesOnNextTick = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 			_currScrollPos = 0,
 			_scrollDirection = "PAUSED",
+			_isDocument = true,
 			_viewPortSize = 0;
 
 		/*
@@ -85,18 +85,19 @@
 				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
 				return; // cancel
 			}
+			_isDocument = !$.contains(document, _options.scrollContainer.get(0));
 			// update container size immediately
 			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
+			_options.scrollContainer.on("resize", function(e) {
+				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
+				_updateScenesOnNextTick = true;
+			});
 			_options.scrollContainer.on("scroll", function(e) {
 				var oldScrollPos = _currScrollPos;
 				_currScrollPos = _options.isVertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
 				var deltaScroll = _currScrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
-				_updateScenesOnNextTick = true;
-			});
-			_options.scrollContainer.on("resize", function(e) {
-				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 				_updateScenesOnNextTick = true;
 			});
 
@@ -145,7 +146,7 @@
 				args.unshift(loglevel, prefix);
 				func.apply(window, args);
 			}
-		}
+		};
 
 		/*
 		 * ----------------------------------------------------------------
@@ -234,10 +235,11 @@
 		};
 
 		/**
-		 * Get the viewport size.
+		 * Get all infos or one particular about the controller.
 		 * @public
 		 *
-		 * @returns {float} - The height or width of the viewport (depending wether we're in horizontal or vertical mode)
+		 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.
+		 * @returns {mixed|object} - The requested info(s).
 		 */
 		this.info = function (about) {
 			var values = {
@@ -245,7 +247,8 @@
 				vertical: _options.isVertical,
 				scrollPos: _currScrollPos,
 				scrollDirection: _scrollDirection,
-				container: _options.scrollContainer
+				container: _options.scrollContainer,
+				isDocument: _isDocument
 			}
 			if (!arguments.length) { // get all as an object
 				return values;
@@ -255,6 +258,16 @@
 				log(1, "ERROR: option \"" + about + "\" is not available");
 				return;
 			}
+		};
+
+		/**
+		 * Get array of scenes added to the controller.
+		 * @public
+		 *
+		 * @returns {array} - An array of all scenes that were added to the controller.
+		 */
+		this.scenes = function () {
+			return _sceneObjects;
 		};
 
 		// INIT
@@ -309,7 +322,6 @@
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
-			_startPoint = 0, // recalculated on update
 			_parent = null,
 			_tween,
 			_pin;
@@ -438,32 +450,27 @@
 		 * @private
 		 */
 		var updatePinState = function (to) {
-			var state = ($.type(to) === "string") ? to : _state;
+			var state = ($.inArray(to, ["BEFORE", "DURING", "AFTER"]) > -1) ? to : _state;
 			if (_pin && _parent) {
 				var 
 					css,
 					spacer =  _pin.parent(),
-					vertical = _parent.info("vertical");
+					containerInfo = _parent.info();
 
 				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
 					// pinned
-					var
-						spacerOffset = spacer.offset(),
-						fixedPosTop,
-						fixedPosLeft;
-
-					if (vertical) {
-						fixedPosTop = spacerOffset.top - _startPoint;
-						fixedPosLeft = spacerOffset.left;
+					var fixedPos = getOffset(spacer, true); // get viewport position of spacer
+ 
+					if (containerInfo.vertical) {
+						fixedPos.top += _options.duration * _progress;
 					} else {
-						fixedPosTop = spacerOffset.top;
-						fixedPosLeft = spacerOffset.left - _startPoint;
+						fixedPos.left += _options.duration * _progress;
 					}
 
 					css = {
 						position: "fixed",
-						top: fixedPosTop,
-						left: fixedPosLeft
+						top: fixedPos.top,
+						left: fixedPos.left
 					}
 				} else {
 					// unpinned
@@ -471,8 +478,8 @@
 						pos = (state === "BEFORE") ? 0 : _options.duration;
 					css = {
 						position: "absolute",
-						top: vertical ? pos : 0,
-						left: vertical ? 0 : pos
+						top:  containerInfo.vertical ? pos : 0,
+						left: containerInfo.vertical ? 0 : pos
 					}
 				}
 				_pin.css(css);
@@ -497,7 +504,21 @@
 					updatePinState();
 				}
 			}
-		}
+		};
+		
+		/**
+		 * Updates the Pin state (in certain scenarios)
+		 * If the controller container is not the document and we are mid-pin-phase scrolling or resizing the main document can result to wrong pin positions.
+		 * So this function is called on resize and scroll of the document.
+		 * @private
+		 */
+		var updatePinInContainer = function () {
+			if (_parent && _pin && _state === "DURING") {
+				if (!_parent.info("isDocument")) {
+					updatePinState();
+				}
+			}
+		};
 
 		/*
 		 * ----------------------------------------------------------------
@@ -727,16 +748,12 @@
 					var
 						element = $(_options.triggerElement).first(),
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
-						containerOffset = _parent.info("container").offset() || {top: 0, left: 0},
-						elementOffset;
+						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
+						elementOffset = (pin.get(0) === element.get(0)) ? // if pin == trigger -> use spacer instead.	
+										getOffset(pin.parent()) :			  // spacer
+										getOffset(element);				  // trigger element
 
-					if (pin.get(0) === element.get(0)) { // if  pin == trigger -> use spacer instead.	
-						elementOffset = pin.parent().offset(); // spacer
-					} else {
-						elementOffset = element.offset(); // trigger element
-					}
-
-					if ($.contains(document, _parent.info("container").get(0))) { // not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+					if (!_parent.info("isDocument")) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 						containerOffset.top -= _parent.info("scrollPos");
 						containerOffset.left -= _parent.info("scrollPos");
 					}
@@ -768,31 +785,29 @@
 				if (immediately) {
 					var
 						containerInfo = _parent.info(),
+						startPoint,
 						endPoint,
 						newProgress;
 
 					// get the start position
-					_startPoint = ScrollScene.triggerOffset();
+					startPoint = ScrollScene.triggerOffset();
 
 					// add optional offset
-					_startPoint += _options.offset;
+					startPoint += _options.offset;
 
 					// take triggerHook into account
-					_startPoint -= containerInfo.size * ScrollScene.triggerHook();
+					startPoint -= containerInfo.size * ScrollScene.triggerHook();
 
 					// where will the scene end?
-					endPoint = _startPoint + _options.duration;
+					endPoint = startPoint + _options.duration;
 
 					if (_options.duration > 0) {
-						newProgress = (containerInfo.scrollPos - _startPoint)/(endPoint - _startPoint);
+						newProgress = (containerInfo.scrollPos - startPoint)/(endPoint - startPoint);
 					} else {
-						newProgress = containerInfo.scrollPos > _startPoint ? 1 : 0;
+						newProgress = containerInfo.scrollPos > startPoint ? 1 : 0;
 					}
-					
-					// startPoint is neccessary inside the class for the calculation of the fixed position for pins.
-					// ScrollScene.startPoint = startPoint;
 
-					log(3, "Scene Update", {"startPoint" : _startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
+					log(3, "Scene Update", {"startPoint" : startPoint, "endPoint" : endPoint,"curScrollPos" : containerInfo.scrollPos});
 
 					ScrollScene.progress(newProgress);
 				} else {
@@ -860,7 +875,7 @@
 
 					// do actual updates
 					updateTweenProgress();
-					if (_state != oldState) { // update pins only if something changes
+					if (_state != oldState || _state === "DURING") { // update pins only if something changes OR during Pin
 						updatePinState();
 					}
 
@@ -998,7 +1013,6 @@
 					});
 			}
 
-
 			// now place the pin element inside the spacer	
 			_pin.wrap(spacer)
 					// save old styles (for reset)
@@ -1018,8 +1032,9 @@
 					});
 
 			// update the size of the pin Spacer.
-			// this also calls updatePinState
-			updatePinSpacerSize();
+			updatePinSpacerSize(); // this also calls updatePinState
+
+			$(window).on("scroll resize", updatePinInContainer);
 
 			return ScrollScene;
 		};
@@ -1047,6 +1062,7 @@
 						left: vertical ? 0 : _options.duration * _progress
 					});
 				}
+				$(window).off("scroll resize", updatePinInContainer);
 				_pin = null;
 			}
 			return ScrollScene;
@@ -1197,7 +1213,7 @@
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
 			}
 			return ScrollScene;
-		 }
+		 };
 
 		 /**
 		 * Remove an event listener.
@@ -1211,7 +1227,7 @@
 		 	// console.log(_events);
 		 	$(document).off($.trim(name.toLowerCase()) + ".ScrollScene", callback)
 		 	return ScrollScene;
-		 }
+		 };
 
 		 /**
 		 * Trigger an event.
@@ -1233,7 +1249,7 @@
 			// fire all callbacks of the event
 			$.event.trigger(event);
 			return ScrollScene;
-		 }
+		 };
 
 		// INIT
 		construct();
@@ -1261,7 +1277,7 @@
 			console[method] = console.log; // prefer .log over nothing
 		}
 	});
-	// global debugging function
+	// debugging function
 	var debug = function (loglevel) {
 		if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
 		var now = new Date(),
@@ -1273,5 +1289,31 @@
 		args.unshift(time);
 		func.apply(console, args);
 	};
+	// a helper function that should generally be faster than jQuery.offset() and can also return position in relation to viewport.
+	function getOffset ($obj, relativeToViewport) {
+		var  offset = {
+				top: 0,
+				left: 0
+			};
+		if ($obj.length > 0) {
+			var obj = $obj.get(0);
+			if (obj.getBoundingClientRect !== undefined) { // check if available
+				var  rect = obj.getBoundingClientRect();
+				offset.top = rect.top;
+				offset.left = rect.left;
+				if (!relativeToViewport) { // clientRect is by default relative to viewport...
+					offset.top += $(document).scrollTop();
+					offset.left += $(document).scrollLeft();
+				}
+			} else { // fall back to jquery
+				offset = $obj.offset() || offset; // if element has offset undefined (i.e. document) use 0 for top and left
+				if (relativeToViewport) { // jquery.offset is by default NOT relative to viewport...
+					offset.top -= $(document).scrollTop();
+					offset.left -= $(document).scrollLeft();
+				}
+			}
+		}
+		return offset;
+	}
 
 })(jQuery);
