@@ -35,6 +35,12 @@
 					<div class="spacer"></div>
 					<div class="spacer"></div>
 					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
+					<div class="spacer"></div>
 				</section>
 			</div>
 			
@@ -64,14 +70,14 @@
 					scene = new ScrollScene({
 									triggerElement: "#trigger",
 									duration: 300,
-									offset: 50,
+									offset: 100,
 									// tweenProgress: true,
 									// reverse: false,
 									loglevel: 2
 								})
 								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
 								// .on("progress", function (e) { console.log (e); })
-								.on("change", function (e) { console.log (e); })
+								// .on("change", function (e) { console.log (e); })
 								// .on("start", function (e) { console.log (e); })
 								// .on("end", function (e) { console.log (e); })
 								// .on("enter", function (e) { console.log (e); })
@@ -81,18 +87,19 @@
 								.addTo(controller)
 								.addIndicators();
 
-					new ScrollScene({triggerElement: "#trigger", offset: 370, duration: 200})
+					new ScrollScene({triggerElement: "#trigger", offset: 450, duration: 200})
 						.setTween(TweenMax.to(".animated", 2, {
 							backgroundColor: "blue",
 							rotation: -180
 						}))
+						.setPin(".animated")
 						.addTo(controller)
 						.addIndicators();
 
 					// console.log(scene);
 					$(".animated").click(function () {
 						// scene = scene.destroy(true);
-						// scene.duration(scene.duration() - 100);
+						scene.duration(scene.duration() - 100);
 						// console.log(controller.scrollDirection());
 						// scene.unbind("change");
 						// scene.remove();

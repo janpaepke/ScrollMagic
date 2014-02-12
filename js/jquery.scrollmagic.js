@@ -16,9 +16,11 @@
 
 // TODO: consider logs - what should be logged and where
 // TODO: test / implement mobile capabilities
-// TODO: test successive pins (animate, pin for a while, animate, pin...)
 // TODO: make examples
 // TODO: finish Docs
+// TODO: bug: when cascading pins (pin, unpin, pin) and pushFollowers = true, the spacer size is not displayed correctly. Work out why and work out why pin needs to be positioned absolutely on add and relatively on update. for it to work...
+// -----------------------
+// TODO: consider call conditions for updatePinSpacerSize (performance?)
 // TODO: feature: have different tweens, when scrolling up, than when scrolling down
 // TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 
@@ -324,7 +326,8 @@
 			_progress = 0,
 			_parent = null,
 			_tween,
-			_pin;
+			_pin,
+			_pinOptions;
 
 
 		/*
@@ -454,12 +457,11 @@
 			if (_pin && _parent) {
 				var 
 					css,
-					spacer =  _pin.parent(),
 					containerInfo = _parent.info();
 
 				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
 					// pinned
-					var fixedPos = getOffset(spacer, true); // get viewport position of spacer
+					var fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
  
 					if (containerInfo.vertical) {
 						fixedPos.top += _options.duration * _progress;
@@ -471,18 +473,17 @@
 						position: "fixed",
 						top: fixedPos.top,
 						left: fixedPos.left
-					}
+					};
 				} else {
 					// unpinned
-					var
-						pos = (state === "BEFORE") ? 0 : _options.duration;
 					css = {
-						position: "absolute",
-						top:  containerInfo.vertical ? pos : 0,
-						left: containerInfo.vertical ? 0 : pos
-					}
+						position: "relative",
+						top:  0,
+						left: 0
+					};
 				}
 				_pin.css(css);
+				updatePinSpacerSize();
 			}
 		};
 
@@ -493,19 +494,22 @@
 		 */
 		var updatePinSpacerSize = function () {
 			if (_pin && _parent) {
-				if (_pin.data("pushFollowers")) {
-					var spacer = _pin.parent();
+				var css = _pinOptions.cascaded ?
+							{width: 0, height: 0}
+						  : {width: _pin.outerWidth(true), height: _pin.outerHeight(true)};
+				if (_pinOptions.pushFollowers) {
 					if (_parent.info("vertical")) {
-						spacer.height(_pin.data("startHeight") + _options.duration);
+						css.paddingTop = _state == "AFTER" ? _options.duration : 0;
+						css.paddingBottom = _state == "AFTER" ? 0 : _options.duration;
 					} else {
-						spacer.width(_pin.data("startWidth") + _options.duration);
+						css.paddingLeft = _state == "AFTER" ? _options.duration : 0;
+						css.paddingRight = _state == "AFTER" ? 0 : _options.duration;
 					}
-					// UPDATE progress, because when the spacer size is changed it may affect the pin state
-					updatePinState();
 				}
+				_pinOptions.spacer.css(css);
 			}
 		};
-		
+
 		/**
 		 * Updates the Pin state (in certain scenarios)
 		 * If the controller container is not the document and we are mid-pin-phase scrolling or resizing the main document can result to wrong pin positions.
@@ -557,7 +561,6 @@
 				_options.duration = newDuration;
 				checkOptionsValidity();
 				ScrollScene.dispatch("change", {what: "duration"}); // fire event
-				// update some shit
 				updatePinSpacerSize();
 				ScrollScene.update();
 			}
@@ -750,7 +753,7 @@
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
 						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
 						elementOffset = (pin.get(0) === element.get(0)) ? // if pin == trigger -> use spacer instead.	
-										getOffset(pin.parent()) :			  // spacer
+										getOffset(_pinOptions.spacer) :			  // spacer
 										getOffset(element);				  // trigger element
 
 					if (!_parent.info("isDocument")) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
@@ -955,14 +958,16 @@
 		 *
 		 * @param {(string|object)} element - A Selctor or a jQuery object for the object that is supposed to be pinned.
 		 * @param {object} [settings.pushFollowers=true] - If true following elements will be "pushed" down, if false the pinned element will just scroll past them
-		 * @param {object} [settings.spacerClass="superscrollorama-pin-spacer"] - Classname of the pin spacer element
+		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.setPin = function (element, settings) {
-			var defaultSettings = {
-				pushFollowers: true,
-				spacerClass: "superscrollorama-pin-spacer"
-			};
+			var
+				defaultSettings = {
+					pushFollowers: true,
+					spacerClass: "scrollmagic-pin-spacer"
+				},
+				settings = $.extend({}, defaultSettings, settings);
 
 			// validate Element
 			element = $(element).first();
@@ -982,14 +987,14 @@
 				
 			}
 			_pin = element;
-
+			
+			// create spacer
 			_pin.parent().hide(); // hack start to force jQuery css to return percentage values instead of calculated ones.
-			var
-				settings = $.extend({}, defaultSettings, settings),				
-				// create spacer
-				spacer = $("<div>&nbsp;</div>") // for some reason a completely empty div can cause layout changes sometimes.
+			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
+					.data("ScrollMagicSpacer", true)
 					.css({
+						display: _pin.css("display"),
 						position: "relative",
 						top: _pin.css("top"),
 						left: _pin.css("left"),
@@ -998,31 +1003,18 @@
 					});
 			_pin.parent().show(); // hack end.
 
-			if (_pin.css("position") == "absolute") {
-				// well this is easy.
-				spacer.css({
-						width: 0,
-						height: 0
-					});
-			} else {
-				// copy size so element will replace pinned element in DOM
-				spacer.css({
-						display: _pin.css("display"),
-						width: _pin.outerWidth(true),
-						height: _pin.outerHeight(true)
-					});
-			}
+			// set the pin Options
+			_pinOptions = {
+				spacer: spacer,
+				pushFollowers: settings.pushFollowers,
+				cascaded: _pin.parent().data("ScrollMagicSpacer"), // if the parent is also a spacer this needs to be known when calculating the size
+				origStyle: _pin.attr("style") || "" // save old styles (for reset)
+			};
 
 			// now place the pin element inside the spacer	
-			_pin.wrap(spacer)
-					// save old styles (for reset)
-					// TODO: check if needed. Maybe only save position, top, left, bottom, right?
-					.data("style", _pin.attr("style") || "")
-					// save some data for (re-)calculating pin spacer size
-					.data("pushFollowers", settings.pushFollowers)
-					.data("startWidth", spacer.width())
-					.data("startHeight", spacer.height())
-					// set new css
+			_pin.before(spacer)
+					.appendTo(spacer)
+					// and set new css
 					.css({
 						position: "absolute",
 						top: 0,
@@ -1031,10 +1023,11 @@
 						right: "auto"
 					});
 
-			// update the size of the pin Spacer.
-			updatePinSpacerSize(); // this also calls updatePinState
-
+			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll resize", updatePinInContainer);
+
+			// finally update the pin to init
+			updatePinState();
 
 			return ScrollScene;
 		};
@@ -1049,11 +1042,10 @@
 		 */
 		this.removePin = function (reset) {
 			if (_pin) {
-				var spacer = _pin.parent();
 				if (reset || !_parent) { // if there's no parent no progress was made anyway...
-					_pin.insertBefore(spacer)
-						.attr("style", _pin.data("style"));
-					spacer.remove();
+					_pin.insertBefore(_pinOptions.spacer)
+						.attr("style", _pinOptions.origStyle);
+					_pinOptions.spacer.remove();
 				} else {
 					var vertical = _parent.info("vertical");
 					_pin.css({
@@ -1208,7 +1200,7 @@
 		 */
 		 this.on = function (name, callback) {
 			if ($.isFunction(callback)) {
-		 		$(document).on($.trim(name.toLowerCase()) + ".ScrollScene", callback);
+				$(document).on($.trim(name.toLowerCase()) + ".ScrollScene", callback);
 			} else {
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
 			}
@@ -1224,9 +1216,8 @@
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.off = function (name, callback) {
-		 	// console.log(_events);
-		 	$(document).off($.trim(name.toLowerCase()) + ".ScrollScene", callback)
-		 	return ScrollScene;
+			$(document).off($.trim(name.toLowerCase()) + ".ScrollScene", callback)
+			return ScrollScene;
 		 };
 
 		 /**
@@ -1243,7 +1234,7 @@
 				type: $.trim(name.toLowerCase()) + ".ScrollScene",
 				target: ScrollScene
 			}
-	 		if ($.isPlainObject(vars)) {
+			if ($.isPlainObject(vars)) {
 				event = $.extend({}, vars, event);
 			}
 			// fire all callbacks of the event
