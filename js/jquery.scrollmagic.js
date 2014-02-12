@@ -18,9 +18,9 @@
 // TODO: test / implement mobile capabilities
 // TODO: make examples
 // TODO: finish Docs
-// TODO: bug: when cascading pins (pin, unpin, pin) and pushFollowers = true, the spacer size is not displayed correctly. Work out why and work out why pin needs to be positioned absolutely on add and relatively on update. for it to work...
 // -----------------------
 // TODO: consider call conditions for updatePinSpacerSize (performance?)
+// TODO: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
 // TODO: feature: have different tweens, when scrolling up, than when scrolling down
 // TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 
@@ -494,16 +494,26 @@
 		 */
 		var updatePinSpacerSize = function () {
 			if (_pin && _parent) {
-				var css = _pinOptions.cascaded ?
-							{width: 0, height: 0}
-						  : {width: _pin.outerWidth(true), height: _pin.outerHeight(true)};
+				var
+					ended = (_state === "AFTER")
+					vertical = _parent.info("vertical"),
+					css = {};
+
+				css[vertical ? "width" : "min-width"] = _pin.outerWidth(true);
+				css[vertical ? "min-height" : "height"] = _pin.outerHeight(true);
+
+				// special case margin left and right auto used to center horizontally in vertical scrolls
+				if (vertical && _pinOptions.marginCenter) {
+					css["margin-left"] = css["margin-right"] = "auto";
+				}
+
 				if (_pinOptions.pushFollowers) {
-					if (_parent.info("vertical")) {
-						css.paddingTop = _state == "AFTER" ? _options.duration : 0;
-						css.paddingBottom = _state == "AFTER" ? 0 : _options.duration;
+					if (vertical) {
+						css.paddingTop = ended ? _options.duration : 0;
+						css.paddingBottom = ended ? 0 : _options.duration;
 					} else {
-						css.paddingLeft = _state == "AFTER" ? _options.duration : 0;
-						css.paddingRight = _state == "AFTER" ? 0 : _options.duration;
+						css.paddingLeft = ended ? _options.duration : 0;
+						css.paddingRight = ended ? 0 : _options.duration;
 					}
 				}
 				_pinOptions.spacer.css(css);
@@ -989,36 +999,35 @@
 			_pin = element;
 			
 			// create spacer
-			_pin.parent().hide(); // hack start to force jQuery css to return percentage values instead of calculated ones.
+			_pin.parent().hide(); // hack start to force jQuery css to return stylesheet values instead of calculated px values.
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
-					.data("ScrollMagicSpacer", true)
 					.css({
-						display: _pin.css("display"),
 						position: "relative",
+						display: _pin.css("display"),
 						top: _pin.css("top"),
 						left: _pin.css("left"),
 						bottom: _pin.css("bottom"),
 						right: _pin.css("right")
 					});
-			_pin.parent().show(); // hack end.
 
 			// set the pin Options
 			_pinOptions = {
 				spacer: spacer,
+				marginCenter: _pin.css("margin-left") == "auto" && _pin.css("margin-left") == "auto",
 				pushFollowers: settings.pushFollowers,
-				cascaded: _pin.parent().data("ScrollMagicSpacer"), // if the parent is also a spacer this needs to be known when calculating the size
 				origStyle: _pin.attr("style") || "" // save old styles (for reset)
 			};
+			_pin.parent().show(); // hack end.
 
 			// now place the pin element inside the spacer	
 			_pin.before(spacer)
 					.appendTo(spacer)
 					// and set new css
 					.css({
-						position: "absolute",
-						top: 0,
-						left: 0,
+						position: "relative",
+						top: "auto",
+						left: "auto",
 						bottom: "auto",
 						right: "auto"
 					});
