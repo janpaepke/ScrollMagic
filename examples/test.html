@@ -61,7 +61,7 @@
 					});
 
 					var controller = new ScrollMagic({
-						loglevel: 2,
+						loglevel: 3,
 						scrollContainer: useScrollContainer ? ".scrollContainer" : window,
 						isVertical: vertical,
 						globalSceneOptions: {triggerHook: "onCenter"}
@@ -73,7 +73,7 @@
 									offset: 100,
 									// tweenProgress: true,
 									// reverse: false,
-									loglevel: 2
+									loglevel: 3
 								})
 								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
 								// .on("progress", function (e) { console.log (e); })
@@ -93,17 +93,19 @@
 							rotation: -180
 						}))
 						.setPin(".animated")
-						.addTo(controller)
-						.addIndicators();
+						// .addTo(controller)
+						// .addIndicators();
 
 					// console.log(scene);
 					$(".animated").click(function () {
 						// scene = scene.destroy(true);
 						// scene.duration(scene.duration() - 100);
-						// scene.removePin();
+						// scene.removePin(true);
+						// scene.loglevel(3);
 						// console.log(controller.scrollDirection());
 						// scene.unbind("change");
 						// scene.remove();
+						// scene.off("progress");
 						// scene.duration(scene.duration() + 200);
 						// scene.setTween(new TimelineMax().add(TweenMax.to("#ani", 1, {color: "blue", left: "-=100"})))
 						// 	 .duration(600)
