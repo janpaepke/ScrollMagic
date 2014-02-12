@@ -577,7 +577,7 @@
 			} else if (_options.duration != newDuration) { // set
 				_options.duration = newDuration;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "duration", newval: newDuration}); // fire event
+				ScrollScene.trigger("change", {what: "duration", newval: newDuration}); // fire event
 				updatePinSpacerSize();
 				ScrollScene.update();
 			}
@@ -603,7 +603,7 @@
 			} else if (_options.offset != newOffset) { // set
 				_options.offset = newOffset;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "offset", newval: newOffset}); // fire event
+				ScrollScene.trigger("change", {what: "offset", newval: newOffset}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -628,7 +628,7 @@
 			} else if (_options.triggerElement != newTriggerElement) { // set
 				_options.triggerElement = newTriggerElement;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "triggerElement", newval: newTriggerElement}); // fire event
+				ScrollScene.trigger("change", {what: "triggerElement", newval: newTriggerElement}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -670,7 +670,7 @@
 			} else if (_options.triggerHook != newTriggerHook) { // set
 				_options.triggerHook = newTriggerHook;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "triggerHook", newval: newTriggerHook}); // fire event
+				ScrollScene.trigger("change", {what: "triggerHook", newval: newTriggerHook}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -695,7 +695,7 @@
 			} else if (_options.reverse != newReverse) { // set
 				_options.reverse = newReverse;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "reverse", newval: newReverse}); // fire event
+				ScrollScene.trigger("change", {what: "reverse", newval: newReverse}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -720,7 +720,7 @@
 			} else if (_options.tweenChanges != newTweenChanges) { // set
 				_options.tweenChanges = newTweenChanges;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "tweenChanges", newval: newTweenChanges}); // fire event
+				ScrollScene.trigger("change", {what: "tweenChanges", newval: newTweenChanges}); // fire event
 				ScrollScene.update();
 			}
 			return ScrollScene;
@@ -745,7 +745,7 @@
 			} else if (_options.loglevel != newLoglevel) { // set
 				_options.loglevel = newLoglevel;
 				checkOptionsValidity();
-				ScrollScene.dispatch("change", {what: "loglevel", newval: newLoglevel}); // fire event
+				ScrollScene.trigger("change", {what: "loglevel", newval: newLoglevel}); // fire event
 				// no need to update the scene with this param...
 			}
 			return ScrollScene;
@@ -839,7 +839,7 @@
 						newProgress = containerInfo.scrollPos > startPos ? 1 : 0;
 					}
 
-					ScrollScene.dispatch("update", {startPos: startPos, endPos: endPos, scrollPos: containerInfo.scrollPos});
+					ScrollScene.trigger("update", {startPos: startPos, endPos: endPos, scrollPos: containerInfo.scrollPos});
 
 					ScrollScene.progress(newProgress);
 				} else {
@@ -902,25 +902,25 @@
 					if (stateChanged || _state === "DURING") { // update pins only if something changes OR during Pin
 						updatePinState();
 					}
-					ScrollScene.dispatch("progress", eventVars);
+					ScrollScene.trigger("progress", eventVars);
 
 
 					if (stateChanged) { // fire state change events
 						if (_state === 'DURING' || _options.duration == 0) {
-							ScrollScene.dispatch("enter", eventVars);
+							ScrollScene.trigger("enter", eventVars);
 						}
 						if ((_state === 'DURING' && scrollDirection === 'FORWARD')|| _state === 'BEFORE') {
-							ScrollScene.dispatch("start", eventVars);
+							ScrollScene.trigger("start", eventVars);
 						} else if (_options.duration == 0) {
-							ScrollScene.dispatch((_state === 'AFTER') ? "start" : "end", eventVars);
+							ScrollScene.trigger((_state === 'AFTER') ? "start" : "end", eventVars);
 						}
 						if ((_state === 'DURING' && scrollDirection === 'REVERSE')|| _state === 'AFTER') {
-							ScrollScene.dispatch("end", {scrollDirection: scrollDirection});
+							ScrollScene.trigger("end", {scrollDirection: scrollDirection});
 						} else if (_options.duration == 0) {
-							ScrollScene.dispatch((_state === 'AFTER') ? "start" : "end", eventVars);
+							ScrollScene.trigger((_state === 'AFTER') ? "start" : "end", eventVars);
 						}
 						if (_state !== 'DURING' || _options.duration == 0) {
-							ScrollScene.dispatch("leave", eventVars);
+							ScrollScene.trigger("leave", eventVars);
 						}
 					}
 				}
@@ -1291,7 +1291,7 @@
 		 * @param {object} [vars] - An object containing info that should be passed to the callback.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		 this.dispatch = function (name, vars) {
+		 this.trigger = function (name, vars) {
 			log(3, 'event fired: ' + name, "->", vars);
 			var event = {
 				type: $.trim(name).toLowerCase() + ".ScrollScene",
