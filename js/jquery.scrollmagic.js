@@ -14,7 +14,6 @@
 	@author Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: test / implement mobile capabilities
 // TODO: make examples
 // TODO: finish Docs
 // -----------------------
@@ -22,6 +21,7 @@
 // TODO: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
 // TODO: feature: have different tweens, when scrolling up, than when scrolling down
 // TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
+// TODO: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 
 (function($) {
 	/**
@@ -91,7 +91,7 @@
 			// update container size immediately
 			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
-			_options.scrollContainer.on("scroll resize", updateContainer);
+			_options.scrollContainer.on("scroll resize", update);
 			try {
 				TweenLite.ticker.addEventListener("tick", onTick); // prefer TweenMax Ticker, but don't rely on it for basic functionality
 				_tickerUsed = true;
@@ -121,12 +121,12 @@
 				_updateScenesOnNextTick = false;
 			}
 		};
-
+		
 		/**
-		* Update the scroll Position
+		* Update the Container
 		* @private
 		*/
-		var updateContainer = function (e) {
+		var update = function (e) {
 			if (e.type == "resize") {
 				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			}
@@ -136,7 +136,6 @@
 			_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 			_updateScenesOnNextTick = true;
 		};
-
 
 		/**
 		 * Send a debug message to the console.
