@@ -15,7 +15,6 @@
 */
 
 // TODO: test / implement mobile capabilities
-// TODO: detroy ScrollMagic method (kill everything and unset listeners)
 // TODO: make examples
 // TODO: finish Docs
 // -----------------------
@@ -68,7 +67,8 @@
 			_scrollPos = 0,
 			_scrollDirection = "PAUSED",
 			_isDocument = true,
-			_viewPortSize = 0;
+			_viewPortSize = 0,
+			_tickerUsed = false;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -91,20 +91,13 @@
 			// update container size immediately
 			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
-			_options.scrollContainer.on("scroll resize", function(e) {
-				if (e.type == "resize") {
-					_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
-				}
-				updateScrollPos();
-				_updateScenesOnNextTick = true;
-			});
-
+			_options.scrollContainer.on("scroll resize", updateContainer);
 			try {
 				TweenLite.ticker.addEventListener("tick", onTick); // prefer TweenMax Ticker, but don't rely on it for basic functionality
-			}
-			catch (e) {}
-			finally {
+				_tickerUsed = true;
+			} catch (e) {
 				_options.scrollContainer.on("scroll resize", onTick); // okay then just update on scroll/resize...
+				_tickerUsed = false;
 			}
 
 			log(3, "added new ScrollMagic controller");
@@ -114,7 +107,7 @@
 		* Handle updates on tick instad of on scroll (performance)
 		* @private
 		*/
-		var onTick = function () {
+		var onTick = function (e) {
 			if (_updateScenesOnNextTick) {
 				if ($.isArray(_updateScenesOnNextTick)) {
 					// update specific scenes
@@ -133,11 +126,15 @@
 		* Update the scroll Position
 		* @private
 		*/
-		var updateScrollPos = function () {
+		var updateContainer = function (e) {
+			if (e.type == "resize") {
+				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
+			}
 			var oldScrollPos = _scrollPos;
 			_scrollPos = _options.isVertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
 			var deltaScroll = _scrollPos - oldScrollPos;
 			_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+			_updateScenesOnNextTick = true;
 		};
 
 
@@ -240,7 +237,7 @@
 			if (immediately) {
 				$.each(_sceneObjects, function (index, scene) {
 					log(3, "updating Scene " + (index + 1) + "/" + _sceneObjects.length);
-					ScrollMagic.updateScene(scene, true);
+					scene.update(true);
 				});
 			} else {
 				_updateScenesOnNextTick = true;
@@ -273,6 +270,29 @@
 				log(1, "ERROR: option \"" + about + "\" is not available");
 				return;
 			}
+		};
+
+		
+		/**
+		 * Destroy the Controller all Scenes and everything.
+		 * @public
+		 *
+		 * @param {boolean} [resetScenes=false] - If true the pins and tweens (if existent) of all scenes will be reset.
+		 * @returns {null}
+		 */
+		this.destroy = function (resetScenes) {
+			while (_sceneObjects.length > 0) {
+				var scene = _sceneObjects[_sceneObjects.length - 1];
+				scene.destroy(resetScenes);
+			}
+			_options.scrollContainer.off("scroll resize", updateContainer);
+			if (_tickerUsed) {
+				TweenLite.ticker.removeEventListener("tick", onTick);
+			} else {
+				_options.scrollContainer.off("scroll resize", onTick);
+			}
+			log(3, "destroyed ScrollMagic (reset: " + (resetScenes ? "true" : "false") + ")");
+			return null;
 		};
 
 		// INIT
@@ -1110,7 +1130,7 @@
 				_parent = controller;
 				checkOptionsValidity();
 				updatePinSpacerSize();
-				log(3, "added scene to controller");
+				log(3, "added ScrollScene to controller");
 				controller.addScene(ScrollScene);
 				return ScrollScene;
 			}
@@ -1128,7 +1148,7 @@
 			if (_parent) {
 				var tmpParent = _parent;
 				_parent = null;
-				log(3, "removed scene from controller");
+				log(3, "removed ScrollScene from controller");
 				tmpParent.removeScene(ScrollScene);
 			}
 			return ScrollScene;
@@ -1146,7 +1166,7 @@
 			this.removePin(reset);
 			this.remove();
 			this.off("start end enter leave progress change update")
-			log(3, "destroyed scene (reset: " + (reset ? "true" : "false") + ")");
+			log(3, "destroyed ScrollScene (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
 
