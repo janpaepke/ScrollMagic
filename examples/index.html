@@ -16,43 +16,73 @@
 </head>
 <body>
 	<div id="content-wrapper">
-		<div id="example-wrapper" class="vertical">
-
-			<div class="scrollContent">
-				<section id="titlechart">
-					<div id="description">
-						<h1>Simple Animation</h1>
-						<h2>short description Text blablabla</h2>
-					</div>
-				</section>
-				<section id="demo">
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer" id="trigger"></div>
-					<div class="spacer">
-						<div class="animated box2 red center"></div>
-					</div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-				</section>
+		<section id="titlechart">
+			<div id="description">
+				<h1>ScrollMagic Examples</h1>
+				<ul>
+					<li>
+						<a href="basic">Basic</a>
+						<ul>
+							<li>
+								<a href="basic/simple_tweening.html">Simple Tweening</a>
+							</li>
+							<li>
+								<a href="basic/simple_pinning.html">Simple Pinning</a>
+							</li>
+							<li>
+								<a href="basic/going_vertical.html">Going vertical</a>
+							</li>
+							<li>
+								<a href="basic/settings.html">Settings</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="advanced">Advanced</a>
+						<ul>
+							<li>
+								<a href="advanced/debugging.html">Debugging</a>
+							</li>
+							<li>
+								<a href="advanced/advanced_technology.html">Advanced Tweening</a>
+							</li>
+							<li>
+								<a href="advanced/parallax.html">Parallax</a>
+							</li>
+							<li>
+								<a href="advanced/container.html">Container</a>
+							</li>
+							<li>
+								<a href="advanced/custom_actions.html">Custom Actions</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="expert">Expert</a>
+						<ul>
+							<li>
+								<a href="expert/cascading_pins.html">Cascading Pins</a>
+							</li>
+							<li>
+								<a href="expert/responsive_duration.html">Responsive Duration</a>
+							</li>
+							<li>
+								<a href="expert/manipulating_tweens.html">Manipulating Tweens</a>
+							</li>
+							<li>
+								<a href="expert/multiple_scroll_directions.html">Multiple Scroll Directions</a>
+							</li>
+							<li>
+								<a href="expert/mobile_applications.html">Mobile Applications</a>
+							</li>
+							<li>
+								<a href="expert/removing_and_destroying.html">Removing and Destroying</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
 			</div>
-			<script>
-				$(document).ready(function($) {
-
-					var controller = new ScrollMagic({loglevel: 2, globalSceneOptions: {loglevel: 2}});
-
-					var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
-									.setTween(TweenMax.to(".animated", 0.5, {backgroundColor: "green", rotation: 360}))
-									.addTo(controller);
-
-					// show indicators (requires debug extension)
-					scene.addIndicators();
-				});
-			</script>
-		</div>
+		</section>
 	</div>
 </body>
 </html>

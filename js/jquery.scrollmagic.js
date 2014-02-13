@@ -15,6 +15,7 @@
 */
 
 // TODO: test / implement mobile capabilities
+// TODO: detroy ScrollMagic method (kill everything and unset listeners)
 // TODO: make examples
 // TODO: finish Docs
 // -----------------------

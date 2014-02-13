@@ -51,14 +51,15 @@ h2 {
 	font-size: 13px;
 }
 #example-wrapper section {
-	height: 100%;
-	min-height: 500px;
+	min-height: 100%;
 	min-width: 100%;
 }
 
 section#titlechart {
 	text-align: center;
 	position: relative;
+	height: 100%;
+	min-height: 500px;
 }
 .horizontal section {
 	display: inline-block;
@@ -73,34 +74,103 @@ section#titlechart #description {
 	height: 200px;
 	margin: -100px auto auto -300px;
 }
-section#titlechart #description:after {
+#example-wrapper section#titlechart #description:after {
 	content: "↧";
 	font-size: 40px;
 }
-.horizontal section#titlechart #description:after {
+#example-wrapper.horizontal section#titlechart #description:after {
 	content: "↦";
 }
 
+section#demo {
+	font-size: 0;
+	text-align: center;
+	background-image: url("../img/example_bg_v.png");
+}
+.horizontal section#demo {
+	text-align: inherit;
+	background-image: url("../img/example_bg_h.png");
+}
+
 .spacer {
-	min-height: 99px;
-	border-top: 1px dotted #7a7fac;
+	text-align: center;
+	min-height: 100px;
+	background-image: url("../img/example_bg_spacer_v.gif");
+}
+.spacer.s0 {
+	min-height: 1px;
+}
+.spacer.s1 {
+	min-height: 100px;
+}
+.spacer.s2 {
+	min-height: 200px;
+}
+.spacer.s3 {
+	min-height: 300px;
+}
+.spacer.s4 {
+	min-height: 400px;
+}
+.spacer.s5 {
+	min-height: 500px;
+}
+.spacer.s6 {
+	min-height: 600px;
+}
+.spacer.s7 {
+	min-height: 700px;
+}
+.spacer.s8 {
+	min-height: 800px;
+}
+.spacer.s9 {
+	min-height: 900px;
+}
+.spacer.s10 {
+	min-height: 1000px;
 }
 .horizontal .spacer {
-	border-bottom: none;
+	background-image: url("../img/example_bg_spacer_h.gif");
 	margin-bottom: 0;
-	min-height: auto;
-	border-left: 1px dotted #7a7fac;
-	min-width: 199px;
+	min-height: initial;
+	min-width: 100px;
 	height: 100%;
 	display: inline-block;
 	vertical-align: top;
 }
-.spacer {
-	text-align: center;
+.horizontal .spacer.s0 {
+	min-width: 1px;
 }
-
-.spacer h1 {
-	padding-top: 26px;
+.horizontal .spacer.s1 {
+	min-width: 100px;
+}
+.horizontal .spacer.s2 {
+	min-width: 200px;
+}
+.horizontal .spacer.s3 {
+	min-width: 300px;
+}
+.horizontal .spacer.s4 {
+	min-width: 400px;
+}
+.horizontal .spacer.s5 {
+	min-width: 500px;
+}
+.horizontal .spacer.s6 {
+	min-width: 600px;
+}
+.horizontal .spacer.s7 {
+	min-width: 700px;
+}
+.horizontal .spacer.s8 {
+	min-width: 800px;
+}
+.horizontal .spacer.s9 {
+	min-width: 900px;
+}
+.horizontal .spacer.s10 {
+	min-width: 1000px;
 }
 
 .box1, .box2, .box3 {
@@ -110,35 +180,29 @@ section#titlechart #description:after {
 .box1 {
 	width: 100px;
 	height: 100px;
+	margin: 0 auto 0 auto;
 }
 .box2 {
 	width: 50px;
 	height: 50px;
+	margin: 25px auto 25px auto;
 }
 .box3 {
 	width: 26px;
 	height: 26px;
-}
-.spacer .box1.center {
-	margin: 0 auto 0 auto;
-}
-.spacer .box2.center {
-	margin: 25px auto 25px auto;
-}
-.spacer .box3.center {
 	margin: 37px auto 37px auto;
 }
-.horizontal .spacer .box1.center {
+.horizontal .box1 {
 	top: 50%;
-	margin: -50px auto auto auto;
+	margin: -50px 0 auto 0;
 }
-.horizontal .spacer .box2.center {
+.horizontal .box2 {
 	top: 50%;
-	margin: -25px auto auto auto;
+	margin: -25px 25px auto 25px;
 }
-.horizontal .spacer .box3.center {
+.horizontal .box3 {
 	top: 50%;
-	margin: -13px auto auto auto;
+	margin: -13px 37px auto 37px;
 }
 
 

@@ -13,7 +13,6 @@
 	<script type="text/javascript" src="../js/_dependent/jquery-1.11.0.min.js"></script>
   	<script type="text/javascript" src="../js/jquery.scrollmagic.js"></script>
   	<script type="text/javascript" src="../js/jquery.scrollmagic.debug.js"></script>
-	
 </head>
 <body>
 	<div id="content-wrapper">
@@ -26,21 +25,10 @@
 					</div>
 				</section>
 				<section id="demo">
-					<div class="spacer" id="trigger"></div>
-					<div class="spacer">
-						<div class="animated box2 red center" style="position: absolute"></div>
-					</div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
-					<div class="spacer"></div>
+					<div class="spacer s1"></div>
+					<div class="spacer s0" id="trigger"></div>
+					<div class="animated box2 red center"></div>
+					<div class="spacer s7"></div>
 				</section>
 			</div>
 			
@@ -61,7 +49,7 @@
 					});
 
 					var controller = new ScrollMagic({
-						loglevel: 3,
+						// loglevel: 3,
 						scrollContainer: useScrollContainer ? ".scrollContainer" : window,
 						isVertical: vertical,
 						globalSceneOptions: {triggerHook: "onCenter"}
@@ -70,13 +58,13 @@
 					scene = new ScrollScene({
 									triggerElement: "#trigger",
 									duration: 200,
-									offset: 100,
+									// offset: 100,
 									// tweenProgress: true,
 									// reverse: false,
-									loglevel: 3
+									// loglevel: 3
 								})
 								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
-								// .on("progress", function (e) { console.log (e); })
+								// .on("progress change start end enter leave", function (e) { console.log (e); })
 								// .on("change", function (e) { console.log (e); })
 								// .on("start", function (e) { console.log (e); })
 								// .on("end", function (e) { console.log (e); })
@@ -93,13 +81,15 @@
 							rotation: -180
 						}))
 						.setPin(".animated")
-						// .addTo(controller)
-						// .addIndicators();
+						.addTo(controller)
+						.addIndicators();
 
 					// console.log(scene);
 					$(".animated").click(function () {
+						// x.addTo(controller)
+						// .addIndicators();
 						// scene = scene.destroy(true);
-						// scene.duration(scene.duration() - 100);
+						scene.duration(scene.duration() + 10);
 						// scene.removePin(true);
 						// scene.loglevel(3);
 						// console.log(controller.scrollDirection());
