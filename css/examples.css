@@ -1,3 +1,6 @@
+/*
+	General styles
+*/
 body {
 	font-family: "Source Sans Pro", Arial, sans-serif;
 	background-color: #c7e1ff;
@@ -18,7 +21,16 @@ h1 {
 h2 {
 	font-size: 20px;
 }
-
+a, a:visited {
+	text-decoration: none;
+	color: #2e639e;
+}
+a:hover {
+	text-decoration: underline;
+}
+/*
+	Containers
+*/
 #content-wrapper, #example-wrapper {
 	height: 100%;
 }
@@ -81,6 +93,10 @@ section#titlechart #description {
 #example-wrapper.horizontal section#titlechart #description:after {
 	content: "↦";
 }
+#example-wrapper section#titlechart #description a {
+	display: block;
+	margin-bottom: 20px;
+}
 
 section#demo {
 	font-size: 0;
@@ -91,7 +107,9 @@ section#demo {
 	text-align: inherit;
 	background-image: url("../img/example_bg_h.png");
 }
-
+/*
+	Elements
+*/
 .spacer {
 	text-align: center;
 	min-height: 100px;
@@ -214,4 +232,326 @@ section#demo {
 }
 .blue {
 	background-color: #3b3d97;
+}
+
+/*
+	MENU
+*/
+
+ul#menu, ul#menu ul {
+	list-style: none;
+	padding: 0;
+}
+
+ul#menu {
+	position: fixed;
+	z-index: 999;
+	width: 500px;
+	left: 50%;
+	margin: 10px auto auto -250px;
+	text-align: center;
+}
+
+#titlechart ul#menu {
+	margin-top: 40px;
+	position: static;
+	z-index: inherit;
+	width: auto;
+	left: auto;
+	margin: 40px auto auto auto;
+}
+ul#menu > li {
+	display: inline-block;
+	margin: 0 5px 0 5px;
+	position: relative;
+	min-height: 30px;
+	border-radius: 4px;
+	background-color: #79b0ee;
+	vertical-align: top;
+}
+ul#menu li a {
+	padding: 0 10px 0 10px;
+	min-width: 133px;
+	display: inline-block;
+	text-decoration: none;
+	line-height: 30px;
+	color: white;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-size: 15px;
+}
+ul#menu ul {
+	display: none;
+}
+
+ul#menu li:hover > a {
+	color: #2e639e;
+}
+ul#menu li:hover ul {
+	display: block;
+	width: 100%;
+	padding: 5px 0 5px 0;
+	border-top: 1px dashed white;
+}
+ul#menu ul li a {
+	text-transform: none;
+	font-size: 11px;
+	line-height: 20px;
+	font-weight: lighter;
+	color: #133f71;
+}
+ul#menu ul li a:hover {
+	background-color: #3883d8;
+	color: white;
+}
+
+.menuwrap {
+	position: fixed;
+	background-color: rgba(255, 255, 255, 0.9);
+	min-width: 500px;
+	left: 50%;
+	margin-left: -250px;
+	min-height: 51px;
+	top: -51px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	z-index: 998;
+	text-align: center;
+	transition: top 0.5s;
+	-webkit-transition: top 0.5s; /* Safari */
+}
+.menuwrap:hover {
+	top: 0px;
+}
+.menuwrap div:last-child {
+	top: 51px;
+	position: absolute;
+	width: 60px;
+	left: inherit;
+	left: 50%;
+	color: #2e639e;
+	margin-left: -30px;
+	background-color: inherit;
+	line-height: 20px;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	font-size: 11px;
+	text-transform: uppercase;
+	transition: top 0.5s;
+	-webkit-transition: top 0.5s; /* Safari */
+	transition-delay: 0.5s;
+	-webkit-transition-delay: 0.5s; /* Safari */
+}
+.menuwrap:hover > div {
+	opacity: 0;
+	top: -20px;
+	transition: top 0.1s;
+	-webkit-transition: top 0.1s; /* Safari */
+	transition-delay: 0.5s;
+	-webkit-transition-delay: 0.5s; /* Safari */
+}
+/*
+	Codecontainer
+*/
+#codecontainer {
+	position: fixed;
+	overflow-y: scroll;
+	top: 30px;
+	bottom: 20px;
+	right: 20px;
+	left: 20px;
+	background-color: white;
+	border-radius: 4px;
+	padding: 10px 0 10px 0;
+}
+#codecontainer pre {
+	margin: 0;
+	padding: 0;
+	line-height: 16px;
+	tab-size: 4;
+}
+#codecontainer div.code, #codecontainer div.linenumbers {
+	min-height: 100%;
+}
+#codecontainer div.code {
+	overflow-x: scroll;
+	padding: 0;
+}
+#codecontainer div.code pre {
+	padding: 0 10px 10px 5px;
+}
+#codecontainer div.linenumbers {
+	float: left;
+	padding: 0px 5px 0px 10px;
+	color: #aaa;
+	text-align: right;
+	border-right: 1px solid #e5e5e5;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+#codecontainer span.indent {
+	width: 31px;
+	display: inline-block;
+	white-space: nowrap;
+}
+#codecontainer #closebutton {
+	position: fixed;
+	top: 20px;
+	right: 10px;
+	width: 20px;
+	height: 20px;
+	background-color: white;
+	border-radius: 10px;
+	border: 1px solid #e5e5e5;
+	text-align: center;
+	cursor: pointer;
+	color: #2e639e;
+}
+#codecontainer #closebutton:after {
+	content: "྾";
+}
+#codecontainer #closebutton:hover {
+	background-color: #3883d8;
+	color: white;
+}
+
+/*
+	OTHER
+*/
+a.viewsource:after {
+	content: " }";
+}
+a.viewsource:before {
+	content: "{ ";
+}
+
+/*
+
+Codehighlighting
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+.hljs {
+  display: block; padding: 0.5em;
+  color: #333;
+  /*background: #f8f8f8*/
+}
+
+.hljs-comment,
+.hljs-template_comment,
+.diff .hljs-header,
+.hljs-javadoc {
+  color: #998;
+  font-style: italic
+}
+
+.hljs-keyword,
+.css .rule .hljs-keyword,
+.hljs-winutils,
+.javascript .hljs-title,
+.nginx .hljs-title,
+.hljs-subst,
+.hljs-request,
+.hljs-status {
+  color: #333;
+  font-weight: bold
+}
+
+.hljs-number,
+.hljs-hexcolor,
+.ruby .hljs-constant {
+  color: #099;
+}
+
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-phpdoc,
+.tex .hljs-formula {
+  color: #d14
+}
+
+.hljs-title,
+.hljs-id,
+.coffeescript .hljs-params,
+.scss .hljs-preprocessor {
+  color: #900;
+  font-weight: bold
+}
+
+.javascript .hljs-title,
+.lisp .hljs-title,
+.clojure .hljs-title,
+.hljs-subst {
+  font-weight: normal
+}
+
+.hljs-class .hljs-title,
+.haskell .hljs-type,
+.vhdl .hljs-literal,
+.tex .hljs-command {
+  color: #458;
+  font-weight: bold
+}
+
+.hljs-tag,
+.hljs-tag .hljs-title,
+.hljs-rules .hljs-property,
+.django .hljs-tag .hljs-keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+.hljs-attribute,
+.hljs-variable,
+.lisp .hljs-body {
+  color: #008080
+}
+
+.hljs-regexp {
+  color: #009926
+}
+
+.hljs-symbol,
+.ruby .hljs-symbol .hljs-string,
+.lisp .hljs-keyword,
+.tex .hljs-special,
+.hljs-prompt {
+  color: #990073
+}
+
+.hljs-built_in,
+.lisp .hljs-title,
+.clojure .hljs-built_in {
+  color: #0086b3
+}
+
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-pi,
+.hljs-doctype,
+.hljs-shebang,
+.hljs-cdata {
+  color: #999;
+  font-weight: bold
+}
+
+.hljs-deletion {
+  background: #fdd
+}
+
+.hljs-addition {
+  background: #dfd
+}
+
+.diff .hljs-change {
+  background: #0086b3
+}
+
+.hljs-chunk {
+  color: #aaa
 }
