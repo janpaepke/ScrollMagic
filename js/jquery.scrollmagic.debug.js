@@ -10,9 +10,17 @@
 	// TODO: Document
 	// TODO: correct trigger indicator position when scrolling horizontally and container has top offset and when scrolling vertically
 	// TODO: fix bug of wrong positioning of indicators when changing mobile orientation multiple times.
-	ScrollScene.prototype.addIndicators = function(zindex, parent) {
+	ScrollScene.prototype.addIndicators = function(options) {
+		var
+			DEFAULT_OPTIONS = {
+				parent: undefined,
+				zindex: -1
+			};
+
+
 		var
 			scene = this,
+			options = $.extend({}, DEFAULT_OPTIONS, options),
 			controller = this.parent(),
 			$wrap = $("<div></div>")
 					.addClass("ScrollSceneIndicators")
@@ -23,14 +31,14 @@
 						width: "100%",
 						height: "100%",
 						"text-align": "center",
-						"z-index": zindex === undefined ? -1 : zindex,
+						"z-index": options.zindex,
 						"font-size": 10
 					});
 		if (controller) {
 			var
 				cParams = controller.info(),
-				$container = $(parent).length > 0 ?
-							   $(parent)
+				$container = $(options.parent).length > 0 ?
+							   $(options.parent)
 							 : (cParams.isDocument) ? $("body") : cParams.container, // check if window element (then use body)
 				$triggerHook = $("<div>trigger</div>")
 								.css({

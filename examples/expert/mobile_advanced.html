@@ -47,14 +47,14 @@
 					// make sure we only do this on mobile:
 					if (Modernizr.touch) {
 						// using iScroll but deativating -webkit-transform because pin wouldn't work because of a webkit bug: https://code.google.com/p/chromium/issues/detail?id=20574
-						var myScroll = new IScroll('#example-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});//, {vScrollbar: true, hScroll: false, vScroll: true, bounce: false, useTransition: false, useTransform: false});
+						var myScroll = new IScroll('#example-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
 						// thanks to iScroll 5 we now have a real onScroll event (with some performance drawbacks)
 						myScroll.on("scroll", function () {
-							controller.updateAllScenes();
+							controller.update();
 						});
 
 						// add indicators to scrollcontent so they will be moved with it.
-						scene.addIndicators(undefined, ".scrollContent");
+						scene.addIndicators({parent: ".scrollContent"});
 					} else {
 						// show indicators (requires debug extension)
 						scene.addIndicators();						

@@ -66,6 +66,7 @@
 								})
 								// .setTween(TweenMax.to("#ani", 1, {color: "red", left: "+=100"}));
 								// .on("progress change start end enter leave", function (e) { console.log (e); })
+								// .on("progress update", function (e) { console.log (e); })
 								// .on("change", function (e) { console.log (e); })
 								// .on("start", function (e) { console.log (e); })
 								// .on("end", function (e) { console.log (e); })
@@ -81,18 +82,18 @@
 							backgroundColor: "blue",
 							rotation: -180
 						}))
-						.setPin(".animated")
+						// .setPin(".animated")
 						.addTo(controller)
 						.addIndicators();
 
 					// console.log(scene);
 					$(".animated").click(function () {
-						// controller.destroy();
+						// controller.destroy(true);
 						// x.addTo(controller)
 						// .addIndicators();
 						// scene = scene.destroy(true);
-						scene.duration(scene.duration() + 10);
-						// scene.removePin(true);
+						// scene.duration(scene.duration() + 10);
+						// scene.removePin(true).setPin(".animated", {pushFollowers: false});
 						// scene.loglevel(3);
 						// console.log(controller.scrollDirection());
 						// scene.unbind("change");

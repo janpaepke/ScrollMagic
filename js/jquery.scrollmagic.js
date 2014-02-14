@@ -91,7 +91,7 @@
 			// update container size immediately
 			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
-			_options.scrollContainer.on("scroll resize", update);
+			_options.scrollContainer.on("scroll resize", onChange);
 			try {
 				TweenLite.ticker.addEventListener("tick", onTick); // prefer TweenMax Ticker, but don't rely on it for basic functionality
 				_tickerUsed = true;
@@ -109,24 +109,20 @@
 		*/
 		var onTick = function (e) {
 			if (_updateScenesOnNextTick) {
-				if ($.isArray(_updateScenesOnNextTick)) {
-					// update specific scenes
-					$.each(_updateScenesOnNextTick, function (index, scene) {
-							ScrollMagic.updateScene(scene, true);
-					});
-				} else {
-					// update all scenes
-					ScrollMagic.updateAllScenes(true);
-				}
+				var scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects;
+				$.each(scenesToUpdate, function (index, scene) {
+					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
+					scene.update(true);
+				});
 				_updateScenesOnNextTick = false;
 			}
 		};
 		
 		/**
-		* Update the Container
+		* Handles Container changes
 		* @private
 		*/
-		var update = function (e) {
+		var onChange = function (e) {
 			if (e.type == "resize") {
 				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			}
@@ -181,7 +177,6 @@
 					}
 				})
 				log(3, "added Scene (" + _sceneObjects.length + " total)");
-				ScrollMagic.updateScene(ScrollScene, true);
 			}
 			return ScrollMagic;
 		};
@@ -208,7 +203,7 @@
 		 * @public
 		 *
 		 * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
-		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
+		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick. This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.updateScene = function (scene, immediately) {
@@ -226,20 +221,16 @@
 		};
 
 		/**
-		 * Update all scenes according to their scroll position within the container.
+		 * Update the container and all Scenes
 		 * @public
 		 *
 		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance);
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
-		this.updateAllScenes = function (immediately) {
+		this.update = function (immediately) {
+			onChange({type: "resize"}); // will set _updateScenesOnNextTick to true
 			if (immediately) {
-				$.each(_sceneObjects, function (index, scene) {
-					log(3, "updating Scene " + (index + 1) + "/" + _sceneObjects.length);
-					scene.update(true);
-				});
-			} else {
-				_updateScenesOnNextTick = true;
+				onTick();
 			}
 			return ScrollMagic;
 		};
@@ -284,7 +275,7 @@
 				var scene = _sceneObjects[_sceneObjects.length - 1];
 				scene.destroy(resetScenes);
 			}
-			_options.scrollContainer.off("scroll resize", updateContainer);
+			_options.scrollContainer.off("scroll resize", onChange);
 			if (_tickerUsed) {
 				TweenLite.ticker.removeEventListener("tick", onTick);
 			} else {
@@ -308,7 +299,7 @@
 	 * @param {object} [options] - Options for the Scene. (Can be changed lateron)
 	 * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position
-	 * @param {(string|object)} [options.triggerElement] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
+	 * @param {(string|object)} [options.triggerElement=null] - An Element that defines the start of the scene. Can be a Selector (string), a jQuery Object or a HTML Object. If undefined the scene will start right at the beginning (unless an offset is set).
 	 * @param {(float|string)} [options.triggerHook="onCenter"] - Can be string "onCenter", "onEnter", "onLeave" or float (0 - 1), 0 = onLeave, 1 = onEnter
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it. Does not affect animations where duration=0
@@ -346,7 +337,7 @@
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
-			_parent = null,
+			_parent,
 			_tween,
 			_pin,
 			_pinOptions;
@@ -489,12 +480,9 @@
 				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
 					// pinned
 					var fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
- 
-					if (containerInfo.vertical) {
-						fixedPos.top += _options.duration * _progress;
-					} else {
-						fixedPos.left += _options.duration * _progress;
-					}
+ 					
+ 					// add progress
+ 					fixedPos[containerInfo.vertical ? "top" : "left"] += _options.duration * _progress;
 
 					css = {
 						position: "fixed",
@@ -508,6 +496,9 @@
 						top:  0,
 						left: 0
 					};
+					if (!_pinOptions.pushFollowers && state === "AFTER") {
+						css[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
+					}
 				}
 				_pin.css(css);
 				updatePinSpacerSize();
@@ -571,7 +562,7 @@
 		 * Get parent controller.
 		 * @public
 		 *
-		 * @returns {ScrollMagic} Parent controller or null
+		 * @returns {ScrollMagic} Parent controller or undefined
 		 */
 		this.parent = function () {
 			return _parent;
@@ -996,7 +987,7 @@
 					updateTweenProgress(0);
 				}
 				_tween.kill();
-				_tween = null;
+				_tween = undefined;
 				log(3, "removed tween (reset: " + (reset ? "true" : "false") + ")");
 			}
 			return ScrollScene;
@@ -1056,7 +1047,7 @@
 				spacer: spacer,
 				marginCenter: _pin.css("margin-left") == "auto" && _pin.css("margin-left") == "auto",
 				pushFollowers: settings.pushFollowers,
-				origStyle: _pin.attr("style") || "" // save old styles (for reset)
+				origStyle: _pin.css(["position", "top", "left", "bottom", "right"]) // save old styles (for reset)
 			};
 			_pin.parent().show(); // hack end.
 
@@ -1095,7 +1086,7 @@
 			if (_pin) {
 				if (reset || !_parent) { // if there's no parent no progress was made anyway...
 					_pin.insertBefore(_pinOptions.spacer)
-						.attr("style", _pinOptions.origStyle);
+						.css(_pinOptions.origStyle);
 					_pinOptions.spacer.remove();
 				} else {
 					var vertical = _parent.info("vertical");
@@ -1106,7 +1097,7 @@
 					});
 				}
 				$(window).off("scroll resize", updatePinInContainer);
-				_pin = null;
+				_pin = undefined;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
 			return ScrollScene;
@@ -1131,6 +1122,7 @@
 				updatePinSpacerSize();
 				log(3, "added ScrollScene to controller");
 				controller.addScene(ScrollScene);
+				ScrollScene.update();
 				return ScrollScene;
 			}
 		};
@@ -1146,7 +1138,7 @@
 		this.remove = function () {
 			if (_parent) {
 				var tmpParent = _parent;
-				_parent = null;
+				_parent = undefined;
 				log(3, "removed ScrollScene from controller");
 				tmpParent.removeScene(ScrollScene);
 			}
@@ -1329,7 +1321,6 @@
 		construct();
 		return ScrollScene;
 	};
-
 
 	/*
 	 * ----------------------------------------------------------------
