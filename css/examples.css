@@ -1,34 +1,4 @@
 /*
-	General styles
-*/
-body {
-	font-family: "Source Sans Pro", Arial, sans-serif;
-	background-color: #c7e1ff;
-	font-size: 13px;
-}
-body, html {
-	height: 100%
-}
-
-h1, h2, h3, h4 {
-	font-family: "Josefin Slab", serif;
-}
-h1 {
-	font-style: italic;
-	font-weight: bold;
-	font-size: 40px;
-}
-h2 {
-	font-size: 20px;
-}
-a, a:visited {
-	text-decoration: none;
-	color: #2e639e;
-}
-a:hover {
-	text-decoration: underline;
-}
-/*
 	Containers
 */
 #content-wrapper, #example-wrapper {
@@ -63,8 +33,6 @@ a:hover {
 	font-size: 13px;
 }
 #example-wrapper section {
-	min-height: 100%;
-	min-width: 100%;
 }
 
 section#titlechart {
@@ -72,6 +40,7 @@ section#titlechart {
 	position: relative;
 	height: 100%;
 	min-height: 500px;
+	min-width: 100%;
 }
 .horizontal section {
 	display: inline-block;
@@ -86,6 +55,25 @@ section#titlechart #description {
 	height: 200px;
 	margin: -100px auto auto -300px;
 }
+section#titlechart #description h1 {
+	margin: 0;
+}
+section#titlechart #description h2 {
+	margin-bottom: 20px;
+}
+section#titlechart #description a.viewsource {
+	display: block;
+	margin-bottom: 20px;
+}
+section#titlechart #description ol, section#titlechart #description p {
+	text-align: left;
+	max-width: 400px;
+	margin: 10px auto 10px auto;
+	white-space: normal;
+}
+section#titlechart #description ol {
+	list-style-position: outside;
+}
 #example-wrapper section#titlechart #description:after {
 	content: "↧";
 	font-size: 40px;
@@ -93,17 +81,17 @@ section#titlechart #description {
 #example-wrapper.horizontal section#titlechart #description:after {
 	content: "↦";
 }
-#example-wrapper section#titlechart #description a {
-	display: block;
-	margin-bottom: 20px;
-}
 
-section#demo {
+
+section.demo * {
+	font-size: 13px;
+}
+section.demo {
 	font-size: 0;
 	text-align: center;
 	background-image: url("../img/example_bg_v.png");
 }
-.horizontal section#demo {
+.horizontal section.demo {
 	text-align: inherit;
 	background-image: url("../img/example_bg_h.png");
 }
@@ -148,6 +136,9 @@ section#demo {
 .spacer.s10 {
 	min-height: 1000px;
 }
+.spacer.s_viewport {
+	min-height: 100%;
+}
 .horizontal .spacer {
 	background-image: url("../img/example_bg_spacer_h.gif");
 	margin-bottom: 0;
@@ -190,40 +181,61 @@ section#demo {
 .horizontal .spacer.s10 {
 	min-width: 1000px;
 }
+.spacer.s_viewport {
+	min-width: 100%;
+}
 
 .box1, .box2, .box3 {
 	display: inline-block;
 	position: relative;
+	border-radius: 8px;
+	text-align: center;
 }
 .box1 {
-	width: 100px;
+	min-width: 100px;
 	height: 100px;
 	margin: 0 auto 0 auto;
 }
 .box2 {
-	width: 50px;
+	min-width: 50px;
 	height: 50px;
 	margin: 25px auto 25px auto;
 }
 .box3 {
-	width: 26px;
+	min-width: 26px;
 	height: 26px;
 	margin: 37px auto 37px auto;
 }
 .horizontal .box1 {
 	top: 50%;
+	max-height: 100px;
 	margin: -50px 0 auto 0;
 }
 .horizontal .box2 {
 	top: 50%;
+	max-height: 50px;
 	margin: -25px 25px auto 25px;
 }
 .horizontal .box3 {
 	top: 50%;
+	max-height: 26px;
 	margin: -13px 37px auto 37px;
 }
-
-
+.box1 p, .box2 p, .box3 p {
+	margin: 5px 15px 5px 15px;
+	font-size: 13px;
+	font-weight: lighter;
+	color: white;
+}
+.box1 p:first-child {
+	margin-top: 27px;
+}
+.box1 a, .box2 a, .box3 a {
+	color: white;
+}
+/*
+	colors
+*/
 .red {
 	background-color: #cf3535;
 }
@@ -231,7 +243,92 @@ section#demo {
 	background-color: #00af10;
 }
 .blue {
-	background-color: #3b3d97;
+	background-color: #3883d8;
+}
+.skin {
+	background-color: #ED9F4C;
+}
+.black {
+	background-color: #000000;
+}
+
+form.move {
+	text-align: left;
+	position: fixed;
+	top: 30px;
+	left: 20px;
+	display: block;
+	background-color: white;
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 4px;
+	padding: 20px;
+	z-index: 20;
+}
+form > div, form > fieldset > div {
+	margin: 10px 0 10px 0;
+	display: block;
+}
+form .slider {
+	min-width: 199px;
+	display: inline-block;
+	position: relative;
+	height: 9px;
+	border-right: 1px solid #2e639e;
+	border-left: 1px solid #2e639e;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+form .slider .trackbar {
+	margin-top: 4px;
+	border-top: 1px solid #2e639e;
+	height: 4px;
+}
+form .slider .handle {
+	height: 14px;
+	width: 6px;
+	position: absolute;
+	top: -4px;
+	margin-left: -4px;
+	left: 0%;
+	background-color: white;
+	border-radius: 4px;
+	cursor: pointer;
+	border: 1px solid #2e639e;
+}
+form .slider .handle:hover {
+	background-color: #79b0ee;
+}
+form .slider + input {
+	background-color: transparent;
+	border: none;
+	padding: 0;
+}
+form #options label, form #actions label {
+	min-width: 90px;
+	text-align: right;
+	display: inline-block;
+	margin-right: 10px;
+}
+form #options button {
+	width: 65px;
+}
+form fieldset {
+	padding: 0 10px 0 10px;
+	margin: 5px 0 0 0;
+}
+form fieldset:first-child {
+	margin-top: -5px;
+}
+form fieldset legend {
+	padding: 0 5px 0 5px;
+	margin: 0;
+}
+
+.move {
+	cursor: move;
+}
+.move * {
+	cursor: default;
 }
 
 /*
@@ -307,6 +404,7 @@ ul#menu ul li a:hover {
 
 .menuwrap {
 	position: fixed;
+	background-color: white;
 	background-color: rgba(255, 255, 255, 0.9);
 	min-width: 500px;
 	left: 50%;
@@ -363,12 +461,21 @@ ul#menu ul li a:hover {
 	background-color: white;
 	border-radius: 4px;
 	padding: 10px 0 10px 0;
+	z-index: 900;
 }
 #codecontainer pre {
 	margin: 0;
 	padding: 0;
 	line-height: 16px;
 	tab-size: 4;
+}
+#codecontainer pre .break {
+	background-color: #F6F6F6;
+	font-weight: bold;
+	color: #aaa;
+}
+#codecontainer pre .break:before {
+	content: "᎒"
 }
 #codecontainer div.code, #codecontainer div.linenumbers {
 	min-height: 100%;
@@ -386,12 +493,6 @@ ul#menu ul li a:hover {
 	color: #aaa;
 	text-align: right;
 	border-right: 1px solid #e5e5e5;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 #codecontainer span.indent {
 	width: 31px;

@@ -16,11 +16,13 @@
 
 // TODO: make examples
 // TODO: finish Docs
+// TODO: bug: when making the duration shorter after or during a pin, the element isn't pinned correctly.
 // -----------------------
-// TODO: consider call conditions for updatePinSpacerSize (performance?)
+// TODO: improvement: consider call conditions for updatePinSpacerSize (performance?)
+// TODO: improvement: only update fixed position when it changed (otherwise some quirks in safari - also: performance...)
 // TODO: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
+// TODO: bug: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 // TODO: feature: have different tweens, when scrolling up, than when scrolling down
-// TODO: feature: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 // TODO: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 
 (function($) {
@@ -33,7 +35,7 @@
 	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
 	 * @param {(string|object)} [options.scrollContainer=$(window)] - A selector or a jQuery object that references the main container for scrolling.
-	 * @param {boolean} [options.isVertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
+	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
 	 * @param {object} [options.globalSceneOptions=true] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options @see {@link ScrollScene)
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging. 0: silent | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo
 	 *
@@ -48,7 +50,7 @@
 		var
 			DEFAULT_OPTIONS = {
 				scrollContainer: $(window),
-				isVertical: true,
+				vertical: true,
 				globalSceneOptions: {},
 				loglevel: 2
 			};
@@ -89,7 +91,7 @@
 			}
 			_isDocument = !$.contains(document, _options.scrollContainer.get(0));
 			// update container size immediately
-			_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
+			_viewPortSize = _options.vertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			// set event handlers
 			_options.scrollContainer.on("scroll resize", onChange);
 			try {
@@ -124,10 +126,10 @@
 		*/
 		var onChange = function (e) {
 			if (e.type == "resize") {
-				_viewPortSize = _options.isVertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
+				_viewPortSize = _options.vertical ? _options.scrollContainer.height() : _options.scrollContainer.width();
 			}
 			var oldScrollPos = _scrollPos;
-			_scrollPos = _options.isVertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
+			_scrollPos = _options.vertical ? _options.scrollContainer.scrollTop() : _options.scrollContainer.scrollLeft();
 			var deltaScroll = _scrollPos - oldScrollPos;
 			_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 			_updateScenesOnNextTick = true;
@@ -143,7 +145,7 @@
 		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
 				var
-					prefix = "(ScrollContainer) ->",
+					prefix = "(ScrollMagic) ->",
 					args = Array.prototype.splice.call(arguments, 1),
 					func = Function.prototype.bind.call(debug, window);
 				args.unshift(loglevel, prefix);
@@ -245,12 +247,11 @@
 		this.info = function (about) {
 			var values = {
 				size: _viewPortSize, // contains height or width (in regard to orientation);
-				vertical: _options.isVertical,
+				vertical: _options.vertical,
 				scrollPos: _scrollPos,
 				scrollDirection: _scrollDirection,
 				container: _options.scrollContainer,
-				isDocument: _isDocument,
-				loglevel: _options.loglevel
+				isDocument: _isDocument
 			}
 			if (!arguments.length) { // get all as an object
 				return values;
@@ -260,6 +261,27 @@
 				log(1, "ERROR: option \"" + about + "\" is not available");
 				return;
 			}
+		};
+
+		/**
+		 * Get loglevel option value.
+		 * @public
+		 *
+		 * @returns {number}
+		 *//**
+		 * Set loglevel option value (added for concistency reasons).
+		 * @public
+		 *
+		 * @param {number} newLoglevel - The new loglevel setting of the ScrollMagic controller.
+		 * @returns {ScrollMagic} Parent object for chaining.
+		 */
+		this.loglevel = function (newLoglevel) {
+			if (!arguments.length) { // get
+				return _options.loglevel;
+			} else if (_options.loglevel != newLoglevel) { // set
+				_options.loglevel = newLoglevel;
+			}
+			return ScrollMagic;
 		};
 
 		
@@ -380,10 +402,12 @@
 		 * @private
 		 */
 		var checkOptionsValidity = function () {
+			_options.duration = parseFloat(_options.duration);
 			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"duration\":", _options.duration);
 				_options.duration = DEFAULT_OPTIONS.duration;
 			}
+			_options.offset = parseFloat(_options.offset);
 			if (!$.isNumeric(_options.offset)) {
 				log(1, "ERROR: Invalid value for ScrollScene option \"offset\":", _options.offset);
 				_options.offset = DEFAULT_OPTIONS.offset;
@@ -891,7 +915,7 @@
 					_progress = 0;
 					_state = 'BEFORE';
 					doUpdate = true;
-				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
+				} else if (progress > 0 && progress < 1 && _progress != progress && (progress >= _progress || _options.reverse)) {
 					_progress = progress;
 					_state = 'DURING';
 					doUpdate = true;
@@ -998,7 +1022,7 @@
 		 * @public
 		 *
 		 * @param {(string|object)} element - A Selctor or a jQuery object for the object that is supposed to be pinned.
-		 * @param {object} [settings.pushFollowers=true] - If true following elements will be "pushed" down, if false the pinned element will just scroll past them
+		 * @param {object} [settings.pushFollowers=true] - If true following elements will be "pushed" down for the duration of the pin, if false the pinned element will just scroll past them. Ignored, when duration is 0.
 		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -1304,7 +1328,7 @@
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.trigger = function (name, vars) {
-			log(3, 'event fired: ' + name, "->", vars);
+			log(3, 'event fired:', name, "->", vars);
 			var event = {
 				type: $.trim(name).toLowerCase() + ".ScrollScene",
 				target: ScrollScene

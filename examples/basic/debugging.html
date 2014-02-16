@@ -4,7 +4,7 @@
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=500" />
-	<title>Simple Tweening - Examples - ScrollMagic</title>
+	<title>Debugging - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -25,72 +25,62 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Simple Tweening</h1>
-						<h2>Two examples of basic tweening.</h2>
-						<ol>
-							<li>When no duration is defined for the scene, the tween will simply start playing when the scroll reaches the trigger position.</li>
-							<li>If the scene has a duration the progress of the tween will directly correspond to the scroll position.</li>
-						</ol>
+						<h1>Debugging</h1>
+						<h2>ScrollMagic makes debugging easy.</h2>
+						<p>Open your javascript console to see all the helpful information ScrollMacic logs, if told so by the loglevel option.</p>
+						<p>To help you visualize the parameters of your scene, ScrollMagic comes with a debugging extension. It lets you add indicators to see where the scene starts, where it ends and where the trigger hook position is.<br>You can see them in all the examples (look to the right) and they require the inclusion of an extra JavaScript file (jquery.scrollmagic.debug.js).</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
+				</section>
+				<section class="demo">
+					<form class="loglevel move">
+						<fieldset>
+							<legend>Console Output</legend>
+							<div>
+								<input type="checkbox" id="logcontroller" value="1" checked>
+								<label for="logcontroller">ScrollMagic (controller)</label>
+							</div>
+							<div>
+								<input type="checkbox" id="logscene" value="1" checked>
+								<label for="logscene">ScrollScene</label>
+							</div>
+						</fieldset>
+					</form>
+					<div class="spacer s2"></div>
+					<div id="trigger" class="spacer s0"></div>
+					<div id="target" class="box1 green">
+						<p>I'll be black!</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+					<div class="spacer s2"></div>
 					<script>
-						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
-						});
-					</script>
-				</section>
-				<section class="demo">
-					<div class="spacer s2"></div>
-					<div id="trigger1" class="spacer s0"></div>
-					<div id="animate1" class="box2 skin">
-						<p>You wouldn't like me, when I'm angry!</p>
-						<a href="#" class="viewsource">view source</a>
-					</div>
-					<div class="spacer s2"></div>
-					<script>
-						$(document).ready(function($) {
+							var controller = new ScrollMagic({loglevel: 3});
+
 							// build tween
-							var tween = TweenMax.to("#animate1", 0.5, {backgroundColor: "green", scale: 3});
+							var tween = TweenMax.to("#target", 0.5, {backgroundColor: "black"});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1"})
+							var scene = new ScrollScene({triggerElement: "#trigger", duration: 300, loglevel: 3})
 											.setTween(tween)
+											.setPin("#target")
 											.addTo(controller);
+
+							// checkbox actions
+							$("form.loglevel input[type=checkbox]").on("change", function (e) {
+								var
+									target = $(this).attr("id") == "logcontroller" ? controller : scene,
+									level = $(this).prop("checked") ? 3 : 0;
+
+								target.loglevel(level);
+							});
 
 							// show indicators (requires debug extension)
 							scene.addIndicators();
 						});
 					</script>
 				</section>
-				<section class="demo">
-					<div class="spacer s1"></div>
-					<div id="trigger2" class="spacer s1"></div>
-					<div class="spacer s0"></div>
-					<div id="animate2" class="box1 black">
-						<p>Smurf me!</p>
-						<a href="#" class="viewsource">view source</a>
-					</div>
-					<div class="spacer s2"></div>
-					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.fromTo("#animate2", 0.5, 
-									{"border-top": "0px solid white"},
-									{"border-top": "30px solid white", backgroundColor: "blue", scale: 0.7}
-								);
-
-							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2", duration: 300})
-											.setTween(tween)
-											.addTo(controller);
-
-							// show indicators (requires debug extension)
-							scene.addIndicators();
-						});
-					</script>
-				</section>			
 				<div class="spacer s_viewport"></div>
 			</div>
 		</div>

@@ -1,0 +1,39 @@
+/*
+	General styles
+*/
+body {
+	font-family: "Source Sans Pro", Arial, sans-serif;
+	background-color: #c7e1ff;
+	font-size: 13px;
+}
+body, html {
+	height: 100%
+}
+
+h1, h2, h3, h4 {
+	font-family: "Josefin Slab", serif;
+}
+h1 {
+	font-style: italic;
+	font-weight: bold;
+	font-size: 40px;
+}
+h2 {
+	font-size: 20px;
+}
+a, a:visited {
+	text-decoration: none;
+	color: #2e639e;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+.noselect * {
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}

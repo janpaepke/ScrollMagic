@@ -6,8 +6,8 @@ var
 			sub: {
 				"simple_tweening.html" :	"Simple Tweening",
 				"simple_pinning.html" :		"Simple Pinning",
-				"going_vertical.html" :		"Going vertical",
-				"settings.html" :			"Settings",
+				"going_horizontal.html" :	"Going Horizontal",
+				"scene_manipulation.html" :	"Scene Manipulation",
 				"debugging.html" :			"Debugging"
 			}
 		},
@@ -17,9 +17,10 @@ var
 				"advanced_technology.html" :	"Advanced Tweening",
 				"parallax.html" :				"Parallax",
 				"container.html" :				"Container",
+				"scrolling_anchors.html" :		"Scrolling Anchors",
 				"mobile_advanced.html" :		"Mobile (Basic)",
 				"custom_actions.html" :			"Custom Actions",
-				"unlimited_scroll.html" :		"Unlimited Scroll"
+				"infinite_scrolling.html" :		"Infinite Scrolling"
 			}
 		},
 		"expert": {
@@ -44,13 +45,10 @@ var
 
 // functions
 
-function showCode ($which) {
+function getCode($elem) {
 	var
-		source = $($which)
+		source = $($elem)
 				  .clone()
-				  // .find("section#titlechart")
-						// .remove()
-						// .end()
 				  .html(),
 		lines = source.split("\n"),
 		linenumbers = "";
@@ -77,16 +75,36 @@ function showCode ($which) {
 		});
 	}
 
-	source = lines.join("\n");
+	return {
+		source: lines.join("\n"),
+		linenumbers: linenumbers
+	}
+}
+
+function showCode ($elem) {
+	var
+		code = getCode($elem);
+	
+	if ($elem.is("section.demo")) {
+		// complicated but i want to keep identation.
+		var $desc = $("div#example-wrapper section#titlechart").clone();
+		$desc.find(":not(script)").remove();
+		if ($desc.children().length > 0) {
+			var startcode = getCode($desc);
+			code.linenumbers = startcode.linenumbers + "᎒" + code.linenumbers;
+			code.source = startcode.source + "᎒" + code.source;
+		}
+	}
 
 	// insert
 	var $code = 	$("<div></div>")
 					.addClass("code")
-					.text(source)
+					.text(code.source)
 					.wrapInner("<pre></pre>"),
 		$ln =		$("<div></div>")
 					.addClass("linenumbers")
-					.html(linenumbers)
+					.addClass("noselect")
+					.html(code.linenumbers)
 					.wrapInner("<pre></pre>"),
 		$close = 	$("<div></div>")
 					.attr("id", "closebutton");
@@ -101,15 +119,16 @@ function showCode ($which) {
 	$("body").css("overflow", "hidden"); // set overflow to hidden to avoid scrolling body while open.
 	
 	// highlight
-	hljs.highlightBlock($code.get(0), "    ");
+	hljs.highlightBlock($code.get(0));
+
+	$code.html($code.html().replace("᎒", '<div class="break noselect"> </div>'));
+	$ln.html($ln.html().replace("᎒", '<div class="break noselect"></div>'));
 }
 
 function hideCode() {
 	$("body > div#codecontainer").remove();
 	$("body").css("overflow", "");
 }
-
-console.log();
 
 $(document).ready(function () {
 	// prepare highlight js
@@ -143,6 +162,23 @@ $(document).ready(function () {
 		}
 	}
 
+	// store initial HTML of code
+	$("a.viewsource").each(function () {
+		var $parent = $(this).parents("section.demo, div#example-wrapper, body").first().clone();
+		$(this).data("code", $parent.clone());
+	})
+
+	// build sliders
+	$("div.slider+input")
+		.prop("disabled", true)
+		.on("change", function () {
+			$(this).prev().find(".handle").css("left", Math.round(($(this).val() - parseFloat($(this).attr("min"))) / (parseFloat($(this).attr("max")) - parseFloat($(this).attr("min"))) * 100) + "%");
+		})
+		.prev()
+			.append("<div class=\"trackbar\"></div>")
+			.append("<div class=\"handle\"></div>")
+
+
 });
 
 // event listener
@@ -152,10 +188,85 @@ $(document).on("click", "ul#menu > li > a", function (e) {
 
 $(document).on("click", "a.viewsource", function (e) {
 	e.preventDefault();
-	showCode($("#example-wrapper"));
+	showCode($(this).data("code"));
 });
 
-$(document).on("click", "#codecontainer #closebutton", function (e) {
-	hideCode();
+$(document).on("click", "#codecontainer #closebutton", hideCode);
+$(document).on("keydown", function (e) {
+	if (e.which == 27) {
+		e.preventDefault();
+		hideCode();
+	}
 });
+
+// dragables / slider
+$(document).on("mousedown", ".slider, .move", function (e) {
+	var $this = $(this);
+	if ($this.is(".slider") || e.target == this) { // only the element itself,  not the children, unless its the slider
+		e.stopPropagation();
+		var
+			offset = $this.offset(),
+			drag = {top: offset.top - $(document).scrollTop(), left: offset.left - $(document).scrollLeft()};
+		if ($this.is(".move")) {
+			drag.top -= e.pageY;
+			drag.left -= e.pageX;
+		}
+		$this.data("drag", drag);
+		$this.addClass("dragging");
+		$("body").addClass("noselect");
+	}
+});
+
+$(document).on("mouseup mousemove", function (e) {
+	$(".move.dragging").each(function (f) {
+		var data = $(this).data("drag");
+		if (data) {
+			$(this).css({
+				top:  data.top + e.pageY,
+				left: data.left + e.pageX
+			});
+		}
+	})
+	$(".slider.dragging").each(function (f) {
+		var data = $(this).data("drag");
+		if (data) {
+			var
+				pos = e.pageX - data.left,
+				width = $(this).width(),
+				$input = $(this).next("input"),
+				min = parseFloat($input.attr("min")) || 0,
+				max = parseFloat($input.attr("max")) || width,
+				step = 1/parseFloat($input.attr("step")) || 1;
+			if (pos <= 0) {
+				pos = 0;
+			}
+			if (pos >= width) {
+				pos = width;
+			}
+			var
+				perc = pos/width,
+				val = (max-min) * perc + min,
+				decimals = Math.log(step) / Math.LN10;
+			// mind the step
+			val = Math.round(val*step)/step;
+			$(this).find(".handle").css("left", pos);
+
+			$input.val(val.toFixed(decimals));
+			if ($(this).hasClass("liveupdate")) {
+				$input.change();	
+			}
+		}
+	})
+	e.preventDefault();
+});
+
+$(document).on("mouseup", function (e) {
+	$(".slider.dragging + input").change(); // trigger change
+	$(".move.dragging, .slider.dragging")
+		.data("drag", null)
+		.removeClass("dragging");
+	$("body").removeClass("noselect");
+});
+
+
 
