@@ -1,12 +1,12 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700);
+@import url('http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700');
 /*!
- * Bootstrap v2.3.1
+ * Bootstrap v2.3.2
  *
- * Copyright 2012 Twitter, Inc
+ * Copyright 2013 Twitter, Inc
  * Licensed under the Apache License v2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ * Designed and built with all the love in the world by @mdo and @fat.
  */
 .clearfix {
   *zoom: 1;
@@ -206,7 +206,7 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: "Open Sans", Calibri, Candara, Arial, sans-serif;
+  font-family: "Source Sans Pro", Calibri, Candara, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #555555;
@@ -893,7 +893,7 @@ input,
 button,
 select,
 textarea {
-  font-family: "Open Sans", Calibri, Candara, Arial, sans-serif;
+  font-family: "Source Sans Pro", Calibri, Candara, Arial, sans-serif;
 }
 label {
   display: block;
@@ -2521,6 +2521,14 @@ table th[class*="span"],
 .open > .dropdown-menu {
   display: block;
 }
+.dropdown-backdrop {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 990;
+}
 .pull-right > .dropdown-menu {
   right: 0;
   left: auto;
@@ -3823,7 +3831,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-search .search-query {
   margin-bottom: 0;
   padding: 4px 14px;
-  font-family: "Open Sans", Calibri, Candara, Arial, sans-serif;
+  font-family: "Source Sans Pro", Calibri, Candara, Arial, sans-serif;
   font-size: 13px;
   font-weight: normal;
   line-height: 1;
@@ -5548,13 +5556,10 @@ div.subnav-fixed {
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.table tbody tr.success td {
-  color: #ffffff;
-}
-.table tbody tr.error td {
-  color: #ffffff;
-}
-.table tbody tr.info td {
+.table tbody tr.success td,
+.table tbody tr.error td,
+.table tbody tr.info td,
+.table tbody tr.warning td {
   color: #ffffff;
 }
 .table-bordered {
@@ -5613,6 +5618,17 @@ input[type="color"] {
 .control-group.error select,
 .control-group.error textarea {
   border-color: #ff0039;
+  color: #080808;
+}
+.control-group.info .control-label,
+.control-group.info .help-block,
+.control-group.info .help-inline {
+  color: #9954bb;
+}
+.control-group.info input,
+.control-group.info select,
+.control-group.info textarea {
+  border-color: #9954bb;
   color: #080808;
 }
 .control-group.success .control-label,
@@ -5828,8 +5844,8 @@ a.thumbnail:hover {
 #toc .toc-active a:hover,
 #toc .toc-active a:active,
 #toc .toc-active a:visited {
-  background-color: transparent;
-  color: #007fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
 }
 .toc-shim {
   padding-top: 56px;
@@ -5890,28 +5906,66 @@ code {
   background-color: #007fff;
   color: #ffffff;
 }
-.member-collapsed a {
-  color: #ffffff;
-}
 .member-open {
-  background-color: inherit;
+  background-color: #b1d8ff;
   color: inherit;
-  font-weight: bold;
-}
-.member-open .signature, .member .signature {
-  font-weight: normal;
-  margin-left: 4px;
 }
 .member {
+  -webkit-transition: background-color 0.5s linear;
+  -moz-transition: background-color 0.5s linear;
+  -o-transition: background-color 0.5s linear;
+  transition: background-color 0.5s linear;
+  -webkit-transition: color 0.5s linear;
+  -moz-transition: color 0.5s linear;
+  -o-transition: color 0.5s linear;
+  transition: color 0.5s linear;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 10px;
 }
-#toc {
-  display: none;
+.sunlight-highlighted {
+  margin: 0;
+  line-height: auto;
+  word-break: normal;
+  word-wrap: normal;
+  white-space: pre;
+  background-color: transparent;
+  border: none;
 }
-.row-fluid .span8 {
-  width: 100%;
-  *width: 100%;
+.sunlight-line-number-margin {
+  border-radius: 0;
+  border-width: 0 1px 0 0;
+  font-size: 12px;
+  line-height: 15px;
+  padding: 10px 4px !important;
 }
+.sunlight-code-container {
+  overflow: hidden;
+}
+.sunlight-container {
+  margin: -20px 0 40px 0 !important;
+}
+.member-collapsed .type-signature a {
+  color: white;
+}
+.tag-source {
+  font-size: 11px;
+  font-weight: normal;
+  display: inline-block;
+  margin-left: 0;
+}
+.tag-source ul {
+  list-style: none;
+  margin-left: 0;
+}
+dl.details {
+  margin-bottom: 10px;
+}
+h5 {
+  margin-bottom: 0;
+}
+.tag-returns ul, .tag-returns p {
+  display: inline-block;
+}
+

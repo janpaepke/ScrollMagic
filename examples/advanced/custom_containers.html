@@ -44,7 +44,7 @@
 						<div class="spacer s3"></div>
 						<script>
 							$(document).ready(function($) {
-								var controller1 = new ScrollMagic({scrollContainer: "#container1"});
+								var controller1 = new ScrollMagic({container: "#container1"});
 
 								var scene = new ScrollScene({triggerElement: "#trigger1", duration: 300})
 									.addTo(controller1)
@@ -73,7 +73,7 @@
 						<div class="spacer s4"></div>
 						<script>
 							$(document).ready(function($) {
-								var controller2 = new ScrollMagic({scrollContainer: "#container2", vertical: false});
+								var controller2 = new ScrollMagic({container: "#container2", vertical: false});
 
 								var scene2 = new ScrollScene({triggerElement: "#trigger2", duration: 300})
 									.addTo(controller2)

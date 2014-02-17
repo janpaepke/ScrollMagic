@@ -55,11 +55,23 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:enter">enter</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:leave">leave</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
 						</li>
 						
 						<li>
 							<a href="ScrollScene.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:update">update</a>
 						</li>
 						
 
@@ -96,7 +108,7 @@
     
         
 <dt>
-    <h4 class="name" id="ScrollScene"><span class="type-signature"></span>new ScrollScene<span class="signature">(trigger, <span class="optional">options</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ScrollScene"><span class="type-signature"></span>new ScrollScene<span class="signature">(<span class="optional">options</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -104,7 +116,7 @@
     
     
     <div class="description">
-        <p>CLASS ScrollScene (scene controller)</p>
+        <p>A ScrollScene defines where the controller should react and how.</p>
     </div>
     
 
@@ -140,40 +152,6 @@
 
         <tr>
             
-                <td class="name"><code>trigger</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The ScollScene object that is supposed to be updated.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
                 <td class="name"><code>options</code></td>
             
 
@@ -200,7 +178,7 @@
 
             
 
-            <td class="description last"><p>Options for the Scene. (Can be changed lateron)</p>
+            <td class="description last"><p>Options for the Scene. (Can be changed later on)</p>
                 <h6>Properties</h6>
                 
 
@@ -262,7 +240,7 @@
                 </td>
             
 
-            <td class="description last"><p>The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.</p></td>
+            <td class="description last"><p>The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.</p></td>
         </tr>
 
 	
@@ -301,26 +279,23 @@
                 </td>
             
 
-            <td class="description last"><p>Offset Value for the Trigger Position</p></td>
+            <td class="description last"><p>Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>triggerPosition</code></td>
+                <td class="name"><code>triggerElement</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">float</span>
-|
-
 <span class="param-type">string</span>
 |
 
-<span class="param-type">function</span>
+<span class="param-type">object</span>
 
 
             
@@ -341,12 +316,60 @@
             
                 <td class="default">
                 
-                    "onEnter"
+                    null
                 
                 </td>
             
 
-            <td class="description last"><p>Can be string &quot;onCenter&quot;, &quot;onEnter&quot;, &quot;onLeave&quot; or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)</p></td>
+            <td class="description last"><p>Selector, DOM Object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>triggerHook</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">float</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "onCenter"
+                
+                </td>
+            
+
+            <td class="description last"><p>Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.<br>
+                                                                   Can also be defined using a string:</p>
+<ul>
+<li>&quot;onEnter&quot; =&gt; 1</li>
+<li>&quot;onCenter&quot; =&gt; 0.5</li>
+<li>&quot;onLeave&quot; =&gt; 0</li>
+</ul></td>
         </tr>
 
 	
@@ -392,7 +415,7 @@
 
         <tr>
             
-                <td class="name"><code>smoothTweening</code></td>
+                <td class="name"><code>tweenChanges</code></td>
             
 
             <td class="type">
@@ -424,7 +447,8 @@
                 </td>
             
 
-            <td class="description last"><p>Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0</p></td>
+            <td class="description last"><p>Tweens Animation to the progress target instead of setting it.<br>
+                                                        Does not affect animations where duration=0.</p></td>
         </tr>
 
 	
@@ -463,7 +487,13 @@
                 </td>
             
 
-            <td class="description last"><p>Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo</p></td>
+            <td class="description last"><p>Loglevel for debugging.</p>
+<ul>
+<li>0 =&gt; silent</li>
+<li>1 =&gt; errors</li>
+<li>2 =&gt; errors, warnings</li>
+<li>3 =&gt; errors, warnings, debuginfo</li>
+</ul></td>
         </tr>
 
 	
@@ -502,7 +532,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-316">line 316</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-414">line 414</a>
     </li></ul></dd>
     
 
@@ -524,6 +554,12 @@
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// create a standard scene and add it to a controllernew ScrollScene()		.addTo(controller);// create a scene with custom options and assign a handler to it.var scene = new ScrollScene({		duration: 100,		offset: 200,		triggerHook: "onEnter",		reverse: false});</pre>
+
+
     
 </dd>
 
@@ -548,7 +584,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="dispatch"><span class="type-signature"></span>dispatch<span class="signature">(name, <span class="optional">vars</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    <h4 class="name" id="addTo"><span class="type-signature"></span>addTo<span class="signature">(controller)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
     
     
 </dt>
@@ -556,279 +592,8 @@
     
     
     <div class="description">
-        <p>Trigger an event.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The name of the event that should be fired.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>vars</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>An object containing info that should be passed to the callback.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1018">line 1018</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get duration option value.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-564">line 564</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="signature">(newDuration)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Set duration option value.</p>
+        <p>Add the scene to a controller.<br>
+This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(scene)</p>
     </div>
     
 
@@ -862,13 +627,13 @@
 
         <tr>
             
-                <td class="name"><code>newDuration</code></td>
+                <td class="name"><code>controller</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
 
 
             
@@ -878,7 +643,7 @@
 
             
 
-            <td class="description last"><p>The new duration of the scene.</p></td>
+            <td class="description last"><p>The controller to which the scene should be added.</p></td>
         </tr>
 
 	
@@ -910,7 +675,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-564">line 564</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1294">line 1294</a>
     </li></ul></dd>
     
 
@@ -923,11 +688,6 @@
 
     
     
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
-    </ul>
-    
 
     
 
@@ -939,127 +699,32 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="getTriggerOffset"><span class="type-signature"></span>getTriggerOffset<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Return the trigger offset.
-(always numerical, whereas trigger can also be a jQuery object)</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-922">line 922</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Numeric trigger offset, regardless if the trigger is an offset value or a jQuery object.</p>
 </div>
 
 
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// add a scene to a ScrollMagic controllerscene.addTo(controller);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">(<span class="optional">reset</span>)</span><span class="type-signature"> &rarr; {null}</span></h4>
     
     
 </dt>
@@ -1067,645 +732,7 @@
     
     
     <div class="description">
-        <p>Get offset option value.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-588">line 588</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="signature">(newOffset)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Set offset option value.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>newOffset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The new offset of the scene.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-588">line 588</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
-    </ul>
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="on"><span class="type-signature"></span>on<span class="signature">(name, callback)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Add an event listener.
-The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The name of the event the callback should be attached to.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>A function that should be executed, when the event is dispatched. An event object will be passed to the callback.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-997">line 997</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="progress"><span class="type-signature"></span>progress<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get Scene progress (0 - 1).</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-707">line 707</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="progress"><span class="type-signature"></span>progress<span class="signature">(progress)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Set Scene progress.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>progress</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The new progress value of the scene (0 - 1).</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-707">line 707</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-    <h5>Fires:</h5>
-    <ul>
-        <li><a href="ScrollScene.html#event:start">ScrollScene.event:start</a></li>
-    
-        <li><a href="ScrollScene.html#event:end">ScrollScene.event:end</a></li>
-    
-        <li><a href="ScrollScene.html#event:progress">ScrollScene.event:progress</a></li>
-    </ul>
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">(<span class="optional">reset</span>)</span><span class="type-signature"> &rarr; {null}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Remove the scene from its parent controller.
-Can also be achieved using controller.remove(scene);</p>
+        <p>Destroy the scene and everything.</p>
     </div>
     
 
@@ -1775,7 +802,7 @@ Can also be achieved using controller.remove(scene);</p>
                 </td>
             
 
-            <td class="description last"><p>If false the spacer will not be removed and the element's position will not be reset.</p></td>
+            <td class="description last"><p>If true the pin and tween (if existent) will be reset.</p></td>
         </tr>
 
 	
@@ -1807,7 +834,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-908">line 908</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1345">line 1345</a>
     </li></ul></dd>
     
 
@@ -1832,22 +859,1227 @@ Can also be achieved using controller.remove(scene);</p>
     
             
 
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// destroy the scene without resetting the pin and tween to their initial positionsscene = scene.destroy();// destroy the scene and reset the pin and tweenscene = scene.destroy(true);</pre>
 
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="signature">(<span class="optional">newDuration</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
 		
-<span class="param-type">null</span>
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newDuration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
 
 
-	</dd>
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new duration of the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-696">line 696</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
 </dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current scene duration.</p>
+
+	{
+<span class="param-type">number</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current duration valuevar duration = scene.duration();// set a new durationscene.duration(300);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loglevel"><span class="type-signature"></span>loglevel<span class="signature">(<span class="optional">newLoglevel</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the loglevel option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newLoglevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new loglevel setting of the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-882">line 882</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current loglevel.</p>
+
+	{
+<span class="param-type">number</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current loglevelvar loglevel = scene.loglevel();// set new loglevelscene.loglevel(3);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="off"><span class="type-signature"></span>off<span class="signature">(name, <span class="optional">callback</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Remove one or more event listener.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The name or names of the event that should be removed.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A specific callback function that should be removed. If none is passed all callbacks to the event listener will be removed.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1533">line 1533</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">function callback (event) {		console.log("Event fired! (" + event.type + ")");}// add listenersscene.on("change update", callback);// remove listenersscene.off("change update", callback);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="signature">(<span class="optional">newOffset</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the offset option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newOffset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new offset of the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-724">line 724</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current scene offset.</p>
+
+	{
+<span class="param-type">number</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current offsetvar offset = scene.offset();// set a new offsetscene.offset(100);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="on"><span class="type-signature"></span>on<span class="signature">(name, callback)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Add one ore more event listener.<br>
+The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name or names of the event the callback should be attached to.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A function that should be executed, when the event is dispatched. An event object will be passed to the callback.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1506">line 1506</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">function callback (event) {		console.log("Event fired! (" + event.type + ")");}// add listenersscene.on("change update progress start end enter leave", callback);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="signature">()</span><span class="type-signature"> &rarr; {undefined}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> the parent controller.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-676">line 676</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent controller or</p>
+
+	{
+<span class="param-type">undefined</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the parent controller of a scenevar controller = scene.parent();</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="progress"><span class="type-signature"></span>progress<span class="signature">(<span class="optional">progress</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the scene progress.<br>
+Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new progress value of the scene (0 - 1).</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1025">line 1025</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:enter">ScrollScene.event:enter</a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:start">ScrollScene.event:start</a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:progress">ScrollScene.event:progress</a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:end">ScrollScene.event:end</a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:leave">ScrollScene.event:leave</a>, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current scene progress.</p>
+
+	{
+<span class="param-type">number</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current scene progressvar progress = scene.progress();// set new scene progressscene.progress(0.3);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Remove the scene from its parent controller.<br>
+This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.removeScene(scene)
+The scene will not be updated anymore until you readd it to a controller.
+To remove the pin or the tween you need to call removeTween() or removePin() respectively.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1322">line 1322</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove the scene from its parent controllerscene.remove();</pre>
+
+
     
 </dd>
 
@@ -1964,7 +2196,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-880">line 880</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1262">line 1262</a>
     </li></ul></dd>
     
 
@@ -1988,27 +2220,25 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove the pin from the scene without resetting it (the spacer is not removed)scene.removePin();// remove the pin from the scene and reset the pin element to its initial position (spacer is removed)scene.removePin(true);</pre>
+
+
     
 </dd>
 
@@ -2093,7 +2323,7 @@ Can also be achieved using controller.remove(scene);</p>
                 </td>
             
 
-            <td class="description last"><p>If true the tween weill be reset to start values.</p></td>
+            <td class="description last"><p>If true the tween will be reset to its initial values.</p></td>
         </tr>
 
 	
@@ -2125,7 +2355,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-777">line 777</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1148">line 1148</a>
     </li></ul></dd>
     
 
@@ -2149,34 +2379,32 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
 </div>
 
 
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove the tween from the scene without resetting itscene.removeTween();// remove the tween from the scene and reset it to initial positionscene.removeTween(true);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="reverse"><span class="type-signature"></span>reverse<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="reverse"><span class="type-signature"></span>reverse<span class="signature">(<span class="optional">newReverse</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
     
 </dt>
@@ -2184,95 +2412,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Get reverse option value.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-656">line 656</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">boolean</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="reverse"><span class="type-signature"></span>reverse<span class="signature">(newReverse)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Set reverse option value.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the reverse option value.</p>
     </div>
     
 
@@ -2293,6 +2433,8 @@ Can also be achieved using controller.remove(scene);</p>
 
 		<th>Type</th>
 
+		
+		<th>Argument</th>
 		
 
 		
@@ -2318,6 +2460,16 @@ Can also be achieved using controller.remove(scene);</p>
             
             </td>
 
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
             
 
             
@@ -2354,7 +2506,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-656">line 656</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-828">line 828</a>
     </li></ul></dd>
     
 
@@ -2369,7 +2521,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <h5>Fires:</h5>
     <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
     </ul>
     
 
@@ -2381,29 +2533,40 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current reverse option value.</p>
+
+	{
+<span class="param-type">boolean</span>
+
+}
+
 </div>
 
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
 
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
-
-        
+</li>
+        </ul>
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current reverse optionvar reverse = scene.reverse();// set new reverse optionscene.reverse(false);</pre>
+
+
     
 </dd>
 
@@ -2418,7 +2581,9 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Pin an element for the duration of the tween.</p>
+        <p>Pin an element for the duration of the tween.<br>
+If the scene duration is 0 the element will never be unpinned.<br>
+Note, that pushFollowers has no effect, when the scene duration is 0.</p>
     </div>
     
 
@@ -2487,7 +2652,7 @@ Can also be achieved using controller.remove(scene);</p>
                 </td>
             
 
-            <td class="description last"><p>A Selctor or a jQuery object for the object that is supposed to be pinned.</p></td>
+            <td class="description last"><p>A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.</p></td>
         </tr>
 
 	
@@ -2526,7 +2691,7 @@ Can also be achieved using controller.remove(scene);</p>
                 </td>
             
 
-            <td class="description last"><p>If true following elements will be &quot;pushed&quot; down, if false the pinned element will just scroll past them</p></td>
+            <td class="description last"><p>If true following elements will be &quot;pushed&quot; down for the duration of the pin, if false the pinned element will just scroll past them. Ignored, when duration is 0.</p></td>
         </tr>
 
 	
@@ -2560,12 +2725,12 @@ Can also be achieved using controller.remove(scene);</p>
             
                 <td class="default">
                 
-                    "superscrollorama-pin-spacer"
+                    "scrollmagic-pin-spacer"
                 
                 </td>
             
 
-            <td class="description last"><p>Classname of the pin spacer element</p></td>
+            <td class="description last"><p>Classname of the pin spacer element, which is used to replace the element while pinning.</p></td>
         </tr>
 
 	
@@ -2597,7 +2762,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-798">line 798</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1177">line 1177</a>
     </li></ul></dd>
     
 
@@ -2621,27 +2786,25 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// pin element and push all following elements down by the amount of the pin duration.scene.setPin("#pin");// pin element and keeping all following elements in their place. The pinned element will move past them.scene.setPin("#pin", {pushFollowers: false});</pre>
+
+
     
 </dd>
 
@@ -2656,7 +2819,9 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Add a tween to the scene (one TweenMax object per scene!).</p>
+        <p>Add a tween to the scene.<br>
+If you want to add multiple tweens, wrap them into one TimelineMax object and add it.<br>
+The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of 0.</p>
     </div>
     
 
@@ -2706,7 +2871,7 @@ Can also be achieved using controller.remove(scene);</p>
 
             
 
-            <td class="description last"><p>A TweenMax object that should be animated during the scene.</p></td>
+            <td class="description last"><p>A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.</p></td>
         </tr>
 
 	
@@ -2738,7 +2903,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-755">line 755</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1109">line 1109</a>
     </li></ul></dd>
     
 
@@ -2762,34 +2927,32 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// add a single tweenscene.setTween(TweenMax.to("obj"), 1, {x: 100});// add multiple tweens, wrapped in a timeline.var timeline = new TimelineMax();var tween1 = TweenMax.from("obj1", 1, {x: 100});var tween2 = TweenMax.to("obj2", 1, {y: 100});timeline		.add(tween1)		.add(tween2);scene.addTween(timeline);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="smoothTweening"><span class="type-signature"></span>smoothTweening<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="state"><span class="type-signature"></span>state<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
 </dt>
@@ -2797,7 +2960,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Get smoothTweening option value.</p>
+        <p><strong>Get</strong> the current state.</p>
     </div>
     
 
@@ -2830,7 +2993,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-680">line 680</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-903">line 903</a>
     </li></ul></dd>
     
 
@@ -2854,30 +3017,32 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
+<div class="param-desc tag-returns">
+    <p>&quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p>
 
+	{
+<span class="param-type">string</span>
 
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">boolean</span>
+}
 
-
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current statevar state = scene.state();</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="smoothTweening"><span class="type-signature"></span>smoothTweening<span class="signature">(newSmoothTweening)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">(name, <span class="optional">vars</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
     
     
 </dt>
@@ -2885,7 +3050,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Set smoothTweening option value.</p>
+        <p>Trigger an event.</p>
     </div>
     
 
@@ -2907,6 +3072,8 @@ Can also be achieved using controller.remove(scene);</p>
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
 		
 
@@ -2919,23 +3086,64 @@ Can also be achieved using controller.remove(scene);</p>
 
         <tr>
             
-                <td class="name"><code>newSmoothTweening</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">string</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>The new smoothTweening setting of the scene.</p></td>
+            <td class="description last"><p>The name of the event that should be triggered.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>vars</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>An object containing info that should be passed to the callback.</p></td>
         </tr>
 
 	
@@ -2967,7 +3175,161 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-680">line 680</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1550">line 1550</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">this.trigger("change");</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="triggerElement"><span class="type-signature"></span>triggerElement<span class="signature">(<span class="optional">newTriggerElement</span>)</span><span class="type-signature"> &rarr; {string|object}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the triggerElement option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newTriggerElement</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new trigger element for the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-755">line 755</a>
     </li></ul></dd>
     
 
@@ -2982,7 +3344,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <h5>Fires:</h5>
     <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
     </ul>
     
 
@@ -2994,368 +3356,50 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">()</span><span class="type-signature"> &rarr; {number|object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get trigger.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-541">line 541</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-|
-
-<span class="param-type">object</span>
-
-
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">(newTrigger)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Set trigger.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>newTrigger</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The new trigger of the scene.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-541">line 541</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-    <h5>Fires:</h5>
     <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
-    </ul>
-    
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current triggerElement.</p>
 
-    
+	{
+<span class="param-type">string</span>
+|
 
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Parent object for chaining.</p>
+<span class="param-type">object</span>
+
+}
+
 </div>
 
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
 
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="triggerPosition"><span class="type-signature"></span>triggerPosition<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Get triggerPosition relative to viewport.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-612">line 612</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>A number from 0 to 1 that defines where on the viewport the offset and startPosition should be related to.</p>
 </div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-
-        
+</li>
+        </ul>
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current triggerElementvar triggerElement = scene.triggerElement();// set a new triggerElement using a selectorscene.triggerElement("#trigger");// set a new triggerElement using a jQuery Objectscene.triggerElement($("#trigger"));// set a new triggerElement using a DOM Objectscene.triggerElement(document.getElementById("trigger"));</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="triggerPosition"><span class="type-signature"></span>triggerPosition<span class="signature">(newTriggerPosition)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    <h4 class="name" id="triggerHook"><span class="type-signature"></span>triggerHook<span class="signature">(<span class="optional">newTriggerHook</span>)</span><span class="type-signature"> &rarr; {float}</span></h4>
     
     
 </dt>
@@ -3363,7 +3407,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Set triggerPosition option value.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the triggerHook option value.</p>
     </div>
     
 
@@ -3385,6 +3429,8 @@ Can also be achieved using controller.remove(scene);</p>
 		<th>Type</th>
 
 		
+		<th>Argument</th>
+		
 
 		
 
@@ -3397,7 +3443,7 @@ Can also be achieved using controller.remove(scene);</p>
 
         <tr>
             
-                <td class="name"><code>newTriggerPosition</code></td>
+                <td class="name"><code>newTriggerHook</code></td>
             
 
             <td class="type">
@@ -3407,19 +3453,285 @@ Can also be achieved using controller.remove(scene);</p>
 |
 
 <span class="param-type">string</span>
-|
-
-<span class="param-type">function</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>The new triggerPosition of the scene. See ScrollScene parameter description for value options.</p></td>
+            <td class="description last"><p>The new triggerHook of the scene. @see parameter description for value options.</p></td>         </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-784">line 784</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>{@link ScrollScene.event:change, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current triggerHook (ALWAYS numerical).</p>
+
+	{
+<span class="param-type">float</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current triggerHook valuevar triggerHook = scene.triggerHook();// set a new triggerHook using a stringscene.triggerHook("onLeave");// set a new triggerHook using a numberscene.triggerHook(0.7);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="triggerOffset"><span class="type-signature"></span>triggerOffset<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> the trigger offset relative to container.<br>
+this calculates the starting offset of the scene, taking into account the triggerElement (if available) and the offset</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-917">line 917</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Numeric trigger offset, in relation to container (top value for vertical, left for horizontal).</p>
+
+	{
+<span class="param-type">number</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the trigger offsetvar triggerOffset = scene.triggerOffset();</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="tweenChanges"><span class="type-signature"></span>tweenChanges<span class="signature">(<span class="optional">newTweenChanges</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the tweenChanges option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newTweenChanges</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new tweenChanges setting of the scene.</p></td>
         </tr>
 
 	
@@ -3451,7 +3763,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-612">line 612</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-855">line 855</a>
     </li></ul></dd>
     
 
@@ -3466,7 +3778,185 @@ Can also be achieved using controller.remove(scene);</p>
     
     <h5>Fires:</h5>
     <ul>
-        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a></li>
+        <li><a href="ScrollScene.html#event:change">ScrollScene.event:change</a>, when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p>[get] Current tweenChanges option value.</p>
+
+	{
+<span class="param-type">boolean</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p>[set] Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current tweenChanges optionvar tweenChanges = scene.tweenChanges();// set new tweenChanges optionscene.tweenChanges(true);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(<span class="optional">immediately</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Update the Scene in the parent Controller<br>
+This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.updateScene(scene, immediately)</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>immediately</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true the update will be instantly, if false it will wait until next tweenmax tick (better performance)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-967">line 967</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:update">ScrollScene.event:update</a></li>
     </ul>
     
 
@@ -3480,27 +3970,25 @@ Can also be achieved using controller.remove(scene);</p>
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// update the scene on next tickscene.update();// update the scene immediatelyscene.update(true);</pre>
+
+
     
 </dd>
 
@@ -3523,7 +4011,7 @@ Can also be achieved using controller.remove(scene);</p>
     
     
     <div class="description">
-        <p>Scene change event.
+        <p>Scene change event.<br>
 Fires whenvever a property of the scene is changed.</p>
     </div>
     
@@ -3580,7 +4068,7 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -3605,7 +4093,7 @@ Fires whenvever a property of the scene is changed.</p>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -3621,7 +4109,30 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
         </tr>
 
 	
@@ -3644,7 +4155,30 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>Indicates what value has been changed.</p></td>
+            <td class="description last"><p>Indicates what value has been changed</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>newval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">mixed</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The new value of the changed property</p></td>
         </tr>
 
 	
@@ -3680,7 +4214,7 @@ Fires whenvever a property of the scene is changed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-943">line 943</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1472">line 1472</a>
     </li></ul></dd>
     
 
@@ -3703,6 +4237,12 @@ Fires whenvever a property of the scene is changed.</p>
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("change", function (event) {		console.log("Scene Property \"" + event.what + "\" changed to " + event.newval);});</pre>
+
+
+    
 </dd>
 
         
@@ -3716,9 +4256,9 @@ Fires whenvever a property of the scene is changed.</p>
     
     
     <div class="description">
-        <p>Scene end event.
-Fires whenever the scene's state goes from &quot;DURING&quot; to either &quot;BEFORE&quot; or &quot;AFTER&quot;.
-Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.</p>
+        <p>Scene end event.<br>
+Fires whenever the scroll position its the ending point of the scene.<br>
+It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
     </div>
     
 
@@ -3774,7 +4314,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -3799,7 +4339,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -3815,14 +4355,60 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>newState</code></td>
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
             
 
             <td class="type">
@@ -3838,7 +4424,30 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)</p></td>
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -3874,7 +4483,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-942">line 942</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1379">line 1379</a>
     </li></ul></dd>
     
 
@@ -3897,6 +4506,550 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("end", function (event) {		alert("Hit end point of scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:enter">enter</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene enter event.<br>
+Fires whenever the scene enters the &quot;DURING&quot; state.<br>
+Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1398">line 1398</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("enter", function (event) {		alert("Entered a scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:leave">leave</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene leave event.<br>
+Fires whenever the scene's state goes from &quot;DURING&quot; to either &quot;BEFORE&quot; or &quot;AFTER&quot;.<br>
+Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1417">line 1417</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("leave", function (event) {		alert("Left a scene.");});</pre>
+
+
+    
 </dd>
 
         
@@ -3910,7 +5063,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     <div class="description">
-        <p>Scene progress event.
+        <p>Scene progress event.<br>
 Fires whenever the progress of the scene changes.</p>
     </div>
     
@@ -3967,7 +5120,7 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -3992,7 +5145,7 @@ Fires whenever the progress of the scene changes.</p>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -4008,7 +5161,30 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
         </tr>
 
 	
@@ -4031,7 +5207,53 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>Reflects the current progress of the scene.</p></td>
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -4067,7 +5289,7 @@ Fires whenever the progress of the scene changes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-944">line 944</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1454">line 1454</a>
     </li></ul></dd>
     
 
@@ -4090,6 +5312,12 @@ Fires whenever the progress of the scene changes.</p>
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("progress", function (event) {		console.log("Scene progress changed.");});</pre>
+
+
+    
 </dd>
 
         
@@ -4103,9 +5331,9 @@ Fires whenever the progress of the scene changes.</p>
     
     
     <div class="description">
-        <p>Scene start event.
-Fires whenever the scene enters the &quot;DURING&quot; state.
-Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.</p>
+        <p>Scene start event.<br>
+Fires whenever the scroll position its the starting point of the scene.<br>
+It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
     </div>
     
 
@@ -4161,7 +5389,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -4186,7 +5414,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -4202,14 +5430,60 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>oldState</code></td>
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
             
 
             <td class="type">
@@ -4225,7 +5499,30 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)</p></td>
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -4261,7 +5558,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-941">line 941</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1360">line 1360</a>
     </li></ul></dd>
     
 
@@ -4283,6 +5580,280 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("start", function (event) {		alert("Hit start point of scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:update">update</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene update event.<br>
+Fires whenever the scene is updated (but not necessarily changes the progress).</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>startPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The starting position of the scene (in relation to the conainer)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>endPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ending position of the scene (in relation to the conainer)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current scroll position of the container</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1436">line 1436</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("update", function (event) {		console.log("Scene updated.");});</pre>
+
+
     
 </dd>
 
@@ -4308,7 +5879,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a>
-		on Fri Sep 27 2013 11:22:14 GMT+0200 (MESZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Mon Feb 17 2014 23:43:58 GMT+0100 (MEZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
@@ -4339,6 +5910,9 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 	<script>
 		$( function () {
 			$( "#toc" ).toc( {
+			    anchorName  : function(i, heading, prefix) {
+					return $(heading).attr("id") || ( prefix + i );
+				},
 				selectors   : "h1,h2,h3,h4",
 				showAndHide : false,
 				scrollTo    : 60

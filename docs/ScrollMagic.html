@@ -55,11 +55,23 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:enter">enter</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:leave">leave</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
 						</li>
 						
 						<li>
 							<a href="ScrollScene.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:update">update</a>
 						</li>
 						
 
@@ -104,8 +116,7 @@
     
     
     <div class="description">
-        <p>CLASS ScrollMagic (main controller)</p>
-<p>(TODO: Description)</p>
+        <p>The main class that is needed once per scroll container.</p>
     </div>
     
 
@@ -197,7 +208,7 @@
 
         <tr>
             
-                <td class="name"><code>scrollContainer</code></td>
+                <td class="name"><code>container</code></td>
             
 
             <td class="type">
@@ -227,19 +238,19 @@
             
                 <td class="default">
                 
-                    $(window)
+                    window
                 
                 </td>
             
 
-            <td class="description last"><p>A selector or a jQuery object that references the main container for scrolling.</p></td>
+            <td class="description last"><p>A selector, DOM Object or a jQuery object that references the main container for scrolling.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>isVertical</code></td>
+                <td class="name"><code>vertical</code></td>
             
 
             <td class="type">
@@ -271,20 +282,20 @@
                 </td>
             
 
-            <td class="description last"><p>Defines if the controller reacts to vertical (true) or horizontal (false) scrolling.</p></td>
+            <td class="description last"><p>Sets the scroll mode to vertical (true) or horizontal (false) scrolling.</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>reverse</code></td>
+                <td class="name"><code>globalSceneOptions</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">object</span>
 
 
             
@@ -305,12 +316,12 @@
             
                 <td class="default">
                 
-                    true
+                    {}
                 
                 </td>
             
 
-            <td class="description last"><p>Global setting to prevent Scenes from reversing, when scrolling back up. Can be set globally here or individually for each scene.</p></td>
+            <td class="description last"><p>These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see <a href="ScrollScene.html">ScrollScene</a>.</p></td>
         </tr>
 
 	
@@ -349,7 +360,13 @@
                 </td>
             
 
-            <td class="description last"><p>Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo</p></td>
+            <td class="description last"><p>Loglevel for debugging:</p>
+<ul>
+<li>0 =&gt; silent</li>
+<li>1 =&gt; errors</li>
+<li>2 =&gt; errors, warnings</li>
+<li>3 =&gt; errors, warnings, debuginfo</li>
+</ul></td>
         </tr>
 
 	
@@ -388,7 +405,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-59">line 59</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-55">line 55</a>
     </li></ul></dd>
     
 
@@ -410,6 +427,12 @@
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// basic initializationvar controller = new ScrollMagic();// passing optionsvar controller = new ScrollMagic({container: "#myContainer", loglevel: 3});</pre>
+
+
     
 </dd>
 
@@ -434,7 +457,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(scene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="addScene"><span class="type-signature"></span>addScene<span class="signature">(scene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -442,7 +465,8 @@
     
     
     <div class="description">
-        <p>Add a Scene to the controller.</p>
+        <p>Add a Scene to the controller.<br>
+This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(controller)</p>
     </div>
     
 
@@ -524,7 +548,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-216">line 216</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-191">line 191</a>
     </li></ul></dd>
     
 
@@ -548,36 +572,32 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    <ul>
-<li>Parent object for chaining.</li>
-</ul>
-</div>
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// with a previously defined scenecontroller.addScene(scene);// with a newly created scene.controller.addScene(new ScrollScene({duration : 0}));</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="addScene"><span class="type-signature"></span>addScene<span class="signature">(trigger, <span class="optional">options</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    <h4 class="name" id="destroy"><span class="type-signature"></span>destroy<span class="signature">(<span class="optional">resetScenes</span>)</span><span class="type-signature"> &rarr; {null}</span></h4>
     
     
 </dt>
@@ -585,7 +605,7 @@
     
     
     <div class="description">
-        <p>Shorthand function to add a scene to support easier chaining.</p>
+        <p>Destroy the Controller, all Scenes and everything.</p>
     </div>
     
 
@@ -596,94 +616,6 @@
     
         <h5>Parameters:</h5>
         
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>trigger</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The ScollScene object that is supposed to be updated.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>Options for the Scene. (Can be changed lateron)</p>
-                <h6>Properties</h6>
-                
 
 <table class="params table table-striped">
     <thead>
@@ -711,169 +643,7 @@
 
         <tr>
             
-                <td class="name"><code>duration</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last"><p>The duration of the scene. If 0 tweens will auto-play when reaching the trigger, pins will be pinned indefinetly starting at the trigger position.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last"><p>Offset Value for the Trigger Position</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>triggerPosition</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    "onEnter"
-                
-                </td>
-            
-
-            <td class="description last"><p>Can be string &quot;onCenter&quot;, &quot;onEnter&quot;, &quot;onLeave&quot; or float (0 - 1), 0 = onLeave, 1 = onEnter or a function (returning a value from 0 to 1)</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>reverse</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last"><p>Should the scene reverse, when scrolling up?</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>smoothTweening</code></td>
+                <td class="name"><code>resetScenes</code></td>
             
 
             <td class="type">
@@ -905,53 +675,7 @@
                 </td>
             
 
-            <td class="description last"><p>Tweens Animation to the progress target instead of setting it. Requires a TimelineMax Object for tweening. Does not affect animations where duration==0</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>loglevel</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    2
-                
-                </td>
-            
-
-            <td class="description last"><p>Loglevel for debugging. 0: none | 1: errors | 2: errors,warnings | 3: errors,warnings,debuginfo</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-            </td>
+            <td class="description last"><p>If true the pins and tweens (if existent) of all scenes will be reset.</p></td>
         </tr>
 
 	
@@ -983,19 +707,12 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-263">line 263</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-356">line 356</a>
     </li></ul></dd>
     
 
     
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="ScrollScene.html">ScrollScene</a></li>
-        </ul>
-    </dd>
     
 
     
@@ -1014,34 +731,32 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    <p>New ScrollScene object for chaining.</p>
+<div class="param-desc tag-returns">
+    <p>Null to unset handler variables.</p>
+
+	{
+<span class="param-type">null</span>
+
+}
+
 </div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-
-	</dd>
-</dl>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// without resetting the scenescontroller = controller.destroy();// with scene resetcontroller = controller.destroy(true);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">(scene, <span class="optional">reset</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="info"><span class="type-signature"></span>info<span class="signature">(<span class="optional">about</span>)</span><span class="type-signature"> &rarr; {mixed|object}</span></h4>
     
     
 </dt>
@@ -1049,7 +764,7 @@
     
     
     <div class="description">
-        <p>Remove scene from the controller.</p>
+        <p><strong>Get</strong> all infos or one in particular about the controller.</p>
     </div>
     
 
@@ -1075,7 +790,321 @@
 		
 
 		
-		<th>Default</th>
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>about</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>If passed only this info will be returned instead of an object containing all.<br>
+                                      Valid options are:</p>
+<ul>
+<li>&quot;size&quot; =&gt; the current viewport size of the container</li>
+<li>&quot;vertical&quot; =&gt; true if vertical scrolling, otherwise false</li>
+<li>&quot;scrollPos&quot; =&gt; the current scroll position</li>
+<li>&quot;scrollDirection&quot; =&gt; the last known direction of the scroll</li>
+<li>&quot;container&quot; =&gt; the container element</li>
+<li>&quot;isDocument&quot; =&gt; true if container element is the document.</li>
+</ul></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-299">line 299</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>The requested info(s).</p>
+
+	{
+<span class="param-type">mixed</span>
+|
+
+<span class="param-type">object</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// returns the current scroll position (number)var scrollPos = controller.info("scrollPos");// returns all infos as an objectvar infos = controller.info();</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loglevel"><span class="type-signature"></span>loglevel<span class="signature">(<span class="optional">newLoglevel</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the current loglevel option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newLoglevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new loglevel setting of the ScrollMagic controller.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-332">line 332</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Current loglevel or parent object for chaining.</p>
+
+	{
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current valuevar loglevel = controller.loglevel();// set a new valuecontroller.loglevel(3);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeScene"><span class="type-signature"></span>removeScene<span class="signature">(scene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Remove a scene from the controller.<br>
+This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
 		
 
 		<th class="last">Description</th>
@@ -1100,61 +1129,10 @@
             </td>
 
             
-                <td class="attributes">
-                
 
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
             
 
             <td class="description last"><p>The ScollScene to be removed.</p></td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>reset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>Reset the pin and/or the animation</p></td>
         </tr>
 
 	
@@ -1186,7 +1164,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-237">line 237</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-219">line 219</a>
     </li></ul></dd>
     
 
@@ -1210,34 +1188,32 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove a scene from the controllercontroller.removeScene(scene);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="updateScenes"><span class="type-signature"></span>updateScenes<span class="signature">(<span class="optional">immediately</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">(<span class="optional">immediately</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1245,7 +1221,7 @@
     
     
     <div class="description">
-        <p>Force an update of all Scenes.</p>
+        <p>Update the controller params and all its Scenes.</p>
     </div>
     
 
@@ -1315,7 +1291,7 @@
                 </td>
             
 
-            <td class="description last"><p>If true it will be updated right now, if false it will wait until next tweenmax tick</p></td>
+            <td class="description last"><p>If true the update will be instantly, if false it will wait until next tweenmax tick (better performance)</p></td>
         </tr>
 
 	
@@ -1347,7 +1323,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-276">line 276</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-271">line 271</a>
     </li></ul></dd>
     
 
@@ -1371,34 +1347,32 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
+<div class="param-desc tag-returns">
     <p>Parent object for chaining.</p>
-</div>
 
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
+	{
 <span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
 
+}
 
-	</dd>
-</dl>
+</div>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// update the controller on next tick (saves performance)controller.update();// update the controller immediatelycontroller.update(true);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="vertical"><span class="type-signature"></span>vertical<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="updateScene"><span class="type-signature"></span>updateScene<span class="signature">(scene, <span class="optional">immediately</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1406,7 +1380,8 @@
     
     
     <div class="description">
-        <p>Get the scroll direction.</p>
+        <p>Update a specific scene according to the scroll position of the container.<br>
+This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.update()</p>
     </div>
     
 
@@ -1414,6 +1389,110 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>scene</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The ScollScene object that is supposed to be updated.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>immediately</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true the update will be instantly, if false it will wait until next tweenmax tick. This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     
@@ -1439,7 +1518,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-291">line 291</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-244">line 244</a>
     </li></ul></dd>
     
 
@@ -1463,29 +1542,25 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    <ul>
-<li>true if vertical scrolling, false if horizontal.</li>
-</ul>
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
 </div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">boolean</span>
-
-
-	</dd>
-</dl>
 
 
         
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// update a specific scene on next tickcontroller.updateScene(scene);// update a specific scene immediatelycontroller.updateScene(scene, true);</pre>
+
+
     
 </dd>
 
@@ -1515,7 +1590,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a>
-		on Fri Sep 27 2013 11:22:14 GMT+0200 (MESZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Mon Feb 17 2014 23:43:57 GMT+0100 (MEZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
@@ -1546,6 +1621,9 @@
 	<script>
 		$( function () {
 			$( "#toc" ).toc( {
+			    anchorName  : function(i, heading, prefix) {
+					return $(heading).attr("id") || ( prefix + i );
+				},
 				selectors   : "h1,h2,h3,h4",
 				showAndHide : false,
 				scrollTo    : 60

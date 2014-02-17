@@ -55,11 +55,23 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:enter">enter</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:leave">leave</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
 						</li>
 						
 						<li>
 							<a href="ScrollScene.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:update">update</a>
 						</li>
 						
 
@@ -170,7 +182,7 @@
     
     
     <div class="description">
-        <p>Scene change event.
+        <p>Scene change event.<br>
 Fires whenvever a property of the scene is changed.</p>
     </div>
     
@@ -227,7 +239,7 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -252,7 +264,7 @@ Fires whenvever a property of the scene is changed.</p>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -268,7 +280,30 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
         </tr>
 
 	
@@ -291,7 +326,30 @@ Fires whenvever a property of the scene is changed.</p>
 
             
 
-            <td class="description last"><p>Indicates what value has been changed.</p></td>
+            <td class="description last"><p>Indicates what value has been changed</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>newval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">mixed</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The new value of the changed property</p></td>
         </tr>
 
 	
@@ -327,7 +385,7 @@ Fires whenvever a property of the scene is changed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-943">line 943</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1472">line 1472</a>
     </li></ul></dd>
     
 
@@ -350,6 +408,12 @@ Fires whenvever a property of the scene is changed.</p>
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("change", function (event) {		console.log("Scene Property \"" + event.what + "\" changed to " + event.newval);});</pre>
+
+
+    
 </dd>
 
         
@@ -363,9 +427,9 @@ Fires whenvever a property of the scene is changed.</p>
     
     
     <div class="description">
-        <p>Scene end event.
-Fires whenever the scene's state goes from &quot;DURING&quot; to either &quot;BEFORE&quot; or &quot;AFTER&quot;.
-Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.</p>
+        <p>Scene end event.<br>
+Fires whenever the scroll position its the ending point of the scene.<br>
+It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
     </div>
     
 
@@ -421,7 +485,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -446,7 +510,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -462,14 +526,60 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>newState</code></td>
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
             
 
             <td class="type">
@@ -485,7 +595,30 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>Indicates towards which side we leave the scene: To the Top/Left (BEFORE) or Bottom/Right (AFTER)</p></td>
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -521,7 +654,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-942">line 942</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1379">line 1379</a>
     </li></ul></dd>
     
 
@@ -544,6 +677,550 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("end", function (event) {		alert("Hit end point of scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:enter">enter</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene enter event.<br>
+Fires whenever the scene enters the &quot;DURING&quot; state.<br>
+Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1398">line 1398</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("enter", function (event) {		alert("Entered a scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:leave">leave</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene leave event.<br>
+Fires whenever the scene's state goes from &quot;DURING&quot; to either &quot;BEFORE&quot; or &quot;AFTER&quot;.<br>
+Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1417">line 1417</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("leave", function (event) {		alert("Left a scene.");});</pre>
+
+
+    
 </dd>
 
         
@@ -557,7 +1234,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     <div class="description">
-        <p>Scene progress event.
+        <p>Scene progress event.<br>
 Fires whenever the progress of the scene changes.</p>
     </div>
     
@@ -614,7 +1291,7 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -639,7 +1316,7 @@ Fires whenever the progress of the scene changes.</p>
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -655,7 +1332,30 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
         </tr>
 
 	
@@ -678,7 +1378,53 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>Reflects the current progress of the scene.</p></td>
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -714,7 +1460,7 @@ Fires whenever the progress of the scene changes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-944">line 944</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1454">line 1454</a>
     </li></ul></dd>
     
 
@@ -737,6 +1483,12 @@ Fires whenever the progress of the scene changes.</p>
     
     
     
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("progress", function (event) {		console.log("Scene progress changed.");});</pre>
+
+
+    
 </dd>
 
         
@@ -750,9 +1502,9 @@ Fires whenever the progress of the scene changes.</p>
     
     
     <div class="description">
-        <p>Scene start event.
-Fires whenever the scene enters the &quot;DURING&quot; state.
-Keep in Mind that it doesn't matter if the scene plays forward or backward: The event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.</p>
+        <p>Scene start event.<br>
+Fires whenever the scroll position its the starting point of the scene.<br>
+It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
     </div>
     
 
@@ -808,7 +1560,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The event Object passed to each callback.</p>
+            <td class="description last"><p>The event Object passed to each callback</p>
                 <h6>Properties</h6>
 
 <table class="props table table-striped">
@@ -833,7 +1585,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>type</code></td>
             
 
             <td class="type">
@@ -849,14 +1601,60 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>The unique name of the event.</p></td>
+            <td class="description last"><p>The name of the event</p></td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>oldState</code></td>
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>progress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Reflects the current progress of the scene</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
             
 
             <td class="type">
@@ -872,7 +1670,30 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 
             
 
-            <td class="description last"><p>Indicates from which side we enter the scene from the Top/Left (BEFORE) or Bottom/Right (AFTER)</p></td>
+            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollDirection</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
         </tr>
 
 	
@@ -908,7 +1729,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-941">line 941</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1360">line 1360</a>
     </li></ul></dd>
     
 
@@ -930,6 +1751,280 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
     
     
     
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("start", function (event) {		alert("Hit start point of scene.");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:update">update</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene update event.<br>
+Fires whenever the scene is updated (but not necessarily changes the progress).</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>startPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The starting position of the scene (in relation to the conainer)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>endPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ending position of the scene (in relation to the conainer)</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The current scroll position of the container</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1436">line 1436</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("update", function (event) {		console.log("Scene updated.");});</pre>
+
+
     
 </dd>
 
@@ -955,7 +2050,7 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a>
-		on Fri Sep 27 2013 11:22:13 GMT+0200 (MESZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Mon Feb 17 2014 23:43:57 GMT+0100 (MEZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
@@ -986,6 +2081,9 @@ Keep in Mind that it doesn't matter if the scene plays forward or backward: The 
 	<script>
 		$( function () {
 			$( "#toc" ).toc( {
+			    anchorName  : function(i, heading, prefix) {
+					return $(heading).attr("id") || ( prefix + i );
+				},
 				selectors   : "h1,h2,h3,h4",
 				showAndHide : false,
 				scrollTo    : 60

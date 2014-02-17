@@ -32,6 +32,10 @@
 							<li>A pin of a scene that has a duration will be pinned for the repective ammount of scrolled pixels and then released again.</li>
 							<li>If no duration is defined, the pinned element will never be released unless scrolling back past the trigger position.</li>
 						</ol>
+						<p>
+							Note that the first pin pushes down the following elements. A gap with the size of the scene's duration appears.<br>
+							This can be disabled using the option <code>pushFollowers: false</code>. For scenes with a duration of 0 "<code>pushFollowers</code>" is always disabled.
+						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>

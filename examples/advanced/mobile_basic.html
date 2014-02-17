@@ -61,7 +61,7 @@
 							TweenMax.to(".goomba", 0.5, {scaleY: 0.1, "margin-top": 93, "margin-bottom": 7, ease: Circ.easeIn}), 1.5
 						);
 
-					var controller = new ScrollMagic({scrollContainer: "#example-wrapper"});
+					var controller = new ScrollMagic({container: "#example-wrapper"});
 
 					var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
 									.setTween(tween)

@@ -139,7 +139,7 @@
 		icon.setAttribute("src", "data:image/png;base64," + sunlightIcon);
 		icon.setAttribute("alt", "about");
 		aboutLink.appendChild(icon);
-		about.appendChild(aboutLink);
+		// about.appendChild(aboutLink);
 		
 		ul.appendChild(about);
 		ul.appendChild(viewRaw);
