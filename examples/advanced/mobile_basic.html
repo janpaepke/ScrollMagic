@@ -4,7 +4,7 @@
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=500" />
-	<title>Mobile Advanced - ScrollMagic</title>
+	<title>Mobile Support (Basic) - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -20,48 +20,54 @@
   	<script type="text/javascript" src="../../js/jquery.scrollmagic.debug.js"></script>
 </head>
 <body>
+	<ul id="menu"></ul>
 	<div id="content-wrapper">
 		<div id="example-wrapper" class="scrollContainer">
-			<div class="scrollContent" style="position: relative;">
+			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Mobile Advanced</h1>
-						<h2>short description Text blablabla</h2>
+						<h1>Mobile Support (Basic)</h1>
+						<h2>Try this page on your mobile device!</h2>
+						<p>
+							ScrollMagic works just as well on mobile devices.<br>
+							One big drawback is that mobile devices dispatch the scroll event AFTER the scroll is complete and not DURING.<br>
+							To get support for on-the-fly updates the easiest way is to wrap all your content into a big container with the size of the viewport and scroll within it instead (like shown in this example).<br>
+							Unfortunately this also results in loosing the scroll momentum. To see how you can preserve it check "<a href="../expert/mobile_advanced.html">Mobile Support (advanced)</a>".
+						</p>
 					</div>
 				</section>
 				<section class="demo">
-					<div class="spacer s2"></div>
-					<div class="spacer s0" id="trigger"></div>
-					<div class="animated box2 red"></div>
+					<div class="spacer s1"></div>
+					<div class="spacer s1" id="trigger"></div>
+					<div class="spacer s0"></div>
+					<div class="mario box2"></div>
+					<div class="goomba box3"></div>
 					<div class="spacer s7"></div>
 				</section>
 			</div>
-  			<script type="text/javascript" src="../../js/_mobile/iscroll.js"></script>
 			<script>
 				$(document).ready(function($) {
+
+					var tween = new TimelineMax ()
+						.add([
+							TweenMax.to(".mario", 1, {left: 50, ease: Circ.easeIn}),
+							TweenMax.to(".mario", 1, {top: -60, ease: Circ.easeOut})
+						])
+						.add([
+							TweenMax.to(".mario", 1, {top: 0, ease: Circ.easeIn}),
+							TweenMax.to(".mario", 1, {left: 70, ease: Circ.easeOut})
+						])
+						.add(
+							TweenMax.to(".goomba", 0.5, {scaleY: 0.1, "margin-top": 93, "margin-bottom": 7, ease: Circ.easeIn}), 1.5
+						);
 
 					var controller = new ScrollMagic({scrollContainer: "#example-wrapper"});
 
 					var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
-									.setTween(TweenMax.to(".animated", 1, {backgroundColor: "green", rotation: 360}))
-									.setPin(".animated")
+									.setTween(tween)
 									.addTo(controller);
 
-					// make sure we only do this on mobile:
-					if (Modernizr.touch) {
-						// using iScroll but deativating -webkit-transform because pin wouldn't work because of a webkit bug: https://code.google.com/p/chromium/issues/detail?id=20574
-						var myScroll = new IScroll('#example-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
-						// thanks to iScroll 5 we now have a real onScroll event (with some performance drawbacks)
-						myScroll.on("scroll", function () {
-							controller.update();
-						});
-
-						// add indicators to scrollcontent so they will be moved with it.
-						scene.addIndicators({parent: ".scrollContent"});
-					} else {
-						// show indicators (requires debug extension)
-						scene.addIndicators();						
-					}
+					scene.addIndicators();
 
 				});
 			</script>

@@ -7,19 +7,19 @@ var
 				"simple_tweening.html" :	"Simple Tweening",
 				"simple_pinning.html" :		"Simple Pinning",
 				"going_horizontal.html" :	"Going Horizontal",
+				"debugging.html" :			"Debugging",
+				"custom_actions.html" :		"Custom Actions",
 				"scene_manipulation.html" :	"Scene Manipulation",
-				"debugging.html" :			"Debugging"
 			}
 		},
 		"advanced": {
 			title: "Advanced",
 			sub: {
-				"advanced_technology.html" :	"Advanced Tweening",
-				"parallax.html" :				"Parallax",
-				"container.html" :				"Container",
-				"scrolling_anchors.html" :		"Scrolling Anchors",
-				"mobile_advanced.html" :		"Mobile (Basic)",
-				"custom_actions.html" :			"Custom Actions",
+				"advanced_tweening.html" :		"Advanced Tweening",
+				"custom_containers.html" :		"Custom Containers",
+				"mobile_basic.html" :			"Mobile Support (Basic)",
+				"anchor_link_scrolling.html" :	"Anchor Link Scrolling",
+				"parallax_scrolling.html" :		"Parallax Scrolling",
 				"infinite_scrolling.html" :		"Infinite Scrolling"
 			}
 		},
@@ -30,7 +30,7 @@ var
 				"responsive_duration.html" :		"Responsive Duration",
 				"manipulating_tweens.html" :		"Manipulating Tweens",
 				"multiple_scroll_directions.html" :	"Multiple Scroll Directions",
-				"mobile_advanced.html" :			"Mobile (Advanced)",
+				"mobile_advanced.html" :			"Mobile Support (Advanced)",
 				"removing_and_destroying.html" :	"Removing and Destroying",
 			}
 		}
@@ -164,7 +164,7 @@ $(document).ready(function () {
 
 	// store initial HTML of code
 	$("a.viewsource").each(function () {
-		var $parent = $(this).parents("section.demo, div#example-wrapper, body").first().clone();
+		var $parent = $(this).parents(".demowrap, section.demo:not(.demowrap .demo), div#example-wrapper, body").first().clone();
 		$(this).data("code", $parent.clone());
 	})
 

@@ -4,7 +4,7 @@
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=500" />
-	<title>Simple Tweening - Examples - ScrollMagic</title>
+	<title>Parallax Scrolling - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -22,42 +22,51 @@
 <body>
 	<ul id="menu"></ul>
 	<div id="content-wrapper">
-		<div id="example-wrapper">
+		<div id="example-wrapper" class="horizontal">
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Simple Tweening</h1>
-						<h2>Two examples of basic tweening.</h2>
-						<ol>
-							<li>When no duration is defined for the scene, the tween will simply start playing when the scroll reaches the trigger position.</li>
-							<li>If the scene has a duration the progress of the tween will directly correspond to the scroll position.</li>
-						</ol>
+						<h1>Parallax Scrolling</h1>
+						<h2>No big deal, if you have ScrollMagic.</h2>
+						<p>
+							Adding a parallax effect to your website is just a matter of assigning different movement speeds for the layers.
+						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
 						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
+							controller = new ScrollMagic({vertical: false});
 						});
 					</script>
 				</section>
-				<section class="demo">
-					<div class="spacer s2"></div>
-					<div id="trigger1" class="spacer s0"></div>
-					<div id="animate1" class="box2 skin">
-						<p>You wouldn't like me, when I'm angry!</p>
-						<a href="#" class="viewsource">view source</a>
+				<div class="spacer s0"></div>
+				<section class="demo fullwidth">
+					<div id="parallaxContainer">
+						<div class="layer1">
+							<div class="box1 white">
+								<p>A box in the sky.</p>
+								<a href="#" class="viewsource">view source</a>
+							</div>
+						</div>
+						<div class="layer2"></div>
+						<div class="layer3"></div>
 					</div>
-					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
 							// build tween
-							var tween = TweenMax.to("#animate1", 0.5, {backgroundColor: "green", scale: 2.5});
+							var tween = new TimelineMax ()
+								.add([
+									TweenMax.to("#parallaxContainer .layer1", 1, {"background-position-x": -40, ease: Linear.easeNone}),
+									TweenMax.to("#parallaxContainer .layer2", 1, {"background-position-x": -500, ease: Linear.easeNone}),
+									TweenMax.to("#parallaxContainer .layer3", 1, {"background-position-x": -225, ease: Linear.easeNone})
+								]);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1"})
+							var scene = new ScrollScene({triggerElement: "#parallaxContainer", duration: 2000, offset: 450})
 											.setTween(tween)
+											.setPin("#parallaxContainer")
 											.addTo(controller);
 
 							// show indicators (requires debug extension)
@@ -65,25 +74,29 @@
 						});
 					</script>
 				</section>
-				<section class="demo">
-					<div class="spacer s1"></div>
-					<div id="trigger2" class="spacer s1"></div>
-					<div class="spacer s0"></div>
-					<div id="animate2" class="box1 black">
-						<p>Smurf me!</p>
-						<a href="#" class="viewsource">view source</a>
+				<div class="spacer s4"></div>
+				<div class="spacer s0"></div>
+				<section class="demo fullwidth" id="trigger2">
+					<div id="parallaxText">
+						<h1 class="layer1">TEXT</h1>
+						<h1 class="layer2">TEXT</h1>
+						<h1 class="layer3">
+							TEXT
+							<a href="#" class="viewsource">view source</a>
+						</h1>
+						
 					</div>
-					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
 							// build tween
-							var tween = TweenMax.fromTo("#animate2", 0.5, 
-									{"border-top": "0px solid white"},
-									{"border-top": "30px solid white", backgroundColor: "blue", scale: 0.7}
-								);
+							var tween = new TimelineMax ()
+								.add([
+									TweenMax.fromTo("#parallaxText .layer1", 1, {scale: 3, autoAlpha: 0.05, left: 300}, {left: -300, ease: Linear.easeNone}),
+									TweenMax.fromTo("#parallaxText .layer2", 1, {scale: 2, autoAlpha: 0.3, left: 150}, {left: -150, ease: Linear.easeNone})
+								]);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2", duration: 300})
+							var scene = new ScrollScene({triggerElement: "#trigger2", duration: $(window).width()})
 											.setTween(tween)
 											.addTo(controller);
 

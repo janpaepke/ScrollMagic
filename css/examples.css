@@ -4,24 +4,28 @@
 #content-wrapper, #example-wrapper {
 	height: 100%;
 }
-#example-wrapper.scrollContainer {
+.scrollContainer {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	width: 100%
+}
+.scrollContainer {
+	height: 100%;
+	margin: auto;
 }
 #example-wrapper .scrollContent {
 	height: 100%;
 }
 
-#example-wrapper.horizontal.scrollContainer {
+.horizontal.scrollContainer {
 	overflow-y: hidden;
 	overflow-x: scroll;
 }
-#example-wrapper.scrollContainer .scrollContent {
+.scrollContainer .scrollContent {
 	width: 100%;
 	height: auto;
 }
-#example-wrapper.scrollContainer.horizontal .scrollContent {
+.scrollContainer.horizontal .scrollContent {
 	width: auto;
 	height: 100%;
 }
@@ -30,6 +34,12 @@
 	font-size: 0;  /* fix for spaces between inline block divs */
 }
 #example-wrapper.horizontal div {
+	font-size: 13px;
+}
+#example-wrapper .scrollContent, #example-wrapper.horizontal .scrollContent {
+	font-size: 0;
+}
+#example-wrapper .scrollContent div {
 	font-size: 13px;
 }
 #example-wrapper section {
@@ -93,8 +103,13 @@ section.demo {
 }
 .horizontal section.demo {
 	text-align: inherit;
+	white-space: nowrap;
 	background-image: url("../img/example_bg_h.png");
 }
+.horizontal section.demo.fullwidth {
+	min-width: 100%;
+}
+
 /*
 	Elements
 */
@@ -190,6 +205,7 @@ section.demo {
 	position: relative;
 	border-radius: 8px;
 	text-align: center;
+	vertical-align: middle;
 }
 .box1 {
 	min-width: 100px;
@@ -233,9 +249,31 @@ section.demo {
 .box1 a, .box2 a, .box3 a {
 	color: white;
 }
+.box1.white *, .box2.white *, .box3.white * {
+	color: #2e639e;
+}
+.box2.mario {
+	background-color: #004fae;
+	border-top: 30px solid #fc112f;
+	border-bottom: 10px solid #c4723b;
+}
+.box3.goomba {
+	min-width: 30px;
+	height: 4px;
+	margin-top: 75px;
+	margin-left: 30px;
+	margin-bottom: 25px;
+	background-color: #b39475;
+	border-top: 30px solid #744527;
+	border-bottom: 6px solid #c4723b;
+}
 /*
 	colors
 */
+
+.box1.outline, .box2.outline, .box3.outline {
+	border: 1px solid white;
+}
 .red {
 	background-color: #cf3535;
 }
@@ -251,7 +289,12 @@ section.demo {
 .black {
 	background-color: #000000;
 }
-
+.white {
+	background-color: #FFFFFF;
+}
+/*
+	Form
+*/
 form.move {
 	text-align: left;
 	position: fixed;
@@ -295,7 +338,7 @@ form .slider .handle {
 	cursor: pointer;
 	border: 1px solid #2e639e;
 }
-form .slider .handle:hover {
+form .slider .handle:hover, form .slider.dragging .handle {
 	background-color: #79b0ee;
 }
 form .slider + input {
@@ -328,7 +371,7 @@ form fieldset legend {
 	cursor: move;
 }
 .move * {
-	cursor: default;
+	cursor: auto;
 }
 
 /*
@@ -365,11 +408,11 @@ ul#menu > li {
 	border-radius: 4px;
 	background-color: #79b0ee;
 	vertical-align: top;
+	min-width: 152px;
 }
 ul#menu li a {
-	padding: 0 10px 0 10px;
-	min-width: 133px;
-	display: inline-block;
+	padding: 0 5px 0 5px;
+	display: block;
 	text-decoration: none;
 	line-height: 30px;
 	color: white;
@@ -528,6 +571,103 @@ a.viewsource:after {
 }
 a.viewsource:before {
 	content: "{ ";
+}
+
+#parallaxContainer {
+	width: 900px;
+	height: 500px;
+	top: 30px;
+	position: relative;
+}
+#parallaxContainer .layer1 {
+	height: 100%;
+	text-align: center;
+	background-image: url("../img/example_parallax_l1.gif");
+}
+#parallaxContainer .layer2 {
+	background-image: url("../img/example_parallax_l2.png");
+	position: absolute;
+	height: 139px;
+	width: 100%;
+	bottom: 32px
+}
+#parallaxContainer .layer3 {
+	background-image: url("../img/example_parallax_l3.gif");
+	position: absolute;
+	height: 32px;
+	width: 100%;
+	bottom: 0px;
+}
+#parallaxText {
+	width: 0;
+	height: 100%;
+	margin: auto;
+	position: relative;
+}
+#parallaxText .layer1, #parallaxText .layer2, #parallaxText .layer3 {
+	position: absolute;
+	font-size: 50px;
+	line-height: 50px;
+	margin-left: -100px;
+	margin-top: -25px;
+	width: 200px;
+	top: 50%;
+	left: 50%;
+	text-align: center;
+	color: #133f71;
+}
+#parallaxText .layer1 {
+	top: 48%;
+}
+#parallaxText .layer2 {
+	top: 49%;
+}
+#parallaxText .layer3 a {
+	display: block;
+	font-family: "Source Sans Pro", Arial, sans-serif;
+	font-style: normal;
+	font-weight: normal;
+}
+
+.dynamicContent #content {
+	width: 480px;
+	margin: auto;
+	text-align: left;
+}
+.dynamicContent #content .box1 {
+	margin: 10px;
+}
+
+.dynamicContent #loader {
+	height: 0;
+	overflow: hidden;
+	line-height: 60px;
+}
+.dynamicContent #loader.active {
+	height: 60px;
+}
+.dynamicContent #loader img {
+	vertical-align: text-bottom;
+}
+
+#customactions {
+	height: 160px;
+	width: 170px;
+	margin: auto;
+	padding-top: 40px;
+	text-align: left;
+}
+#customactions label {
+	width: 100px;
+	display: inline-block;
+}
+#customactions code {
+	color: #3883d8;
+}
+#customactions a.viewsource {
+	margin-top: 20px;
+	display: block;
+	text-align: center;
 }
 
 /*

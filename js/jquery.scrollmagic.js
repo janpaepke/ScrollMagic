@@ -471,14 +471,13 @@
 							_tween.reverse();
 						}
 					} else {
-						var TweenProgress = progress * _tween.duration();
 						// go to a specific point in time
 						if (_options.tweenChanges) {
 							// go smooth
-							_tween.tweenTo(TweenProgress);
+							_tween.tweenTo(progress * _tween.duration());
 						} else {
 							// just hard set it
-							_tween.pause(TweenProgress);
+							_tween.progress(progress).pause();
 						}
 					}
 				} else {
@@ -871,7 +870,7 @@
 					if (_options.duration > 0) {
 						newProgress = (containerInfo.scrollPos - startPos)/(endPos - startPos);
 					} else {
-						newProgress = containerInfo.scrollPos > startPos ? 1 : 0;
+						newProgress = containerInfo.scrollPos >= startPos ? 1 : 0;
 					}
 
 					ScrollScene.trigger("update", {startPos: startPos, endPos: endPos, scrollPos: containerInfo.scrollPos});

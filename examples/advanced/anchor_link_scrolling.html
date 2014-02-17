@@ -4,7 +4,7 @@
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=500" />
-	<title>Simple Tweening - Examples - ScrollMagic</title>
+	<title>Anchor Link Scrolling - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -26,66 +26,61 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Simple Tweening</h1>
-						<h2>Two examples of basic tweening.</h2>
-						<ol>
-							<li>When no duration is defined for the scene, the tween will simply start playing when the scroll reaches the trigger position.</li>
-							<li>If the scene has a duration the progress of the tween will directly correspond to the scroll position.</li>
-						</ol>
+						<h1>Anchor Link Scrolling</h1>
+						<h2>Mastering in-page navigation.</h2>
+						<p>If you have a long page and you want to use anchor links to allow your users to navigate it you might want to scroll to the respective position, instead of jumping to it. After all you put a lot of effort in to all those animations and you want the user to see them...</p>
+						<p>The best way to achieve this is to use the TweenMax ScrollToPlugin and change the behaviour of all anchor links. (remember to load the necessary .js file)</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
+				</section>
+				<section class="demo">
+					<form class="move">
+						<fieldset>
+							<legend>Anchor Links</legend>
+							<p><a href="#top">Top</a></p>
+							<p><a href="#middle">Middle</a></p>
+							<p><a href="#bottom">Bottom</a></p>
+						</fieldset>
+					</form>
+					<a id="top"></a>
+					<div class="spacer s1"></div>
+					<a id="middle"></a>
+					<div class="spacer s1"></div>
+					<a id="bottom"></a>
+					<div class="spacer s0"></div>
+					<div id="animate" class="box1 blue">
+						<p>Peek-a-boo!</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+					<div class="spacer s2"></div>
+					<script type="text/javascript" src="../../js/_dependent/greensock/plugins/ScrollToPlugin.min.js"></script>
 					<script>
-						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
-						});
-					</script>
-				</section>
-				<section class="demo">
-					<div class="spacer s2"></div>
-					<div id="trigger1" class="spacer s0"></div>
-					<div id="animate1" class="box2 skin">
-						<p>You wouldn't like me, when I'm angry!</p>
-						<a href="#" class="viewsource">view source</a>
-					</div>
-					<div class="spacer s2"></div>
-					<script>
-						$(document).ready(function($) {
+							var controller = new ScrollMagic();
+
 							// build tween
-							var tween = TweenMax.to("#animate1", 0.5, {backgroundColor: "green", scale: 2.5});
+							var tween = TweenMax.from("#animate", 0.5, {autoAlpha: 0, scale: 0.7});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1"})
+							var scene = new ScrollScene({triggerElement: "a#top", duration: 200, triggerHook: "onLeave"})
 											.setTween(tween)
 											.addTo(controller);
 
-							// show indicators (requires debug extension)
-							scene.addIndicators();
-						});
-					</script>
-				</section>
-				<section class="demo">
-					<div class="spacer s1"></div>
-					<div id="trigger2" class="spacer s1"></div>
-					<div class="spacer s0"></div>
-					<div id="animate2" class="box1 black">
-						<p>Smurf me!</p>
-						<a href="#" class="viewsource">view source</a>
-					</div>
-					<div class="spacer s2"></div>
-					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.fromTo("#animate2", 0.5, 
-									{"border-top": "0px solid white"},
-									{"border-top": "30px solid white", backgroundColor: "blue", scale: 0.7}
-								);
-
-							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2", duration: 300})
-											.setTween(tween)
-											.addTo(controller);
+							// change behaviour of anchor links to scroll instead of jump
+							$(document).on("click", "a[href^=#]", function (e) {
+								var
+									id = $(this).attr("href"),
+									$elem = $(id);
+								if ($elem.length > 0) {
+									e.preventDefault();
+									TweenMax.to(window, 0.5, {scrollTo: {y: $elem.offset().top}});
+									if (window.history && window.history.pushState) {
+										// if supported by the browser we can even update the URL.
+										history.pushState("", document.title, id);
+									}
+								}
+							});
 
 							// show indicators (requires debug extension)
 							scene.addIndicators();

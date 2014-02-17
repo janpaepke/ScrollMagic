@@ -10,6 +10,7 @@
 	// TODO: Document
 	// TODO: correct trigger indicator position when scrolling horizontally and container has top offset and when scrolling vertically
 	// TODO: fix bug of wrong positioning of indicators when changing mobile orientation multiple times.
+	// TODO: hide hook if there is more than one in one position
 	ScrollScene.prototype.addIndicators = function(options) {
 		var
 			DEFAULT_OPTIONS = {
@@ -66,7 +67,7 @@
 				$container.css("position", "relative"); // positioning needed for correct display of indicators
 			}
 
-			if ($container.find("div.ScrollSceneIndicators div.hook").length == 0) { // only one needed
+			if ($container.find("div.ScrollSceneIndicators div.hook").length == 0) { // TODO: buggy. if multiple different ones all should be shown...
 
 				$wrap.append($triggerHook);
 			}
