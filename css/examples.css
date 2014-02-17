@@ -21,11 +21,11 @@
 	overflow-y: hidden;
 	overflow-x: scroll;
 }
-.scrollContainer .scrollContent {
+#example-wrapper.scrollContainer .scrollContent {
 	width: 100%;
 	height: auto;
 }
-.scrollContainer.horizontal .scrollContent {
+#example-wrapper.scrollContainer.horizontal .scrollContent {
 	width: auto;
 	height: 100%;
 }
@@ -100,6 +100,12 @@ section.demo {
 	font-size: 0;
 	text-align: center;
 	background-image: url("../img/example_bg_v.png");
+}
+section.demo.fullheight {
+	min-height: 100%;
+}
+section.demo.doublewidth, .spacer.doublewidth {
+	min-width: 200%;
 }
 .horizontal section.demo {
 	text-align: inherit;
@@ -274,12 +280,6 @@ section.demo {
 .box1.outline, .box2.outline, .box3.outline {
 	border: 1px solid white;
 }
-.red {
-	background-color: #cf3535;
-}
-.green {
-	background-color: #00af10;
-}
 .blue {
 	background-color: #3883d8;
 }
@@ -291,6 +291,15 @@ section.demo {
 }
 .white {
 	background-color: #FFFFFF;
+}
+.red {
+	background-color: #cf3535;
+}
+.green {
+	background-color: #00af10;
+}
+.orange {
+	background-color: #ea6300;
 }
 /*
 	Form
@@ -346,11 +355,14 @@ form .slider + input {
 	border: none;
 	padding: 0;
 }
-form #options label, form #actions label {
+form #options label, form #actions label, form #tweenparams label {
 	min-width: 90px;
 	text-align: right;
 	display: inline-block;
 	margin-right: 10px;
+}
+form #tweenparams label {
+	min-width: 50px;
 }
 form #options button {
 	width: 65px;
@@ -427,7 +439,13 @@ ul#menu ul {
 ul#menu li:hover > a {
 	color: #2e639e;
 }
-ul#menu li:hover ul {
+html.touch ul#menu li:hover > a {
+	color: white;
+}
+html.touch ul#menu li:hover ul {
+	display: none;
+}
+ul#menu li:hover ul, html.touch ul#menu li.open ul {
 	display: block;
 	width: 100%;
 	padding: 5px 0 5px 0;
@@ -461,10 +479,10 @@ ul#menu ul li a:hover {
 	transition: top 0.5s;
 	-webkit-transition: top 0.5s; /* Safari */
 }
-.menuwrap:hover {
+.menuwrap:hover, .menuwrap.open {
 	top: 0px;
 }
-.menuwrap div:last-child {
+.menuwrap div.flag {
 	top: 51px;
 	position: absolute;
 	width: 60px;
@@ -483,13 +501,26 @@ ul#menu ul li a:hover {
 	transition-delay: 0.5s;
 	-webkit-transition-delay: 0.5s; /* Safari */
 }
-.menuwrap:hover > div {
+.menuwrap:hover div.flag, .menuwrap.open div.flag {
 	opacity: 0;
 	top: -20px;
 	transition: top 0.1s;
 	-webkit-transition: top 0.1s; /* Safari */
 	transition-delay: 0.5s;
 	-webkit-transition-delay: 0.5s; /* Safari */
+}
+html.touch .menuwrap.open div.flag {
+	top: -50px;
+}
+html.touch .menuwrap div.flag {
+	width: 100px;
+	margin-left: -50px;
+	font-size: 25px;
+	line-height: 50px;
+}
+html.touch .menuwrap div.flag {
+	/*opacity: 1;
+	top: 51px;*/
 }
 /*
 	Codecontainer
@@ -505,6 +536,7 @@ ul#menu ul li a:hover {
 	border-radius: 4px;
 	padding: 10px 0 10px 0;
 	z-index: 900;
+	min-height: 300px;
 }
 #codecontainer pre {
 	margin: 0;
@@ -608,9 +640,9 @@ a.viewsource:before {
 	position: absolute;
 	font-size: 50px;
 	line-height: 50px;
-	margin-left: -100px;
+	margin-left: -150px;
 	margin-top: -25px;
-	width: 200px;
+	width: 300px;
 	top: 50%;
 	left: 50%;
 	text-align: center;
@@ -668,6 +700,40 @@ a.viewsource:before {
 	margin-top: 20px;
 	display: block;
 	text-align: center;
+}
+.demo.responsiveDuration {
+	position: relative;
+}
+.responsiveDuration .box1 {
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	margin-top: -50px;
+	margin-left: -50px;
+}
+#destroybox a {
+	display: block;
+	margin-top: 20px;
+}
+#destroybox a.disabled {
+	color: #79b0ee;
+}
+#mobileadvanced {
+	width: 150px;
+	height: 150px;
+}
+#mobileadvanced p {
+	margin-top: 50px;
+}
+#multiDirect {
+	text-align: left;
+}
+#multiDirect .box1 {
+	position: absolute;
+	margin: 200px auto auto 200px;
+}
+#multiDirect .box1 p:first-child {
+	margin-top: 20px;
 }
 
 /*

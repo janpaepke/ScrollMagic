@@ -3,33 +3,35 @@
 	ScrollMagic - The jQuery plugin for doing magical scroll animations
 	by Jan Paepke 2014 (@janpaepke)
 
-	Inspired by and partially based on the one and only SUPERSCROLLORAMA by John Polacek (@johnpolacek)
+	Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
 	johnpolacek.github.com/superscrollorama/
 
 	Powered by the Greensock Tweening Platform
 	http://www.greensock.com/js
 	Greensock License info at http://www.greensock.com/licensing/
 
-	Dual licensed under MIT and GPL.
-	@author Jan Paepke, e-mail@janpaepke.de
+	@version - 1.0.0
+	@requires - jQuery
+	@license - Dual licensed under MIT and GPL.
+	@author - Jan Paepke, e-mail@janpaepke.de
 */
 
-// TODO: make examples
-// TODO: finish Docs
-// TODO: bug: when making the duration shorter after or during a pin, the element isn't pinned correctly.
+// @todo: finish Docs
+// @todo: bug: when making the duration shorter after or during a pin, the element isn't pinned correctly.
 // -----------------------
-// TODO: improvement: consider call conditions for updatePinSpacerSize (performance?)
-// TODO: improvement: only update fixed position when it changed (otherwise some quirks in safari - also: performance...)
-// TODO: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
-// TODO: bug: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
-// TODO: feature: have different tweens, when scrolling up, than when scrolling down
-// TODO: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
+// @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
+// @todo: improvement: only update fixed position when it changed (otherwise some quirks in safari - also: performance...)
+// @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
+// @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
+// @todo: bug: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
+// @todo: feature: have different tweens, when scrolling up, than when scrolling down
+// @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 
 (function($) {
 	/**
 	 * CLASS ScrollMagic (main controller)
 	 *
-	 * (TODO: Description)
+	 * The main class that is needed once per scroll container.
 	 *
 	 * @constructor
 	 *
@@ -116,6 +118,9 @@
 					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
 					scene.update(true);
 				});
+				if (scenesToUpdate.length == 0 && _options.loglevel >= 3) {
+					log(3, "updating 0 Scenes (nothing added to controller)");
+				}
 				_updateScenesOnNextTick = false;
 			}
 		};
@@ -315,6 +320,8 @@
 
 	/**
 	 * CLASS ScrollScene (scene controller)
+	 *
+	 * A ScrollScene defines where the controller should react and how.
 	 *
 	 * @constructor
 	 *
@@ -914,7 +921,7 @@
 					_progress = 0;
 					_state = 'BEFORE';
 					doUpdate = true;
-				} else if (progress > 0 && progress < 1 && _progress != progress && (progress >= _progress || _options.reverse)) {
+				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
 					_progress = progress;
 					_state = 'DURING';
 					doUpdate = true;
@@ -977,7 +984,7 @@
 			}
 			try {
 				// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
-				_tween = new TimelineMax()
+				_tween = new TimelineMax({smoothChildTiming: true})
 					.add(TweenMaxObject)
 					.pause();
 			} catch (e) {

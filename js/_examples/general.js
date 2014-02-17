@@ -97,19 +97,19 @@ function showCode ($elem) {
 	}
 
 	// insert
-	var $code = 	$("<div></div>")
+	var $code = 	$("<div>")
 					.addClass("code")
 					.text(code.source)
-					.wrapInner("<pre></pre>"),
-		$ln =		$("<div></div>")
+					.wrapInner("<pre>"),
+		$ln =		$("<div>")
 					.addClass("linenumbers")
 					.addClass("noselect")
 					.html(code.linenumbers)
-					.wrapInner("<pre></pre>"),
-		$close = 	$("<div></div>")
+					.wrapInner("<pre>"),
+		$close = 	$("<div>")
 					.attr("id", "closebutton");
 	
-	$("<div></div>")
+	$("<div>")
 		.attr("id", "codecontainer")
 		.append($ln)
 		.append($code)
@@ -140,26 +140,43 @@ $(document).ready(function () {
 		$.each(MENU, function (key, value) {
 			var
 				path = isRoot ? key : "../" + key;
-				$li = $("<li></li>").appendTo($menu),
+				$li = $("<li>").appendTo($menu),
 				$a = $("<a href='" + path + "'>" + value.title + "</a>").appendTo($li),
-				$ul_sub = $("<ul></ul>").appendTo($li);
+				$ul_sub = $("<ul>").appendTo($li);
 			$.each(value.sub, function (key, value) {
 				var
-					$li = $("<li></li>").appendTo($ul_sub),
+					$li = $("<li>").appendTo($ul_sub),
 					$a = $("<a href='" + path + "/" + key + "'>" + value + "</a>").appendTo($li)
 			})
 		});
 
 		if ($menu.parent().is("body")) {
 			var
-				$flag = $("<div>Menu</div>");
-				$menuwrap = $("<div></div>")
+				$flag = $("<div>Menu</div>")
+							.addClass("flag");
+				$menuwrap = $("<div>")
 							.addClass("menuwrap")
 							.prependTo("body")
 							.before($menu)
 							.append($menu)
 							.append($flag);
+
+			$(document).on("touchstart", ".menuwrap", function (e) {
+				$menuwrap.addClass("open");
+				e.stopPropagation();
+			});
+			$(document).on("touchstart", ":not(.menuwrap)", function (e) {
+				$menuwrap.removeClass("open");
+			});
 		}
+		$(document).on("touchstart", "ul#menu li", function (e) {
+			$("ul#menu li").removeClass("open");
+			var $parent = $(e.target).parents("ul#menu li");
+			if ($parent.length > 0) {
+				$parent.addClass("open");
+				e.stopPropagation();
+			}
+		});
 	}
 
 	// store initial HTML of code
@@ -267,6 +284,5 @@ $(document).on("mouseup", function (e) {
 		.removeClass("dragging");
 	$("body").removeClass("noselect");
 });
-
 
 

@@ -78,10 +78,10 @@
 				<div class="spacer s0"></div>
 				<section class="demo fullwidth" id="trigger2">
 					<div id="parallaxText">
-						<h1 class="layer1">TEXT</h1>
-						<h1 class="layer2">TEXT</h1>
+						<h1 class="layer1">PARALLAX</h1>
+						<h1 class="layer2">PARALLAX</h1>
 						<h1 class="layer3">
-							TEXT
+							PARALLAX
 							<a href="#" class="viewsource">view source</a>
 						</h1>
 						
@@ -91,8 +91,8 @@
 							// build tween
 							var tween = new TimelineMax ()
 								.add([
-									TweenMax.fromTo("#parallaxText .layer1", 1, {scale: 3, autoAlpha: 0.05, left: 300}, {left: -300, ease: Linear.easeNone}),
-									TweenMax.fromTo("#parallaxText .layer2", 1, {scale: 2, autoAlpha: 0.3, left: 150}, {left: -150, ease: Linear.easeNone})
+									TweenMax.fromTo("#parallaxText .layer1", 1, {scale: 3, autoAlpha: 0.05, left: 300}, {left: -350, ease: Linear.easeNone}),
+									TweenMax.fromTo("#parallaxText .layer2", 1, {scale: 2, autoAlpha: 0.3, left: 150}, {left: -175, ease: Linear.easeNone})
 								]);
 
 							// build scene
