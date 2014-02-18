@@ -18,7 +18,6 @@
 
 // @todo: make readme
 // @todo: make project homepage
-// @todo: look at start/end events (make better?)
 // @todo: bug: when making the duration shorter after or during a pin, the element isn't pinned correctly.
 // -----------------------
 // @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
@@ -1051,7 +1050,8 @@
 					// fire events
 					var
 						eventVars = {progress: _progress, state: _state, scrollDirection: scrollDirection},
-						stateChanged = _state != oldState;
+						stateChanged = _state != oldState,
+						instantReverse = (_state === 'BEFORE' && _options.duration == 0);
 
 					// do actual updates
 					updateTweenProgress();
@@ -1065,15 +1065,11 @@
 						if (_state === 'DURING' || _options.duration == 0) {
 							ScrollScene.trigger("enter", eventVars);
 						}
-						if ((_state === 'DURING' && scrollDirection === 'FORWARD')|| _state === 'BEFORE') {
-							ScrollScene.trigger("start", eventVars);
-						} else if (_options.duration == 0) {
-							ScrollScene.trigger((_state === 'AFTER') ? "start" : "end", eventVars);
+						if (_state === 'BEFORE' || oldState === 'BEFORE') {
+							ScrollScene.trigger(instantReverse ? "end" : "start", eventVars);
 						}
-						if ((_state === 'DURING' && scrollDirection === 'REVERSE')|| _state === 'AFTER') {
-							ScrollScene.trigger("end", eventVars);
-						} else if (_options.duration == 0) {
-							ScrollScene.trigger((_state === 'AFTER') ? "start" : "end", eventVars);
+						if (_state === 'AFTER' || oldState === 'AFTER') {
+							ScrollScene.trigger(instantReverse ? "start" : "end", eventVars);
 						}
 						if (_state !== 'DURING' || _options.duration == 0) {
 							ScrollScene.trigger("leave", eventVars);
