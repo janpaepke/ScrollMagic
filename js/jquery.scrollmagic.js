@@ -18,9 +18,9 @@
 
 // @todo: make readme
 // @todo: make project homepage
+// @todo: bug: pins jerk in all browsers except chrome. FIX!
 // -----------------------
 // @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
-// @todo: improvement: only update fixed position when it changed (otherwise some quirks in safari - also: performance...)
 // @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
 // @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 // @todo: feature: have different tweens, when scrolling up, than when scrolling down
@@ -466,7 +466,7 @@
 			ScrollScene.on("change.internal", function (e) {
 				checkOptionsValidity();
 				if (e.what != "loglevel") { // no need to update the scene with this option...
-					if (e.what == "duration") { //  || _options.duration == 0 && _state === "AFTER"
+					if (e.what == "duration" || (_state === "AFTER" && _options.duration == 0)) {
 						updatePinState();
 					}
 					ScrollScene.update();
@@ -602,10 +602,14 @@
 
 				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
 					// pinned
-					var fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
- 					
+					var
+						fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
+ 						progress = (_options.duration > 0)
+ 								   ? _options.duration * _progress // easy...
+ 								   : containerInfo.scrollPos - _options.offset + (containerInfo.size * ScrollScene.triggerHook()) - ScrollScene.triggerOffset(); // if duration 0 then we need to calculate the distance scrolled past the trigger
+
  					// add progress
- 					fixedPos[containerInfo.vertical ? "top" : "left"] += _options.duration * _progress;
+ 					fixedPos[containerInfo.vertical ? "top" : "left"] += progress;
 
 					newCSS = {
 						position: "fixed",
