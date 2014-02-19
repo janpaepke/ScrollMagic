@@ -18,13 +18,11 @@
 
 // @todo: make readme
 // @todo: make project homepage
-// @todo: bug: when making the duration shorter after or during a pin, the element isn't pinned correctly.
 // -----------------------
 // @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
 // @todo: improvement: only update fixed position when it changed (otherwise some quirks in safari - also: performance...)
 // @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
 // @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
-// @todo: bug: When scrolling back with a pin and reverse false DURING the scene, the pin isnt'stuck where it is. If it would be unpinned where it is scrolling up would change the fixed position and the start or end position by the ammount scrolled back. For now pins will behave normally in this case and fire no events. Workaround see ScrollSCene.progress, last elseif bracket.
 // @todo: feature: have different tweens, when scrolling up, than when scrolling down
 // @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 
@@ -421,6 +419,7 @@
 
 		var
 			TRIGGER_HOOK_STRINGS = ["onCenter", "onEnter", "onLeave"],
+			EVENT_NAMESPACE = "ScrollScene",
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
@@ -460,6 +459,22 @@
 		 */
 		var construct = function () {
 			checkOptionsValidity();
+
+			// internal event listeners
+			ScrollScene.on("change.internal", function (e) {
+				checkOptionsValidity();
+				if (e.what == "duration") {
+					updatePinState();
+				}
+				if (e.what != "loglevel") { // no need to update the scene with this option...
+					ScrollScene.update();
+				}
+			});
+			// internal event listeners
+			ScrollScene.on("progress.internal", function (e) {
+				updateTweenProgress();
+				updatePinState();
+			});
 		};
 
 		/**
@@ -607,7 +622,7 @@
 					}
 				}
 				_pin.css(css);
-				updatePinSpacerSize();
+				updatePinSpacerSize(); // called in case the pin element's size is changed during pin.
 			}
 		};
 
@@ -698,10 +713,7 @@
 				return _options.duration;
 			} else if (_options.duration != newDuration) { // set
 				_options.duration = newDuration;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "duration", newval: newDuration}); // fire event
-				updatePinSpacerSize();
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -726,9 +738,7 @@
 				return _options.offset;
 			} else if (_options.offset != newOffset) { // set
 				_options.offset = newOffset;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "offset", newval: newOffset}); // fire event
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -757,9 +767,7 @@
 				return _options.triggerElement;
 			} else if (_options.triggerElement != newTriggerElement) { // set
 				_options.triggerElement = newTriggerElement;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "triggerElement", newval: newTriggerElement}); // fire event
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -803,9 +811,7 @@
 				return triggerPoint;
 			} else if (_options.triggerHook != newTriggerHook) { // set
 				_options.triggerHook = newTriggerHook;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "triggerHook", newval: newTriggerHook}); // fire event
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -830,9 +836,7 @@
 				return _options.reverse;
 			} else if (_options.reverse != newReverse) { // set
 				_options.reverse = newReverse;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "reverse", newval: newReverse}); // fire event
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -857,9 +861,7 @@
 				return _options.tweenChanges;
 			} else if (_options.tweenChanges != newTweenChanges) { // set
 				_options.tweenChanges = newTweenChanges;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "tweenChanges", newval: newTweenChanges}); // fire event
-				ScrollScene.update();
 			}
 			return ScrollScene;
 		};
@@ -884,9 +886,7 @@
 				return _options.loglevel;
 			} else if (_options.loglevel != newLoglevel) { // set
 				_options.loglevel = newLoglevel;
-				checkOptionsValidity();
 				ScrollScene.trigger("change", {what: "loglevel", newval: newLoglevel}); // fire event
-				// no need to update the scene with this param...
 			}
 			return ScrollScene;
 		};
@@ -1043,8 +1043,8 @@
 					_progress = 1;
 					_state = 'AFTER';
 					doUpdate = true;
-				} else if (_state === "DURING") { // WORKAROUND (see TODOs): only occurs when reverse is false, otherwise it would be cought above.
-					updatePinState(progress <= 0 ? "BEFORE" : "DURING"); // do a hard update of the pin
+				} else if (_state === "DURING" && !_options.reverse) {
+					updatePinState(); // in case we scrolled back and reverse is disabled => update the pin position, so it doesn't scroll back as well.
 				}
 				if (doUpdate) {
 					// fire events
@@ -1053,21 +1053,16 @@
 						stateChanged = _state != oldState,
 						instantReverse = (_state === 'BEFORE' && _options.duration == 0);
 
-					// do actual updates
-					updateTweenProgress();
-					if (stateChanged || _state === "DURING") { // update pins only if something changes OR during Pin
-						updatePinState();
-					}
-					ScrollScene.trigger("progress", eventVars);
-
-
-					if (stateChanged) { // fire state change events
+					if (stateChanged) {
 						if (_state === 'DURING' || _options.duration == 0) {
 							ScrollScene.trigger("enter", eventVars);
 						}
 						if (_state === 'BEFORE' || oldState === 'BEFORE') {
 							ScrollScene.trigger(instantReverse ? "end" : "start", eventVars);
 						}
+					}
+					ScrollScene.trigger("progress", eventVars);
+					if (stateChanged) {
 						if (_state === 'AFTER' || oldState === 'AFTER') {
 							ScrollScene.trigger(instantReverse ? "start" : "end", eventVars);
 						}
@@ -1343,7 +1338,7 @@
 			this.removeTween(reset);
 			this.removePin(reset);
 			this.remove();
-			this.off("start end enter leave progress change update")
+			this.off("start end enter leave progress change update change.internal progress.internal")
 			log(3, "destroyed ScrollScene (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
@@ -1502,8 +1497,10 @@
 		 */
 		 this.on = function (name, callback) {
 			if ($.isFunction(callback)) {
-				var events = $.trim(name).toLowerCase().split(" ");
-				$(document).on(events.join(".ScrollScene ") + ".ScrollScene", callback);
+				var names = $.trim(name).toLowerCase()
+							.replace(/(\w+)\.(\w+)/g, '$1.' + EVENT_NAMESPACE + '_$2') // add custom namespace, if one is defined
+							.replace(/( |^)(\w+)( |$)/g, '$1$2.' + EVENT_NAMESPACE + '$3'); // add namespace to regulars.
+				$(ScrollScene).on(names, callback);
 			} else {
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
 			}
@@ -1528,8 +1525,10 @@
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.off = function (name, callback) {
-		 	var events = $.trim(name).toLowerCase().split(" ");
-			$(document).off(events.join(".ScrollScene ") + ".ScrollScene", callback)
+			var names = $.trim(name).toLowerCase()
+						.replace(/(\w+)\.(\w+)/g, '$1.' + EVENT_NAMESPACE + '_$2') // add custom namespace, if one is defined
+						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + EVENT_NAMESPACE + '$3'); // add namespace to regulars.
+			$(ScrollScene).off(names, callback)
 			return ScrollScene;
 		 };
 
@@ -1547,14 +1546,14 @@
 		 this.trigger = function (name, vars) {
 			log(3, 'event fired:', name, "->", vars);
 			var event = {
-				type: $.trim(name).toLowerCase() + ".ScrollScene",
+				type: $.trim(name).toLowerCase(),
 				target: ScrollScene
 			}
 			if ($.isPlainObject(vars)) {
 				event = $.extend({}, vars, event);
 			}
 			// fire all callbacks of the event
-			$.event.trigger(event);
+			$(ScrollScene).trigger(event);
 			return ScrollScene;
 		 };
 
