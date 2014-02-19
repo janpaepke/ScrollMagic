@@ -240,7 +240,8 @@
                 </td>
             
 
-            <td class="description last"><p>The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.</p></td>
+            <td class="description last"><p>The duration of the scene.<br>
+                                               If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.</p></td>
         </tr>
 
 	
@@ -334,7 +335,7 @@
             <td class="type">
             
                 
-<span class="param-type">float</span>
+<span class="param-type">number</span>
 |
 
 <span class="param-type">string</span>
@@ -366,9 +367,9 @@
             <td class="description last"><p>Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.<br>
                                                                    Can also be defined using a string:</p>
 <ul>
-<li>&quot;onEnter&quot; =&gt; 1</li>
-<li>&quot;onCenter&quot; =&gt; 0.5</li>
-<li>&quot;onLeave&quot; =&gt; 0</li>
+<li><code>&quot;onEnter&quot;</code> =&gt; <code>1</code></li>
+<li><code>&quot;onCenter&quot;</code> =&gt; <code>0.5</code></li>
+<li><code>&quot;onLeave&quot;</code> =&gt; <code>0</code></li>
 </ul></td>
         </tr>
 
@@ -448,7 +449,7 @@
             
 
             <td class="description last"><p>Tweens Animation to the progress target instead of setting it.<br>
-                                                        Does not affect animations where duration=0.</p></td>
+                                                        Does not affect animations where duration is <code>0</code>.</p></td>
         </tr>
 
 	
@@ -489,10 +490,10 @@
 
             <td class="description last"><p>Loglevel for debugging.</p>
 <ul>
-<li>0 =&gt; silent</li>
-<li>1 =&gt; errors</li>
-<li>2 =&gt; errors, warnings</li>
-<li>3 =&gt; errors, warnings, debuginfo</li>
+<li><code>0</code> =&gt; silent</li>
+<li><code>1</code> =&gt; errors</li>
+<li><code>2</code> =&gt; errors, warnings</li>
+<li><code>3</code> =&gt; errors, warnings, debuginfo</li>
 </ul></td>
         </tr>
 
@@ -675,7 +676,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1294">line 1294</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1289">line 1289</a>
     </li></ul></dd>
     
 
@@ -802,7 +803,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
                 </td>
             
 
-            <td class="description last"><p>If true the pin and tween (if existent) will be reset.</p></td>
+            <td class="description last"><p>If <code>true</code> the pin and tween (if existent) will be reset.</p></td>
         </tr>
 
 	
@@ -834,7 +835,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1345">line 1345</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1340">line 1340</a>
     </li></ul></dd>
     
 
@@ -858,6 +859,16 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     <h5>Returns:</h5>
     
             
+<div class="param-desc tag-returns">
+    <p>Null to unset handler variables.</p>
+
+	{
+<span class="param-type">null</span>
+
+}
+
+</div>
+
 
         
     
@@ -975,7 +986,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-696">line 696</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-713">line 713</a>
     </li></ul></dd>
     
 
@@ -1005,7 +1016,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current scene duration.</p>
+    <p><code>get</code> -  Current scene duration.</p>
 
 	{
 <span class="param-type">number</span>
@@ -1018,7 +1029,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -1112,7 +1123,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
 
             
 
-            <td class="description last"><p>The new loglevel setting of the scene.</p></td>
+            <td class="description last"><p>The new loglevel setting of the scene. <code>[0-3]</code></p></td>
         </tr>
 
 	
@@ -1144,7 +1155,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-882">line 882</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-886">line 886</a>
     </li></ul></dd>
     
 
@@ -1174,7 +1185,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current loglevel.</p>
+    <p><code>get</code> -  Current loglevel.</p>
 
 	{
 <span class="param-type">number</span>
@@ -1187,7 +1198,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -1344,7 +1355,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1533">line 1533</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1530">line 1530</a>
     </li></ul></dd>
     
 
@@ -1495,7 +1506,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-724">line 724</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-738">line 738</a>
     </li></ul></dd>
     
 
@@ -1525,7 +1536,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current scene offset.</p>
+    <p><code>get</code> -  Current scene offset.</p>
 
 	{
 <span class="param-type">number</span>
@@ -1538,7 +1549,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.addScene(sc
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -1676,7 +1687,7 @@ The callback function will be fired at the respective event, and an object conta
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1506">line 1506</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1501">line 1501</a>
     </li></ul></dd>
     
 
@@ -1725,7 +1736,7 @@ The callback function will be fired at the respective event, and an object conta
         
             
 <dt>
-    <h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="signature">()</span><span class="type-signature"> &rarr; {undefined}</span></h4>
+    <h4 class="name" id="parent"><span class="type-signature"></span>parent<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1766,7 +1777,7 @@ The callback function will be fired at the respective event, and an object conta
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-676">line 676</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-693">line 693</a>
     </li></ul></dd>
     
 
@@ -1791,10 +1802,10 @@ The callback function will be fired at the respective event, and an object conta
     
             
 <div class="param-desc tag-returns">
-    <p>Parent controller or</p>
+    <p>Parent controller or <code>undefined</code></p>
 
 	{
-<span class="param-type">undefined</span>
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
 
 }
 
@@ -1886,7 +1897,7 @@ Usually it shouldn't be necessary to use this as a setter, as it is set automati
 
             
 
-            <td class="description last"><p>The new progress value of the scene (0 - 1).</p></td>
+            <td class="description last"><p>The new progress value of the scene <code>[0 - 1]</code>.</p></td>
         </tr>
 
 	
@@ -1918,7 +1929,7 @@ Usually it shouldn't be necessary to use this as a setter, as it is set automati
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1025">line 1025</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1027">line 1027</a>
     </li></ul></dd>
     
 
@@ -1956,7 +1967,7 @@ Usually it shouldn't be necessary to use this as a setter, as it is set automati
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current scene progress.</p>
+    <p><code>get</code> -  Current scene progress.</p>
 
 	{
 <span class="param-type">number</span>
@@ -1969,7 +1980,7 @@ Usually it shouldn't be necessary to use this as a setter, as it is set automati
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -2037,7 +2048,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1322">line 1322</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1317">line 1317</a>
     </li></ul></dd>
     
 
@@ -2164,7 +2175,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
                 </td>
             
 
-            <td class="description last"><p>If false the spacer will not be removed and the element's position will not be reset.</p></td>
+            <td class="description last"><p>If <code>false</code> the spacer will not be removed and the element's position will not be reset.</p></td>
         </tr>
 
 	
@@ -2196,7 +2207,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1262">line 1262</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1257">line 1257</a>
     </li></ul></dd>
     
 
@@ -2323,7 +2334,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
                 </td>
             
 
-            <td class="description last"><p>If true the tween will be reset to its initial values.</p></td>
+            <td class="description last"><p>If <code>true</code> the tween will be reset to its initial values.</p></td>
         </tr>
 
 	
@@ -2355,7 +2366,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1148">line 1148</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1142">line 1142</a>
     </li></ul></dd>
     
 
@@ -2506,7 +2517,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-828">line 828</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-836">line 836</a>
     </li></ul></dd>
     
 
@@ -2536,7 +2547,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current reverse option value.</p>
+    <p><code>get</code> -  Current reverse option value.</p>
 
 	{
 <span class="param-type">boolean</span>
@@ -2549,7 +2560,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -2691,7 +2702,8 @@ Note, that pushFollowers has no effect, when the scene duration is 0.</p>
                 </td>
             
 
-            <td class="description last"><p>If true following elements will be &quot;pushed&quot; down for the duration of the pin, if false the pinned element will just scroll past them. Ignored, when duration is 0.</p></td>
+            <td class="description last"><p>If <code>true</code> following elements will be &quot;pushed&quot; down for the duration of the pin, if <code>false</code> the pinned element will just scroll past them.<br>
+                                                            Ignored, when duration is <code>0</code>.</p></td>
         </tr>
 
 	
@@ -2762,7 +2774,7 @@ Note, that pushFollowers has no effect, when the scene duration is 0.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1177">line 1177</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1172">line 1172</a>
     </li></ul></dd>
     
 
@@ -2821,7 +2833,7 @@ Note, that pushFollowers has no effect, when the scene duration is 0.</p>
     <div class="description">
         <p>Add a tween to the scene.<br>
 If you want to add multiple tweens, wrap them into one TimelineMax object and add it.<br>
-The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of 0.</p>
+The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of <code>0</code>.</p>
     </div>
     
 
@@ -2903,7 +2915,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1109">line 1109</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1103">line 1103</a>
     </li></ul></dd>
     
 
@@ -2993,7 +3005,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-903">line 903</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-905">line 905</a>
     </li></ul></dd>
     
 
@@ -3018,7 +3030,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
             
 <div class="param-desc tag-returns">
-    <p>&quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p>
+    <p><code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p>
 
 	{
 <span class="param-type">string</span>
@@ -3175,7 +3187,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1550">line 1550</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1549">line 1549</a>
     </li></ul></dd>
     
 
@@ -3329,7 +3341,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-755">line 755</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-767">line 767</a>
     </li></ul></dd>
     
 
@@ -3359,7 +3371,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current triggerElement.</p>
+    <p><code>get</code> -  Current triggerElement.</p>
 
 	{
 <span class="param-type">string</span>
@@ -3375,7 +3387,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -3399,7 +3411,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
         
             
 <dt>
-    <h4 class="name" id="triggerHook"><span class="type-signature"></span>triggerHook<span class="signature">(<span class="optional">newTriggerHook</span>)</span><span class="type-signature"> &rarr; {float}</span></h4>
+    <h4 class="name" id="triggerHook"><span class="type-signature"></span>triggerHook<span class="signature">(<span class="optional">newTriggerHook</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
     
 </dt>
@@ -3449,7 +3461,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
             <td class="type">
             
                 
-<span class="param-type">float</span>
+<span class="param-type">number</span>
 |
 
 <span class="param-type">string</span>
@@ -3503,7 +3515,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-784">line 784</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-794">line 794</a>
     </li></ul></dd>
     
 
@@ -3533,10 +3545,10 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current triggerHook (ALWAYS numerical).</p>
+    <p><code>get</code> -  Current triggerHook (ALWAYS numerical).</p>
 
 	{
-<span class="param-type">float</span>
+<span class="param-type">number</span>
 
 }
 
@@ -3546,7 +3558,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -3579,7 +3591,7 @@ The duration of the tween is streched to the scroll duration of the scene, unles
     
     <div class="description">
         <p><strong>Get</strong> the trigger offset relative to container.<br>
-this calculates the starting offset of the scene, taking into account the triggerElement (if available) and the offset</p>
+This method calculates the starting offset of the scene, taking into account the triggerElement (if available) and the offset</p>
     </div>
     
 
@@ -3612,7 +3624,7 @@ this calculates the starting offset of the scene, taking into account the trigge
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-917">line 917</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-919">line 919</a>
     </li></ul></dd>
     
 
@@ -3763,7 +3775,7 @@ this calculates the starting offset of the scene, taking into account the trigge
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-855">line 855</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-861">line 861</a>
     </li></ul></dd>
     
 
@@ -3793,7 +3805,7 @@ this calculates the starting offset of the scene, taking into account the trigge
     <ul>
             <li>
 <div class="param-desc tag-returns">
-    <p>[get] Current tweenChanges option value.</p>
+    <p><code>get</code> -  Current tweenChanges option value.</p>
 
 	{
 <span class="param-type">boolean</span>
@@ -3806,7 +3818,7 @@ this calculates the starting offset of the scene, taking into account the trigge
         
             <li>
 <div class="param-desc tag-returns">
-    <p>[set] Parent object for chaining.</p>
+    <p><code>set</code> -  Parent object for chaining.</p>
 
 	{
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
@@ -3909,7 +3921,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.updateScene
                 </td>
             
 
-            <td class="description last"><p>If true the update will be instantly, if false it will wait until next tweenmax tick (better performance)</p></td>
+            <td class="description last"><p>If <code>true</code> the update will be instantly, if <code>false</code> it will wait until next tweenmax tick (better performance).</p></td>
         </tr>
 
 	
@@ -3941,7 +3953,7 @@ This is the equivalent to <a href="ScrollMagic.html">ScrollMagic</a>.updateScene
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-967">line 967</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-969">line 969</a>
     </li></ul></dd>
     
 
@@ -4214,7 +4226,7 @@ Fires whenvever a property of the scene is changed.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1472">line 1472</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1467">line 1467</a>
     </li></ul></dd>
     
 
@@ -4424,7 +4436,7 @@ It will also fire when scrolling back up from after the scene and going over its
 
             
 
-            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+            <td class="description last"><p>The current state of the scene <code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p></td>
         </tr>
 
 	
@@ -4447,7 +4459,7 @@ It will also fire when scrolling back up from after the scene and going over its
 
             
 
-            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+            <td class="description last"><p>Indicates which way we are scrolling <code>&quot;PAUSED&quot;</code>, <code>&quot;FORWARD&quot;</code> or <code>&quot;REVERSE&quot;</code></p></td>
         </tr>
 
 	
@@ -4483,7 +4495,7 @@ It will also fire when scrolling back up from after the scene and going over its
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1379">line 1379</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1374">line 1374</a>
     </li></ul></dd>
     
 
@@ -4693,7 +4705,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
 
             
 
-            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+            <td class="description last"><p>The current state of the scene <code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p></td>
         </tr>
 
 	
@@ -4716,7 +4728,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
 
             
 
-            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+            <td class="description last"><p>Indicates which way we are scrolling <code>&quot;PAUSED&quot;</code>, <code>&quot;FORWARD&quot;</code> or <code>&quot;REVERSE&quot;</code></p></td>
         </tr>
 
 	
@@ -4752,7 +4764,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1398">line 1398</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1393">line 1393</a>
     </li></ul></dd>
     
 
@@ -4962,7 +4974,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
 
             
 
-            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+            <td class="description last"><p>The current state of the scene <code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p></td>
         </tr>
 
 	
@@ -4985,7 +4997,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
 
             
 
-            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+            <td class="description last"><p>Indicates which way we are scrolling <code>&quot;PAUSED&quot;</code>, <code>&quot;FORWARD&quot;</code> or <code>&quot;REVERSE&quot;</code></p></td>
         </tr>
 
 	
@@ -5021,7 +5033,7 @@ Keep in mind that it doesn't matter if the scene plays forward or backward: This
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1417">line 1417</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1412">line 1412</a>
     </li></ul></dd>
     
 
@@ -5230,7 +5242,7 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+            <td class="description last"><p>The current state of the scene <code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p></td>
         </tr>
 
 	
@@ -5253,7 +5265,7 @@ Fires whenever the progress of the scene changes.</p>
 
             
 
-            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+            <td class="description last"><p>Indicates which way we are scrolling <code>&quot;PAUSED&quot;</code>, <code>&quot;FORWARD&quot;</code> or <code>&quot;REVERSE&quot;</code></p></td>
         </tr>
 
 	
@@ -5289,7 +5301,7 @@ Fires whenever the progress of the scene changes.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1454">line 1454</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1449">line 1449</a>
     </li></ul></dd>
     
 
@@ -5499,7 +5511,7 @@ It will also fire when scrolling back up going over the start position of the sc
 
             
 
-            <td class="description last"><p>The current state of the scene &quot;BEFORE&quot;, &quot;DURING&quot; or &quot;AFTER&quot;</p></td>
+            <td class="description last"><p>The current state of the scene <code>&quot;BEFORE&quot;</code>, <code>&quot;DURING&quot;</code> or <code>&quot;AFTER&quot;</code></p></td>
         </tr>
 
 	
@@ -5522,7 +5534,7 @@ It will also fire when scrolling back up going over the start position of the sc
 
             
 
-            <td class="description last"><p>Indicates which way we are scrolling &quot;PAUSED&quot;, FORWARD&quot; or &quot;REVERSE&quot;</p></td>
+            <td class="description last"><p>Indicates which way we are scrolling <code>&quot;PAUSED&quot;</code>, <code>&quot;FORWARD&quot;</code> or <code>&quot;REVERSE&quot;</code></p></td>
         </tr>
 
 	
@@ -5558,7 +5570,7 @@ It will also fire when scrolling back up going over the start position of the sc
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1360">line 1360</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1355">line 1355</a>
     </li></ul></dd>
     
 
@@ -5826,7 +5838,7 @@ Fires whenever the scene is updated (but not necessarily changes the progress).<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1436">line 1436</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1431">line 1431</a>
     </li></ul></dd>
     
 
@@ -5873,13 +5885,13 @@ Fires whenever the scene is updated (but not necessarily changes the progress).<
 					
 					
 		<span class="copyright">
-		© Jan Paepke 2013
+		© Jan Paepke 2014
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a>
-		on Mon Feb 17 2014 23:43:58 GMT+0100 (MEZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Feb 19 2014 12:51:44 GMT+0100 (MEZ) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

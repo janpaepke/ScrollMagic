@@ -41,13 +41,13 @@
 	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
 	 * @param {(string|object)} [options.container=window] - A selector, DOM Object or a jQuery object that references the main container for scrolling.
-	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (true) or horizontal (false) scrolling.
+	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollScene}.
 	 * @param {number} [options.loglevel=2] Loglevel for debugging:
-											 ** 0 => silent
-											 ** 1 => errors
-											 ** 2 => errors, warnings
-											 ** 3 => errors, warnings, debuginfo
+											 ** `0` => silent
+											 ** `1` => errors
+											 ** `2` => errors, warnings
+											 ** `3` => errors, warnings, debuginfo
 	 *
 	 */
 	ScrollMagic = function(options) {
@@ -236,7 +236,8 @@
 		 * controller.updateScene(scene, true);
 		 *
 		 * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
-		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick. This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick.<br>
+		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.updateScene = function (scene, immediately) {
@@ -263,7 +264,7 @@
 	 	 * // update the controller immediately
 		 * controller.update(true);
 		 *
-		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance)
+		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick (better performance)
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
@@ -286,12 +287,12 @@
 		 *
 		 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.<br>
 		 							 Valid options are:
-		 							 ** "size" => the current viewport size of the container
-		 							 ** "vertical" => true if vertical scrolling, otherwise false
-		 							 ** "scrollPos" => the current scroll position
-		 							 ** "scrollDirection" => the last known direction of the scroll
-		 							 ** "container" => the container element
-		 							 ** "isDocument" => true if container element is the document.
+		 							 ** `"size"` => the current viewport size of the container
+		 							 ** `"vertical"` => true if vertical scrolling, otherwise false
+		 							 ** `"scrollPos"` => the current scroll position
+		 							 ** `"scrollDirection"` => the last known direction of the scroll
+		 							 ** `"container"` => the container element
+		 							 ** `"isDocument"` => true if container element is the document.
 		 * @returns {(mixed|object)} The requested info(s).
 		 */
 		this.info = function (about) {
@@ -324,7 +325,7 @@
 	 	 * // set a new value
 		 * controller.loglevel(3);
 		 *
-		 * @param {number} [newLoglevel] - The new loglevel setting of the ScrollMagic controller.
+		 * @param {number} [newLoglevel] - The new loglevel setting of the ScrollMagic controller. `[0-3]`
 		 * @returns {(number|ScrollMagic)} Current loglevel or parent object for chaining.
 		 */
 		this.loglevel = function (newLoglevel) {
@@ -348,7 +349,7 @@
 	 	 * // with scene reset
 		 * controller = controller.destroy(true);
 		 *
-		 * @param {boolean} [resetScenes=false] - If true the pins and tweens (if existent) of all scenes will be reset.
+		 * @param {boolean} [resetScenes=false] - If `true` the pins and tweens (if existent) of all scenes will be reset.
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
@@ -391,22 +392,23 @@
 	 * });
 	 *
 	 * @param {object} [options] - Options for the Scene. (Can be changed later on)
-	 * @param {number} [options.duration=0] - The duration of the scene. If 0 tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
+	 * @param {number} [options.duration=0] - The duration of the scene.<br>
+	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
 	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM Object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
-	 * @param {(float|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.<br>
+	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.<br>
 	 															  Can also be defined using a string:
-	 															  ** "onEnter" => 1
-	 															  ** "onCenter" => 0.5
-	 															  ** "onLeave" => 0
+	 															  ** `"onEnter"` => `1`
+	 															  ** `"onCenter"` => `0.5`
+	 															  ** `"onLeave"` => `0`
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.<br>
-	 												   Does not affect animations where duration=0.
+	 												   Does not affect animations where duration is `0`.
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging.
-	 										  ** 0 => silent
-	 										  ** 1 => errors
-	 										  ** 2 => errors, warnings
-	 										  ** 3 => errors, warnings, debuginfo
+	 										  ** `0` => silent
+	 										  ** `1` => errors
+	 										  ** `2` => errors, warnings
+	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
 	ScrollScene = function (options) {
@@ -463,10 +465,10 @@
 			// internal event listeners
 			ScrollScene.on("change.internal", function (e) {
 				checkOptionsValidity();
-				if (e.what == "duration") {
-					updatePinState();
-				}
 				if (e.what != "loglevel") { // no need to update the scene with this option...
+					if (e.what == "duration") { //  || _options.duration == 0 && _state === "AFTER"
+						updatePinState();
+					}
 					ScrollScene.update();
 				}
 			});
@@ -595,7 +597,7 @@
 			var state = ($.inArray(to, ["BEFORE", "DURING", "AFTER"]) > -1) ? to : _state;
 			if (_pin && _parent) {
 				var 
-					css,
+					newCSS,
 					containerInfo = _parent.info();
 
 				if (state === "DURING" || (state === "AFTER" && _options.duration == 0)) { // if duration is 0 - we just never unpin
@@ -605,24 +607,26 @@
  					// add progress
  					fixedPos[containerInfo.vertical ? "top" : "left"] += _options.duration * _progress;
 
-					css = {
+					newCSS = {
 						position: "fixed",
 						top: fixedPos.top,
 						left: fixedPos.left
 					};
 				} else {
 					// unpinned
-					css = {
+					newCSS = {
 						position: "relative",
 						top:  0,
 						left: 0
 					};
 					if (!_pinOptions.pushFollowers && state === "AFTER") {
-						css[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
+						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 					}
 				}
-				_pin.css(css);
-				updatePinSpacerSize(); // called in case the pin element's size is changed during pin.
+				// set new values
+				_pin.css(newCSS);
+				// update pin spacer in case the pin element's size is changed during pin.
+				updatePinSpacerSize();
 			}
 		};
 
@@ -686,7 +690,7 @@
 		 * // get the parent controller of a scene
 		 * var controller = scene.parent();
 		 *
-		 * @returns {ScrollMagic} Parent controller or {@type undefined}
+		 * @returns {ScrollMagic} Parent controller or `undefined`
 		 */
 		this.parent = function () {
 			return _parent;
@@ -705,8 +709,8 @@
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @param {number} [newDuration] - The new duration of the scene.
-		 * @returns {number} [get] Current scene duration.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @returns {number} `get` -  Current scene duration.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.duration = function (newDuration) {
 			if (!arguments.length) { // get
@@ -730,8 +734,8 @@
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @param {number} [newOffset] - The new offset of the scene.
-		 * @returns {number} [get] Current scene offset.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @returns {number} `get` -  Current scene offset.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.offset = function (newOffset) {
 			if (!arguments.length) { // get
@@ -759,8 +763,8 @@
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @param {(string|object)} [newTriggerElement] - The new trigger element for the scene.
-		 * @returns {(string|object)} [get] Current triggerElement.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @returns {(string|object)} `get` -  Current triggerElement.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerElement = function (newTriggerElement) {
 			if (!arguments.length) { // get
@@ -785,9 +789,9 @@
 		 * scene.triggerHook(0.7);
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
-		 * @param {(float|string)} [newTriggerHook] - The new triggerHook of the scene. @see {@link ScrollScene) parameter description for value options.
-		 * @returns {float} [get] Current triggerHook (ALWAYS numerical).
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @param {(number|string)} [newTriggerHook] - The new triggerHook of the scene. @see {@link ScrollScene) parameter description for value options.
+		 * @returns {number} `get` -  Current triggerHook (ALWAYS numerical).
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerHook = function (newTriggerHook) {
 			if (!arguments.length) { // get
@@ -828,8 +832,8 @@
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @param {boolean} [newReverse] - The new reverse setting of the scene.
-		 * @returns {boolean} [get] Current reverse option value.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @returns {boolean} `get` -  Current reverse option value.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.reverse = function (newReverse) {
 			if (!arguments.length) { // get
@@ -853,8 +857,8 @@
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @param {boolean} [newTweenChanges] - The new tweenChanges setting of the scene.
-		 * @returns {boolean} [get] Current tweenChanges option value.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @returns {boolean} `get` -  Current tweenChanges option value.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.tweenChanges = function (newTweenChanges) {
 			if (!arguments.length) { // get
@@ -877,9 +881,9 @@
 		 * scene.loglevel(3);
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
-		 * @param {number} [newLoglevel] - The new loglevel setting of the scene.
-		 * @returns {number} [get] Current loglevel.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @param {number} [newLoglevel] - The new loglevel setting of the scene. `[0-3]`
+		 * @returns {number} `get` -  Current loglevel.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.loglevel = function (newLoglevel) {
 			if (!arguments.length) { // get
@@ -898,7 +902,7 @@
 		 * // get the current state
 		 * var state = scene.state();
 		 *
-		 * @returns {string} "BEFORE", "DURING" or "AFTER"
+		 * @returns {string} `"BEFORE"`, `"DURING"` or `"AFTER"`
 		 */
 		this.state = function () {
 			return _state;
@@ -961,7 +965,7 @@
 		 *
 		 * @fires ScrollScene.update
 		 *
-		 * @param {boolean} [immediately=false] - If true the update will be instantly, if false it will wait until next tweenmax tick (better performance)
+		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick (better performance).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
@@ -1018,9 +1022,9 @@
 		 * @fires {@link ScrollScene.end}, when used as setter
 		 * @fires {@link ScrollScene.leave}, when used as setter
 		 *
-		 * @param {number} [progress] - The new progress value of the scene (0 - 1).
-		 * @returns {number} [get] Current scene progress.
-		 * @returns {ScrollScene} [set] Parent object for chaining.
+		 * @param {number} [progress] - The new progress value of the scene `[0-1]`.
+		 * @returns {number} `get` -  Current scene progress.
+		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.progress = function (progress) {
 			if (!arguments.length) { // get
@@ -1080,7 +1084,7 @@
 		/**
 		 * Add a tween to the scene.<br>
 		 * If you want to add multiple tweens, wrap them into one TimelineMax object and add it.<br>
-		 * The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of 0.
+		 * The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of `0`.
 		 * @public
 		 * @example
 		 * // add a single tween
@@ -1134,7 +1138,7 @@
 		 * // remove the tween from the scene and reset it to initial position
 		 * scene.removeTween(true);
 		 *
-		 * @param {boolean} [reset=false] - If true the tween will be reset to its initial values.
+		 * @param {boolean} [reset=false] - If `true` the tween will be reset to its initial values.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.removeTween = function (reset) {
@@ -1162,7 +1166,8 @@
 		 * scene.setPin("#pin", {pushFollowers: false});
 		 *
 		 * @param {(string|object)} element - A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.
-		 * @param {object} [settings.pushFollowers=true] - If true following elements will be "pushed" down for the duration of the pin, if false the pinned element will just scroll past them. Ignored, when duration is 0.
+		 * @param {object} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.<br>
+		 												   Ignored, when duration is `0`.
 		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element while pinning.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -1248,7 +1253,7 @@
 		 * // remove the pin from the scene and reset the pin element to its initial position (spacer is removed)
 		 * scene.removePin(true);
 		 *
-		 * @param {boolean} [reset=false] - If false the spacer will not be removed and the element's position will not be reset.
+		 * @param {boolean} [reset=false] - If `false` the spacer will not be removed and the element's position will not be reset.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.removePin = function (reset) {
@@ -1331,8 +1336,8 @@
 		 * // destroy the scene and reset the pin and tween
 		 * scene = scene.destroy(true);
 		 *
-		 * @param {boolean} [reset=false] - If true the pin and tween (if existent) will be reset.
-		 * @returns {null}
+		 * @param {boolean} [reset=false] - If `true` the pin and tween (if existent) will be reset.
+		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (reset) {
 			this.removeTween(reset);
@@ -1365,8 +1370,8 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {number} event.progress - Reflects the current progress of the scene
-		 * @property {string} event.state - The current state of the scene "BEFORE", "DURING" or "AFTER"
-		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "PAUSED", FORWARD" or "REVERSE"
+		 * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
 		 * Scene end event.<br>
@@ -1384,8 +1389,8 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {number} event.progress - Reflects the current progress of the scene
-		 * @property {string} event.state - The current state of the scene "BEFORE", "DURING" or "AFTER"
-		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "PAUSED", FORWARD" or "REVERSE"
+		 * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
 		 * Scene enter event.<br>
@@ -1403,8 +1408,8 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {number} event.progress - Reflects the current progress of the scene
-		 * @property {string} event.state - The current state of the scene "BEFORE", "DURING" or "AFTER"
-		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "PAUSED", FORWARD" or "REVERSE"
+		 * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
 		 * Scene leave event.<br>
@@ -1422,8 +1427,8 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {number} event.progress - Reflects the current progress of the scene
-		 * @property {string} event.state - The current state of the scene "BEFORE", "DURING" or "AFTER"
-		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "PAUSED", FORWARD" or "REVERSE"
+		 * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
 		 * Scene update event.<br>
@@ -1458,8 +1463,8 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {number} event.progress - Reflects the current progress of the scene
-		 * @property {string} event.state - The current state of the scene "BEFORE", "DURING" or "AFTER"
-		 * @property {string} event.scrollDirection - Indicates which way we are scrolling "PAUSED", FORWARD" or "REVERSE"
+		 * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
 		 * Scene change event.<br>
