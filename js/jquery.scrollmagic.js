@@ -22,6 +22,7 @@
 // @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
 // @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
 // @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
+// @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
 // @todo: feature: have different tweens, when scrolling up, than when scrolling down
 // @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 
@@ -444,7 +445,7 @@
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
-			_scrollOffset = {start: 0, end: 0},
+			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
 			_parent,
 			_tween,
 			_pin,
@@ -468,7 +469,7 @@
 			ScrollScene.on("change.internal", function (e) {
 				checkOptionsValidity();
 				if (e.what != "loglevel" && e.what != "tweenChanges") { // no need for a scene update scene with these options...
-					if (e.what != "reverse") { // no changes to start or end position
+					if (e.what != "reverse" && _options.triggerElement === null) { // otherwise not necessary or it will be updated in ScrollScene.update()
 						updateScrollOffset();
 					}
 					ScrollScene.update();
@@ -548,22 +549,20 @@
 		};
 
 		/**
-		 * Update the start position of the scene (relative to top of container)
+		 * Update the start and end scrollOffset of the container.
+		 * The positions reflect what the parent's scroll position will be at the start and end respectively.
 		 * @private
 		 */
 		var updateScrollOffset = function () {
 			if (_parent) {
-				// get the trigger position
-				_scrollOffset.start = ScrollScene.triggerOffset();
-				// add optional offset
-				_scrollOffset.start += _options.offset;
-				// take triggerHook into account
+				_scrollOffset = {start: ScrollScene.startPosition()};
+				// take away triggerHook portion to get relative to top
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
-				// where will the scene end?
-				_scrollOffset.end = _scrollOffset.start + _options.duration;
 			} else {
-				_scrollOffset = {start: 0, end: 0};
+				_scrollOffset = {start: _options.offset};
 			}
+			// where will the scene end?
+			_scrollOffset.end = _scrollOffset.start + _options.duration;
 		};
 
 		/**
@@ -934,41 +933,45 @@
 		};
 		
 		/**
-		 * **Get** the trigger offset relative to container.<br>
-		 * This method calculates the starting offset of the scene, taking into account the triggerElement (if available) and the offset
+		 * **Get** the start position of the scene in relation to the container.<br>
 		 * @public
 		 * @example
-		 * // get the trigger offset
-		 * var triggerOffset = scene.triggerOffset();
+		 * // get the scene's start position
+		 * var startPosition = scene.startPosition();
 		 *
-		 * @returns {number} Numeric trigger offset, in relation to container (top value for vertical, left for horizontal).
+		 * @returns {number} Start position of the scene. Top position value for vertical and left position value for horizontal scrolls.
 		 */
-		this.triggerOffset = function () {
+		this.startPosition = function () {
+			var pos = 0;
 			if (_parent) {
+				var containerInfo = _parent.info()
+				// get the trigger position
 				if (_options.triggerElement === null) {
-					// start where the trigger hook starts
-					return _parent.info("size") * ScrollScene.triggerHook();
+					// start at the triggerHook to start right at the beginning
+					pos = containerInfo.size * ScrollScene.triggerHook();
 				} else {
 					// Element as trigger
 					var
 						element = $(_options.triggerElement).first(),
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
 						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
-						elementOffset = (pin.get(0) === element.get(0)) ? // if pin == trigger -> use spacer instead.	
-										getOffset(_pinOptions.spacer) :			  // spacer
-										getOffset(element);				  // trigger element
+						elementOffset = (pin.get(0) === element.get(0)) ?		// if pin == trigger -> use spacer instead.	
+										getOffset(_pinOptions.spacer) :			// spacer
+										getOffset(element);						// trigger element
 
-					if (!_parent.info("isDocument")) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-						containerOffset.top -= _parent.info("scrollPos");
-						containerOffset.left -= _parent.info("scrollPos");
+					if (!containerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+						containerOffset.top -= containerInfo.scrollPos;
+						containerOffset.left -= containerInfo.scrollPos;
 					}
 
-					return _parent.info("vertical") ? elementOffset.top - containerOffset.top : elementOffset.left - containerOffset.left;
+					pos = containerInfo.vertical
+						  ? elementOffset.top - containerOffset.top
+						  : elementOffset.left - containerOffset.left;
 				}
-			} else {
-				// if there's no parent yet we don't know if we're scrolling horizontally or vertically
-				return 0;
+				// add optional offset
+				pos += _options.offset;
 			}
+			return pos;
 		};
 
 		/*
@@ -999,6 +1002,10 @@
 					var
 						scrollPos = _parent.info("scrollPos"),
 						newProgress;
+					// if triggerElement is set we need to update the start position as it may have changed.
+					if (_options.triggerElement !== null) {
+						updateScrollOffset()
+					}
 
 					if (_options.duration > 0) {
 						newProgress = (scrollPos - _scrollOffset.start)/(_scrollOffset.end - _scrollOffset.start);

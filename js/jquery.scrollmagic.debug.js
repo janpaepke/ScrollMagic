@@ -161,7 +161,7 @@
 			
 			if (!triggerOnly) {
 				var
-					startPos = scene.triggerOffset() + scene.offset(),
+					startPos = scene.startPosition(),
 					endPos = startPos + scene.duration();
 				
 				$start.css(resetCSS);
