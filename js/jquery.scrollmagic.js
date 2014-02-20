@@ -18,6 +18,7 @@
 
 // @todo: make readme
 // @todo: make project homepage
+// @todo: add google analytics tracking to docs & examples
 // -----------------------
 // @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
 // @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
@@ -58,6 +59,7 @@
 		 * ----------------------------------------------------------------
 		 */
 		var
+			NAMESPACE = "ScrollMagic",
 			DEFAULT_OPTIONS = {
 				container: window,
 				vertical: true,
@@ -112,7 +114,7 @@
 				_tickerUsed = false;
 			}
 
-			log(3, "added new ScrollMagic controller");
+			log(3, "added new " + NAMESPACE + " controller");
 		};
 
 		/**
@@ -121,13 +123,14 @@
 		*/
 		var onTick = function (e) {
 			if (_updateScenesOnNextTick) {
-				// update container params
-				var oldScrollPos = _scrollPos;
+				var
+					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects,
+					oldScrollPos = _scrollPos;
+				// update scroll pos & direction
 				_scrollPos = _options.vertical ? _options.container.scrollTop() : _options.container.scrollLeft();
 				var deltaScroll = _scrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 				// update scenes
-				var scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects;
 				$.each(scenesToUpdate, function (index, scene) {
 					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
 					scene.update(true);
@@ -160,7 +163,7 @@
 		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
 				var
-					prefix = "(ScrollMagic) ->",
+					prefix = "(" + NAMESPACE + ") ->",
 					args = Array.prototype.splice.call(arguments, 1),
 					func = Function.prototype.bind.call(debug, window);
 				args.unshift(loglevel, prefix);
@@ -365,7 +368,7 @@
 			} else {
 				_options.container.off("scroll resize", onTick);
 			}
-			log(3, "destroyed ScrollMagic (reset: " + (resetScenes ? "true" : "false") + ")");
+			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};
 
@@ -393,7 +396,9 @@
 	 *		reverse: false
 	 * });
 	 *
-	 * @param {object} [options] - Options for the Scene. (Can be changed later on)
+	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.<br>
+	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.<br>
+	 							   When a scene is added to the controller the options defined using the ScrollScene constructor will be overwritten by those set in `globalSceneOptions`.
 	 * @param {number} [options.duration=0] - The duration of the scene.<br>
 	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
@@ -423,7 +428,7 @@
 
 		var
 			TRIGGER_HOOK_STRINGS = ["onCenter", "onEnter", "onLeave"],
-			EVENT_NAMESPACE = "ScrollScene",
+			NAMESPACE = "ScrollScene",
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
@@ -495,7 +500,7 @@
 		var log = function (loglevel, output) {
 			if (_options.loglevel >= loglevel) {
 				var
-					prefix = "(ScrollScene) ->",
+					prefix = "(" + NAMESPACE + ") ->",
 					args = Array.prototype.splice.call(arguments, 1),
 					func = Function.prototype.bind.call(debug, window);
 				args.unshift(loglevel, prefix);
@@ -508,28 +513,34 @@
 		 * @private
 		 */
 		var checkOptionsValidity = function () {
+			$.each(_options, function (key, value) {
+				if (!ScrollScene[key]) {
+					log(2, "WARNING: Unknown option \"" + key + "\"");
+					delete _options[key];
+				}
+			});
 			_options.duration = parseFloat(_options.duration);
 			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"duration\":", _options.duration);
+				log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
 				_options.duration = DEFAULT_OPTIONS.duration;
 			}
 			_options.offset = parseFloat(_options.offset);
 			if (!$.isNumeric(_options.offset)) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"offset\":", _options.offset);
+				log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
 				_options.offset = DEFAULT_OPTIONS.offset;
 			}
 			if (_options.triggerElement != null && $(_options.triggerElement).length == 0) {
-				log(1, "ERROR: Element defined in ScrollScene option \"triggerElement\" was not found:", _options.triggerElement);
+				log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
 				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
 			}
 			if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
-				log(1, "ERROR: Invalid value for ScrollScene option \"triggerHook\": ", _options.triggerHook);
+				log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
 			if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 				var wrongval = _options.loglevel;
 				_options.loglevel = DEFAULT_OPTIONS.loglevel;
-				log(1, "ERROR: Invalid value for ScrollScene option \"loglevel\":", wrongval);
+				log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 			}
 			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
 				// check if there are position tweens defined for the trigger and warn about it :)
@@ -554,14 +565,11 @@
 		 * @private
 		 */
 		var updateScrollOffset = function () {
+			_scrollOffset = {start: ScrollScene.startPosition()};
 			if (_parent) {
-				_scrollOffset = {start: ScrollScene.startPosition()};
 				// take away triggerHook portion to get relative to top
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
-			} else {
-				_scrollOffset = {start: _options.offset};
 			}
-			// where will the scene end?
 			_scrollOffset.end = _scrollOffset.start + _options.duration;
 		};
 
@@ -626,7 +634,9 @@
 					// pinned state
 					var
 						fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
- 						scrollDistance = containerInfo.scrollPos - _scrollOffset.start;
+ 						scrollDistance = _options.reverse || _options.duration == 0
+ 										 ? containerInfo.scrollPos - _scrollOffset.start // quicker
+ 										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
 
  					// add scrollDistance
  					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
@@ -942,13 +952,13 @@
 		 * @returns {number} Start position of the scene. Top position value for vertical and left position value for horizontal scrolls.
 		 */
 		this.startPosition = function () {
-			var pos = 0;
+			var pos = _options.offset;
 			if (_parent) {
 				var containerInfo = _parent.info()
 				// get the trigger position
 				if (_options.triggerElement === null) {
-					// start at the triggerHook to start right at the beginning
-					pos = containerInfo.size * ScrollScene.triggerHook();
+					// return the triggerHook to start right at the beginning
+					pos += containerInfo.size * ScrollScene.triggerHook();
 				} else {
 					// Element as trigger
 					var
@@ -964,12 +974,10 @@
 						containerOffset.left -= containerInfo.scrollPos;
 					}
 
-					pos = containerInfo.vertical
+					pos += containerInfo.vertical
 						  ? elementOffset.top - containerOffset.top
 						  : elementOffset.left - containerOffset.left;
 				}
-				// add optional offset
-				pos += _options.offset;
 			}
 			return pos;
 		};
@@ -1316,7 +1324,7 @@
 				checkOptionsValidity();
 				updateScrollOffset();
 				updatePinSpacerSize();
-				log(3, "added ScrollScene to controller");
+				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
 				return ScrollScene;
@@ -1339,7 +1347,7 @@
 			if (_parent) {
 				var tmpParent = _parent;
 				_parent = undefined;
-				log(3, "removed ScrollScene from controller");
+				log(3, "removed " + NAMESPACE + " from controller");
 				tmpParent.removeScene(ScrollScene);
 			}
 			return ScrollScene;
@@ -1363,7 +1371,7 @@
 			this.removePin(reset);
 			this.remove();
 			this.off("start end enter leave progress change update change.internal progress.internal")
-			log(3, "destroyed ScrollScene (reset: " + (reset ? "true" : "false") + ")");
+			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
 
@@ -1522,8 +1530,8 @@
 		 this.on = function (name, callback) {
 			if ($.isFunction(callback)) {
 				var names = $.trim(name).toLowerCase()
-							.replace(/(\w+)\.(\w+)/g, '$1.' + EVENT_NAMESPACE + '_$2') // add custom namespace, if one is defined
-							.replace(/( |^)(\w+)( |$)/g, '$1$2.' + EVENT_NAMESPACE + '$3'); // add namespace to regulars.
+							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
+							.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
 				$(ScrollScene).on(names, callback);
 			} else {
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
@@ -1550,8 +1558,8 @@
 		 */
 		 this.off = function (name, callback) {
 			var names = $.trim(name).toLowerCase()
-						.replace(/(\w+)\.(\w+)/g, '$1.' + EVENT_NAMESPACE + '_$2') // add custom namespace, if one is defined
-						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + EVENT_NAMESPACE + '$3'); // add namespace to regulars.
+						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
+						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
 			$(ScrollScene).off(names, callback)
 			return ScrollScene;
 		 };
