@@ -1,32 +1,31 @@
 /*
-	@overview
-	ScrollMagic - The jQuery plugin for doing magical scroll animations
-	by Jan Paepke 2014 (@janpaepke)
+ScrollMagic
+The jQuery plugin for doing magical scroll animations
+(c) Jan Paepke 2014 (@janpaepke)
+	
+Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
+http://johnpolacek.github.com/superscrollorama/
 
-	Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
-	johnpolacek.github.com/superscrollorama/
-
-	Powered by the Greensock Tweening Platform
-	http://www.greensock.com/js
-	Greensock License info at http://www.greensock.com/licensing/
-
-	@version - 1.0.0
-	@requires - jQuery
-	@license - Dual licensed under MIT and GPL.
-	@author - Jan Paepke, e-mail@janpaepke.de
+Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
+Greensock License info at http://www.greensock.com/licensing/
 */
+/**
+@overview	###Info
+@version	1.0.0
+@license	Dual licensed under MIT license and GPL.
+@author		Jan Paepke - e-mail@janpaepke.de
 
-// @todo: make readme
-// @todo: make project homepage
-// @todo: add google analytics tracking to docs & examples
-// -----------------------
-// @todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
-// @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
-// @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
-// @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
-// @todo: feature: have different tweens, when scrolling up, than when scrolling down
-// @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
-
+@todo: make project homepage
+@todo: minify
+@todo: add google analytics tracking to docs & examples
+-----------------------
+@todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
+@todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset positioning errors occur.
+@todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
+@todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
+@todo: feature: have different tweens, when scrolling up, than when scrolling down
+@todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
+*/
 (function($) {
 	/**
 	 * The main class that is needed once per scroll container.
@@ -52,6 +51,8 @@
 	 *
 	 */
 	ScrollMagic = function(options) {
+
+		"use strict";
 
 		/*
 		 * ----------------------------------------------------------------
@@ -420,6 +421,8 @@
 	 */
 	ScrollScene = function (options) {
 
+		"use strict";
+
 		/*
 		 * ----------------------------------------------------------------
 		 * settings
@@ -633,7 +636,7 @@
 				if (_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					var
-						fixedPos = getOffset(_pinOptions.spacer, true); // get viewport position of spacer
+						fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
  						scrollDistance = _options.reverse || _options.duration == 0
  										 ? containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
@@ -672,7 +675,7 @@
 		var updatePinSpacerSize = function () {
 			if (_pin && _parent) {
 				var
-					ended = (_state === "AFTER")
+					ended = (_state === "AFTER"),
 					vertical = _parent.info("vertical"),
 					css = {};
 
@@ -964,7 +967,7 @@
 					var
 						element = $(_options.triggerElement).first(),
 						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
-						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
+						containerOffset = getOffset(_parent.info("container")), // container position is needed because element offset is returned in relation to document, not in relation to container.
 						elementOffset = (pin.get(0) === element.get(0)) ?		// if pin == trigger -> use spacer instead.	
 										getOffset(_pinOptions.spacer) :			// spacer
 										getOffset(element);						// trigger element
