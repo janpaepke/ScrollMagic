@@ -682,23 +682,18 @@ Greensock License info at http://www.greensock.com/licensing/
 					before = (_state === "BEFORE"),
 					vertical = _parent.info("vertical"),
 					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
-					pinSize = {width: 0, height: 0},
 					css = {};
 
 				if (marginCollapse) {
 					css["margin-top"] = !after ? _pin.css("margin-top") : "auto";
 					css["margin-bottom"] = !before ? _pin.css("margin-bottom") : "auto";
-					pinSize.width = _pin.width();
-					pinSize.height = _pin.height();
 				} else {
 					css["margin-top"] = css["margin-bottom"] = "auto";
-					pinSize.width = _pin.outerWidth(true);
-					pinSize.height = _pin.outerHeight(true);
 				}
 
 				// set new size
-				css[vertical ? "width" : "min-width"] = pinSize.width;
-				css[vertical ? "min-height" : "height"] = pinSize.height;
+				css[vertical ? "width" : "min-width"] = _pin.outerWidth(!marginCollapse);
+				css[vertical ? "min-height" : "height"] = _pin.outerHeight(!marginCollapse);
 
 				if (_pinOptions.pushFollowers) {
 					if (vertical) {
