@@ -5876,7 +5876,7 @@ a.thumbnail:hover {
   display: block;
 }
 .jsdoc-message {
-  font-size: 90%;
+  font-size: 70%;
   text-align: center;
   color: #007fff;
   width: 100%;
@@ -5892,6 +5892,7 @@ a.thumbnail:hover {
 footer {
   border-top: 1px solid #007fff;
   padding-top: 15px;
+  padding-bottom: 15px;
 }
 code {
   background-color: none;
