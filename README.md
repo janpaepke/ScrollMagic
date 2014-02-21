@@ -1,6 +1,6 @@
 #ScrollMagic
 
-###The jQuery plugin for doing magical scroll animations.
+###The jQuery plugin for doing magical scroll interactions.
 
 ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.  
 It's the plugin for you, if you want to ...
@@ -14,7 +14,7 @@ It's the plugin for you, if you want to ...
 
 Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs) to get started.
 
-###About the Plugin
+##About the Plugin
 
 ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
 Like Superscrollorama it relys on the [Greensock Animation Platform (GSAP](www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
@@ -30,12 +30,12 @@ The major perks of using ScrollMagic include:
 * support for div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 
-###Compatibility
+##Compatibility
 
 ScrollMagic aims to support all major browsers in recent versions:  
 Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
 
-###About the Author
+##About the Author
 
 I am a freelance Art Director based in Vienna, Austria (soon Lausanne, Switzerland).  
 I started this project to intensify my knowledge of javascript.

@@ -1,6 +1,6 @@
 /*
 ScrollMagic
-The jQuery plugin for doing magical scroll animations
+The jQuery plugin for doing magical scroll interactions.
 (c) Jan Paepke 2014 (@janpaepke)
 	
 Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
