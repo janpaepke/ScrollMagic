@@ -1,6 +1,7 @@
 #ScrollMagic
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
-###The jQuery plugin for doing magical scroll interactions.
+###The jQuery plugin for magical scroll interactions.
 
 ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.  
 It's the plugin for you, if you want to ...
@@ -17,20 +18,20 @@ Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the 
 ##About the Plugin
 
 ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
-Like Superscrollorama it relys on the [Greensock Animation Platform (GSAP](www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
+Like Superscrollorama it relies on the [Greensock Animation Platform (GSAP)](www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
 
 The major perks of using ScrollMagic include:
 * optimized performance
 * flexibility
 * mobile compatibility
 * ready for responsive webdesign
-* oop programming and object chaining
+* object oriented programming and object chaining
 * event management
 * support for both scroll directions (even different on one page)
 * support for div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 
-##Compatibility
+##Browser Support
 
 ScrollMagic aims to support all major browsers in recent versions:  
 Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
