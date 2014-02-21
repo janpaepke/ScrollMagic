@@ -3,7 +3,7 @@
 
 ScrollMagic is dual licensed under the MIT license (below) and [GPL](http://www.gnu.org/licenses/gpl-3.0.html).
 
-The Greensock Animation Platform (GSAP) is used with permission per its license agreement.
+The Greensock Animation Platform (GSAP) is used with permission per its license agreement.  
 For more information, go to http://www.greensock.com/licensing/
 
 ##MIT License

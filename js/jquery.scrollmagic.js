@@ -10,7 +10,7 @@ Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
 Greensock License info at http://www.greensock.com/licensing/
 */
 /**
-@overview	###Info
+@overview	##Info
 @version	1.0.0
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de

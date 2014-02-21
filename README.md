@@ -45,5 +45,5 @@ I started this project to intensify my knowledge of javascript.
 ##License
 
 ScrollMagic is dual licensed under the MIT license and GPL.  
-For more information click [here](/LICENSE.md).  
+For more information click [here](https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md).  
 Click [here](http://www.greensock.com/licensing/) to get more information on greensock licensing.
