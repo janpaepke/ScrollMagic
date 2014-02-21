@@ -2,7 +2,7 @@
 
 ###The jQuery plugin for doing magical scroll animations.
 
-ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.
+ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.  
 It's the plugin for you, if you want to ...
 * ... start an animation at a specific scroll position
 * ... synchronize an animation to the scrollbar movement
@@ -16,7 +16,7 @@ Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the 
 
 ###About the Plugin
 
-ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).
+ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
 Like Superscrollorama it relys on the [Greensock Animation Platform (GSAP](www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
 
 The major perks of using ScrollMagic include:
@@ -32,18 +32,18 @@ The major perks of using ScrollMagic include:
 
 ###Compatibility
 
-ScrollMagic aims to support all major browsers in recent versions:
+ScrollMagic aims to support all major browsers in recent versions:  
 Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
 
 ###About the Author
 
-I am a freelance Art Director based in Vienna, Austria (soon Lausanne, Switzerland).
+I am a freelance Art Director based in Vienna, Austria (soon Lausanne, Switzerland).  
 I started this project to intensify my knowledge of javascript.
 
 [Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
 
 ##License
 
-ScrollMagic is dual licensed under the MIT license and GPL.
-For more information click [here](/LICENSE.md).
+ScrollMagic is dual licensed under the MIT license and GPL.  
+For more information click [here](/LICENSE.md).  
 Click [here](http://www.greensock.com/licensing/) to get more information on greensock licensing.
