@@ -640,6 +640,9 @@ Greensock License info at http://www.greensock.com/licensing/
  						scrollDistance = _options.reverse || _options.duration == 0
  										 ? containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
+ 					
+ 					// remove spacer margin to get real position (in case marginCollapse mode)
+ 					fixedPos.top -= parseFloat(_pinOptions.spacer.css("margin-top"));
 
  					// add scrollDistance
  					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
@@ -662,7 +665,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 				// set new values
 				_pin.css(newCSS);
-				// update pin spacer in case the pin element's size is changed during pin.
+				// update pin spacer
 				updatePinSpacerSize();
 			}
 		};
@@ -675,25 +678,35 @@ Greensock License info at http://www.greensock.com/licensing/
 		var updatePinSpacerSize = function () {
 			if (_pin && _parent) {
 				var
-					ended = (_state === "AFTER"),
+					after = (_state === "AFTER"),
+					before = (_state === "BEFORE"),
 					vertical = _parent.info("vertical"),
+					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
+					pinSize = {width: 0, height: 0},
 					css = {};
 
-				css[vertical ? "width" : "min-width"] = _pin.outerWidth(true);
-				css[vertical ? "min-height" : "height"] = _pin.outerHeight(true);
-
-				// special case margin left and right auto used to center horizontally in vertical scrolls
-				if (vertical && _pinOptions.marginCenter) {
-					css["margin-left"] = css["margin-right"] = "auto";
+				if (marginCollapse) {
+					css["margin-top"] = !after ? _pin.css("margin-top") : "auto";
+					css["margin-bottom"] = !before ? _pin.css("margin-bottom") : "auto";
+					pinSize.width = _pin.width();
+					pinSize.height = _pin.height();
+				} else {
+					css["margin-top"] = css["margin-bottom"] = "auto";
+					pinSize.width = _pin.outerWidth(true);
+					pinSize.height = _pin.outerHeight(true);
 				}
+
+				// set new size
+				css[vertical ? "width" : "min-width"] = pinSize.width;
+				css[vertical ? "min-height" : "height"] = pinSize.height;
 
 				if (_pinOptions.pushFollowers) {
 					if (vertical) {
-						css.paddingTop = ended ? _options.duration : 0;
-						css.paddingBottom = ended ? 0 : _options.duration;
+						css.paddingTop = after ? _options.duration : 0;
+						css.paddingBottom = after ? 0 : _options.duration;
 					} else {
-						css.paddingLeft = ended ? _options.duration : 0;
-						css.paddingRight = ended ? 0 : _options.duration;
+						css.paddingLeft = after ? _options.duration : 0;
+						css.paddingRight = after ? 0 : _options.duration;
 					}
 				}
 				_pinOptions.spacer.css(css);
@@ -1227,27 +1240,26 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 			_pin = element;
 			
-			// create spacer
 			_pin.parent().hide(); // hack start to force jQuery css to return stylesheet values instead of calculated px values.
+			var pinCSS = _pin.css(["position", "display", "top", "left", "bottom", "right"])
+			_pin.parent().show(); // hack end.
+
+			// create spacer
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
+					.css(pinCSS)
 					.css({
 						position: "relative",
-						display: _pin.css("display"),
-						top: _pin.css("top"),
-						left: _pin.css("left"),
-						bottom: _pin.css("bottom"),
-						right: _pin.css("right")
+						"margin-left": "auto",
+						"margin-right": "auto"
 					});
 
 			// set the pin Options
 			_pinOptions = {
 				spacer: spacer,
-				marginCenter: _pin.css("margin-left") == "auto" && _pin.css("margin-left") == "auto",
 				pushFollowers: settings.pushFollowers,
-				origStyle: _pin.css(["position", "top", "left", "bottom", "right"]) // save old styles (for reset)
+				origStyle: _pin.css(pinCSS) // save old styles (for reset)
 			};
-			_pin.parent().show(); // hack end.
 
 			// now place the pin element inside the spacer	
 			_pin.before(spacer)
