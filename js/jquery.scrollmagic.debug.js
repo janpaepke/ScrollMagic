@@ -19,25 +19,25 @@
 		var
 			scene = this,
 			options = $.extend({}, DEFAULT_OPTIONS, options),
-			controller = this.parent(),
-			$wrap = $("<div></div>")
-					.addClass("ScrollSceneIndicators")
-					.css({
-						position: "absolute",
-						top: 0,
-						left: 0,
-						width: "100%",
-						height: "100%",
-						"text-align": "center",
-						"z-index": options.zindex,
-						"font-size": 10
-					});
+			controller = this.parent();
 		if (controller) {
 			var
 				cParams = controller.info(),
-				$container = $(options.parent).length > 0 ?
-							   $(options.parent)
-							 : (cParams.isDocument) ? $("body") : cParams.container, // check if window element (then use body)
+				$container = $(options.parent).length > 0
+							 ? $(options.parent)
+							 : cParams.isDocument ? $("body") : cParams.container, // check if window element (then use body)
+				$wrap = $("<div></div>")
+						.addClass("ScrollSceneIndicators")
+						.css({
+							position: "absolute",
+							top: 0,
+							left: 0,
+							width: "100%",
+							height: "100%",
+							"text-align": "center",
+							"z-index": options.zindex,
+							"font-size": 10
+						}),
 				$triggerHook = $("<div>trigger</div>")
 								.css({
 									position: "fixed",
@@ -113,7 +113,15 @@
 				if (!cParams.isDocument) {
 					hookPos -=  cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
 				}
-			
+
+			if (cParams.isDocument) { // account for possible body positioning
+				var bodyOffset = indicators.offsetParent().is("body") ? $("body").offset() : parentOffset;
+				indicators.css({
+					top: -bodyOffset.top,
+					left: -bodyOffset.left
+				})
+			}
+
 			$triggerHook
 				.css(resetCSS)
 				.attr("data-hook", hookPos)

@@ -1,13 +1,7 @@
 {
     "name": "ScrollMagic",
+    "version": "1.0.0",
     "title": "ScrollMagic",
-    "description": "The jQuery plugin for magical scroll animations.",
-    "keywords": [
-        "scroll",
-        "scrolling",
-        "animation"
-    ],
-    "version": "0.8",
     "author": {
         "name": "Jan Paepke",
         "url": "http://www.janpaepke.de"
@@ -15,16 +9,29 @@
     "licenses": [
         {
             "type": "MIT",
-            "url": "https://github.com/janpaepke/ScrollMagic/blob/master/README.md"
+            "url": "https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md"
         },
         {
-            "url":"http://www.greensock.com/licensing/"
+            "type": "GPL",
+            "url":"http://www.gnu.org/licenses/gpl-3.0.html"
         }
     ],
-    "homepage": "http://janpaepke.github.com/ScrollMagic/",
-    "demo": "http://janpaepke.github.com/ScrollMagic/",
     "dependencies": {
         "jquery": ">=1.5",
         "greensock":">=1.8"
-    }
+    },
+    "description": "The jQuery plugin for magical scroll interactions.",
+    "keywords": [
+        "scroll",
+        "scrolling",
+        "animation",
+        "sticky",
+        "pin",
+        "scrollbar",
+        "scroll position",
+        "progress"
+    ],
+    "homepage": "http://janpaepke.github.io/ScrollMagic/",
+    "docs": "http://janpaepke.github.io/ScrollMagic/docs",
+    "demo": "http://janpaepke.github.io/ScrollMagic/",
 }
