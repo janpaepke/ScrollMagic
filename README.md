@@ -32,19 +32,25 @@ The major perks of using ScrollMagic include:
 
 ## Installation
 
-To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:  
-```<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>```
+To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:
+```html
+<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
+```
 
-For deployment use the minified version _instead_:  
-```<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>```
+For deployment use the minified version _instead_:
+```html
+<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
+```
 
-And to have access to the debugging extension during development, include this file _additionally_:  
-```<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>```  
+And to have access to the debugging extension during development, include this file _additionally_:
+```html
+<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
+```
 You can remove the debugging extension for actual deployment.
 
 ## Usage
 
-```
+```javascript
 // init controller
 var controller = new ScrollMagic();
 

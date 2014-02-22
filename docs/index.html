@@ -139,10 +139,17 @@
 <li>support for div containers (even multiple on one page)</li>
 <li>extensive debugging and logging capabilities</li>
 </ul>
-<h2>Installation</h2><p>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;&gt;&lt;/script&gt;</code></p>
-<p>For deployment use the minified version <em>instead</em>:<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;&gt;&lt;/script&gt;</code></p>
-<p>And to have access to the debugging extension during development, include this file <em>additionally</em>:<br><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;&gt;&lt;/script&gt;</code><br>You can remove the debugging extension for actual deployment.</p>
-<h2>Usage</h2><pre><code>// init controller
+<h2>Installation</h2><p>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
+<pre><code class="lang-html">&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>For deployment use the minified version <em>instead</em>:</p>
+<pre><code class="lang-html">&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>And to have access to the debugging extension during development, include this file <em>additionally</em>:</p>
+<pre><code class="lang-html">&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>You can remove the debugging extension for actual deployment.</p>
+<h2>Usage</h2><pre><code class="lang-javascript">// init controller
 var controller = new ScrollMagic();
 
 // assign handler &quot;scene&quot; and add it to Controller
@@ -156,7 +163,8 @@ controller.add([
     scene2 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
     new ScrollScene({offset: 20}) // add anonymous scene
 ]);
-</code></pre><p>Check out the <a href="http://janpaepke.github.com/ScrollMagic/examples">examples</a> or the <a href="http://janpaepke.github.com/ScrollMagic/docs">documentation</a> for full reference.</p>
+</code></pre>
+<p>Check out the <a href="http://janpaepke.github.com/ScrollMagic/examples">examples</a> or the <a href="http://janpaepke.github.com/ScrollMagic/docs">documentation</a> for full reference.</p>
 <h2>Browser Support</h2><p>ScrollMagic aims to support all major browsers in recent versions:<br>Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+</p>
 <h2>About the Author</h2><p>I am a freelance Art Director based in Vienna, Austria (soon Lausanne, Switzerland).<br>I started this project to intensify my knowledge of javascript.</p>
 <p><a href="http://www.janpaepke.de">Check out my website</a> or <a href="http://twitter.com/janpaepke">Follow me on Twitter</a></p>
