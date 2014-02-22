@@ -30,6 +30,38 @@ The major perks of using ScrollMagic include:
 * support for div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 
+## Installation
+
+To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:  
+```<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>```
+
+For deployment use the minified version _instead_:  
+```<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>```
+
+And to have access to the debugging extension during development, include this file _additionally_:  
+```<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>```  
+You can remove the debugging extension for actual deployment.
+
+## Usage
+
+```
+// init controller
+var controller = new ScrollMagic();
+
+// assign handler "scene" and add it to Controller
+var scene = new ScrollScene({duration: 100})
+				.addTo(controller);
+
+// add multiple scenes at once
+var scene2;
+controller.add([
+	scene, // add above defined scene
+	scene2 = new ScrollScene({duration: 200}), // add scene and assign handler "scene2"
+	new ScrollScene({offset: 20}) // add anonymous scene
+]);
+```
+Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs) for full reference.
+
 ##Browser Support
 
 ScrollMagic aims to support all major browsers in recent versions:  

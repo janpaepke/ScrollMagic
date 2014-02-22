@@ -179,7 +179,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Add a Scene to the controller.<br>
+		 * Add one ore more Scene(s) to the controller.<br>
 		 * This is the equivalent to {@link ScrollScene}.addTo(controller)
 		 * @public
 		 * @example
@@ -189,43 +189,61 @@ Greensock License info at http://www.greensock.com/licensing/
 	 	 * // with a newly created scene.
 		 * controller.addScene(new ScrollScene({duration : 0}));
 		 *
-		 * @param {ScrollScene} scene - The ScollScene to be added.
+	 	 * // adding multiple scenes
+		 * controller.addScene(new ScrollScene({duration : 0}));
+		 *
+		 * @param {(ScrollScene|array)} ScrollScene - ScrollScene or Array of ScrollScenes to be added to the controller.
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.addScene = function (ScrollScene) {
-			if (ScrollScene.parent() != ScrollMagic) {
-				ScrollScene.addTo(ScrollMagic);
-			} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
-				// new scene
-				_sceneObjects.push(ScrollScene);
-				// insert Global defaults.
-				$.each(_options.globalSceneOptions, function (key, value) {
-					if (ScrollScene[key]) {
-						ScrollScene[key].call(ScrollScene, value);
-					}
-				})
-				log(3, "added Scene (" + _sceneObjects.length + " total)");
+			if ($.isArray(ScrollScene)) {
+				$.each(ScrollScene, function (index, scene) {
+					ScrollMagic.addScene(scene)
+				});
+			} else {
+				if (ScrollScene.parent() != ScrollMagic) {
+					ScrollScene.addTo(ScrollMagic);
+				} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
+					// new scene
+					_sceneObjects.push(ScrollScene);
+					// insert Global defaults.
+					$.each(_options.globalSceneOptions, function (key, value) {
+						if (ScrollScene[key]) {
+							ScrollScene[key].call(ScrollScene, value);
+						}
+					})
+					log(3, "added Scene (" + _sceneObjects.length + " total)");
+				}
 			}
 			return ScrollMagic;
 		};
 
 		/**
-		 * Remove a scene from the controller.<br>
+		 * Remove one ore more scene(s) from the controller.<br>
 		 * This is the equivalent to {@link ScrollScene}.remove()
 		 * @public
 		 * @example
 		 * // remove a scene from the controller
 		 * controller.removeScene(scene);
 		 *
-		 * @param {ScrollScene} scene - The ScollScene to be removed.
+		 * // remove multiple scenes from the controller
+		 * controller.removeScene([scene, scene2, scene3]);
+		 *
+		 * @param {(ScrollScene|array)} ScrollScene - ScrollScene or Array of ScrollScenes to be removed from the controller.
 		 * @returns {ScrollMagic} Parent object for chaining.
 		 */
 		this.removeScene = function (ScrollScene) {
-			var index = $.inArray(ScrollScene, _sceneObjects);
-			if (index > -1) {
-				_sceneObjects.splice(index, 1);
-				ScrollScene.remove();
-				log(3, "removed Scene (" + _sceneObjects.length + " total)");
+			if ($.isArray(ScrollScene)) {
+				$.each(ScrollScene, function (index, scene) {
+					ScrollMagic.removeScene(scene)
+				});
+			} else {
+				var index = $.inArray(ScrollScene, _sceneObjects);
+				if (index > -1) {
+					_sceneObjects.splice(index, 1);
+					ScrollScene.remove();
+					log(3, "removed Scene (" + _sceneObjects.length + " total)");
+				}
 			}
 			return ScrollMagic;
 		};

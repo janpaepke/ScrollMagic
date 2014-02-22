@@ -457,7 +457,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="addScene"><span class="type-signature"></span>addScene<span class="signature">(scene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="addScene"><span class="type-signature"></span>addScene<span class="signature">(ScrollScene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -465,7 +465,7 @@
     
     
     <div class="description">
-        <p>Add a Scene to the controller.<br>
+        <p>Add one ore more Scene(s) to the controller.<br>
 This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(controller)</p>
     </div>
     
@@ -500,13 +500,16 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>ScrollScene</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+|
+
+<span class="param-type">array</span>
 
 
             
@@ -516,7 +519,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
 
             
 
-            <td class="description last"><p>The ScollScene to be added.</p></td>
+            <td class="description last"><p>ScrollScene or Array of ScrollScenes to be added to the controller.</p></td>
         </tr>
 
 	
@@ -548,7 +551,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-195">line 195</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-198">line 198</a>
     </li></ul></dd>
     
 
@@ -588,7 +591,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// with a previously defined scenecontroller.addScene(scene);// with a newly created scene.controller.addScene(new ScrollScene({duration : 0}));</pre>
+    <pre class="sunlight-highlight-javascript">// with a previously defined scenecontroller.addScene(scene);// with a newly created scene.controller.addScene(new ScrollScene({duration : 0}));// adding multiple scenescontroller.addScene(new ScrollScene({duration : 0}));</pre>
 
 
     
@@ -707,7 +710,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-361">line 361</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-379">line 379</a>
     </li></ul></dd>
     
 
@@ -867,7 +870,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-304">line 304</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-322">line 322</a>
     </li></ul></dd>
     
 
@@ -1021,7 +1024,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-337">line 337</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-355">line 355</a>
     </li></ul></dd>
     
 
@@ -1073,7 +1076,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
         
             
 <dt>
-    <h4 class="name" id="removeScene"><span class="type-signature"></span>removeScene<span class="signature">(scene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="removeScene"><span class="type-signature"></span>removeScene<span class="signature">(ScrollScene)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1081,7 +1084,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.addTo(contr
     
     
     <div class="description">
-        <p>Remove a scene from the controller.<br>
+        <p>Remove one ore more scene(s) from the controller.<br>
 This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p>
     </div>
     
@@ -1116,13 +1119,16 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p
 
         <tr>
             
-                <td class="name"><code>scene</code></td>
+                <td class="name"><code>ScrollScene</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+|
+
+<span class="param-type">array</span>
 
 
             
@@ -1132,7 +1138,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p
 
             
 
-            <td class="description last"><p>The ScollScene to be removed.</p></td>
+            <td class="description last"><p>ScrollScene or Array of ScrollScenes to be removed from the controller.</p></td>
         </tr>
 
 	
@@ -1164,7 +1170,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-223">line 223</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-235">line 235</a>
     </li></ul></dd>
     
 
@@ -1204,7 +1210,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// remove a scene from the controllercontroller.removeScene(scene);</pre>
+    <pre class="sunlight-highlight-javascript">// remove a scene from the controllercontroller.removeScene(scene);// remove multiple scenes from the controllercontroller.removeScene([scene, scene2, scene3]);</pre>
 
 
     
@@ -1323,7 +1329,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.remove()</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-276">line 276</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-294">line 294</a>
     </li></ul></dd>
     
 
@@ -1519,7 +1525,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.update()</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-249">line 249</a>
+        <a href="jquery.scrollmagic.js.html">/Users/jan/desktop/ScrollMagic/js/jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-267">line 267</a>
     </li></ul></dd>
     
 
@@ -1625,7 +1631,7 @@ This is the equivalent to <a href="ScrollScene.html">ScrollScene</a>.update()</p
 			    anchorName  : function(i, heading, prefix) {
 					return $(heading).attr("id") || ( prefix + i );
 				},
-				selectors   : "h1,h2,h3,h4",
+				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
 				showAndHide : false,
 				scrollTo    : 60
 			} );

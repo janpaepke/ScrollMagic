@@ -5,9 +5,9 @@
 
 	Dual licensed under MIT and GPL.
 	@author Jan Paepke, e-mail@janpaepke.de
+	@todo: Document
 */
 (function($) {
-	// TODO: Document
 	ScrollScene.prototype.addIndicators = function(options) {
 		var
 			DEFAULT_OPTIONS = {
