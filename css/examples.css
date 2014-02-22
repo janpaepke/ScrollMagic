@@ -478,9 +478,13 @@ ul#menu ul li a:hover {
 	text-align: center;
 	transition: top 0.5s;
 	-webkit-transition: top 0.5s; /* Safari */
+	transition-delay: 1s;
+	-webkit-transition-delay: 1s; /* Safari */
 }
 .menuwrap:hover, .menuwrap.open {
 	top: 0px;
+	transition-delay: 0s;
+	-webkit-transition-delay: 0s; /* Safari */
 }
 .menuwrap div.flag {
 	top: 51px;
@@ -498,8 +502,8 @@ ul#menu ul li a:hover {
 	text-transform: uppercase;
 	transition: top 0.5s;
 	-webkit-transition: top 0.5s; /* Safari */
-	transition-delay: 0.5s;
-	-webkit-transition-delay: 0.5s; /* Safari */
+	transition-delay: 1.5s;
+	-webkit-transition-delay: 1.5s; /* Safari */
 }
 .menuwrap:hover div.flag, .menuwrap.open div.flag {
 	opacity: 0;

@@ -96,6 +96,12 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var construct = function () {
+			$.each(_options, function (key, value) {
+				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
+					log(2, "WARNING: Unknown option \"" + key + "\"");
+					delete _options[key];
+				}
+			});
 			_options.container = $(_options.container).first()
 			// check ScrolContainer
 			if (_options.container.length == 0) {
@@ -535,7 +541,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		var checkOptionsValidity = function () {
 			$.each(_options, function (key, value) {
-				if (!ScrollScene[key]) {
+				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
 					log(2, "WARNING: Unknown option \"" + key + "\"");
 					delete _options[key];
 				}
@@ -710,8 +716,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 
 				// set new size
-				css[vertical ? "width" : "min-width"] = _pin.outerWidth(!marginCollapse);
-				css[vertical ? "min-height" : "height"] = _pin.outerHeight(!marginCollapse);
+				css["width"] = _pin.outerWidth(!marginCollapse);
+				css["height"] = _pin.outerHeight(!marginCollapse);
 
 				if (_pinOptions.pushFollowers) {
 					if (vertical) {

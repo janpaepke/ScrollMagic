@@ -4,13 +4,13 @@
 
 ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.  
 It's the plugin for you, if you want to ...
-* ... start an animation at a specific scroll position
-* ... synchronize an animation to the scrollbar movement
-* ... pin an element at a specific scroll position (sticky elements)
-* ... pin an element for a limited amount of scroll progress (sticky elements)
-* ... easily add a parallax effect to your website
-* ... create an inifinitely scrolling page (ajax load of additional content)
-* ... call functions when the user hits certain scroll positions or react in any other way to the current scroll position
+* ... start an animation at a specific scroll position.
+* ... synchronize an animation to the scrollbar movement.
+* ... pin an element at a specific scroll position (sticky elements).
+* ... pin an element for a limited amount of scroll progress (sticky elements).
+* ... easily add a parallax effect to your website.
+* ... create an inifinitely scrolling page (ajax load of additional content).
+* ... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.
 
 Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs) to get started.
 
@@ -37,12 +37,12 @@ To use ScrollMagic in your project simply include the plugin js file in the head
 <script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
 ```
 
-For deployment use the minified version _instead_:
+For deployment use the minified version __instead__:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
 ```
 
-And to have access to the debugging extension during development, include this file _additionally_:
+And to have access to the debugging extension during development, include this file __additionally__:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
 ```
