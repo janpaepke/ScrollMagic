@@ -19,10 +19,10 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: minify
 @todo: add google analytics tracking to docs & examples
 -----------------------
-@todo: improvement: consider call conditions for updatePinSpacerSize (performance?)
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
+@todo: feature: consider public method to trigger pinspacerresize (in case size changes during pin)
 @todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 */
@@ -654,11 +654,17 @@ Greensock License info at http://www.greensock.com/licensing/
 		var updatePinState = function () {
 			if (_pin && _parent) {
 				var 
-					newCSS,
 					containerInfo = _parent.info();
 
 				if (_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
+					if (_pin.css("position") != "fixed") {
+						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
+						_pin.css("position", "fixed");
+						// update pin spacer
+						updatePinSpacerSize();
+					}
+
 					var
 						fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
  						scrollDistance = _options.reverse || _options.duration == 0
@@ -671,26 +677,29 @@ Greensock License info at http://www.greensock.com/licensing/
  					// add scrollDistance
  					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
-					newCSS = {
-						position: "fixed",
+					// set new values
+					_pin.css({
 						top: fixedPos.top,
 						left: fixedPos.left
-					};
+					});
 				} else {
 					// unpinned state
-					newCSS = {
-						position: "relative",
-						top:  0,
-						left: 0
-					};
+					var newCSS = {
+							position: "relative",
+							top:  0,
+							left: 0
+						},
+						change = _pin.css("position") != "relative";
 					if (!_pinOptions.pushFollowers && _state === "AFTER") {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 					}
+					// set new values
+					_pin.css(newCSS);
+					if (change) {
+						// update pin spacer if state changed
+						updatePinSpacerSize();
+					}
 				}
-				// set new values
-				_pin.css(newCSS);
-				// update pin spacer
-				updatePinSpacerSize();
 			}
 		};
 
@@ -704,7 +713,9 @@ Greensock License info at http://www.greensock.com/licensing/
 				var
 					after = (_state === "AFTER"),
 					before = (_state === "BEFORE"),
+					during = (_state === "DURING"),
 					vertical = _parent.info("vertical"),
+					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
 					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
 					css = {};
 
@@ -715,9 +726,19 @@ Greensock License info at http://www.greensock.com/licensing/
 					css["margin-top"] = css["margin-bottom"] = "auto";
 				}
 
-				// set new size
-				css["width"] = _pin.outerWidth(!marginCollapse);
-				css["height"] = _pin.outerHeight(!marginCollapse);
+				// set new size spacer->pin if relsize / spacer->pin if hard size
+				if (_pinOptions.relSize.width) {
+					_pin.css("width", during ? _pinOptions.spacer.width() : "100%");
+				} else {
+					css["min-width"] = $spacercontent.outerWidth(true); // needed for cascading pins
+					css.width = during ? css["min-width"] : "auto";
+				}
+				if (_pinOptions.relSize.height) {
+					_pin.css("height", during ? _pinOptions.spacer.height() : "100%");
+				} else {
+					css["min-height"] = $spacercontent.outerHeight(!marginCollapse); // needed for cascading pins
+					css.height = during ? css["min-height"] : "auto";
+				}
 
 				if (_pinOptions.pushFollowers) {
 					if (vertical) {
@@ -1260,7 +1281,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			_pin = element;
 			
 			_pin.parent().hide(); // hack start to force jQuery css to return stylesheet values instead of calculated px values.
-			var pinCSS = _pin.css(["position", "display", "top", "left", "bottom", "right"])
+			var
+				pinCSS = _pin.css(["position", "display", "top", "left", "bottom", "right"]),
+				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
 
 			// create spacer
@@ -1276,9 +1299,21 @@ Greensock License info at http://www.greensock.com/licensing/
 			// set the pin Options
 			_pinOptions = {
 				spacer: spacer,
+				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
+					width: sizeCSS.width.slice(-1) === "%",
+					height: sizeCSS.height.slice(-1) === "%"
+				},
 				pushFollowers: settings.pushFollowers,
 				origStyle: _pin.css(pinCSS) // save old styles (for reset)
 			};
+
+			// if relative size, copy it to spacer...
+			if (_pinOptions.relSize.width) {
+				spacer.css("width", sizeCSS.width);
+			}
+			if (_pinOptions.relSize.height) {
+				spacer.css("height", sizeCSS.height);
+			}
 
 			// now place the pin element inside the spacer	
 			_pin.before(spacer)

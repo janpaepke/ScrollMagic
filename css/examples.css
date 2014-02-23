@@ -733,7 +733,6 @@ a.viewsource:before {
 	text-align: left;
 }
 #multiDirect .box1 {
-	position: absolute;
 	margin: 200px auto auto 200px;
 }
 #multiDirect .box1 p:first-child {
