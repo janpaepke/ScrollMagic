@@ -19,9 +19,11 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: minify
 @todo: add google analytics tracking to docs & examples
 -----------------------
+@todo: bug: pinning doesnt work properly with absolutely positioned elements.
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
+@toto: improvement: check if its possible to take the recalculation of the start point out of the scene update, while still making sure it is always up to date (performance)
 @todo: feature: consider public method to trigger pinspacerresize (in case size changes during pin)
 @todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
@@ -1031,11 +1033,14 @@ Greensock License info at http://www.greensock.com/licensing/
 					// Element as trigger
 					var
 						element = $(_options.triggerElement).first(),
-						pin = _pin || $(), // so pin.get(0) doesnt return an error, if no pin exists.
-						containerOffset = getOffset(_parent.info("container")), // container position is needed because element offset is returned in relation to document, not in relation to container.
-						elementOffset = (pin.get(0) === element.get(0)) ?		// if pin == trigger -> use spacer instead.	
-										getOffset(_pinOptions.spacer) :			// spacer
-										getOffset(element);						// trigger element
+						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
+						
+					// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+					while (element.parent().data("ScrollMagicPinSpacer")) {
+						element = element.parent();
+					}
+
+					var elementOffset = getOffset(element);
 
 					if (!containerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 						containerOffset.top -= containerInfo.scrollPos;
@@ -1100,7 +1105,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * **Get** or **Set** the scene progress.<br>
+		 * **Get** or **Set** the scene's progress.<br>
 		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().
 		 * @public
 		 * @example
@@ -1169,7 +1174,6 @@ Greensock License info at http://www.greensock.com/licensing/
 						}
 					}
 				}
-
 
 				return ScrollScene;
 			}
@@ -1262,7 +1266,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @param {(string|object)} element - A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.
 		 * @param {object} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.<br>
 		 												   Ignored, when duration is `0`.
-		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element while pinning.
+		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element 
+		 inning.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.setPin = function (element, settings) {
@@ -1302,6 +1307,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
 					.css(pinCSS)
+					.data("ScrollMagicPinSpacer", true)
 					.css({
 						position: "relative",
 						"margin-left": "auto",
