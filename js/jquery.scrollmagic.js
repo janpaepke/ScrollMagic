@@ -759,13 +759,25 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * So this function is called on resize and scroll of the document.
 		 * @private
 		 */
-		var updatePinInContainer = function () {
+		var updatePinInContainer = function (e) {
 			if (_parent && _pin && _state === "DURING") {
 				if (!_parent.info("isDocument")) {
 					updatePinState();
 				}
 			}
 		};
+		/**
+		 * Updates the Pin spacer size state (in certain scenarios)
+		 * If container is resized during pin and relatively sized the size of the pin might need to be updated...
+		 * So this function is called on resize of the container.
+		 * @private
+		 */
+		var updateRelativePinSpacer = function (e) {
+			if (_parent && _pin && _state === "DURING" && (_pinOptions.relSize.width || _pinOptions.relSize.height)) {
+				updatePinSpacerSize();
+			}
+		};
+
 
 		/*
 		 * ----------------------------------------------------------------
@@ -1393,6 +1405,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				checkOptionsValidity();
 				updateScrollOffset();
 				updatePinSpacerSize();
+				_parent.info("container").on("resize", updateRelativePinSpacer);
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
@@ -1414,6 +1427,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		this.remove = function () {
 			if (_parent) {
+				_parent.info("container").off("resize", updateRelativePinSpacer);
 				var tmpParent = _parent;
 				_parent = undefined;
 				log(3, "removed " + NAMESPACE + " from controller");
