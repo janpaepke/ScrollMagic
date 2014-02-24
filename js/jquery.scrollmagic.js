@@ -19,7 +19,6 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: minify
 @todo: add google analytics tracking to docs & examples
 -----------------------
-@todo: bug: pinning doesnt work properly with absolutely positioned elements.
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
@@ -687,11 +686,11 @@ Greensock License info at http://www.greensock.com/licensing/
 				} else {
 					// unpinned state
 					var newCSS = {
-							position: "relative",
+							position: _pinOptions.origStyle.position == "absolute" ? "absolute" : "relative",
 							top:  0,
 							left: 0
 						},
-						change = _pin.css("position") != "relative";
+						change = _pin.css("position") != newCSS.position;
 					if (!_pinOptions.pushFollowers && _state === "AFTER") {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 					}
@@ -711,7 +710,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updatePinSpacerSize = function () {
-			if (_pin && _parent) {
+			if (_pin && _parent && _pinOptions.origStyle.position != "absolute") { // no spacerresize, if original position is absolute
 				var
 					after = (_state === "AFTER"),
 					before = (_state === "BEFORE"),
@@ -1303,16 +1302,27 @@ Greensock License info at http://www.greensock.com/licensing/
 				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
 
+			if (pinCSS.position == "fixed") {
+				log(1, "ERROR: Pin does not work with elements that are positioned 'fixed'.");
+				_pin = undefined;
+				return ScrollScene;
+			}
+
 			// create spacer
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
 					.css(pinCSS)
 					.data("ScrollMagicPinSpacer", true)
 					.css({
-						position: "relative",
+						position: pinCSS.position == "absolute" ? "absolute" : "relative",
 						"margin-left": "auto",
 						"margin-right": "auto"
 					});
+
+			if (pinCSS.position == "absolute" && settings.pushFollowers) {
+				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
+				settings.pushFollowers = false;
+			}
 
 			// set the pin Options
 			_pinOptions = {
@@ -1322,7 +1332,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					height: sizeCSS.height.slice(-1) === "%"
 				},
 				pushFollowers: settings.pushFollowers,
-				origStyle: _pin.css(pinCSS) // save old styles (for reset)
+				origStyle: pinCSS // save old styles (for reset)
 			};
 
 			// if relative size, copy it to spacer...
@@ -1338,7 +1348,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					.appendTo(spacer)
 					// and set new css
 					.css({
-						position: "relative",
+						position: pinCSS.position == "absolute" ? "absolute" : "relative",
 						top: "auto",
 						left: "auto",
 						bottom: "auto",
