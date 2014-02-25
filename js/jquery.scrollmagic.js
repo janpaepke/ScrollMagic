@@ -691,8 +691,13 @@ Greensock License info at http://www.greensock.com/licensing/
 							left: 0
 						},
 						change = _pin.css("position") != newCSS.position;
-					if (!_pinOptions.pushFollowers && _state === "AFTER") {
-						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
+					
+					if (_state === "AFTER") {
+						if (!_pinOptions.pushFollowers) {
+							newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
+						} else if (parseFloat(_pinOptions.spacer.css("padding-top")) == 0) {
+							change = true; // if in after state but havent updated spacer yet (jumped past pin)
+						}
 					}
 					// set new values
 					_pin.css(newCSS);
