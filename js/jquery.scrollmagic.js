@@ -15,7 +15,6 @@ Greensock License info at http://www.greensock.com/licensing/
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
-@todo: make project homepage
 @todo: minify
 @todo: add google analytics tracking to docs & examples
 -----------------------
@@ -698,6 +697,8 @@ Greensock License info at http://www.greensock.com/licensing/
 						} else if (parseFloat(_pinOptions.spacer.css("padding-top")) == 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
 						}
+					} else if (parseFloat(_pinOptions.spacer.css("padding-bottom")) == 0) { // before
+						change = true; // jumped past fixed state upward direction
 					}
 					// set new values
 					_pin.css(newCSS);

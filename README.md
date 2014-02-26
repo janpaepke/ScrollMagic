@@ -17,7 +17,7 @@ Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the 
 ##About the Plugin
 
 ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
-Like Superscrollorama it relies on the [Greensock Animation Platform (GSAP)](www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
+Like Superscrollorama it relies on the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
 
 The major perks of using ScrollMagic include:
 * optimized performance
@@ -27,7 +27,7 @@ The major perks of using ScrollMagic include:
 * object oriented programming and object chaining
 * event management
 * support for both scroll directions (even different on one page)
-* support for div containers (even multiple on one page)
+* support for scrolling inside div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 
 ## Installation
