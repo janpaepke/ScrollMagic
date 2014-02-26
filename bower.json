@@ -7,7 +7,10 @@
     "name": "Jan Paepke",
     "url": "http://www.janpaepke.de"
   },
-  "main": ["js/jquery.scrollmagic.js"],
+  "main": [
+    "js/jquery.scrollmagic.js"
+    "js/jquery.scrollmagic.min.js"
+  ],
   "dependencies": {
     "jquery": "~1.9.1",
     "tweenMax": "git@github.com:greensock/GreenSock-JS.git#latest"
