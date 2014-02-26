@@ -15,8 +15,6 @@ Greensock License info at http://www.greensock.com/licensing/
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
-@todo: minify
------------------------
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)

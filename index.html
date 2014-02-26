@@ -15,8 +15,7 @@
 	<script type="text/javascript" src="js/_dependent/greensock/plugins/ScrollToPlugin.min.js"></script>
 	<script type="text/javascript" src="js/_dependent/jquery-1.11.0.min.js"></script>
   	<script type="text/javascript" src="js/_examples/modernizr.custom.min.js"></script>
-  	<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
-  	<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
+  	<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
   	<script type="text/javascript" src="js/_examples/demo.js"></script>
 </head>
 <body>
@@ -143,7 +142,7 @@
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[1])
-					.setTween(TweenMax.from(elements[1], 1, {left: "-50%", "margin-left": -200, ease: Back.easeOut}));
+					.setTween(TweenMax.from(elements[1], 1, {left: "-50%", marginLeft: -200, ease: Back.easeOut}));
 
 				// spin
 				new ScrollScene(sceneOptions)
@@ -166,7 +165,7 @@
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[4])
-					.setTween(TweenMax.staggerTo($(elements[4]).children("span"), 0.0001, {"text-decoration": "underline", "text-transform": "uppercase"}, 0.2));
+					.setTween(TweenMax.staggerTo($(elements[4]).children("span"), 0.0001, {textDecoration: "underline", textTransform: "uppercase"}, 0.2));
 			</script>
 		</section>
 		<section id="pin">
@@ -183,7 +182,7 @@
 				// ani
 				var pinani = new TimelineMax()
 					// pin move down
-					.add(TweenMax.from("#pin>h3:first-child", 0.5, {top: "0%", "margin-top": 0}))
+					.add(TweenMax.from("#pin>h3:first-child", 0.5, {top: "0%", marginTop: 0}))
 					// wipe
 					.add(TweenMax.to("#wipe", 1, {width: "100%"}))
 					// slide
@@ -243,7 +242,7 @@
 					.triggerHook("onCenter")
 					.setTween(new TimelineMax().add([
 						TweenMax.fromTo("#parallax #big", 1, {scale: 2, alpha: 0.1, top: "100%"}, {top: "0%", ease: Linear.easeNone}),
-						TweenMax.to("#parallax #parallaxbg", 1, {"background-position-y": -260, ease: Linear.easeNone})
+						TweenMax.to("#parallax #parallaxbg", 1, {backgroundPosition: "0 -260%", ease: Linear.easeNone})
 					]));
 			</script>
 		</section>

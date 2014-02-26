@@ -116,6 +116,7 @@ h3 {
 
 #tweens {
 	height: auto;
+	overflow: hidden;
 }
 
 #tweens h3 {
