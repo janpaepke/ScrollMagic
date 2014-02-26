@@ -16,7 +16,6 @@ Greensock License info at http://www.greensock.com/licensing/
 @author		Jan Paepke - e-mail@janpaepke.de
 
 @todo: minify
-@todo: add google analytics tracking to docs & examples
 -----------------------
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
