@@ -5,13 +5,47 @@
 	z-index: 999;
 }
 #msg {
+	line-height: 13px;
 	position: fixed;
-	width: 200px;
+	width: 260px;
+	height: 28px;
+	padding-top: 12px;
 	left: 50%;
-	margin-left: -100px;
-	bottom: 15px;
+	margin-left: -130px;
+	bottom: 0px;
 	text-align: center;
 	z-index: 500;
+	background-color: #2e639e;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
+	color: #FFFFFF;
+	font-size: 13px;
+}
+#msg div {
+	display: inline-block;
+}
+#msg .word {
+	font-weight: bolder;
+	text-transform: uppercase;
+}
+#msg a {
+	color: #FFFFFF;
+	margin-left: 10px;
+}
+#msg a:hover {
+	text-decoration: none;
+}
+#msg a:hover .word {
+	text-decoration: underline;
+}
+#msg img {
+	vertical-align: bottom;
+}
+#msg div.scroll {
+	width: 12px;
+	height: 13px;
+	vertical-align: bottom;
+	background-image: url("../img/demo_arrow_scroll.png");
 }
 div#content-wrapper {
 	height: 100%;
@@ -237,4 +271,52 @@ h3 {
 	background-color: #c7e1ff;
 	left: 0;
 	top: 0;
+}
+#info #hatcontainer {
+	width: 140px;
+	height: 200px;
+	position: relative;
+	float: left;
+}
+
+#info #hatcontainer .hat {
+	position: absolute;
+	bottom: 10px;
+}
+#info #hatcontainer #bunny {
+	position: absolute;
+	bottom: 67px;
+	left: 23px;
+}
+#info #hatcontainer #bunny .eye {
+	position: absolute;
+	top: 6px;
+	left: 30px;
+	display: none;
+}
+#info #hatcontainer #speechbubble {
+	position: absolute;
+	width: 165px;
+	height: 103px;
+	background-image: url("../img/demo_bubble.png");
+	left: -118px;
+	top: -24px;
+}
+#speechbubble p {
+	margin: 0;
+	text-align: center;
+	line-height: 22px;
+	color: #2e639e;
+}
+#speechbubble p:first-child {
+	font-size: 24px;
+	margin-top: 23px;
+}
+#speechbubble p:last-child {
+	font-size: 30px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+a:hover #speechbubble p:last-child {
+	text-decoration: underline;
 }

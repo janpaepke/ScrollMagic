@@ -28,7 +28,10 @@
   		});
   	</script>
 	<a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
-	<div id="msg">please scroll or <a href="#info">skip</a></div>
+	<div id="msg">
+		please <span class="word">scroll</span> <div class="scroll"></div>
+		<a class="skip" href="#info">or click here to <span class="word">skip</span> <img src="img/demo_arrow_skip.png"></a>
+	</div>
 	<div id="content-wrapper">
 		<section id="start">
 			<div id="intro">
@@ -70,11 +73,18 @@
 					.setPin("section#start")
 					.addTo(controller);
 
+				// msg scroll ani
+				new ScrollScene({
+						duration: 140,
+						offset: -100
+					})
+					.setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
+					.addTo(controller);
 				// msg hide
 				new ScrollScene({
 						offset: 40
 					})
-					.setTween(TweenMax.to("#msg", 0.5, {bottom: -30}))
+					.setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
 					.addTo(controller);
 
 				// hat movement
@@ -91,7 +101,7 @@
 						duration: 180
 					})
 					.on("end", function (e) {
-						if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.3) { // check pin progress so it doesnt launch on refresh
+						if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.37) { // check pin progress so it doesnt launch on refresh
 							// make it rain!
 							$("#start .sparkpoint").sparkle({
 								amount: 40,
@@ -253,6 +263,20 @@
 				<div id="sublinecover"></div>
 			</h2><br>
 			<div id="content">
+				<div id="hatcontainer">
+					<a href="examples/index.html">
+						<div id="speechbubble">
+							<p>check out the</p>
+							<p>examples</p>
+						</div>
+						<img class="hat" src="img/demo_hat.png">
+						<div id="bunny">
+							<img src="img/demo_bunny.png">
+							<img class="eye" src="img/demo_bunny_wink.png">
+						</div>
+						<img class="hat" src="img/demo_hat_front.png">
+					</a>
+				</div>
 				<p>
 					ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.<br>
 					It's the plugin for you, if you want to ...
@@ -266,10 +290,8 @@
 					<li>... create an inifinitely scrolling page (ajax load of additional content).</li>
 					<li>... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.</li>
 				</ul>
-				<h4>
-					Browse <a href="examples/index.html">the examples</a> or read <a href="docs/index.html">the documentation</a> to get started.
-				</h4>
 				<p>
+					<b>Browse <a href="examples/index.html">the examples</a> or read <a href="docs/index.html">the documentation</a> to get started.</b><br>
 					For the installation manual and source code visit the <a href="https://github.com/janpaepke/ScrollMagic">project on github</a> or download the latest version as <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">zip</a> or <a href="https://github.com/janpaepke/ScrollMagic/tarball/master">tar</a>.
 				</p>
 				<h3>History</h3>
@@ -293,7 +315,10 @@
 				</ul>
 				<h3>Credits</h3>
 				<p>
-					ScrollMagic by <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a>
+					ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a>
+				</p>
+				<p>
+					<a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
 				</p>
 				<p>
 					<a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Plattform (GSAP)</a> by <a href="http://www.greensock.com" target="_blank">Greensock</a>
@@ -318,6 +343,29 @@
 						})
 					})
 					.setTween(TweenMax.to("#info #sublinecover", 1, {left: "100%", ease: Linear.easeNone}));
+
+				// bunny
+				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+				new ScrollScene({
+					 	triggerElement: "#info #hatcontainer",
+						offset: -20
+					})
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.setTween(
+						new TimelineMax({delay: 1})
+							.add(TweenMax.from("#hatcontainer #bunny", 0.5, {bottom: 5, ease: Power2.easeOut}))
+							.add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
+					);
+				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+				new ScrollScene({
+						triggerElement: "section#info"
+					})
+					.addTo(controller)
+					.setTween(new TimelineMax({repeat: -1})
+						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "block", delay: 0.15}))
+						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "none", delay: 3}))
+					);
 
 				// donate btn
 				new ScrollScene({
