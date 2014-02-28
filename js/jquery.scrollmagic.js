@@ -183,7 +183,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Add one ore more Scene(s) to the controller.<br>
-		 * This is the equivalent to {@link ScrollScene}.addTo(controller)
+		 * This is the equivalent to `ScrollScene.addTo(controller)`
 		 * @public
 		 * @example
 		 * // with a previously defined scene
@@ -223,7 +223,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Remove one ore more scene(s) from the controller.<br>
-		 * This is the equivalent to {@link ScrollScene}.remove()
+		 * This is the equivalent to `ScrollScene.remove()`
 		 * @public
 		 * @example
 		 * // remove a scene from the controller
@@ -253,7 +253,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Update a specific scene according to the scroll position of the container.<br>
-		 * This is the equivalent to {@link ScrollScene}.update()
+		 * This is the equivalent to `ScrollScene.update()`
 		 * @public
 		 * @example
 		 * // update a specific scene on next tick
@@ -1065,7 +1065,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Update the Scene in the parent Controller<br>
-		 * This is the equivalent to {@link ScrollMagic}.updateScene(scene, immediately)
+		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`
 		 * @public
 		 * @example
 		 * // update the scene on next tick
@@ -1405,7 +1405,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Add the scene to a controller.<br>
-		 * This is the equivalent to {@link ScrollMagic}.addScene(scene)
+		 * This is the equivalent to `ScrollMagic.addScene(scene)`
 		 * @public
 		 * @example
 		 * // add a scene to a ScrollMagic controller
@@ -1434,7 +1434,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Remove the scene from its parent controller.<br>
-		 * This is the equivalent to {@link ScrollMagic}.removeScene(scene)
+		 * This is the equivalent to `ScrollMagic.removeScene(scene)`
 		 * The scene will not be updated anymore until you readd it to a controller.
 		 * To remove the pin or the tween you need to call removeTween() or removePin() respectively.
 		 * @public
