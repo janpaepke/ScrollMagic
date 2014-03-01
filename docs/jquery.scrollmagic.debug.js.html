@@ -101,6 +101,7 @@
 	by Jan Paepke 2014 (@janpaepke)
 	http://janpaepke.github.io/ScrollMagic
 
+	@version	1.0.0
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -111,6 +112,13 @@
 	 * The indicatos can only be added _AFTER_ the scene has been added to a controller.
 	 * @public
 
+	 * @example
+	 * // add basic indicators
+	 * scene.addIndicators()
+	 *
+	 * // passing options
+	 * scene.addIndicators({zindex: 100, colorEnd: "#FFFFFF"});
+	 *
 	 * @param {object} [options] - An object containing one or more options for the indicators.
 	 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
 	 														 If undefined, the scene's container will be used.
