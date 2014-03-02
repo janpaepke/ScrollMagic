@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.0
+@version	1.0.1
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -1320,7 +1320,10 @@ Greensock License info at http://www.greensock.com/licensing/
 					.css({
 						position: pinCSS.position == "absolute" ? "absolute" : "relative",
 						"margin-left": "auto",
-						"margin-right": "auto"
+						"margin-right": "auto",
+						"box-sizing": "content-box",
+						"-moz-box-sizing": "content-box",
+						"-webkit-box-sizing": "content-box"
 					});
 
 			if (pinCSS.position == "absolute" && settings.pushFollowers) {
