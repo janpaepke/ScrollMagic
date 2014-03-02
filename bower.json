@@ -13,6 +13,6 @@
   ],
   "dependencies": {
     "jquery": "~1.9.1",
-    "tweenMax": "git@github.com:greensock/GreenSock-JS.git#latest"
+    "gsap": "1.11.5"
   }
 }
