@@ -47,6 +47,10 @@
 	vertical-align: bottom;
 	background-image: url("../img/demo_arrow_scroll.png");
 }
+iframe.twitter-follow-button {
+	vertical-align: text-bottom;
+	margin: auto auto -1px 8px;
+}
 div#content-wrapper {
 	height: 100%;
 	min-width: 900px;
