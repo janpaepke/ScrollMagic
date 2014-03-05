@@ -183,7 +183,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Add one ore more Scene(s) to the controller.<br>
+		 * Add one ore more Scene(s) to the controller.  
 		 * This is the equivalent to `ScrollScene.addTo(controller)`
 		 * @public
 		 * @example
@@ -223,7 +223,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Remove one ore more scene(s) from the controller.<br>
+		 * Remove one ore more scene(s) from the controller.  
 		 * This is the equivalent to `ScrollScene.remove()`
 		 * @public
 		 * @example
@@ -253,7 +253,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Update a specific scene according to the scroll position of the container.<br>
+		 * Update a specific scene according to the scroll position of the container.  
 		 * This is the equivalent to `ScrollScene.update()`
 		 * @public
 		 * @example
@@ -264,7 +264,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * controller.updateScene(scene, true);
 		 *
 		 * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
-		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick.<br>
+		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick.  
 		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
@@ -313,7 +313,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * // returns all infos as an object
 		 * var infos = controller.info();
 		 *
-		 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.<br>
+		 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.  
 		 							 Valid options are:
 		 							 ** `"size"` => the current viewport size of the container
 		 							 ** `"vertical"` => true if vertical scrolling, otherwise false
@@ -419,20 +419,20 @@ Greensock License info at http://www.greensock.com/licensing/
 	 *		reverse: false
 	 * });
 	 *
-	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.<br>
-	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.<br>
+	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
+	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
 	 							   When a scene is added to the controller the options defined using the ScrollScene constructor will be overwritten by those set in `globalSceneOptions`.
-	 * @param {number} [options.duration=0] - The duration of the scene.<br>
+	 * @param {number} [options.duration=0] - The duration of the scene.  
 	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
 	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM Object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
-	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.<br>
+	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
 	 															  Can also be defined using a string:
 	 															  ** `"onEnter"` => `1`
 	 															  ** `"onCenter"` => `0.5`
 	 															  ** `"onLeave"` => `0`
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
-	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.<br>
+	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
 	 												   Does not affect animations where duration is `0`.
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging.
 	 										  ** `0` => silent
@@ -1016,7 +1016,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 		
 		/**
-		 * **Get** the start position of the scene in relation to the container.<br>
+		 * **Get** the start position of the scene in relation to the container.  
 		 * @public
 		 * @example
 		 * // get the scene's start position
@@ -1065,7 +1065,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Update the Scene in the parent Controller<br>
+		 * Update the Scene in the parent Controller  
 		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`
 		 * @public
 		 * @example
@@ -1108,7 +1108,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * **Get** or **Set** the scene's progress.<br>
+		 * **Get** or **Set** the scene's progress.  
 		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().
 		 * @public
 		 * @example
@@ -1183,8 +1183,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Add a tween to the scene.<br>
-		 * If you want to add multiple tweens, wrap them into one TimelineMax object and add it.<br>
+		 * Add a tween to the scene.  
+		 * If you want to add multiple tweens, wrap them into one TimelineMax object and add it.  
 		 * The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of `0`.
 		 * @public
 		 * @example
@@ -1255,8 +1255,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Pin an element for the duration of the tween.<br>
-		 * If the scene duration is 0 the element will never be unpinned.<br>
+		 * Pin an element for the duration of the tween.  
+		 * If the scene duration is 0 the element will never be unpinned.  
 		 * Note, that pushFollowers has no effect, when the scene duration is 0.
 		 * @public
 		 * @example
@@ -1267,9 +1267,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * scene.setPin("#pin", {pushFollowers: false});
 		 *
 		 * @param {(string|object)} element - A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.
-		 * @param {object} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.<br>
+		 * @param {object} [settings] - settings for the pin
+		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
 		 												   Ignored, when duration is `0`.
-		 * @param {object} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element 
+		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element 
 		 inning.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -1408,7 +1409,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Add the scene to a controller.<br>
+		 * Add the scene to a controller.  
 		 * This is the equivalent to `ScrollMagic.addScene(scene)`
 		 * @public
 		 * @example
@@ -1437,7 +1438,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Remove the scene from its parent controller.<br>
+		 * Remove the scene from its parent controller.  
 		 * This is the equivalent to `ScrollMagic.removeScene(scene)`
 		 * The scene will not be updated anymore until you readd it to a controller.
 		 * To remove the pin or the tween you need to call removeTween() or removePin() respectively.
@@ -1488,8 +1489,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		
 		/**
-		 * Scene start event.<br>
-		 * Fires whenever the scroll position its the starting point of the scene.<br>
+		 * Scene start event.  
+		 * Fires whenever the scroll position its the starting point of the scene.  
 		 * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 		 *
 		 * @event ScrollScene.start
@@ -1507,8 +1508,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
-		 * Scene end event.<br>
-		 * Fires whenever the scroll position its the ending point of the scene.<br>
+		 * Scene end event.  
+		 * Fires whenever the scroll position its the ending point of the scene.  
 		 * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 		 *
 		 * @event ScrollScene.end
@@ -1526,8 +1527,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
-		 * Scene enter event.<br>
-		 * Fires whenever the scene enters the "DURING" state.<br>
+		 * Scene enter event.  
+		 * Fires whenever the scene enters the "DURING" state.  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
 		 *
 		 * @event ScrollScene.enter
@@ -1545,8 +1546,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
-		 * Scene leave event.<br>
-		 * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".<br>
+		 * Scene leave event.  
+		 * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
 		 *
 		 * @event ScrollScene.leave
@@ -1564,7 +1565,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
-		 * Scene update event.<br>
+		 * Scene update event.  
 		 * Fires whenever the scene is updated (but not necessarily changes the progress).
 		 *
 		 * @event ScrollScene.update
@@ -1582,7 +1583,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {number} event.scrollPos - The current scroll position of the container
 		 */
 		/**
-		 * Scene progress event.<br>
+		 * Scene progress event.  
 		 * Fires whenever the progress of the scene changes.
 		 *
 		 * @event ScrollScene.progress
@@ -1600,7 +1601,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
 		 */
 		/**
-		 * Scene change event.<br>
+		 * Scene change event.  
 		 * Fires whenvever a property of the scene is changed.
 		 *
 		 * @event ScrollScene.change
@@ -1618,7 +1619,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		 
 		 /**
-		 * Add one ore more event listener.<br>
+		 * Add one ore more event listener.  
 		 * The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.
 		 * @public
 		 *
