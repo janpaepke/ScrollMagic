@@ -1734,15 +1734,15 @@ Greensock License info at http://www.greensock.com/licensing/
 		func.apply(console, args);
 	};
 	// a helper function that should generally be faster than jQuery.offset() and can also return position in relation to viewport.
-	function getOffset ($obj, relativeToViewport) {
+	var getOffset = function ($elem, relativeToViewport) {
 		var  offset = {
 				top: 0,
 				left: 0
-			};
-		if ($obj.length > 0) {
-			var obj = $obj.get(0);
-			if (obj.getBoundingClientRect !== undefined) { // check if available
-				var  rect = obj.getBoundingClientRect();
+			},
+			elem = $elem[0];
+		if (elem) {
+			if (elem.getBoundingClientRect) { // check if available
+				var  rect = elem.getBoundingClientRect();
 				offset.top = rect.top;
 				offset.left = rect.left;
 				if (!relativeToViewport) { // clientRect is by default relative to viewport...
@@ -1750,7 +1750,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					offset.left += $(document).scrollLeft();
 				}
 			} else { // fall back to jquery
-				offset = $obj.offset() || offset; // if element has offset undefined (i.e. document) use 0 for top and left
+				offset = $elem.offset() || offset; // if element has offset undefined (i.e. document) use 0 for top and left
 				if (relativeToViewport) { // jquery.offset is by default NOT relative to viewport...
 					offset.top -= $(document).scrollTop();
 					offset.left -= $(document).scrollLeft();
@@ -1758,6 +1758,6 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		}
 		return offset;
-	}
+	};
 
 })(jQuery);

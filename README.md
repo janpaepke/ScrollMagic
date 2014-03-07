@@ -12,7 +12,7 @@ It's the plugin for you, if you want to ...
 * ... create an inifinitely scrolling page (ajax load of additional content).
 * ... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.
 
-Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs) to get started.
+Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) to get started.
 
 ##About the Plugin
 
@@ -66,7 +66,7 @@ controller.add([
 	new ScrollScene({offset: 20}) // add anonymous scene
 ]);
 ```
-Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs) for full reference.
+Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for full reference.
 
 ##Browser Support
 
