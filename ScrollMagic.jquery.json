@@ -28,10 +28,10 @@
         "sticky",
         "pin",
         "scrollbar",
-        "scroll position",
+        "position",
         "progress"
     ],
     "homepage": "http://janpaepke.github.io/ScrollMagic/",
     "docs": "http://janpaepke.github.io/ScrollMagic/docs",
-    "demo": "http://janpaepke.github.io/ScrollMagic/",
+    "demo": "http://janpaepke.github.io/ScrollMagic/"
 }
