@@ -181,7 +181,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Add one ore more Scene(s) to the controller.  
+		 * Add one ore more scene(s) to the controller.  
 		 * This is the equivalent to `ScrollScene.addTo(controller)`
 		 * @public
 		 * @example
@@ -264,8 +264,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * // update multiple scenes scene on next tick
 		 * controller.updateScene([scene1, scene2, scene3]);
 		 *
-		 * @param {ScrollScene} ScrollScene - The ScollScene object that is supposed to be updated.
-		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick.  
+		 * @param {ScrollScene} ScrollScene - ScrollScene or Array of ScrollScenes that is/are supposed to be updated.
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick.  
 		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
@@ -300,7 +300,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	 	 * // update the controller immediately
 		 * controller.update(true);
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick (better performance)
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance)
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
@@ -1107,7 +1107,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 *
 		 * @fires ScrollScene.update
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick (better performance).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
