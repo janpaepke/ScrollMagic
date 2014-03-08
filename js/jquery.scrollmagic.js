@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.2
+@version	1.0.3
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -20,7 +20,6 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
 @toto: improvement: check if its possible to take the recalculation of the start point out of the scene update, while still making sure it is always up to date (performance)
-@todo: feature: add a possibility to temporarily enable/disable the controller without removing scenes and while minding the pin state
 @todo: feature: consider public method to trigger pinspacerresize (in case size changes during pin)
 @todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
@@ -82,7 +81,8 @@ Greensock License info at http://www.greensock.com/licensing/
 			_scrollDirection = "PAUSED",
 			_isDocument = true,
 			_viewPortSize = 0,
-			_tickerUsed = false;
+			_tickerUsed = false,
+			_enabled = true;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -124,11 +124,11 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		* Handle updates on tick instad of on scroll (performance)
+		* Handle updates on tick instead of on scroll (performance)
 		* @private
 		*/
 		var onTick = function (e) {
-			if (_updateScenesOnNextTick) {
+			if (_updateScenesOnNextTick && _enabled) {
 				var
 					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects,
 					oldScrollPos = _scrollPos;
@@ -137,10 +137,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				var deltaScroll = _scrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 				// update scenes
-				$.each(scenesToUpdate, function (index, scene) {
-					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
-					scene.update(true);
-				});
+				ScrollMagic.updateScene(scenesToUpdate, true);
 				if (scenesToUpdate.length == 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
@@ -254,7 +251,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Update a specific scene according to the scroll position of the container.  
+		 * Update one ore more scene(s) according to the scroll position of the container.  
 		 * This is the equivalent to `ScrollScene.update()`
 		 * @public
 		 * @example
@@ -263,21 +260,31 @@ Greensock License info at http://www.greensock.com/licensing/
 	 	 *
 		 * // update a specific scene immediately
 		 * controller.updateScene(scene, true);
+	 	 *
+		 * // update multiple scenes scene on next tick
+		 * controller.updateScene([scene1, scene2, scene3]);
 		 *
-		 * @param {ScrollScene} scene - The ScollScene object that is supposed to be updated.
+		 * @param {ScrollScene} ScrollScene - The ScollScene object that is supposed to be updated.
 		 * @param {boolean} [immediately=false] - If `true` the update will be instantly, if `false` it will wait until next tweenmax tick.  
 		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
-		this.updateScene = function (scene, immediately) {
-			if (immediately) {
-				scene.update(true);
+		this.updateScene = function (ScrollScene, immediately) {
+			if ($.isArray(ScrollScene)) {
+				$.each(ScrollScene, function (index, scene) {
+					log(3, "updating Scene " + (index + 1) + "/" + ScrollScene.length + " (" + _sceneObjects.length + " total)");
+					ScrollMagic.updateScene(scene, immediately);
+				});
 			} else {
-				if (!$.isArray(_updateScenesOnNextTick)) {
-					_updateScenesOnNextTick = [];
-				}
-				if ($.inArray(scene, _updateScenesOnNextTick) == -1) {
-					_updateScenesOnNextTick.push(scene);	
+				if (immediately) {
+					ScrollScene.update(true);
+				} else {
+					if (!$.isArray(_updateScenesOnNextTick)) {
+						_updateScenesOnNextTick = [];
+					}
+					if ($.inArray(ScrollScene, _updateScenesOnNextTick) == -1) {
+						_updateScenesOnNextTick.push(ScrollScene);	
+					}
 				}
 			}
 			return ScrollMagic;
@@ -366,6 +373,30 @@ Greensock License info at http://www.greensock.com/licensing/
 			return ScrollMagic;
 		};
 
+		/**
+		 * **Get** or **Set** the current enabled state of the controller.  
+		 * This can be used to disable all Scenes connected to the controller without destroying or removing them.
+		 * @public
+		 *
+		 * @example
+		 * // get the current value
+		 * var enabled = controller.enabled();
+		 *
+	 	 * // disable the controller
+		 * controller.enabled(false);
+		 *
+		 * @param {boolean} [newState] - The new enabled state of the controller `true` or `false`.
+		 * @returns {(boolean|ScrollMagic)} Current enabled state or parent object for chaining.
+		 */
+		this.enabled = function (newState) {
+			if (!arguments.length) { // get
+				return _enabled;
+			} else if (_enabled != newState) { // set
+				_enabled = !!newState;
+				ScrollMagic.updateScene(_sceneObjects, true);
+			}
+			return ScrollMagic;
+		};
 		
 		/**
 		 * Destroy the Controller, all Scenes and everything.
@@ -477,6 +508,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_state = 'BEFORE',
 			_progress = 0,
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
+			_enabled = true,
 			_parent,
 			_tween,
 			_pin,
@@ -650,12 +682,12 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Update the pin state.
 		 * @private
 		 */
-		var updatePinState = function () {
+		var updatePinState = function (forceUnpin) {
 			if (_pin && _parent) {
 				var 
 					containerInfo = _parent.info();
 
-				if (_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) { // during scene or if duration is 0 and we are past the trigger
+				if (!forceUnpin && (_state === "DURING" || (_state === "AFTER" && _options.duration == 0))) { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					if (_pin.css("position") != "fixed") {
 						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
@@ -690,14 +722,14 @@ Greensock License info at http://www.greensock.com/licensing/
 						},
 						change = _pin.css("position") != newCSS.position;
 					
-					if (_state === "AFTER") {
-						if (!_pinOptions.pushFollowers) {
-							newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
-						} else if (parseFloat(_pinOptions.spacer.css("padding-top")) == 0) {
+					if (!_pinOptions.pushFollowers) {
+						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
+					} else {
+						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) == 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
+						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) == 0) { // before
+							change = true; // jumped past fixed state upward direction
 						}
-					} else if (parseFloat(_pinOptions.spacer.css("padding-bottom")) == 0) { // before
-						change = true; // jumped past fixed state upward direction
 					}
 					// set new values
 					_pin.css(newCSS);
@@ -720,41 +752,38 @@ Greensock License info at http://www.greensock.com/licensing/
 					after = (_state === "AFTER"),
 					before = (_state === "BEFORE"),
 					during = (_state === "DURING"),
+					pinned = (_pin.css("position") == "fixed"),
 					vertical = _parent.info("vertical"),
 					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
 					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
 					css = {};
 
 				if (marginCollapse) {
-					css["margin-top"] = !after ? _pin.css("margin-top") : "auto";
-					css["margin-bottom"] = !before ? _pin.css("margin-bottom") : "auto";
+					css["margin-top"] = before || (during && pinned) ? _pin.css("margin-top") : "auto";
+					css["margin-bottom"] = after || (during && pinned) ? _pin.css("margin-bottom") : "auto";
 				} else {
 					css["margin-top"] = css["margin-bottom"] = "auto";
 				}
 
 				// set new size spacer->pin if relsize / spacer->pin if hard size
 				if (_pinOptions.relSize.width) {
-					_pin.css("width", during ? _pinOptions.spacer.width() : "100%");
+					_pin.css("width", pinned ? _pinOptions.spacer.width() : "100%");
 				} else {
 					css["min-width"] = $spacercontent.outerWidth(true); // needed for cascading pins
-					css.width = during ? css["min-width"] : "auto";
+					css.width = pinned ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
-					_pin.css("height", during ? _pinOptions.spacer.height() : "100%");
+					_pin.css("height", pinned ? _pinOptions.spacer.height() : "100%");
 				} else {
 					css["min-height"] = $spacercontent.outerHeight(!marginCollapse); // needed for cascading pins
-					css.height = during ? css["min-height"] : "auto";
+					css.height = pinned ? css["min-height"] : "auto";
 				}
 
 				if (_pinOptions.pushFollowers) {
-					if (vertical) {
-						css.paddingTop = after ? _options.duration : 0;
-						css.paddingBottom = after ? 0 : _options.duration;
-					} else {
-						css.paddingLeft = after ? _options.duration : 0;
-						css.paddingRight = after ? 0 : _options.duration;
-					}
+					css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
+					css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 				}
+
 				_pinOptions.spacer.css(css);
 			}
 		};
@@ -1084,23 +1113,27 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.update = function (immediately) {
 			if (_parent) {
 				if (immediately) {
-					var
-						scrollPos = _parent.info("scrollPos"),
-						newProgress;
-					// if triggerElement is set we need to update the start position as it may have changed.
-					if (_options.triggerElement !== null) {
-						updateScrollOffset()
+					if (_parent.enabled() && _enabled) {
+						var
+							scrollPos = _parent.info("scrollPos"),
+							newProgress;
+						// if triggerElement is set we need to update the start position as it may have changed.
+						if (_options.triggerElement !== null) {
+							updateScrollOffset()
+						}
+
+						if (_options.duration > 0) {
+							newProgress = (scrollPos - _scrollOffset.start)/(_scrollOffset.end - _scrollOffset.start);
+						} else {
+							newProgress = scrollPos >= _scrollOffset.start ? 1 : 0;
+						}
+
+						ScrollScene.trigger("update", {startPos: _scrollOffset.start, endPos: _scrollOffset.end, scrollPos: scrollPos});
+
+						ScrollScene.progress(newProgress);
+					} else if (_pin && _pin.css("position") == "fixed") {
+						updatePinState(true); // unpin in position
 					}
-
-					if (_options.duration > 0) {
-						newProgress = (scrollPos - _scrollOffset.start)/(_scrollOffset.end - _scrollOffset.start);
-					} else {
-						newProgress = scrollPos >= _scrollOffset.start ? 1 : 0;
-					}
-
-					ScrollScene.trigger("update", {startPos: _scrollOffset.start, endPos: _scrollOffset.end, scrollPos: scrollPos});
-
-					ScrollScene.progress(newProgress);
 				} else {
 					_parent.updateScene(ScrollScene, false);
 				}
@@ -1395,12 +1428,9 @@ Greensock License info at http://www.greensock.com/licensing/
 						.css(_pinOptions.origStyle);
 					_pinOptions.spacer.remove();
 				} else {
-					var vertical = _parent.info("vertical");
-					_pin.css({
-						position: "absolute",
-						top: vertical ? _options.duration * _progress : 0,
-						left: vertical ? 0 : _options.duration * _progress
-					});
+					if (_state === "DURING") {
+						updatePinState(true); // force unpin at position
+					}
 				}
 				$(window).off("scroll resize", updatePinInContainer);
 				_pin = undefined;
@@ -1438,6 +1468,31 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		};
 
+		/**
+		 * **Get** or **Set** the current enabled state of the scene.  
+		 * This can be used to disable this scene without removing or destroying it.
+		 * @public
+		 *
+		 * @example
+		 * // get the current value
+		 * var enabled = scene.enabled();
+		 *
+	 	 * // disable the scene
+		 * scene.enabled(false);
+		 *
+		 * @param {boolean} [newState] - The new enabled state of the scene `true` or `false`.
+		 * @returns {(boolean|ScrollScene)} Current enabled state or parent object for chaining.
+		 */
+		this.enabled = function (newState) {
+			if (!arguments.length) { // get
+				return _enabled;
+			} else if (_enabled != newState) { // set
+				_enabled = !!newState;
+				ScrollScene.update(true);
+			}
+			return ScrollScene;
+		};
+		
 		/**
 		 * Remove the scene from its parent controller.  
 		 * This is the equivalent to `ScrollMagic.removeScene(scene)`

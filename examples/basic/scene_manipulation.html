@@ -79,6 +79,10 @@
 						<fieldset id="actions">
 							<legend>Actions</legend>
 							<div>
+								<label for="enabled">Scene enabled</label>
+								<input type="checkbox" id="enabled" value="1" checked>
+							</div>
+							<div>
 								<label for="tween">do tween</label>
 								<input type="checkbox" id="tween" value="1" checked>
 							</div>
@@ -138,12 +142,14 @@
 									} else {
 										scene.removeTween(true);
 									}
-								} else {
+								} else if (type == "pin") {
 									if (active) {
 										scene.setPin("#target", {pushFollowers: false});
 									} else {
 										scene.removePin(true);
 									}
+								} else if (type == "enabled") {
+									scene.enabled(active);
 								}
 							});
 							// update triggerElement

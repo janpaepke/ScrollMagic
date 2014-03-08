@@ -4,7 +4,7 @@
 	by Jan Paepke 2014 (@janpaepke)
 	http://janpaepke.github.io/ScrollMagic
 
-	@version	1.0.2
+	@version	1.0.3
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
