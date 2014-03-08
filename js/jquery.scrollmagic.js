@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.3
+@version	1.0.4
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -124,6 +124,14 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
+		* Default function to get scroll pos - is overwriteable using ScrollMagic.scrollPos()
+		* @private
+		*/
+		var getScrollPos = function () {
+			return _options.vertical ? _options.container.scrollTop() : _options.container.scrollLeft();
+		};
+
+		/**
 		* Handle updates on tick instead of on scroll (performance)
 		* @private
 		*/
@@ -133,7 +141,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects,
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
-				_scrollPos = _options.vertical ? _options.container.scrollTop() : _options.container.scrollLeft();
+				_scrollPos = ScrollMagic.scrollPos();
 				var deltaScroll = _scrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 				// update scenes
@@ -307,6 +315,39 @@ Greensock License info at http://www.greensock.com/licensing/
 			onChange({type: "resize"}); // will update size and set _updateScenesOnNextTick to true
 			if (immediately) {
 				onTick();
+			}
+			return ScrollMagic;
+		};
+
+		/**
+		 * **Get** or **Set** the current scrollPosition.  
+		 * Watch out: this will permanently overwrite the controller's scrollPos calculation.  
+		 * If you set it to a number it will always have this value.  
+		 * It usually makes more sense to pass a function, when the scrollPosition calculation is not defined by the containers scrollTop or scrollLeft values.  
+		 * This may be the case for mobile applications using iScroll, as there a child container is moved, instead of actually scrolling the container.  
+		 * Please also mind that your function should return y values for vertical scrolls an x for horizontals.
+		 * @public
+		 *
+		 * @example
+		 * // get the current scroll Position
+		 * var scrollPos = controller.scrollPos();
+		 *
+	 	 * // set a new scrollPos calculation function
+		 * controller.scrollPos(function () {
+		 *	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x
+		 * });
+		 *
+		 * @param {(number|function)} [newLoglevel] - The new value or function used for the scroll position of the container.
+		 * @returns {(number|ScrollMagic)} Current scroll position or parent object for chaining.
+		 */
+		this.scrollPos = function (newScrollPos) {
+			if (!arguments.length) { // get
+				return getScrollPos.call(ScrollMagic);
+			} else { // set
+				if (!$.isFunction(newScrollPos)) {
+					newScrollPos = function () {return newScrollPos;};
+				}
+				getScrollPos = newScrollPos;
 			}
 			return ScrollMagic;
 		};

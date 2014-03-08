@@ -67,6 +67,11 @@
 								// if you dont use pinning, keep "useTransform" set to true, as it is far better in terms of performance.
 								var myScroll = new IScroll('#example-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
 								
+								// overwrite scroll position calculation to use child's offset instead of container's scrollTop();
+								controller.scrollPos(function () {
+									return -myScroll.y;
+								});
+
 								// thanks to iScroll 5 we now have a real onScroll event (with some performance drawbacks)
 								myScroll.on("scroll", function () {
 									controller.update();

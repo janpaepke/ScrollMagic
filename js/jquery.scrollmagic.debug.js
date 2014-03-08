@@ -4,7 +4,7 @@
 	by Jan Paepke 2014 (@janpaepke)
 	http://janpaepke.github.io/ScrollMagic
 
-	@version	1.0.3
+	@version	1.0.4
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -67,6 +67,7 @@
 							height: "100%",
 							"text-align": "center",
 							"z-index": options.zindex,
+							"pointer-events": "none",
 							"font-size": 10
 						}),
 				$triggerHook = $("<div>trigger</div>")

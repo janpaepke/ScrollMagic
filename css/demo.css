@@ -56,6 +56,19 @@ div#content-wrapper {
 	min-width: 900px;
 	min-height: 500px;
 }
+html.touch div#content-wrapper {
+	min-width: 700px;
+}
+.scrollContainer {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	min-width: 650px;
+	width: 100%
+}
+.scrollContent {
+	position: relative;
+	/*height: 100%;*/
+}
 section {
 	height: 100%;
 }
@@ -306,6 +319,9 @@ h3 {
 	left: -118px;
 	top: -24px;
 }
+#info ul.nexttohat {
+	padding-left: 158px;
+}
 #speechbubble p {
 	margin: 0;
 	text-align: center;
@@ -323,4 +339,25 @@ h3 {
 }
 a:hover #speechbubble p:last-child {
 	text-decoration: underline;
+}
+html.touch body {
+	font-size: 25px;
+}
+html.touch #info #hatcontainer {
+	margin-bottom: 260px;
+	height: 300px;
+	width: 240px;
+}
+html.touch #info #hatcontainer .hat {
+	left: 90px;
+}
+html.touch #info #hatcontainer #bunny {
+	left: 110px;
+}
+html.touch #info #hatcontainer #speechbubble {
+	left: -20px;
+	top: 35px;
+}
+html.touch #info ul.nexttohat {
+	padding-left: 240px;
 }

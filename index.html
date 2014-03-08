@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-	<meta name="viewport"			content="width=500" />
+	<meta name="viewport"			content="width=700" />
 	<meta name="keywords"			content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama" />
 	<meta name="description"		content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar." />
 	<meta name="author"				content="Jan Paepke (www.janpaepke.de)" />
@@ -25,24 +25,77 @@
 	<script type="text/javascript" src="js/_dependent/greensock/TweenMax.min.js"></script>
 	<script type="text/javascript" src="js/_dependent/greensock/plugins/ScrollToPlugin.min.js"></script>
 	<script type="text/javascript" src="js/_dependent/jquery-1.11.0.min.js"></script>
+  	<script type="text/javascript" src="js/_examples/modernizr.custom.min.js"></script>
+  	<script type="text/javascript" src="js/_mobile/iscroll.js"></script>
   	<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
   	<script type="text/javascript" src="js/_examples/demo.js"></script>
 </head>
 <body>
-  	<script type="text/javascript">
-  		// init the controller
-  		var controller = new ScrollMagic({
-  			globalSceneOptions: {
-  				triggerHook: "onLeave"
-  			}
-  		});
-  	</script>
 	<a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
 	<div id="msg">
 		please <span class="word">scroll</span> <div class="scroll"></div>
 		<a class="skip" href="#info">or click here to <span class="word">skip</span> <img src="img/demo_arrow_skip.png"></a>
 	</div>
 	<div id="content-wrapper">
+	  	<script type="text/javascript">
+	  		var controller;
+	  		if (Modernizr.touch) {
+	  			var myScroll;
+	  			$(document).ready(function () {
+	  				// wrap for iscroll
+		  			$("#content-wrapper")
+		  				.addClass("scrollContainer")
+		  				.wrapInner('<div class="scrollContent"></div>');
+
+		  			// add iScroll
+	  				myScroll = new IScroll('#content-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
+					
+	  				// update container on scroll
+					myScroll.on("scroll", function () {
+						controller.update();
+					});
+
+					// overwrite scroll position calculation to use child's offset instead of parents scrollTop();
+					controller.scrollPos(function () {
+						return -myScroll.y;
+					});
+
+					// refresh height, so all is included.
+					setTimeout(function () {
+					    myScroll.refresh();
+					}, 0);
+
+	  				$("#content-wrapper").on("touchend", "a", function (e) {
+	  					// a bit dirty workaround for links not working in iscroll for some reason...
+	  					e.preventDefault();
+	  					window.location.href = $(this).attr("href");
+	  				});
+
+					// manual set hight (so height 100% is available within scroll container)
+		  			$(document).on("orientationchange", function () {
+			  			$("section")
+			  				.css("min-height", $(window).height())
+			  				.parent(".scrollmagic-pin-spacer").css("min-height", $(window).height());
+		  			});
+		  			$(document).trigger("orientationchange"); // trigger to init
+	  			});
+	  			// init the controller
+	  			controller = new ScrollMagic({
+		  			container: "#content-wrapper",
+		  			globalSceneOptions: {
+		  				triggerHook: "onLeave"
+		  			}
+		  		});
+	  		} else {
+	  			// init the controller
+		  		controller = new ScrollMagic({
+		  			globalSceneOptions: {
+		  				triggerHook: "onLeave"
+		  			}
+		  		});
+	  		}
+
+	  	</script>
 		<section id="start">
 			<div id="intro">
 				<img class="floor" src="img/demo_floor.png">
@@ -291,7 +344,7 @@
 					ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.<br>
 					It's the plugin for you, if you want to ...
 				</p>
-				<ul>
+				<ul class="nexttohat">
 					<li>... start an animation at a specific scroll position.</li>
 					<li>... synchronize an animation to the scrollbar movement.</li>
 					<li>... pin an element at a specific scroll position (sticky elements).</li>
