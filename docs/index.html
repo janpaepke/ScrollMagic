@@ -139,7 +139,7 @@
 <li>support for scrolling inside div containers (even multiple on one page)</li>
 <li>extensive debugging and logging capabilities</li>
 </ul>
-<h2>Installation</h2><p>Before you start make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
+<h2>Installation</h2><p>Aside from <a href="http://jquery.com/">jQuery</a> make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
 <pre><code class="lang-html">&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;&gt;&lt;/script&gt;
 </code></pre>
 <p>For deployment use the minified version <strong>instead</strong>:</p>
@@ -158,7 +158,7 @@ var scene = new ScrollScene({duration: 100})
 
 // add multiple scenes at once
 var scene2;
-controller.add([
+controller.addScene([
     scene, // add above defined scene
     scene2 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
     new ScrollScene({offset: 20}) // add anonymous scene

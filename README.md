@@ -31,7 +31,7 @@ The major perks of using ScrollMagic include:
 * extensive debugging and logging capabilities
 
 ## Installation
-Before you start make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
+Aside from [jQuery](http://jquery.com/) make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
 To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
@@ -60,7 +60,7 @@ var scene = new ScrollScene({duration: 100})
 
 // add multiple scenes at once
 var scene2;
-controller.add([
+controller.addScene([
 	scene, // add above defined scene
 	scene2 = new ScrollScene({duration: 200}), // add scene and assign handler "scene2"
 	new ScrollScene({offset: 20}) // add anonymous scene
