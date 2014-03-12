@@ -99,6 +99,7 @@ function showCode ($elem) {
 	// insert
 	var $code = 	$("<div>")
 					.addClass("code")
+					.addClass("doselect")
 					.text(code.source)
 					.wrapInner("<pre>"),
 		$ln =		$("<div>")
@@ -107,17 +108,28 @@ function showCode ($elem) {
 					.html(code.linenumbers)
 					.wrapInner("<pre>"),
 		$close = 	$("<div>")
-					.attr("id", "closebutton");
+					.attr("id", "close")
+					.addClass("button"),
+		$select =	$("<div>")
+					.attr("id", "select")
+					.addClass("button")
+					.text("select all"),
+		$codewrap = $("<div>")
+					.addClass("codewrap")
+					.append($ln)
+					.append($code);
 	
 	$("<div>")
 		.attr("id", "codecontainer")
-		.append($ln)
-		.append($code)
+		.append($codewrap)
 		.append($close)
+		.append($select)
 		.appendTo("body");
-	
-	$("body").css("overflow", "hidden"); // set overflow to hidden to avoid scrolling body while open.
-	
+
+	// avoid selecting parts of document, when selecting code.
+	$("html").css("user-select", "none");
+	disableScroll();
+
 	// highlight
 	hljs.highlightBlock($code.get(0));
 
@@ -127,7 +139,46 @@ function showCode ($elem) {
 
 function hideCode() {
 	$("body > div#codecontainer").remove();
-	$("body").css("overflow", "");
+	$("html").css("user-select", "");
+	enableScroll();
+}
+
+function selectCode() {
+	var $code = $("body > div#codecontainer .code");
+	if ($code[0]) {
+		if (document.selection) {
+			var range = document.body.createTextRange();
+			range.moveToElementText($code[0]);
+			range.select();
+		} else if (window.getSelection) {
+			var range = document.createRange();
+			range.selectNode($code[0]);
+			window.getSelection().addRange(range);
+		}
+	}
+}
+
+function disableScroll (elem) {
+	if (elem === undefined) elem = window;
+	var
+		$node = document.ownerDocument ? $(elem) : $("body");
+		pos = {
+			x : $(elem).scrollLeft(),
+			y : $(elem).scrollTop()
+		};
+	$node.css("overflow", "hidden");
+	$(elem).on("scroll.PREVENT", function (e) {
+		$(elem).scrollLeft(pos.x);
+		$(elem).scrollTop(pos.y);
+		e.stopPropagation();
+	});
+}
+
+function enableScroll (elem) {
+	if (elem === undefined) elem = window;
+	var $node = document.ownerDocument ? $(elem) : $("body");
+	$node.css("overflow", "");
+	$(elem).off("scroll.PREVENT");
 }
 
 $(document).ready(function () {
@@ -208,7 +259,8 @@ $(document).on("click", "a.viewsource", function (e) {
 	showCode($(this).data("code"));
 });
 
-$(document).on("click", "#codecontainer #closebutton", hideCode);
+$(document).on("click", "#codecontainer #close.button", hideCode);
+$(document).on("click", "#codecontainer #select.button", selectCode);
 $(document).on("keydown", function (e) {
 	if (e.which == 27) {
 		e.preventDefault();
@@ -230,7 +282,7 @@ $(document).on("mousedown", ".slider, .move", function (e) {
 		}
 		$this.data("drag", drag);
 		$this.addClass("dragging");
-		$("body").addClass("noselect");
+		$("html").addClass("noselect");
 	}
 });
 
@@ -274,7 +326,6 @@ $(document).on("mouseup mousemove", function (e) {
 			}
 		}
 	})
-	e.preventDefault();
 });
 
 $(document).on("mouseup", function (e) {
@@ -282,7 +333,7 @@ $(document).on("mouseup", function (e) {
 	$(".move.dragging, .slider.dragging")
 		.data("drag", null)
 		.removeClass("dragging");
-	$("body").removeClass("noselect");
+	$("html").removeClass("noselect");
 });
 
 $(document).on("orientationchange", function (e) {
@@ -291,5 +342,6 @@ $(document).on("orientationchange", function (e) {
 	}
 });
 $(document).trigger("orientationchange");
+
 
 

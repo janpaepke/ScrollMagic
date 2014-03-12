@@ -29,12 +29,23 @@ a, a:visited {
 a:hover {
 	text-decoration: underline;
 }
-
+.touchonly {
+	display: none;
+}
+html.touch .touchonly {
+	display: block;
+}
 .noselect * {
-  user-select: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -o-user-select: none;
-  user-select: none;
+	user-select: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+}
+.doselect * {
+	user-select: auto;
+	-webkit-user-select: auto;
+	-khtml-user-select: auto;
+	-moz-user-select: auto;
+	-o-user-select: auto;	
 }

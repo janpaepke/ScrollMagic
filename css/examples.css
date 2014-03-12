@@ -531,14 +531,12 @@ html.touch .menuwrap div.flag {
 */
 #codecontainer {
 	position: fixed;
-	overflow-y: scroll;
 	top: 30px;
 	bottom: 20px;
 	right: 20px;
 	left: 20px;
 	background-color: white;
 	border-radius: 4px;
-	padding: 10px 0 10px 0;
 	z-index: 900;
 	min-height: 300px;
 }
@@ -556,17 +554,26 @@ html.touch .menuwrap div.flag {
 #codecontainer pre .break:before {
 	content: "᎒"
 }
-#codecontainer div.code, #codecontainer div.linenumbers {
+#codecontainer .codewrap {
+	position: absolute;
+	top: 10px;
+	bottom: 10px;
+	width: 100%;
+	overflow: hidden;
+	overflow: scroll;
+	white-space: nowrap;
+}
+#codecontainer .code, #codecontainer .linenumbers {
 	min-height: 100%;
 }
-#codecontainer div.code {
-	overflow-x: scroll;
+#codecontainer .code {
 	padding: 0;
+	display: inline-block;
 }
-#codecontainer div.code pre {
-	padding: 0 10px 10px 5px;
+#codecontainer .code {
+	padding: 0 15px 10px 5px;
 }
-#codecontainer div.linenumbers {
+#codecontainer .linenumbers {
 	float: left;
 	padding: 0px 5px 0px 10px;
 	color: #aaa;
@@ -578,12 +585,24 @@ html.touch .menuwrap div.flag {
 	display: inline-block;
 	white-space: nowrap;
 }
-#codecontainer #closebutton {
+#codecontainer #close.button {
 	position: fixed;
 	top: 20px;
 	right: 10px;
 	width: 20px;
 	height: 20px;
+}
+#codecontainer #select.button {
+	position: fixed;
+	top: 20px;
+	right: 40px;
+	height: 20px;
+	padding: 0 10px 0 10px;
+}
+#codecontainer #close.button:after {
+	content: "྾";
+}
+#codecontainer .button {
 	background-color: white;
 	border-radius: 10px;
 	border: 1px solid #e5e5e5;
@@ -591,10 +610,7 @@ html.touch .menuwrap div.flag {
 	cursor: pointer;
 	color: #2e639e;
 }
-#codecontainer #closebutton:after {
-	content: "྾";
-}
-#codecontainer #closebutton:hover {
+#codecontainer .button:hover {
 	background-color: #3883d8;
 	color: white;
 }
