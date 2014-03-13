@@ -12,7 +12,7 @@
     "js/jquery.scrollmagic.min.js"
   ],
   "dependencies": {
-    "jquery": "~1.9.1",
+    "jquery": "~1.11.0",
     "gsap": "1.11.5"
   }
 }
