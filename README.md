@@ -2,7 +2,7 @@
 
 ###The jQuery plugin for magical scroll interactions.
 
-ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.  
+ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.  
 It's the plugin for you, if you want to ...
 * ... start an animation at a specific scroll position.
 * ... synchronize an animation to the scrollbar movement.
@@ -75,7 +75,7 @@ Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
 
 ##About the Author
 
-I am a freelance Art Director based in Vienna, Austria (soon Lausanne, Switzerland).  
+I am a freelance Art Director based in Lausanne, Switzerland.  
 I started this project to intensify my knowledge of javascript.
 
 [Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
