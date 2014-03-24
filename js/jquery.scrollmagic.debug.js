@@ -4,7 +4,7 @@
 	by Jan Paepke 2014 (@janpaepke)
 	http://janpaepke.github.io/ScrollMagic
 
-	@version	1.0.4
+	@version	1.0.5
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -135,17 +135,7 @@
 				parentOffset = cParams.container.offset() || {top: 0, left: 0},
 				parentPos = cParams.vertical ? parentOffset.top : parentOffset.left,
 				hookPos = (cParams.size * scene.triggerHook()) + parentPos,
-				direction = cParams.vertical ? "v" : "h",
-				resetCSS = { // reset (in case scene is removed from a horizontal scene and added to a vertical one)
-					"border": "none",
-					top: "auto",
-					bottom: "auto",
-					left: "auto",
-					right: "auto"
-				};
-				if (!cParams.isDocument) {
-					hookPos -=  cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
-				}
+				direction = cParams.vertical ? "v" : "h";
 
 			if (cParams.isDocument) { // account for possible body positioning
 				var bodyOffset = indicators.offsetParent().is("body") ? $("body").offset() : parentOffset;
@@ -153,10 +143,11 @@
 					top: -bodyOffset.top,
 					left: -bodyOffset.left
 				})
+			} else {
+				hookPos -=  cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
 			}
 
 			$triggerHook
-				.css(resetCSS)
 				.attr("data-hook", hookPos)
 				.attr("data-direction", direction)
 				.data("parent", cParams.container);
@@ -166,47 +157,50 @@
 				$triggerHook.hide();
 			} else {
 				$triggerHook.show();
+				var flip = hookPos > cParams.size*0.8; // put name above line?	
 				if (cParams.vertical) {
 					// triggerHook
 					$triggerHook.css({
-						"border-top": "1px solid blue",
-						padding: "0 8px 2px 8px",
+						top: flip ? hookPos - $triggerHook.height() - 2 : hookPos,
+						left: (cParams.isDocument ? cParams.container.width() : parentOffset.left + cParams.container.width() - $(document).scrollLeft()) - 70 - options.indent,
 						width: 40,
-						top: hookPos,
-						left: (cParams.isDocument ? cParams.container.width() : parentOffset.left + cParams.container.width() - $(document).scrollLeft()) - 70 - options.indent
+						height: "auto",
+						padding: "0 8px 2px 8px",
+						"border-top": flip ? "none" : "1px solid blue",
+						"border-bottom": flip ? "1px solid blue" : "none",
+						"border-left": "none",
+						"border-right": "none"
 					});
-					// correct if too far down
-					if (hookPos > cParams.size*0.8) {
-						$triggerHook
-							.css("border-bottom", "1px solid blue")
-							.css("top", hookPos - $triggerHook.outerHeight(true))
-							.css("border-top", "none");
-					}
 				} else {
 					$triggerHook.css({
-						"border-left": "1px solid blue",
+						top: (cParams.isDocument ? cParams.container.height() : parentOffset.top + cParams.container.height() - $(document).scrollTop()) - 40 - options.indent,
+						left: flip ? hookPos - $triggerHook.width() - 9: hookPos,
+						width: "auto",
 						height: 20,
 						padding: "5px 5px 0 5px",
-						top: (cParams.isDocument ? cParams.container.height() : parentOffset.top + cParams.container.height() - $(document).scrollTop()) - 40 - options.indent,
-						left: hookPos,
+						"border-top": "none",
+						"border-bottom": "none",
+						"border-left": flip ? "none" : "1px solid blue",
+						"border-right": flip ? "1px solid blue" : "none"
 					});
-					// correct if too far right
-					if (hookPos > cParams.size*0.8) {
-						$triggerHook
-							.css("border-right", "1px solid blue")
-							.css("left", hookPos - $triggerHook.width() - parseFloat($triggerHook.css("padding-left")))
-							.css("border-left", "none");
-					}
 				}
 			}
 			
 			if (!triggerOnly) {
 				var
 					startPos = scene.startPosition(),
-					endPos = startPos + scene.duration();
+					endPos = startPos + scene.duration(),
+					resetCSS = {
+						"border": "none",
+						top: "auto",
+						bottom: "auto",
+						left: "auto",
+						right: "auto"
+					};
 				
 				$start.css(resetCSS);
 				$end.css(resetCSS);
+
 				if (scene.duration() == 0) {
 					$end.hide();
 				} else {
@@ -215,32 +209,32 @@
 				if (cParams.vertical) {
 					// start
 					$start.css({
-						"border-top": "1px solid green",
+						top: startPos,
 						right: 71-cParams.container.scrollLeft() + options.indent,
-						padding: "0 8px 0 8px",
-						top: startPos
+						"border-top": "1px solid green",
+						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
-						"border-top": "1px solid red",
+						top: endPos,
 						right: 71-cParams.container.scrollLeft() + options.indent,
-						padding: "0 8px 0 8px",
-						top: endPos
+						"border-top": "1px solid red",
+						padding: "0 8px 0 8px"
 					});
 				} else {
 					// start
 					$start.css({
-						"border-left": "1px solid green",
+						left: startPos,
 						bottom: 40-cParams.container.scrollTop() + options.indent,
-						padding: "0 8px 0 8px",
-						left: startPos
+						"border-left": "1px solid green",
+						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
-						"border-left": "1px solid red",
+						left: endPos,
 						bottom: 40-cParams.container.scrollTop() + options.indent,
-						padding: "0 8px 0 8px",
-						left: endPos
+						"border-left": "1px solid red",
+						padding: "0 8px 0 8px"
 					});
 				}
 			}
