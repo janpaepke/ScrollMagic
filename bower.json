@@ -8,8 +8,7 @@
     "url": "http://www.janpaepke.de"
   },
   "main": [
-    "js/jquery.scrollmagic.js",
-    "js/jquery.scrollmagic.min.js"
+    "js/jquery.scrollmagic.js"
   ],
   "dependencies": {
     "jquery": "~1.11.0",
