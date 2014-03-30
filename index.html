@@ -1,447 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"> 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
-    <meta name="viewport"           content="width=700" />
-    <meta name="keywords"           content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama" />
-    <meta name="description"        content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar." />
-    <meta name="author"             content="Jan Paepke (www.janpaepke.de)" />
-    <meta name="designer"           content="Jan Paepke (www.janpaepke.de)" />
-    <meta property="fb:admins"      content="595418934" />
-    <meta property="og:type"        content="website" />
-    <meta property="og:url"         content="http://janpaepke.github.io/ScrollMagic/" />
-    <meta property="og:image"       content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg" />
-    <meta property="og:title"       content="ScrollMagic" />
-    <meta property="og:description" content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar." />
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport"			content="width=700" />
+	<meta name="keywords"			content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama" />
+	<meta name="description"		content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar." />
+	<meta name="author"				content="Jan Paepke (www.janpaepke.de)" />
+	<meta name="designer"			content="Jan Paepke (www.janpaepke.de)" />
+	<meta property="fb:admins"		content="595418934" />
+	<meta property="og:type"		content="website" />
+	<meta property="og:url"			content="http://janpaepke.github.io/ScrollMagic/" />
+	<meta property="og:image"		content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg" />
+	<meta property="og:title"		content="ScrollMagic" />
+	<meta property="og:description"	content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar." />
 
-    <title>ScrollMagic - The jQuery plugin for magical scroll interactions.</title>
+	<title>ScrollMagic - The jQuery plugin for magical scroll interactions.</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700,700italic' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="css/normalize.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
-    <link rel="stylesheet" href="css/demo.css" type="text/css">
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700,700italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+	<link rel="stylesheet" href="css/demo.css" type="text/css">
 
-    <script type="text/javascript" src="js/_dependent/greensock/TweenMax.min.js"></script>
-    <script type="text/javascript" src="js/_dependent/greensock/plugins/ScrollToPlugin.min.js"></script>
-    <script type="text/javascript" src="js/_dependent/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="js/_examples/modernizr.custom.min.js"></script>
-    <script type="text/javascript" src="js/_mobile/iscroll.js"></script>
-    <script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
-    <script type="text/javascript" src="js/_examples/demo.js"></script>
+	<script type="text/javascript" src="js/_dependent/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="js/_dependent/greensock/plugins/ScrollToPlugin.min.js"></script>
+	<script type="text/javascript" src="js/_dependent/jquery-1.11.0.min.js"></script>
+  	<script type="text/javascript" src="js/_examples/modernizr.custom.min.js"></script>
+  	<script type="text/javascript" src="js/_mobile/iscroll.js"></script>
+  	<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
+  	<script type="text/javascript" src="js/_examples/demo.js"></script>
 </head>
 <body>
-    <a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
-    <div id="msg">
-        please <span class="word">scroll</span> <div class="scroll"></div>
-        <a class="skip" href="#info">or click here to <span class="word">skip</span> <img src="img/demo_arrow_skip.png"></a>
-    </div>
-    <div id="content-wrapper">
-        <script type="text/javascript">
-            var controller;
-            if (Modernizr.touch) {
-                var myScroll;
-                $(document).ready(function () {
-                    // wrap for iscroll
-                    $("#content-wrapper")
-                        .addClass("scrollContainer")
-                        .wrapInner('<div class="scrollContent"></div>');
+	<a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+	<div id="msg">
+		please <span class="word">scroll</span> <div class="scroll"></div>
+		<a class="skip" href="#info">or click here to <span class="word">skip</span> <img src="img/demo_arrow_skip.png"></a>
+	</div>
+	<div id="content-wrapper">
+	  	<script type="text/javascript">
+	  		var controller;
+	  		if (Modernizr.touch) {
+	  			var myScroll;
+	  			$(document).ready(function () {
+	  				// wrap for iscroll
+		  			$("#content-wrapper")
+		  				.addClass("scrollContainer")
+		  				.wrapInner('<div class="scrollContent"></div>');
 
-                    // add iScroll
-                    myScroll = new IScroll('#content-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
-                    
-                    // update container on scroll
-                    myScroll.on("scroll", function () {
-                        controller.update();
-                    });
+		  			// add iScroll
+	  				myScroll = new IScroll('#content-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3});
+					
+	  				// update container on scroll
+					myScroll.on("scroll", function () {
+						controller.update();
+					});
 
-                    // overwrite scroll position calculation to use child's offset instead of parents scrollTop();
-                    controller.scrollPos(function () {
-                        return -myScroll.y;
-                    });
+					// overwrite scroll position calculation to use child's offset instead of parents scrollTop();
+					controller.scrollPos(function () {
+						return -myScroll.y;
+					});
 
-                    // refresh height, so all is included.
-                    setTimeout(function () {
-                        myScroll.refresh();
-                    }, 0);
+					// refresh height, so all is included.
+					setTimeout(function () {
+					    myScroll.refresh();
+					}, 0);
 
-                    $("#content-wrapper").on("touchend", "a", function (e) {
-                        // a bit dirty workaround for links not working in iscroll for some reason...
-                        e.preventDefault();
-                        window.location.href = $(this).attr("href");
-                    });
+	  				$("#content-wrapper").on("touchend", "a", function (e) {
+	  					// a bit dirty workaround for links not working in iscroll for some reason...
+	  					e.preventDefault();
+	  					window.location.href = $(this).attr("href");
+	  				});
 
-                    // manual set hight (so height 100% is available within scroll container)
-                    $(document).on("orientationchange", function () {
-                        $("section")
-                            .css("min-height", $(window).height())
-                            .parent(".scrollmagic-pin-spacer").css("min-height", $(window).height());
-                    });
-                    $(document).trigger("orientationchange"); // trigger to init
-                });
-                // init the controller
-                controller = new ScrollMagic({
-                    container: "#content-wrapper",
-                    globalSceneOptions: {
-                        triggerHook: "onLeave"
-                    }
-                });
-            } else {
-                // init the controller
-                controller = new ScrollMagic({
-                    globalSceneOptions: {
-                        triggerHook: "onLeave"
-                    }
-                });
-            }
+					// manual set hight (so height 100% is available within scroll container)
+		  			$(document).on("orientationchange", function () {
+			  			$("section")
+			  				.css("min-height", $(window).height())
+			  				.parent(".scrollmagic-pin-spacer").css("min-height", $(window).height());
+		  			});
+		  			$(document).trigger("orientationchange"); // trigger to init
+	  			});
+	  			// init the controller
+	  			controller = new ScrollMagic({
+		  			container: "#content-wrapper",
+		  			globalSceneOptions: {
+		  				triggerHook: "onLeave"
+		  			}
+		  		});
+	  		} else {
+	  			// init the controller
+		  		controller = new ScrollMagic({
+		  			globalSceneOptions: {
+		  				triggerHook: "onLeave"
+		  			}
+		  		});
+	  		}
 
-        </script>
-        <section id="start">
-            <div id="intro">
-                <img class="floor" src="img/demo_floor.png">
-                <h1>ScrollMagic</h1>
-                <img class="tophat" src="img/demo_tophat.png">
-                <img class="wand" src="img/demo_wand.png">
-                <div class="sparkpoint"></div>
-            </div>
-            <script type="text/javascript">
-                // wrap each title letter
-                $("#start h1").wrapEach(/(.)/g, "<span>$1</span>");
+	  	</script>
+		<section id="start">
+			<div id="intro">
+				<img class="floor" src="img/demo_floor.png">
+				<h1>ScrollMagic</h1>
+				<img class="tophat" src="img/demo_tophat.png">
+				<img class="wand" src="img/demo_wand.png">
+				<div class="sparkpoint"></div>
+			</div>
+			<script type="text/javascript">
+				// wrap each title letter
+				$("#start h1").wrapEach(/(.)/g, "<span>$1</span>");
 
-                // animations
-                var nervousHat = new TimelineMax({repeat: -1, yoyo: true})
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -3}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10", left: "+=6", rotation: 0}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=6", rotation: 3}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=5", left: "-=3", rotation: 1.5}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -1.5}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=3", rotation: 0}))
-                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10"}));
-                var abracadabra = TweenMax.fromTo("#start .wand", 1, {top: -$(window).height()/3, left: 370, rotation: 20}, {top: 10, rotation: -20});
-                var reveal = new TimelineMax()
-                    .add([
-                            TweenMax.to("#start .tophat", 1, {bottom: $(window).height(), left: "-=50", rotation: -20}),
-                            TweenMax.from("#start h1", 1, {scale: 0.4, top: "+=70", delay: 0.1}),
-                            TweenMax.to("#start .wand", 0.8, {top: -$(window).height()/3, left: 450, rotation: 30}),
-                            TweenMax.to("#start .floor", 1, {autoAlpha: 0})
-                        ]);
-                var laola = new TimelineMax()
-                    .add(TweenMax.staggerTo("#start h1 span", 0.5, {top: -20}, 0.2))
-                    .add(TweenMax.staggerTo("#start h1 span", 0.5, {top: 0}, 0.2), 0.5);
+				// animations
+				var nervousHat = new TimelineMax({repeat: -1, yoyo: true})
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -3}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10", left: "+=6", rotation: 0}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=6", rotation: 3}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=5", left: "-=3", rotation: 1.5}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -1.5}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=3", rotation: 0}))
+					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10"}));
+				var abracadabra = TweenMax.fromTo("#start .wand", 1, {top: -$(window).height()/3, left: 370, rotation: 20}, {top: 10, rotation: -20});
+				var reveal = new TimelineMax()
+					.add([
+							TweenMax.to("#start .tophat", 1, {bottom: $(window).height(), left: "-=50", rotation: -20}),
+							TweenMax.from("#start h1", 1, {scale: 0.4, top: "+=70", delay: 0.1}),
+							TweenMax.to("#start .wand", 0.8, {top: -$(window).height()/3, left: 450, rotation: 30}),
+							TweenMax.to("#start .floor", 1, {autoAlpha: 0})
+						]);
+				var laola = new TimelineMax()
+					.add(TweenMax.staggerTo("#start h1 span", 0.5, {top: -20}, 0.2))
+					.add(TweenMax.staggerTo("#start h1 span", 0.5, {top: 0}, 0.2), 0.5);
 
-                // container pin
-                var startpin = new ScrollScene({
-                        duration: 700
-                    })
-                    .setPin("section#start")
-                    .addTo(controller);
+				// container pin
+				var startpin = new ScrollScene({
+						duration: 700
+					})
+					.setPin("section#start")
+					.addTo(controller);
 
-                // msg scroll ani
-                new ScrollScene({
-                        duration: 140,
-                        offset: -100
-                    })
-                    .setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
-                    .addTo(controller);
-                // msg hide
-                new ScrollScene({
-                        offset: 40
-                    })
-                    .setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
-                    .addTo(controller);
+				// msg scroll ani
+				new ScrollScene({
+						duration: 140,
+						offset: -100
+					})
+					.setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
+					.addTo(controller);
+				// msg hide
+				new ScrollScene({
+						offset: 40
+					})
+					.setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
+					.addTo(controller);
 
-                // hat movement
-                new ScrollScene({
-                        duration: 300,
-                        offset: -100
-                    })
-                    .setTween(nervousHat)
-                    .addTo(controller);
+				// hat movement
+				new ScrollScene({
+						duration: 300,
+						offset: -100
+					})
+					.setTween(nervousHat)
+					.addTo(controller);
 
-                // magic wand
-                new ScrollScene({
-                        offset: 20,
-                        duration: 180
-                    })
-                    .on("end", function (e) {
-                        if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.37) { // check pin progress so it doesnt launch on refresh
-                            // make it rain!
-                            $("#start .sparkpoint").sparkle({
-                                amount: 40,
-                                duration: 0.2
-                            });
-                        }
-                    })
-                    .setTween(abracadabra)
-                    .addTo(controller);
+				// magic wand
+				new ScrollScene({
+						offset: 20,
+						duration: 180
+					})
+					.on("end", function (e) {
+						if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.37) { // check pin progress so it doesnt launch on refresh
+							// make it rain!
+							$("#start .sparkpoint").sparkle({
+								amount: 40,
+								duration: 0.2
+							});
+						}
+					})
+					.setTween(abracadabra)
+					.addTo(controller);
 
-                // big reveal
-                new ScrollScene({
-                        duration: 300,
-                        offset: 260
-                    })
-                    .setTween(reveal)
-                    .addTo(controller);
+				// big reveal
+				new ScrollScene({
+						duration: 300,
+						offset: 260
+					})
+					.setTween(reveal)
+					.addTo(controller);
 
-                // jumping text
-                new ScrollScene({
-                        duration: 200,
-                        offset: 450
-                    })
-                    .setTween(laola)
-                    .addTo(controller);
+				// jumping text
+				new ScrollScene({
+						duration: 200,
+						offset: 450
+					})
+					.setTween(laola)
+					.addTo(controller);
 
-            </script>
-        </section>
-        <section id="tweens">
-            <h3>fade</h3>
-            <h3>move</h3>
-            <h3>spin</h3>
-            <h3>scale</h3>
-            <h3>text properties</h3>
-            <script type="text/javascript">
-                var sceneOptions = {duration: 200, offset: -100};
-                var elements = $("#tweens h3");
+			</script>
+		</section>
+		<section id="tweens">
+			<h3>fade</h3>
+			<h3>move</h3>
+			<h3>spin</h3>
+			<h3>scale</h3>
+			<h3>text properties</h3>
+			<script type="text/javascript">
+				var sceneOptions = {duration: 200, offset: -100};
+				var elements = $("#tweens h3");
 
-                // fade
-                new ScrollScene(sceneOptions)
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .triggerElement(elements[0])
-                    .setTween(TweenMax.from(elements[0], 1, {autoAlpha: 0}));
+				// fade
+				new ScrollScene(sceneOptions)
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.triggerElement(elements[0])
+					.setTween(TweenMax.from(elements[0], 1, {autoAlpha: 0}));
 
-                // move
-                new ScrollScene(sceneOptions)
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .triggerElement(elements[1])
-                    .setTween(TweenMax.from(elements[1], 1, {left: "-50%", marginLeft: -200, ease: Back.easeOut}));
+				// move
+				new ScrollScene(sceneOptions)
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.triggerElement(elements[1])
+					.setTween(TweenMax.from(elements[1], 1, {left: "-50%", marginLeft: -200, ease: Back.easeOut}));
 
-                // spin
-                new ScrollScene(sceneOptions)
-                    .offset(200)
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .triggerElement(elements[1]) // use previous element as trigger, as top position changes during spin
-                    .setTween(TweenMax.to(elements[2], 1, {rotation: 360}));
+				// spin
+				new ScrollScene(sceneOptions)
+					.offset(200)
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.triggerElement(elements[1]) // use previous element as trigger, as top position changes during spin
+					.setTween(TweenMax.to(elements[2], 1, {rotation: 360}));
 
-                // scale
-                new ScrollScene(sceneOptions)
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .triggerElement(elements[3])
-                    .setTween(TweenMax.from(elements[3], 1, {scale: 0, ease: Back.easeOut}));
+				// scale
+				new ScrollScene(sceneOptions)
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.triggerElement(elements[3])
+					.setTween(TweenMax.from(elements[3], 1, {scale: 0, ease: Back.easeOut}));
 
-                // text properties
-                $(elements[4]).wrapEach(/(.)/g, "<span>$1</span>");// wrap letters
-                new ScrollScene(sceneOptions)
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .triggerElement(elements[4])
-                    .setTween(TweenMax.staggerTo($(elements[4]).children("span"), 0.0001, {textDecoration: "underline", textTransform: "uppercase"}, 0.2));
-            </script>
-        </section>
-        <section id="pin">
-            <h3 id="hlpin">pin</h3>
-            <div id="wipe">
-                <h3>wipe</h3>
-            </div>
-            <div id="slide">
-                <h3>slide</h3>
-                <h3>color</h3>
-            </div>
-            <h3 id="unpin">unpin</h3>
-            <script type="text/javascript">
-                // ani
-                var pinani = new TimelineMax()
-                    // pin move down
-                    .add(TweenMax.from("#pin>h3:first-child", 0.5, {top: "0%", marginTop: 0}))
-                    // wipe
-                    .add(TweenMax.to("#wipe", 1, {width: "100%"}))
-                    // slide
-                    .add(TweenMax.to("#slide", 1, {top: "0%", ease: Bounce.easeOut, delay: 0.2}))
-                    // color
-                    .add([
-                        TweenMax.to("#slide h3:first-child", 0.2, {autoAlpha: 0}),
-                        TweenMax.from("#slide h3:last-child", 0.2, {autoAlpha: 0})
-                    ])
-                    .add([
-                        TweenMax.to("#slide", 0.3, {backgroundColor: "yellow"}),
-                        TweenMax.to("#slide h3:last-child", 0.3, {color: "blue"})
-                    ])
-                    .add([
-                        TweenMax.to("#slide", 0.3, {backgroundColor: "green"}),
-                        TweenMax.to("#slide h3:last-child", 0.3, {color: "red"})
-                    ])
-                    .add([
-                        TweenMax.to("#slide", 0.3, {backgroundColor: "red"}),
-                        TweenMax.to("#slide h3:last-child", 0.3, {color: "white"})
-                    ])
-                    .add([
-                        TweenMax.to("#slide", 0.3, {backgroundColor: "#c7e1ff"}),
-                        TweenMax.to("#slide h3:last-child", 0.3, {color: "black"})
-                    ])
-                    // unpin
-                    .add(TweenMax.from("#unpin", .5, {top: "100%"}));
-                // pin
-                new ScrollScene({
-                        triggerElement: "section#pin",
-                        duration: 1100
-                    })
-                    .on("progress", function () {
-                        // keep centered even though width changes
-                        $("#wipe h3").width($("#pin>h3").width());
-                    })
-                    .setTween(pinani)
-                    .setPin("section#pin")
-                    .addTo(controller);
-            </script>
-        </section>
-        <section id="parallax">
-            <div id="parallaxbg">
-                <div class="top"></div>
-                <div class="bottom"></div>
-            </div>
-            <h3>parallax</h3>
-            <h3 id="big">parallax</h3>
-            <script type="text/javascript">
-                // parallax
-                new ScrollScene({
-                        triggerElement: "section#parallax",
-                        duration: $(window).height() + 300,
-                        offset: -150
-                    })
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .setTween(new TimelineMax().add([
-                        TweenMax.fromTo("#parallax #big", 1, {scale: 2, alpha: 0.1, top: "100%"}, {top: "0%", ease: Linear.easeNone}),
-                        TweenMax.to("#parallax #parallaxbg", 1, {backgroundPosition: "0 -260%", ease: Linear.easeNone})
-                    ]));
-            </script>
-        </section>
-        <section id="info">
-            <h1>ScrollMagic</h1>
-            <h2>
-                The jQuery Plugin for magical scroll interactions.
-                <div id="sublinecover"></div>
-            </h2><br>
-            <div id="content">
-                <div id="hatcontainer">
-                    <a href="examples/index.html">
-                        <div id="speechbubble">
-                            <p>check out the</p>
-                            <p>examples</p>
-                        </div>
-                        <img class="hat" src="img/demo_hat.png">
-                        <div id="bunny">
-                            <img src="img/demo_bunny.png">
-                            <img class="eye" src="img/demo_bunny_wink.png">
-                        </div>
-                        <img class="hat" src="img/demo_hat_front.png">
-                    </a>
-                </div>
-                <p>
-                    ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.<br>
-                    It's the plugin for you, if you want to ...
-                </p>
-                <ul class="nexttohat">
-                    <li>... start an animation at a specific scroll position.</li>
-                    <li>... synchronize an animation to the scrollbar movement.</li>
-                    <li>... pin an element at a specific scroll position (sticky elements).</li>
-                    <li>... pin an element for a limited amount of scroll progress (sticky elements).</li>
-                    <li>... easily add a parallax effect to your website.</li>
-                    <li>... create an inifinitely scrolling page (ajax load of additional content).</li>
-                    <li>... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.</li>
-                </ul>
-                <p>
-                    <b>Browse <a href="examples/index.html">the examples</a> or read <a href="docs/index.html">the documentation</a> to get started.</b><br>
-                    For the installation manual and source code visit the <a href="https://github.com/janpaepke/ScrollMagic">project on github</a> or download the latest version as <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">zip</a> or <a href="https://github.com/janpaepke/ScrollMagic/tarball/master">tar</a>.
-                </p>
-                <h3>History</h3>
-                <p>
-                    ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama" target="_blank">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>
-                    Like Superscrollorama it relies on the <a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Platform (GSAP)</a> to build animations, but was developed with specific regard to former shortcomings.
-                </p>
-                <p>
-                    The major perks of using ScrollMagic include:
-                </p>
-                <ul>
-                    <li>optimized performance</li>
-                    <li>flexibility</li>
-                    <li>mobile compatibility</li>
-                    <li>ready for responsive webdesign</li>
-                    <li>object oriented programming and object chaining</li>
-                    <li>event management</li>
-                    <li>support for both scroll directions (even different on one page)</li>
-                    <li>support for scrolling inside div containers (even multiple on one page)</li>
-                    <li>extensive debugging and logging capabilities</li>
-                </ul>
-                <h3>Credits</h3>
-                <p>
-                    ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a> <a href="https://twitter.com/janpaepke" class="twitter-follow-button" data-show-count="false">follow @janpaepke</a>
-                    <script>/*!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");*/</script>
-                </p>
-                <p>
-                    <a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
-                </p>
-                <p>
-                    <a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Plattform (GSAP)</a> by <a href="http://www.greensock.com" target="_blank">Greensock</a>
-                </p>
-                <a id="donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"></a>
-            </div>
-            <script type="text/javascript">
-                // subline
-                new ScrollScene({
-                        triggerElement: "section#info",
-                        duration: 250,
-                        offset: -50
-                    })
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .on("progress", function () {
-                        $("#info h2").sparkle({
-                            x: $("#info #sublinecover").position().left,
-                            y: 10,
-                            amount: 5,
-                            duration: 0.1
-                        })
-                    })
-                    .setTween(TweenMax.to("#info #sublinecover", 1, {left: "100%", ease: Linear.easeNone}));
+				// text properties
+				$(elements[4]).wrapEach(/(.)/g, "<span>$1</span>");// wrap letters
+				new ScrollScene(sceneOptions)
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.triggerElement(elements[4])
+					.setTween(TweenMax.staggerTo($(elements[4]).children("span"), 0.0001, {textDecoration: "underline", textTransform: "uppercase"}, 0.2));
+			</script>
+		</section>
+		<section id="pin">
+			<h3 id="hlpin">pin</h3>
+			<div id="wipe">
+				<h3>wipe</h3>
+			</div>
+			<div id="slide">
+				<h3>slide</h3>
+				<h3>color</h3>
+			</div>
+			<h3 id="unpin">unpin</h3>
+			<script type="text/javascript">
+				// ani
+				var pinani = new TimelineMax()
+					// pin move down
+					.add(TweenMax.from("#pin>h3:first-child", 0.5, {top: "0%", marginTop: 0}))
+					// wipe
+					.add(TweenMax.to("#wipe", 1, {width: "100%"}))
+					// slide
+					.add(TweenMax.to("#slide", 1, {top: "0%", ease: Bounce.easeOut, delay: 0.2}))
+					// color
+					.add([
+						TweenMax.to("#slide h3:first-child", 0.2, {autoAlpha: 0}),
+						TweenMax.from("#slide h3:last-child", 0.2, {autoAlpha: 0})
+					])
+					.add([
+						TweenMax.to("#slide", 0.3, {backgroundColor: "yellow"}),
+						TweenMax.to("#slide h3:last-child", 0.3, {color: "blue"})
+					])
+					.add([
+						TweenMax.to("#slide", 0.3, {backgroundColor: "green"}),
+						TweenMax.to("#slide h3:last-child", 0.3, {color: "red"})
+					])
+					.add([
+						TweenMax.to("#slide", 0.3, {backgroundColor: "red"}),
+						TweenMax.to("#slide h3:last-child", 0.3, {color: "white"})
+					])
+					.add([
+						TweenMax.to("#slide", 0.3, {backgroundColor: "#c7e1ff"}),
+						TweenMax.to("#slide h3:last-child", 0.3, {color: "black"})
+					])
+					// unpin
+					.add(TweenMax.from("#unpin", .5, {top: "100%"}));
+				// pin
+				new ScrollScene({
+						triggerElement: "section#pin",
+						duration: 1100
+					})
+					.on("progress", function () {
+						// keep centered even though width changes
+						$("#wipe h3").width($("#pin>h3").width());
+					})
+					.setTween(pinani)
+					.setPin("section#pin")
+					.addTo(controller);
+			</script>
+		</section>
+		<section id="parallax">
+			<div id="parallaxbg">
+				<div class="top"></div>
+				<div class="bottom"></div>
+			</div>
+			<h3>parallax</h3>
+			<h3 id="big">parallax</h3>
+			<script type="text/javascript">
+				// parallax
+				new ScrollScene({
+						triggerElement: "section#parallax",
+						duration: $(window).height() + 300,
+						offset: -150
+					})
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.setTween(new TimelineMax().add([
+						TweenMax.fromTo("#parallax #big", 1, {scale: 2, alpha: 0.1, top: "100%"}, {top: "0%", ease: Linear.easeNone}),
+						TweenMax.to("#parallax #parallaxbg", 1, {backgroundPosition: "0 -260%", ease: Linear.easeNone})
+					]));
+			</script>
+		</section>
+		<section id="info">
+			<h1>ScrollMagic</h1>
+			<h2>
+				The jQuery Plugin for magical scroll interactions.
+				<div id="sublinecover"></div>
+			</h2><br>
+			<div id="content">
+				<div id="hatcontainer">
+					<a href="examples/index.html">
+						<div id="speechbubble">
+							<p>check out the</p>
+							<p>examples</p>
+						</div>
+						<img class="hat" src="img/demo_hat.png">
+						<div id="bunny">
+							<img src="img/demo_bunny.png">
+							<img class="eye" src="img/demo_bunny_wink.png">
+						</div>
+						<img class="hat" src="img/demo_hat_front.png">
+					</a>
+				</div>
+				<p>
+					ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a progress bar.<br>
+					It's the plugin for you, if you want to ...
+				</p>
+				<ul class="nexttohat">
+					<li>... start an animation at a specific scroll position.</li>
+					<li>... synchronize an animation to the scrollbar movement.</li>
+					<li>... pin an element at a specific scroll position (sticky elements).</li>
+					<li>... pin an element for a limited amount of scroll progress (sticky elements).</li>
+					<li>... easily add a parallax effect to your website.</li>
+					<li>... create an inifinitely scrolling page (ajax load of additional content).</li>
+					<li>... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.</li>
+				</ul>
+				<p>
+					<b>Browse <a href="examples/index.html">the examples</a> or read <a href="docs/index.html">the documentation</a> to get started.</b><br>
+					For the installation manual and source code visit the <a href="https://github.com/janpaepke/ScrollMagic">project on github</a> or download the latest version as <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">zip</a> or <a href="https://github.com/janpaepke/ScrollMagic/tarball/master">tar</a>.
+				</p>
+				<h3>History</h3>
+				<p>
+					ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama" target="_blank">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>
+					Like Superscrollorama it relies on the <a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Platform (GSAP)</a> to build animations, but was developed with specific regard to former shortcomings.
+				</p>
+				<p>
+					The major perks of using ScrollMagic include:
+				</p>
+				<ul>
+					<li>optimized performance</li>
+					<li>flexibility</li>
+					<li>mobile compatibility</li>
+					<li>ready for responsive webdesign</li>
+					<li>object oriented programming and object chaining</li>
+					<li>event management</li>
+					<li>support for both scroll directions (even different on one page)</li>
+					<li>support for scrolling inside div containers (even multiple on one page)</li>
+					<li>extensive debugging and logging capabilities</li>
+				</ul>
+				<h3>Credits</h3>
+				<p>
+					ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a> <a href="https://twitter.com/janpaepke" class="twitter-follow-button" data-show-count="false">follow @janpaepke</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				</p>
+				<p>
+					<a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
+				</p>
+				<p>
+					<a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Plattform (GSAP)</a> by <a href="http://www.greensock.com" target="_blank">Greensock</a>
+				</p>
+				<a id="donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"></a>
+			</div>
+			<script type="text/javascript">
+				// subline
+				new ScrollScene({
+						triggerElement: "section#info",
+						duration: 250,
+						offset: -50
+					})
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.on("progress", function () {
+						$("#info h2").sparkle({
+							x: $("#info #sublinecover").position().left,
+							y: 10,
+							amount: 5,
+							duration: 0.1
+						})
+					})
+					.setTween(TweenMax.to("#info #sublinecover", 1, {left: "100%", ease: Linear.easeNone}));
 
-                // bunny
-                TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-                new ScrollScene({
-                        triggerElement: "#info #hatcontainer",
-                        offset: -20
-                    })
-                    .addTo(controller)
-                    .triggerHook("onCenter")
-                    .setTween(
-                        new TimelineMax({delay: 1})
-                            .add(TweenMax.from("#hatcontainer #bunny", 0.5, {bottom: 5, ease: Power2.easeOut}))
-                            .add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
-                    );
-                TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-                new ScrollScene({
-                        triggerElement: "section#info"
-                    })
-                    .addTo(controller)
-                    .setTween(new TimelineMax({repeat: -1})
-                        .add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "block", delay: 0.15}))
-                        .add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "none", delay: 3}))
-                    );
+				// bunny
+				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+				new ScrollScene({
+					 	triggerElement: "#info #hatcontainer",
+						offset: -20
+					})
+					.addTo(controller)
+					.triggerHook("onCenter")
+					.setTween(
+						new TimelineMax({delay: 1})
+							.add(TweenMax.from("#hatcontainer #bunny", 0.5, {bottom: 5, ease: Power2.easeOut}))
+							.add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
+					);
+				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+				new ScrollScene({
+						triggerElement: "section#info"
+					})
+					.addTo(controller)
+					.setTween(new TimelineMax({repeat: -1})
+						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "block", delay: 0.15}))
+						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "none", delay: 3}))
+					);
 
-                // donate btn
-                new ScrollScene({
-                        triggerElement: "#info #donate",
-                        offset: 50
-                    })
-                    .addTo(controller)
-                    .triggerHook("onEnter")
-                    .setTween(TweenMax.from("#info #donate img", 0.5, {scale: 0, ease: Elastic.easeOut, delay: 0.5}));
-            </script>
-        </section>
-    </div>
-    
+				// donate btn
+				new ScrollScene({
+						triggerElement: "#info #donate",
+						offset: 50
+					})
+					.addTo(controller)
+					.triggerHook("onEnter")
+					.setTween(TweenMax.from("#info #donate img", 0.5, {scale: 0, ease: Elastic.easeOut, delay: 0.5}));
+			</script>
+		</section>
+	</div>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
+		ga('send', 'pageview');
+	</script>
 </body>
 </html>
