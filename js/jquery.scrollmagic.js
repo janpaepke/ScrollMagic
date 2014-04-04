@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.5
+@version	1.0.6
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -756,8 +756,9 @@ Greensock License info at http://www.greensock.com/licensing/
 					});
 				} else {
 					// unpinned state
-					var newCSS = {
-							position: _pinOptions.origStyle.position == "absolute" ? "absolute" : "relative",
+					var
+						newCSS = {
+							position: _pinOptions.inFlow ? "relative" : "absolute",
 							top:  0,
 							left: 0
 						},
@@ -788,7 +789,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updatePinSpacerSize = function () {
-			if (_pin && _parent && _pinOptions.origStyle.position != "absolute") { // no spacerresize, if original position is absolute
+			if (_pin && _parent && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 				var
 					after = (_state === "AFTER"),
 					before = (_state === "BEFORE"),
@@ -806,20 +807,42 @@ Greensock License info at http://www.greensock.com/licensing/
 					css["margin-top"] = css["margin-bottom"] = "auto";
 				}
 
-				// set new size spacer->pin if relsize / spacer->pin if hard size
+				// set new size
+				// if relsize: spacer -> pin | else: pin -> spacer
 				if (_pinOptions.relSize.width) {
-					_pin.css("width", pinned ? _pinOptions.spacer.width() : "100%");
+					if (pinned) {
+						if ($(window).width() == _pinOptions.spacer.parent().width()) {
+							// relative to body
+							_pin.css("width", "inherit");
+						} else {
+							// not relative to body -> need to calculate
+							_pin.css("width", _pinOptions.spacer.width());
+						}
+					} else {
+						_pin.css("width", "100%");
+					}
 				} else {
 					css["min-width"] = $spacercontent.outerWidth(true); // needed for cascading pins
 					css.width = pinned ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
-					_pin.css("height", pinned ? _pinOptions.spacer.height() : "100%");
+					if (pinned) {
+						if ($(window).height() == _pinOptions.spacer.parent().height()) {
+							// relative to body
+							_pin.css("height", "inherit");
+						} else {
+							// not relative to body -> need to calculate
+							_pin.css("height", _pinOptions.spacer.height());
+						}
+					} else {
+						_pin.css("height", "100%");
+					}
 				} else {
 					css["min-height"] = $spacercontent.outerHeight(!marginCollapse); // needed for cascading pins
 					css.height = pinned ? css["min-height"] : "auto";
 				}
 
+				// add space for duration if pushFollowers is true
 				if (_pinOptions.pushFollowers) {
 					css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 					css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
@@ -842,6 +865,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 			}
 		};
+
 		/**
 		 * Updates the Pin spacer size state (in certain scenarios)
 		 * If container is resized during pin and relatively sized the size of the pin might need to be updated...
@@ -849,7 +873,15 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updateRelativePinSpacer = function (e) {
-			if (_parent && _pin && _state === "DURING" && (_pinOptions.relSize.width || _pinOptions.relSize.height)) {
+			if (   _parent && _pin // well, duh
+				&& (_state === "DURING" || _state === "AFTER" && _options.duration == 0) // element in pinned state?
+				&& ( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+					  (
+					       _pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()
+					  	|| _pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height()
+					  )
+				   )
+			) {
 				updatePinSpacerSize();
 			}
 		};
@@ -1362,6 +1394,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (element.length == 0) {
 				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 				return ScrollScene; // cancel
+			} else if (element.css("position") == "fixed") {
+				log(1, "ERROR: Pin does not work with elements that are positioned 'fixed'.");
+				return ScrollScene; // cancel
 			}
 
 			if (_pin) { // preexisting pin?
@@ -1378,15 +1413,10 @@ Greensock License info at http://www.greensock.com/licensing/
 			
 			_pin.parent().hide(); // hack start to force jQuery css to return stylesheet values instead of calculated px values.
 			var
-				pinCSS = _pin.css(["position", "display", "top", "left", "bottom", "right"]),
+				inFlow = _pin.css("position") != "absolute",
+				pinCSS = _pin.css(["display", "top", "left", "bottom", "right"]),
 				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
-
-			if (pinCSS.position == "fixed") {
-				log(1, "ERROR: Pin does not work with elements that are positioned 'fixed'.");
-				_pin = undefined;
-				return ScrollScene;
-			}
 
 			// create spacer
 			var spacer = $("<div></div>")
@@ -1394,7 +1424,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					.css(pinCSS)
 					.data("ScrollMagicPinSpacer", true)
 					.css({
-						position: pinCSS.position == "absolute" ? "absolute" : "relative",
+						position: inFlow ? "relative" : "absolute",
 						"margin-left": "auto",
 						"margin-right": "auto",
 						"box-sizing": "content-box",
@@ -1402,7 +1432,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						"-webkit-box-sizing": "content-box"
 					});
 
-			if (pinCSS.position == "absolute" && settings.pushFollowers) {
+			if (!inFlow && settings.pushFollowers) {
 				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
 				settings.pushFollowers = false;
 			}
@@ -1415,10 +1445,11 @@ Greensock License info at http://www.greensock.com/licensing/
 					height: sizeCSS.height.slice(-1) === "%"
 				},
 				pushFollowers: settings.pushFollowers,
-				origStyle: pinCSS // save old styles (for reset)
+				inFlow: inFlow, // stores if the element takes up space in the document flow
+				origStyle: _pin.attr("style") // save old styles (for reset)
 			};
 
-			// if relative size, copy it to spacer...
+			// if relative size, transfer it to spacer and make pin calculate it...
 			if (_pinOptions.relSize.width) {
 				spacer.css("width", sizeCSS.width);
 			}
@@ -1431,7 +1462,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					.appendTo(spacer)
 					// and set new css
 					.css({
-						position: pinCSS.position == "absolute" ? "absolute" : "relative",
+						position: inFlow ? "relative" : "absolute",
 						top: "auto",
 						left: "auto",
 						bottom: "auto",
@@ -1466,7 +1497,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (_pin) {
 				if (reset || !_parent) { // if there's no parent no progress was made anyway...
 					_pin.insertBefore(_pinOptions.spacer)
-						.css(_pinOptions.origStyle);
+						.attr("style", _pinOptions.origStyle);
 					_pinOptions.spacer.remove();
 				} else {
 					if (_state === "DURING") {

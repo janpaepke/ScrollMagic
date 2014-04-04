@@ -1,6 +1,6 @@
 {
     "name": "ScrollMagic",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "title": "ScrollMagic",
     "author": {
         "name": "Jan Paepke",
@@ -17,7 +17,7 @@
         }
     ],
     "dependencies": {
-        "jquery": ">=1.6",
+        "jquery": ">=1.7",
         "greensock":">=1.8"
     },
     "description": "The jQuery plugin for magical scroll interactions.",
