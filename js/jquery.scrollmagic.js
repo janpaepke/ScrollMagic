@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.6
+@version	1.0.7
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -664,7 +664,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updateScrollOffset = function () {
-			_scrollOffset = {start: ScrollScene.startPosition()};
+			_scrollOffset = {start: ScrollScene.triggerOffset()};
 			if (_parent) {
 				// take away triggerHook portion to get relative to top
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
@@ -876,11 +876,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (   _parent && _pin // well, duh
 				&& (_state === "DURING" || _state === "AFTER" && _options.duration == 0) // element in pinned state?
 				&& ( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-					  (
-					       _pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()
-					  	|| _pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height()
-					  )
-				   )
+						   (_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width())
+						|| (_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
+					)
 			) {
 				updatePinSpacerSize();
 			}
@@ -999,7 +997,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * scene.triggerHook(0.7);
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
-		 * @param {(number|string)} [newTriggerHook] - The new triggerHook of the scene. @see {@link ScrollScene) parameter description for value options.
+		 * @param {(number|string)} [newTriggerHook] - The new triggerHook of the scene. @see {@link ScrollScene} parameter description for value options.
 		 * @returns {number} `get` -  Current triggerHook (ALWAYS numerical).
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
@@ -1119,15 +1117,24 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 		
 		/**
-		 * **Get** the start position of the scene in relation to the container.  
+		 * **Get** the trigger offset of the scene.  
+		 * @public
+		 * @deprecated Method is deprecated since 1.0.7. You should now use {@link ScrollScene.triggerOffset}
+		 */
+		this.startPosition = function () {
+			return this.triggerOffset();
+		}
+
+		/**
+		 * **Get** the trigger offset of the scene.  
 		 * @public
 		 * @example
-		 * // get the scene's start position
-		 * var startPosition = scene.startPosition();
+		 * // get the scene's trigger offset
+		 * var triggerOffset = scene.triggerOffset();
 		 *
 		 * @returns {number} Start position of the scene. Top position value for vertical and left position value for horizontal scrolls.
 		 */
-		this.startPosition = function () {
+		this.triggerOffset = function () {
 			var pos = _options.offset;
 			if (_parent) {
 				var containerInfo = _parent.info()
@@ -1161,6 +1168,23 @@ Greensock License info at http://www.greensock.com/licensing/
 			return pos;
 		};
 
+		/**
+		 * **Get** the current scroll offset for the start of the scene.  
+		 * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
+		 * This means, that resizing the container will influence the scene's start offset.
+		 * @public
+		 * @example
+		 * // get the current scroll offset for the start and end of the scene.
+		 * var start = scene.scrollOffset();
+		 * var end = scene.scrollOffset() + scene.duration();
+		 * console.log("the scene starts at", start, "and ends at", end);
+		 *
+		 * @returns {number} The scroll offset (of the container) at which the scene will trigger. Y value for vertical and X value for horizontal scrolls.
+		 */
+		this.scrollOffset = function () {
+			return _scrollOffset.start;
+		};
+
 		/*
 		 * ----------------------------------------------------------------
 		 * public functions (scene modification)
@@ -1168,7 +1192,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Update the Scene in the parent Controller  
+		 * Update the Scene in the parent Controller.  
 		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`
 		 * @public
 		 * @example
@@ -1841,7 +1865,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			"warn",
 			"log"
 		];
-	if (!console.log) {
+	if (!console['log']) {
 		console.log = $.noop; // no console log, well - do nothing then...
 	}
 	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.

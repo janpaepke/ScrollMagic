@@ -4,7 +4,7 @@
 	by Jan Paepke 2014 (@janpaepke)
 	http://janpaepke.github.io/ScrollMagic
 
-	@version	1.0.6
+	@version	1.0.7
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -188,7 +188,7 @@
 			
 			if (!triggerOnly) {
 				var
-					startPos = scene.startPosition(),
+					startPos = scene.triggerOffset(),
 					endPos = startPos + scene.duration(),
 					resetCSS = {
 						"border": "none",
