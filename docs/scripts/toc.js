@@ -5,17 +5,21 @@ $.fn.toc = function(options) {
 
   var container = $(opts.container);
   var headings = $(opts.selectors, container);
-  var headingOffsets = [];
   var activeClassName = opts.prefix+'-active';
 
   var scrollTo = function(e) {
     if (opts.smoothScrolling) {
       e.preventDefault();
       var elScrollTo = $(e.target).attr('href');
-      var $el = $(elScrollTo);
+      var $el = $(elScrollTo.replace(":", "\\:"));
+      var callbackCalled = false;
 
-      $('body,html').animate({ scrollTop: $el.offset().top }, 400, 'swing', function() {
+      $('body,html').animate({ scrollTop: $el.offset().top - opts.scrollOffset }, 400, 'swing', function(e) {
         location.hash = elScrollTo;
+        if (!callbackCalled){
+          opts.onScrollFinish.call(self);
+          callbackCalled = true;
+        }
       });
     }
     $('li', self).removeClass(activeClassName);
@@ -31,14 +35,16 @@ $.fn.toc = function(options) {
     timeout = setTimeout(function() {
       var top = $(window).scrollTop(),
         highlighted;
-      for (var i = 0, c = headingOffsets.length; i < c; i++) {
-        if (headingOffsets[i] >= top) {
+      headings.each(function(i, heading) {
+        var $h = $(heading);
+        var htop = $h.offset().top - opts.scrollOffset - opts.highlightOffset;
+        if (htop >= top) {
           $('li', self).removeClass(activeClassName);
           highlighted = $('li:eq('+(i-1)+')', self).addClass(activeClassName);
           opts.onHighlight(highlighted);
-          break;
+          return false;
         }
-      }
+      });
     }, 50);
   };
   if (opts.highlightOnScroll) {
@@ -114,7 +120,6 @@ $.fn.toc = function(options) {
     var ul = $('<ul/>');
     headings.each(function(i, heading) {
       var $h = $(heading);
-      headingOffsets.push($h.offset().top - opts.highlightOffset);
 
       //add anchor
       var anchor = $('<span/>').attr('id', opts.anchorName(i, heading, opts.prefix)).insertBefore($h);
@@ -191,9 +196,10 @@ jQuery.fn.toc.defaults = {
   selectors: 'h1,h2,h3',
   smoothScrolling: true,
   prefix: 'toc',
+  scrollOffset: 0,
   onHighlight: function() {},
   highlightOnScroll: true,
-  highlightOffset: 100,
+  highlightOffset: 10,
   anchorName: function(i, heading, prefix) {
     return prefix+i;
   },

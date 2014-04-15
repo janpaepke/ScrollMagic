@@ -2055,14 +2055,17 @@ Greensock License info at http://www.greensock.com/licensing/
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
+		function openDeeplinkedElement () {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		}
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {
 					return $(heading).attr("id") || ( prefix + i );
 				},
 				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
-				showAndHide : false,
-				scrollTo    : 60
+				onScrollFinish : openDeeplinkedElement,
+				scrollOffset : 60
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
@@ -2073,9 +2076,15 @@ Greensock License info at http://www.greensock.com/licensing/
 	
 	<script>
 		$( function () {
-			$('#main').localScroll({
-				offset: { top: 56 } //offset by the height of your header (give or take a few px, see what works for you)
-			});
+			// $('#main').localScroll({
+			// 	offset: { top: 56 } //offset by the height of your header (give or take a few px, see what works for you)
+			// });
+			// workaround for anchors below header...
+			window.setTimeout(function () {
+				$(document).scrollTop($(document).scrollTop()-60);
+			}, 1)
+			
+			var hash = window.location.hash.substring(1).replace(":", "\\:");
 			$( "dt h4.name" ).each( function () {
 				var $this = $( this );
 				var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
@@ -2084,8 +2093,9 @@ Greensock License info at http://www.greensock.com/licensing/
 
 				$this.append( icon ).css( {cursor : "pointer"} );
 				$this.addClass( "member-collapsed" ).addClass( "member" );
-
-				children.hide();
+				if (hash != $this.attr("id")) {
+					children.hide();
+				}
 				$this.toggle( function () {
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
@@ -2096,6 +2106,9 @@ Greensock License info at http://www.greensock.com/licensing/
 					children.slideUp();
 				} );
 			} );
+			// open if deeplinked
+			if (hash.length > 0)
+				openDeeplinkedElement();
 		} );
 	</script>
 	
