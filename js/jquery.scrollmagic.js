@@ -101,9 +101,9 @@ Greensock License info at http://www.greensock.com/licensing/
 					delete _options[key];
 				}
 			});
-			_options.container = $(_options.container).first()
+			_options.container = $(_options.container).first();
 			// check ScrolContainer
-			if (_options.container.length == 0) {
+			if (_options.container.length === 0) {
 				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
 				return; // cancel
 			}
@@ -143,10 +143,10 @@ Greensock License info at http://www.greensock.com/licensing/
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
 				var deltaScroll = _scrollPos - oldScrollPos;
-				_scrollDirection = (deltaScroll == 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+				_scrollDirection = (deltaScroll === 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
 				// update scenes
 				ScrollMagic.updateScene(scenesToUpdate, true);
-				if (scenesToUpdate.length == 0 && _options.loglevel >= 3) {
+				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
 				_updateScenesOnNextTick = false;
@@ -208,7 +208,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.addScene = function (ScrollScene) {
 			if ($.isArray(ScrollScene)) {
 				$.each(ScrollScene, function (index, scene) {
-					ScrollMagic.addScene(scene)
+					ScrollMagic.addScene(scene);
 				});
 			} else {
 				if (ScrollScene.parent() != ScrollMagic) {
@@ -221,7 +221,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						if (ScrollScene[key]) {
 							ScrollScene[key].call(ScrollScene, value);
 						}
-					})
+					});
 					log(3, "added Scene (" + _sceneObjects.length + " total)");
 				}
 			}
@@ -245,7 +245,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.removeScene = function (ScrollScene) {
 			if ($.isArray(ScrollScene)) {
 				$.each(ScrollScene, function (index, scene) {
-					ScrollMagic.removeScene(scene)
+					ScrollMagic.removeScene(scene);
 				});
 			} else {
 				var index = $.inArray(ScrollScene, _sceneObjects);
@@ -380,7 +380,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				scrollDirection: _scrollDirection,
 				container: _options.container,
 				isDocument: _isDocument
-			}
+			};
 			if (!arguments.length) { // get all as an object
 				return values;
 			} else if (values[about] !== undefined) {
@@ -577,7 +577,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						updateScrollOffset();
 					}
 					ScrollScene.update();
-					if ((_state !== "DURING" && e.what == "duration") || (_state === "AFTER" && _options.duration == 0)) { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
+					if ((_state !== "DURING" && e.what == "duration") || (_state === "AFTER" && _options.duration === 0)) { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
 						updatePinState();
 					}
 				}
@@ -605,7 +605,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				args.unshift(loglevel, prefix);
 				func.apply(window, args);
 			}
-		}
+		};
 
 		/**
 		 * Check the validity of all options and reset to default if neccessary.
@@ -628,7 +628,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
 				_options.offset = DEFAULT_OPTIONS.offset;
 			}
-			if (_options.triggerElement != null && $(_options.triggerElement).length == 0) {
+			if (_options.triggerElement !== null && $(_options.triggerElement).length === 0) {
 				log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
 				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
 			}
@@ -684,7 +684,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (_tween) {
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if ((_state === "DURING" || (_state === "AFTER" && _options.duration == 0)) && _tween.paused()) {
+					if ((_state === "DURING" || (_state === "AFTER" && _options.duration === 0)) && _tween.paused()) {
 						_tween.play();
 					} else if (_state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
@@ -693,7 +693,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					}
 				} else if (progress != _tween.progress()) { // do we even need to update the progress?
 					// no infinite loop - so should we just play or go to a specific point in time?
-					if (_options.duration == 0) {
+					if (_options.duration === 0) {
 						// play the animation
 						if (_state == "AFTER") { // play from 0 to 1
 							_tween.play();
@@ -728,7 +728,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				var 
 					containerInfo = _parent.info();
 
-				if (!forceUnpin && (_state === "DURING" || (_state === "AFTER" && _options.duration == 0))) { // during scene or if duration is 0 and we are past the trigger
+				if (!forceUnpin && (_state === "DURING" || (_state === "AFTER" && _options.duration === 0))) { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					if (_pin.css("position") != "fixed") {
 						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
@@ -739,7 +739,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 					var
 						fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
- 						scrollDistance = _options.reverse || _options.duration == 0
+ 						scrollDistance = _options.reverse || _options.duration === 0
  										 ? containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
  					
@@ -767,9 +767,9 @@ Greensock License info at http://www.greensock.com/licensing/
 					if (!_pinOptions.pushFollowers) {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 					} else {
-						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) == 0) {
+						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) === 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
-						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) == 0) { // before
+						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) === 0) { // before
 							change = true; // jumped past fixed state upward direction
 						}
 					}
@@ -874,7 +874,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		var updateRelativePinSpacer = function (e) {
 			if (   _parent && _pin // well, duh
-				&& (_state === "DURING" || _state === "AFTER" && _options.duration == 0) // element in pinned state?
+				&& (_state === "DURING" || _state === "AFTER" && _options.duration === 0) // element in pinned state?
 				&& ( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 						   (_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width())
 						|| (_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
@@ -1123,7 +1123,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		this.startPosition = function () {
 			return this.triggerOffset();
-		}
+		};
 
 		/**
 		 * **Get** the trigger offset of the scene.  
@@ -1137,7 +1137,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.triggerOffset = function () {
 			var pos = _options.offset;
 			if (_parent) {
-				var containerInfo = _parent.info()
+				var containerInfo = _parent.info();
 				// get the trigger position
 				if (_options.triggerElement === null) {
 					// return the triggerHook to start right at the beginning
@@ -1216,7 +1216,7 @@ Greensock License info at http://www.greensock.com/licensing/
 							newProgress;
 						// if triggerElement is set we need to update the start position as it may have changed.
 						if (_options.triggerElement !== null) {
-							updateScrollOffset()
+							updateScrollOffset();
 						}
 
 						if (_options.duration > 0) {
@@ -1288,10 +1288,10 @@ Greensock License info at http://www.greensock.com/licensing/
 					var
 						eventVars = {progress: _progress, state: _state, scrollDirection: scrollDirection},
 						stateChanged = _state != oldState,
-						instantReverse = (_state === 'BEFORE' && _options.duration == 0);
+						instantReverse = (_state === 'BEFORE' && _options.duration === 0);
 
 					if (stateChanged) {
-						if (_state === 'DURING' || _options.duration == 0) {
+						if (_state === 'DURING' || _options.duration === 0) {
 							ScrollScene.trigger("enter", eventVars);
 						}
 						if (_state === 'BEFORE' || oldState === 'BEFORE') {
@@ -1303,7 +1303,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						if (_state === 'AFTER' || oldState === 'AFTER') {
 							ScrollScene.trigger(instantReverse ? "start" : "end", eventVars);
 						}
-						if (_state !== 'DURING' || _options.duration == 0) {
+						if (_state !== 'DURING' || _options.duration === 0) {
 							ScrollScene.trigger("leave", eventVars);
 						}
 					}
@@ -1410,12 +1410,12 @@ Greensock License info at http://www.greensock.com/licensing/
 				defaultSettings = {
 					pushFollowers: true,
 					spacerClass: "scrollmagic-pin-spacer"
-				},
-				settings = $.extend({}, defaultSettings, settings);
+				};
+			settings = $.extend({}, defaultSettings, settings);
 
 			// validate Element
 			element = $(element).first();
-			if (element.length == 0) {
+			if (element.length === 0) {
 				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 				return ScrollScene; // cancel
 			} else if (element.css("position") == "fixed") {
@@ -1629,7 +1629,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			this.removeTween(reset);
 			this.removePin(reset);
 			this.remove();
-			this.off("start end enter leave progress change update change.internal progress.internal")
+			this.off("start end enter leave progress change update change.internal progress.internal");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
@@ -1819,7 +1819,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			var names = $.trim(name).toLowerCase()
 						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
 						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
-			$(ScrollScene).off(names, callback)
+			$(ScrollScene).off(names, callback);
 			return ScrollScene;
 		 };
 
@@ -1839,7 +1839,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			var event = {
 				type: $.trim(name).toLowerCase(),
 				target: ScrollScene
-			}
+			};
 			if ($.isPlainObject(vars)) {
 				event = $.extend({}, vars, event);
 			}
