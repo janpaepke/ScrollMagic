@@ -340,6 +340,58 @@ h3 {
 a:hover #speechbubble p:last-child {
 	text-decoration: underline;
 }
+#madewith {
+	
+}
+#madewith a {
+	display: inline-block;
+	position: relative;
+	margin-right: 10px;
+	width: 150px;
+	height: 150px;
+	overflow: hidden;
+}
+#madewith a img {
+	width: 100%;
+	height: 100%;
+	/* For Safari 3.1 to 6.0 */
+	-webkit-transition-property: width, height, margin;
+	-webkit-transition-duration: 0.15s;
+	-webkit-transition-timing-function: linear;
+	/* Standard syntax */
+	transition-property: width, height, margin;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+}
+#madewith a::after{
+	content: "";
+	position: absolute;
+	top: -4px;
+	bottom: -4px;
+	left: -4px;
+	right: -4px;
+	border: 4px solid white;
+	/* For Safari 3.1 to 6.0 */
+	-webkit-transition-property: top, bottom, left, right;
+	-webkit-transition-duration: 0.15s;
+	-webkit-transition-timing-function: linear;
+	/* Standard syntax */
+	transition-property: top, bottom, left, right;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+}
+#madewith a:hover img {
+	width: 110%;
+	height: 110%;
+	margin-left: -5%;
+	margin-top: -5%;
+}
+#madewith a:hover::after{
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
 html.touch body {
 	font-size: 25px;
 }
