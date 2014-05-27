@@ -109,7 +109,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.7
+@version	1.0.8
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -832,6 +832,8 @@ Greensock License info at http://www.greensock.com/licensing/
 						_pin.css("position", "fixed");
 						// update pin spacer
 						updatePinSpacerSize();
+						// add pinned class
+						_pin.addClass(_pinOptions.pinnedClass);
 					}
 
 					var
@@ -873,6 +875,8 @@ Greensock License info at http://www.greensock.com/licensing/
 					// set new values
 					_pin.css(newCSS);
 					if (change) {
+						// remove pinned class
+						_pin.removeClass(_pinOptions.pinnedClass);
 						// update pin spacer if state changed
 						updatePinSpacerSize();
 					}
@@ -1289,7 +1293,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		/**
-		 * Update the Scene in the parent Controller.  
+		 * Update the Scene in the parent Controller to reflect the current state.  
 		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`
 		 * @public
 		 * @example
@@ -1498,15 +1502,17 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @param {object} [settings] - settings for the pin
 		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
 		 												   Ignored, when duration is `0`.
-		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element 
-		 inning.
+		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element.  
+		 * @param {string} [settings.pinnedClass=""] - Classname that should be added to the pinned element during pin phase (and removed after).
+		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.setPin = function (element, settings) {
 			var
 				defaultSettings = {
 					pushFollowers: true,
-					spacerClass: "scrollmagic-pin-spacer"
+					spacerClass: "scrollmagic-pin-spacer",
+					pinnedClass: ""
 				};
 			settings = $.extend({}, defaultSettings, settings);
 
@@ -1567,7 +1573,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
-				origStyle: _pin.attr("style") // save old styles (for reset)
+				origStyle: _pin.attr("style"), // save old styles (for reset)
+				pinnedClass: settings.pinnedClass // the class that should be added to the element when pinned
 			};
 
 			// if relative size, transfer it to spacer and make pin calculate it...
