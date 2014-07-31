@@ -24,11 +24,15 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 */
-(function($) {
+(function($, window) {
+	
+	"use strict";
+
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
-	 * @constructor
+	 * @class
+	 * @global
 	 *
 	 * @example
 	 * // basic initialization
@@ -48,9 +52,7 @@ Greensock License info at http://www.greensock.com/licensing/
 											 ** `3` => errors, warnings, debuginfo
 	 *
 	 */
-	ScrollMagic = function(options) {
-
-		"use strict";
+	var ScrollMagic = function(options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -477,7 +479,8 @@ Greensock License info at http://www.greensock.com/licensing/
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
-	 * @constructor
+	 * @class
+	 * @global
 	 *
 	 * @example
 	 * // create a standard scene and add it to a controller
@@ -514,9 +517,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
-	ScrollScene = function (options) {
-
-		"use strict";
+	var ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -863,10 +864,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updatePinInContainer = function (e) {
-			if (_parent && _pin && _state === "DURING") {
-				if (!_parent.info("isDocument")) {
-					updatePinState();
-				}
+			if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) {
+				updatePinState();
 			}
 		};
 
@@ -1860,6 +1859,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		return ScrollScene;
 	};
 
+	// make global references available
+	window.ScrollScene = ScrollScene;
+	window.ScrollMagic = ScrollMagic;
+
 	/*
 	 * ----------------------------------------------------------------
 	 * global logging functions and making sure no console errors occur
@@ -1919,4 +1922,4 @@ Greensock License info at http://www.greensock.com/licensing/
 		return offset;
 	};
 
-})(jQuery);
+})(jQuery, window);
