@@ -486,6 +486,9 @@ ul#menu ul li a:hover {
 	transition-delay: 0s;
 	-webkit-transition-delay: 0s; /* Safari */
 }
+.menuwrap ul#menu {
+	position: absolute;
+}
 .menuwrap div.flag {
 	top: 51px;
 	position: absolute;
