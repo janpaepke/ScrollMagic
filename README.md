@@ -68,7 +68,7 @@ controller.addScene([
 ```
 Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for full reference.
 ##Help
-To get help please first read the [support rules and instructions](https://github.com/janpaepke/ScrollMagic/wiki/Support:-Rules-and-Instructions).  
+To get help please read the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
 If you still can't figure it out, please post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
 ##Browser Support
