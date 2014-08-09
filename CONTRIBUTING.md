@@ -1,7 +1,7 @@
 # ScrollMagic Support Guidelines
 
 Got stuck with your ScrollMagic page and don't know what went wrong?  
-Don't worry - here's how you get help and solve your issues.
+We'd love to help you, but before posting an issue please follow these steps and in most cases you will be able to figure it out yourself.
 
 ## 1. Make sure your console is clean.
 ScrollMagic posts a lot of useful debugging information to the console of your browser.
@@ -13,20 +13,30 @@ Both the [controller class](http://janpaepke.github.io/ScrollMagic/docs/ScrollMa
 Does the controller update, when you scroll?  
 Is your scene object behaving correctly?
 
-To get visual help you can also include the ScrollMagic debugging extension.  
-Include the file into your html like this:
+## 2. The tweens don't work?
+
+### 2.1 Make sure they are happening at the correct scroll position
+
+Many times the reason you don't see your tweens is because they are happening outside of the viewport. Either before you scrolled past the element you are animating or after.
+
+An easy way to make sure is to add visual help by including the ScrollMagic debugging extension.  
+Simply add the file reference into your html like this:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
 ```
-And then use `scene.addIndicators()` to get visual indicators for where your scene should start and stop.
+Then use `scene.addIndicators()` to get visual indicators for where your scene should start and stop.
 
-## 2. Tweens don't work as expected? Make sure it's a ScrollMagic issue!
+If you are sure that the scene is triggering when you want it to and the item is in view, then please...
+
+### 2.1 Make sure the problem is with ScrollMagic, not with TweenMax
 With most tween-related problems the issue lies with CSS, TweenMax or a misuse thereof.  
+For example a common mistake is that the selector for TweenMax turns up empty.
+
 A best practice is usually to create your tweens but **do not** add them to the ScrollScene object using `setTween`.
 Now look at your site and see if the animation plays out the way you wanted to.  
 If it doesn't the problem is obviously not with ScrollMagic.
 
-Check out the [Greensock Forums](http://forums.greensock.com/forum/11-animation-tweening-js/) to get help using TweenMax.
+Check out the [Greensock Forums](http://www.greensock.com/forums/forum/11-gsap/) to get help using TweenMax.
 
 Only once the animation plays like you want it to add it to the ScrollScene.
 
