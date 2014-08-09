@@ -17,7 +17,7 @@ Is your scene object behaving correctly?
 
 ### 2.1 Make sure they are happening at the correct scroll position
 
-Many times the reason you don't see your tweens is because they are happening outside of the viewport. Either before you scrolled past the element you are animating or after.
+Many times the reason you don't see your tweens is because they are happening outside of the viewport. Either before you scrolled past the element you are animating, or after.
 
 An easy way to make sure is to add visual help by including the ScrollMagic debugging extension.  
 Simply add the file reference into your html like this:
