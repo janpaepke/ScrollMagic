@@ -465,7 +465,7 @@
     
     
     <div class="description">
-        <p>Add one ore more scene(s) to the controller.<br>This is the equivalent to <code>ScrollScene.addTo(controller)</code></p>
+        <p>Add one ore more scene(s) to the controller.<br>This is the equivalent to <code>ScrollScene.addTo(controller)</code>.</p>
     </div>
     
 
@@ -709,7 +709,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-458">line 458</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-466">line 466</a>
     </li></ul></dd>
     
 
@@ -860,7 +860,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-434">line 434</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-442">line 442</a>
     </li></ul></dd>
     
 
@@ -1022,7 +1022,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-377">line 377</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-385">line 385</a>
     </li></ul></dd>
     
 
@@ -1176,7 +1176,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-410">line 410</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-418">line 418</a>
     </li></ul></dd>
     
 
@@ -1236,7 +1236,7 @@
     
     
     <div class="description">
-        <p>Remove one ore more scene(s) from the controller.<br>This is the equivalent to <code>ScrollScene.remove()</code></p>
+        <p>Remove one ore more scene(s) from the controller.<br>This is the equivalent to <code>ScrollScene.remove()</code>.</p>
     </div>
     
 
@@ -1378,7 +1378,7 @@
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the current scrollPosition.<br>Watch out: this will permanently overwrite the controller's scrollPos calculation.<br>If you set it to a number it will always have this value.<br>It usually makes more sense to pass a function, when the scrollPosition calculation is not defined by the containers scrollTop or scrollLeft values.<br>This may be the case for mobile applications using iScroll, as there a child container is moved, instead of actually scrolling the container.<br>Please also mind that your function should return y values for vertical scrolls an x for horizontals.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the current scrollPosition.<br><em>Watch out</em>: this will permanently overwrite the controller's scrollPos calculation.<br>If you set it to a number it will always have this value.<br>It usually makes more sense to pass a function, when the scrollPosition calculation is not defined by the containers scrollTop or scrollLeft values.<br>This may be the case for mobile applications using iScroll, as there a child container is moved, instead of actually scrolling the container.<br>Please also mind that your function should return y values for vertical scrolls an x for horizontals.</p>
     </div>
     
 
@@ -1475,7 +1475,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-345">line 345</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-353">line 353</a>
     </li></ul></dd>
     
 
@@ -1535,7 +1535,8 @@
     
     
     <div class="description">
-        <p>Update the controller params and all its Scenes.</p>
+        <p>Updates the controller params and calls updateScene on every scene, that is attached to the controller.<br>See <code>updateScene</code> for more information about what this means.<br>In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.<br>The only application for this method is when ScrollMagic fails to detect these events.<br>One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.
+For this case there will also be the need to provide a custom function to calculate the correct scroll position. See <code>scrollPos</code> for details.</p>
     </div>
     
 
@@ -1637,7 +1638,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-316">line 316</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-324">line 324</a>
     </li></ul></dd>
     
 
@@ -1694,7 +1695,7 @@
     
     
     <div class="description">
-        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code></p>
+        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em>Note:</em> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</p>
     </div>
     
 
@@ -1831,7 +1832,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-282">line 282</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-285">line 285</a>
     </li></ul></dd>
     
 
