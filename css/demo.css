@@ -341,12 +341,14 @@ a:hover #speechbubble p:last-child {
 	text-decoration: underline;
 }
 #madewith {
-	
+	margin-right: -10px;
+	margin-bottom: -10px;
 }
 #madewith a {
 	display: inline-block;
 	position: relative;
 	margin-right: 10px;
+	margin-bottom: 10px;
 	width: 150px;
 	height: 150px;
 	overflow: hidden;
