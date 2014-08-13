@@ -84,7 +84,7 @@ Open your console and navigate to the ScrollMagic directory. Then change to the 
 ```Shell
 $ cd dev
 ```
-To install all necessary components we use the **n**ode **p**ackage **m**anager (comes with node).
+To install all necessary components we use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager (comes with node).
 ```Shell
 $ npm install
 ```
