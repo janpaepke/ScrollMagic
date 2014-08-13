@@ -1,118 +1,6 @@
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>ScrollMagic Source: jquery.scrollmagic.debug.js</title>
-	
-  <script src="scripts/prettify/prettify.js"> </script>
-  <script src="scripts/prettify/lang-css.js"> </script>
-	<!--[if lt IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
-	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-
-	
-	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
-	
-</head>
-
-<body>
-<div class="container-fluid">
-	<div class="navbar navbar-fixed-top navbar-inverse">
-		<div class="navbar-inner">
-			<a class="brand" href="index.html">ScrollMagic</a>
-			<ul class="nav">
-				
-				<li class="dropdown">
-					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="ScrollMagic.html">ScrollMagic</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html">ScrollScene</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-				<li class="dropdown">
-					<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b
-						class="caret"></b></a>
-
-					<ul class="dropdown-menu ">
-						
-						<li>
-							<a href="ScrollScene.html#event:change">change</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:end">end</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:enter">enter</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:leave">leave</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:progress">progress</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:start">start</a>
-						</li>
-						
-						<li>
-							<a href="ScrollScene.html#event:update">update</a>
-						</li>
-						
-
-					</ul>
-				</li>
-				
-			</ul>
-		</div>
-	</div>
-
-	<div class="row-fluid">
-
-		
-			<div class="span12">
-				
-				<div id="main">
-					
-
-
-		<h1 class="page-title">Source: jquery.scrollmagic.debug.js</h1>
-    
-    <section>
-        <article>
-            <pre class="sunlight-highlight-javascript linenums">/*
-ScrollMagic v1.0.8
-The jQuery plugin for doing magical scroll interactions.
-(c) 2014 Jan Paepke (@janpaepke)
-License &amp; Info: http://janpaepke.github.io/ScrollMagic
-	
-Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
-http://johnpolacek.github.com/superscrollorama/
-
-Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
-Greensock License info at http://www.greensock.com/licensing/
-*/
 /*
 	@overview Debug Extension for ScrollMagic.
-	@version	1.0.8
+	@version	%VERSION%
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -164,7 +52,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				$container = $(options.parent).length > 0 ?
 						  $(options.parent)
 						: cParams.isDocument ? $("body") : cParams.container, // check if window element (then use body)
-				$wrap = $("&lt;div>&lt;/div>")
+				$wrap = $("<div></div>")
 						.addClass("ScrollSceneIndicators")
 						.data("options", options)
 						.css({
@@ -178,21 +66,21 @@ Greensock License info at http://www.greensock.com/licensing/
 							"pointer-events": "none",
 							"font-size": 10
 						}),
-				$triggerHook = $("&lt;div>trigger&lt;/div>")
+				$triggerHook = $("<div>trigger</div>")
 								.css({
 									position: "fixed",
 									overflow: "visible",
 									color: options.colorTrigger
 								})
 								.addClass("hook");
-				$start = $("&lt;div>start" + suffix + "&lt;/div>")
+				$start = $("<div>start" + suffix + "</div>")
 								.css({
 									position: "absolute",
 									overflow: "visible",
 									color: options.colorStart
 								})
 								.addClass("start");
-				$end = $("&lt;div>end" + suffix + "&lt;/div>")
+				$end = $("<div>end" + suffix + "</div>")
 								.css({
 									position: "absolute",
 									overflow: "visible",
@@ -212,7 +100,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 			scene.updateIndicators();
 			var callUpdate = function (e) {
-				if ((e.type == "scroll" || e.type == "resize") &amp;&amp; !cParams.isDocument) {
+				if ((e.type == "scroll" || e.type == "resize") && !cParams.isDocument) {
 					scene.updateIndicators(true);
 				} else {
 					scene.updateIndicators();
@@ -234,7 +122,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			controller = scene.parent(),
 			indicators = scene.indicators,
 			options = indicators.data("options");
-		if (indicators &amp;&amp; controller) {
+		if (indicators && controller) {
 			var
 				cParams = controller.info(),
 				$triggerHook = indicators.children(".hook"),
@@ -261,7 +149,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				.data("parent", cParams.container);
 
 			$otherhook = $(".ScrollSceneIndicators .hook[data-hook=\""+ hookPos +"\"][data-direction="+direction+"]:visible").not($triggerHook);
-			if ($otherhook.length > 0 &amp;&amp; $otherhook.data("parent") == cParams.container) {
+			if ($otherhook.length > 0 && $otherhook.data("parent") == cParams.container) {
 				$triggerHook.hide();
 			} else {
 				$triggerHook.show();
@@ -348,117 +236,4 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		}
 	};
-})(jQuery);</pre>
-        </article>
-    </section>
-
-
-
-
-
-				</div>
-
-				<div class="clearfix"></div>
-				<footer>
-					
-					
-		<span class="copyright">
-		© Jan Paepke 2014
-		</span>
-					<br />
-					
-		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-alpha9</a>
-		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
-		</span>
-				</footer>
-			</div>
-
-			
-			<br clear="both">
-		</div>
-
-	</div>
-	<script src="scripts/sunlight.js"></script>
-	<script src="scripts/sunlight.javascript.js"></script>
-	<script src="scripts/sunlight-plugin.doclinks.js"></script>
-	<script src="scripts/sunlight-plugin.linenumbers.js"></script>
-	<script src="scripts/sunlight-plugin.menu.js"></script>
-	<script src="scripts/jquery.min.js"></script>
-	<script src="scripts/jquery.scrollTo.js"></script>
-	<script src="scripts/jquery.localScroll.js"></script>
-	<script src="scripts/bootstrap-dropdown.js"></script>
-	<script src="scripts/toc.js"></script>
-
-	<script> prettyPrint(); </script>
-	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
-
-	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
-		}
-		$( function () {
-			$( "#toc" ).toc( {
-			    anchorName  : function(i, heading, prefix) {
-					return $(heading).attr("id") || ( prefix + i );
-				},
-				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
-				onScrollFinish : openDeeplinkedElement,
-				scrollOffset : 60
-			} );
-			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
-			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
-
-		} );
-	</script>
-
-	
-	<script>
-		$( function () {
-			// $('#main').localScroll({
-			// 	offset: { top: 56 } //offset by the height of your header (give or take a few px, see what works for you)
-			// });
-			// workaround for anchors below header...
-			window.setTimeout(function () {
-				$(document).scrollTop($(document).scrollTop()-60);
-			}, 1)
-			
-			var hash = window.location.hash.substring(1).replace(":", "\\:");
-			$( "dt h4.name" ).each( function () {
-				var $this = $( this );
-				var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
-				var dt = $this.parents( "dt" );
-				var children = dt.next( "dd" );
-
-				$this.append( icon ).css( {cursor : "pointer"} );
-				$this.addClass( "member-collapsed" ).addClass( "member" );
-				if (hash != $this.attr("id")) {
-					children.hide();
-				}
-				$this.toggle( function () {
-					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
-					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
-				}, function () {
-					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
-					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
-					children.slideUp();
-				} );
-			} );
-			// open if deeplinked
-			if (hash.length > 0)
-				openDeeplinkedElement();
-		} );
-	</script>
-	
-
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
-		ga('send', 'pageview');
-	</script>
-</body>
-</html>
+})(jQuery);

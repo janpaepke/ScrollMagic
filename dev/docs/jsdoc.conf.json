@@ -1,0 +1,25 @@
+{
+	"tags"      : {
+		"allowUnknownTags" : true
+	},
+	"plugins"   : ["plugins/markdown"],
+	"templates" : {
+		"cleverLinks"     : true,
+		"monospaceLinks"  : false,
+		"default"         : {
+			"outputSourceFiles" : true
+		},
+		"systemName"      : "ScrollMagic",
+		"footer"          : "",
+		"copyright"       : "© Jan Paepke 2014",
+		"navType"         : "vertical",
+		"theme"           : "cosmo",
+		"linenums"        : true,
+		"collapseSymbols" : true,
+		"inverseNav"      : true
+	},
+	"markdown"  : {
+		"parser"   : "gfm",
+		"hardwrap" : true
+	}
+}

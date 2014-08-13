@@ -1,17 +1,17 @@
 {
-  "name": "ScrollMagic",
-  "description": "The jQuery plugin for magical scroll interactions.",
-  "version": "1.0.8",
-  "homepage": "http://janpaepke.github.io/ScrollMagic/",
-  "author": {
-    "name": "Jan Paepke",
-    "url": "http://www.janpaepke.de"
-  },
-  "main": [
-    "js/jquery.scrollmagic.js"
-  ],
-  "dependencies": {
-    "jquery": "~1.11.0",
-    "gsap": "~> 1.11.5"
-  }
+	"name": "ScrollMagic",
+	"description": "The jQuery plugin for magical scroll interactions.",
+	"version": "1.0.8",
+	"homepage": "http://janpaepke.github.io/ScrollMagic/",
+	"author": {
+		"name": "Jan Paepke",
+		"url": "http://www.janpaepke.de"
+	},
+	"main": [
+		"js/jquery.scrollmagic.js"
+	],
+	"dependencies": {
+		"jquery": "~1.11.0",
+		"gsap": "~> 1.11.5"
+	}
 }

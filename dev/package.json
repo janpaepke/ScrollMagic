@@ -1,0 +1,16 @@
+{
+	"name": "scrollmagic-dev",
+	"version": "1.0.8",
+	"private": true,
+	"devDependencies": {
+		"jshint": "~2.5.1",
+		"uglify-js": "~2.4.13",
+		"semver": "^3.0.1",
+		"chalk": "^0.5.1",
+		"jsdoc": "^3.3.0"
+	},
+	"scripts": {
+		"pretest": "npm update",
+		"test": "karma start karma.conf.js"
+	}
+}
