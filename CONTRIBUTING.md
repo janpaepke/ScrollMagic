@@ -61,6 +61,68 @@ But in order for us to be able to do that and also for future users to benefit f
 
 Thank you for helping me maintain this project by abiding by these rules.
 
-**Please avoid**:
+**For Github issues please avoid**:
 - Hitting reply in the GitHub notification email and leaving the original message in. If you love to use the direct email reply feature, please make sure to delete the original.
 - Posting links to your website and removing them after the issue is solved. This takes away the possibility to learn for future users.
+
+
+# Development
+You want to dig into the source code of ScrollMagic and maybe even contribute? Awesome!  
+Make sure you have [node.js](http://nodejs.org) installed and running on your system.  
+To find out just open your Console (MacOsX Terminal) and type `node -v`.
+
+## Directory Structure
+* `/dev` base folder of the development environment
+	* `/dev/docs` contains configuration and template files for the docs generation
+	* `/dev/src` all the ScrollMagic source files
+	* `/dev/tests` testing environment
+		* `/dev/tests/fixtures` html files for usage in tests
+		* `/dev/tests/spec` contains all the spec files written in [jasemine](http://jasmine.github.io)
+
+## Prepare Development environment
+Open your console and navigate to the ScrollMagic directory. Then change to the dev directory.
+```Shell
+$ cd dev
+```
+To install all necessary components we use the Node Package Manager (comes with node).
+```Shell
+$ npm install
+```
+Now watch the magic happen and once it's done so are you. You are ready to start building and testing.
+
+## Build ScrollMagic
+To combine all source files and store them in their correct location we need to run the build.js file from node.  
+This is achieved by calling:
+```Shell
+$ node build
+```
+You can pass in various arguments to customize the build:
+```
+ 	-v=VERSION	| alias: -version
+ 	Update Version number
+ 	example: node build -v=1.0.4
+ 	
+ 	-o=DIR			| alias: -out=DIR
+ 	Define output directory. If not supplied the default directory '/js' will be used.
+ 	example: node build -o=tmp
+ 	
+ 	-d=[DIR]		| alias: -docs=[DIR]
+ 	Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
+ 	example: node build -d
+```
+So in most cases your build command will look like this:
+```Shell
+$ node build -v=1.0.10 -d
+```
+
+## Test ScrollMagic
+ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.
+**NOTE**: For now only few features are speced out. More tests will follow.
+To run tests call:
+```Shell
+$ npm test
+```
+*Tip:* In case you don't know – to quit the process use ctrl+c.
+
+When you added a new feature be sure to write a new test for it, if you are able to.  
+You'll find a stub spec file here: `dev/tests/spec/_spec.sample.js`.

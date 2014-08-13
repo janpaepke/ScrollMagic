@@ -6,13 +6,13 @@
 
  options:
  	Update Version number
- 		-v=VERSION	| alias: -version			| example: node build.js -v=1.0.4
+ 		-v=VERSION	| alias: -version			| example: node build -v=1.0.4
  	Define output directory
- 		-o=DIR			| alias: -out=DIR			| example: node build.js -o=tmp
+ 		-o=DIR			| alias: -out=DIR			| example: node build -o=tmp
  	Update Docs
- 		-d				| alias: -docs					| example: node build.js -d
+ 		-d				| alias: -docs					| example: node build -d
  	output docs to custom folder:
- 		-d=DIR		| alias: -docs=DIR 			| example: node build.js -d=docs
+ 		-d=DIR		| alias: -docs=DIR 			| example: node build -d=docs
 
 */
 

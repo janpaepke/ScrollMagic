@@ -1,0 +1,1 @@
+jasmine.getFixtures().fixturesPath = 'base/fixtures';
