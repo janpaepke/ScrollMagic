@@ -1,4 +1,4 @@
-# ScrollMagic Support Guidelines
+# Support Guidelines
 
 Got stuck with your ScrollMagic page and don't know what went wrong?  
 We'd love to help you, but before posting an issue please follow these steps and in most cases you will be able to figure it out yourself.
@@ -65,8 +65,8 @@ Thank you for helping me maintain this project by abiding by these rules.
 - Hitting reply in the GitHub notification email and leaving the original message in. If you love to use the direct email reply feature, please make sure to delete the original.
 - Posting links to your website and removing them after the issue is solved. This takes away the possibility to learn for future users.
 
-
-# Development
+---
+# Development Contribution
 You want to dig into the source code of ScrollMagic and maybe even contribute? Awesome!  
 Make sure you have [node.js](http://nodejs.org) installed and running on your system.  
 To find out just open your Console (MacOsX Terminal) and type `node -v`.
@@ -84,14 +84,16 @@ Open your console and navigate to the ScrollMagic directory. Then change to the 
 ```Shell
 $ cd dev
 ```
-To install all necessary components we use the Node Package Manager (comes with node).
+To install all necessary components we use the **n**ode **p**ackage **m**anager (comes with node).
 ```Shell
 $ npm install
 ```
 Now watch the magic happen and once it's done so are you. You are ready to start building and testing.
 
 ## Build ScrollMagic
+For clarity reasons the ScrollMagic source files are split up and can be found in `/dev/src`.
 To combine all source files and store them in their correct location we need to run the build.js file from node.  
+The build process also automatically checks for javascript errors and minifies the main file.
 This is achieved by calling:
 ```Shell
 $ node build
@@ -114,15 +116,16 @@ So in most cases your build command will look like this:
 ```Shell
 $ node build -v=1.0.10 -d
 ```
+This will update the version to 1.0.10 and also generate new docs.
 
 ## Test ScrollMagic
 ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.
-**NOTE**: For now only few features are speced out. More tests will follow.
+**NOTE**: For now only few features are speced out. More tests will follow in due time.  
 To run tests call:
 ```Shell
 $ npm test
 ```
 *Tip:* In case you don't know – to quit the process use ctrl+c.
 
-When you added a new feature be sure to write a new test for it, if you are able to.  
+When you added a new feature to ScrollMagic be sure to write a new test for it, if you are able to.  
 You'll find a stub spec file here: `dev/tests/spec/_spec.sample.js`.
