@@ -20,6 +20,8 @@
 /* ########### load requirements ############ */
 /* ########################################## */
 
+"use strict";
+
 // vars
 var pkg = require('./package.json');
 
@@ -45,7 +47,7 @@ var abspath = function (relpath) {
 
 var replaceAll = function (string, find, replace) {
 	// escape regex
-	find = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
+	find = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 	// return
   return string.replace(new RegExp(find, 'g'), replace);
 };
@@ -158,6 +160,10 @@ process.argv.splice(2).forEach(function(val) {
 	}
 });
 
+var replaces = {
+	"%VERSION%": options.version,
+	"%YEAR%": new Date().getFullYear()
+};
 
 /* ########################################## */
 /* ########## Main build function ########### */
@@ -167,10 +173,7 @@ process.argv.splice(2).forEach(function(val) {
 var build = function (release) {
 	var
 		content = "",
-		replaces = {
-			"%VERSION%": options.version,
-			"%YEAR%": new Date().getFullYear()
-		};
+		inserts = {};
 	
 	// Concatenate files
 	content = release.components.map(function (filePath) {
@@ -183,10 +186,16 @@ var build = function (release) {
 			var
 				search = "// INSERT POINT: "+insert.substring(0, insert.lastIndexOf(".")),
 				replace = fs.readFileSync(DIR.source + "/" + insert, 'utf-8');
-			replaces[search] = replace;
+			inserts[search] = replace;
 		});
 	}
+	
+	// do inserts
+	for (var insert in inserts) {
+		content = replaceAll(content, insert, inserts[insert]);
+	}
 
+	// do replaces
 	for (var needle in replaces) {
 		content = replaceAll(content, needle, replaces[needle]);
 	}
