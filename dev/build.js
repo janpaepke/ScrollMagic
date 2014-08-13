@@ -2,7 +2,7 @@
 
 /*
  build file for ScrollMagic
- usage: node build.js
+ usage: node build
 
  options:
  	Update Version number
@@ -35,6 +35,7 @@ var semver = require('semver');
 var hint = require("jshint").JSHINT;
 var uglify = require('uglify-js');
 var chalk = require('chalk');
+var detectIndent = require('detect-indent');
 
 
 /* ########################################## */
@@ -239,7 +240,7 @@ var build = function (release) {
 var startTime = new Date().getTime();
 var finished = function () {
 	var execTime = new Date().getTime() - startTime;
-	log.info(chalk.green("All done!"), "(" + (execTime / 1000).toFixed(2) + "s)");
+	log.info(chalk.green("All done!"), "(" + (execTime / 1000).toFixed(3) + " secs)");
 };
 
 log.info("Building ScrollMagic version", options.version, options.version === pkg.version ? "(current)" : "(new)");
@@ -255,10 +256,14 @@ if (options.version !== pkg.version) {
 	log.info("Updating version numbers to", options.version);
 	var jsonFiles = ["package.json", "../bower.json", "../ScrollMagic.jquery.json"];
 	jsonFiles.forEach(function (file) {
-		file = abspath(file);
-		var content = JSON.parse(fs.readFileSync(file));
-		content.version = options.version;
-		fs.writeFileSync(file, JSON.stringify(content, null, "\t"));
+		var
+			fullpath = abspath(file),
+			content = fs.readFileSync(fullpath, 'utf-8'),
+			indent = detectIndent(content) || "\t",
+			json = JSON.parse(content);
+
+		json.version = options.version;
+		fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
 	});
 }
 
