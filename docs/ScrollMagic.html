@@ -1382,8 +1382,7 @@
     
     <div class="description">
         <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:
-When used as a getter this function will return the current scroll position.<br>To get a cached value use ScrollMagic.info(&quot;scrollPos&quot;), which will be updated on tick to save on performance.
-For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
+When used as a getter this function will return the current scroll position.<br>To get a cached value use ScrollMagic.info(&quot;scrollPos&quot;), which will be updated on tick to save on performance.<br>For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
 <p>-&gt; <strong>SET</strong>:
 When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
 <p>To change the current scroll position please use <code>ScrollMagic.scrollTo()</code>.</p>

@@ -385,7 +385,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * **Get** the current scrollPosition or **Set** a new method to calculate it.  
 		 * -> **GET**:
 		 * When used as a getter this function will return the current scroll position.  
-		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated on tick to save on performance.
+		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated on tick to save on performance.  
 		 * For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.
 		 *
 		 * -> **SET**:
