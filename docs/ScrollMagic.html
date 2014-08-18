@@ -553,7 +553,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-210">line 210</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-221">line 221</a>
     </li></ul></dd>
     
 
@@ -712,7 +712,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-466">line 466</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-527">line 527</a>
     </li></ul></dd>
     
 
@@ -863,7 +863,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-442">line 442</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-503">line 503</a>
     </li></ul></dd>
     
 
@@ -1025,7 +1025,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-385">line 385</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-446">line 446</a>
     </li></ul></dd>
     
 
@@ -1179,7 +1179,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-418">line 418</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-479">line 479</a>
     </li></ul></dd>
     
 
@@ -1324,7 +1324,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-247">line 247</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-258">line 258</a>
     </li></ul></dd>
     
 
@@ -1373,7 +1373,7 @@
         
             
 <dt>
-    <h4 class="name" id="scrollPos"><span class="type-signature"></span>scrollPos<span class="signature">(<span class="optional">newLoglevel</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="scrollPos"><span class="type-signature"></span>scrollPos<span class="signature">(<span class="optional">scrollPosMethod</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1381,7 +1381,12 @@
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the current scrollPosition.<br><em>Watch out</em>: this will permanently overwrite the controller's scrollPos calculation.<br>If you set it to a number it will always have this value.<br>It usually makes more sense to pass a function, when the scrollPosition calculation is not defined by the containers scrollTop or scrollLeft values.<br>This may be the case for mobile applications using iScroll, as there a child container is moved, instead of actually scrolling the container.<br>Please also mind that your function should return y values for vertical scrolls an x for horizontals.</p>
+        <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:
+When used as a getter this function will return the current scroll position.<br>To get a cached value use ScrollMagic.info(&quot;scrollPos&quot;), which will be updated on tick to save on performance.
+For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
+<p>-&gt; <strong>SET</strong>:
+When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
+<p>To change the current scroll position please use <code>ScrollMagic.scrollTo()</code>.</p>
     </div>
     
 
@@ -1417,15 +1422,12 @@
 
         <tr>
             
-                <td class="name"><code>newLoglevel</code></td>
+                <td class="name"><code>scrollPosMethod</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
-|
-
 <span class="param-type">function</span>
 
 
@@ -1446,7 +1448,7 @@
 
             
 
-            <td class="description last"><p>The new value or function used for the scroll position of the container.</p></td>
+            <td class="description last"><p>The function to be used for the scroll position calculation of the container.</p></td>
         </tr>
 
 	
@@ -1478,7 +1480,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-353">line 353</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-413">line 413</a>
     </li></ul></dd>
     
 
@@ -1521,7 +1523,169 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scrollPos calculation functioncontroller.scrollPos(function () {	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x});</pre>
+    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scroll position calculation methodcontroller.scrollPos(function () {	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">newScrollPos</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.<br>For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.</p>
+<ol>
+<li>If a <code>number</code> is supplied the container will scroll to the new scroll offset.</li>
+<li>If a <code>ScrollScene</code> is supplied the container will scroll to the start of this scene.</li>
+<li>If a <code>function</code> is supplied this function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.<br>The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.</li>
+</ol>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newScrollPos</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-369">line 369</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100var scrollPos = controller.scrollTo(100);// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});var scrollPos = controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
 
 
     
@@ -1538,8 +1702,8 @@
     
     
     <div class="description">
-        <p>Updates the controller params and calls updateScene on every scene, that is attached to the controller.<br>See <code>updateScene</code> for more information about what this means.<br>In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.<br>The only application for this method is when ScrollMagic fails to detect these events.<br>One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.
-For this case there will also be the need to provide a custom function to calculate the correct scroll position. See <code>scrollPos</code> for details.</p>
+        <p>Updates the controller params and calls updateScene on every scene, that is attached to the controller.<br>See <code>ScrollMagic.updateScene()</code> for more information about what this means.<br>In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.<br>The only application for this method is when ScrollMagic fails to detect these events.<br>One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.
+For this case there will also be the need to provide a custom function to calculate the correct scroll position. See <code>ScrollMagic.scrollPos()</code> for details.</p>
     </div>
     
 
@@ -1641,7 +1805,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-324">line 324</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-335">line 335</a>
     </li></ul></dd>
     
 
@@ -1835,7 +1999,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-285">line 285</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-296">line 296</a>
     </li></ul></dd>
     
 

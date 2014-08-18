@@ -96,11 +96,22 @@
 		};
 
 		/**
-		* Default function to get scroll pos - is overwriteable using ScrollMagic.scrollPos()
+		* Default function to get scroll pos - overwriteable using `ScrollMagic.scrollPos(newFunction)`
 		* @private
 		*/
 		var getScrollPos = function () {
 			return _options.vertical ? _options.container.scrollTop() : _options.container.scrollLeft();
+		};
+		/**
+		* Default function to set scroll pos - overwriteable using `ScrollMagic.scrollTo(newFunction)`
+		* @private
+		*/
+		var setScrollPos = function (pos) {
+			if (_options.vertical) {
+				_options.container.scrollTop(pos);
+			} else {
+				_options.container.scrollLeft(pos);
+			}
 		};
 
 		/**
@@ -275,11 +286,11 @@
 
 		/**
 		 * Updates the controller params and calls updateScene on every scene, that is attached to the controller.  
-		 * See {@link updateScene} for more information about what this means.  
+		 * See `ScrollMagic.updateScene()` for more information about what this means.  
 		 * In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.  
 		 * The only application for this method is when ScrollMagic fails to detect these events.  
 		 * One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.
-		 * For this case there will also be the need to provide a custom function to calculate the correct scroll position. See {@link scrollPos} for details.
+		 * For this case there will also be the need to provide a custom function to calculate the correct scroll position. See `ScrollMagic.scrollPos()` for details.
 		 * @public
 		 * @example
 		 * // update the controller on next tick (saves performance)
@@ -300,34 +311,84 @@
 		};
 
 		/**
-		 * **Get** or **Set** the current scrollPosition.  
-		 * *Watch out*: this will permanently overwrite the controller's scrollPos calculation.  
-		 * If you set it to a number it will always have this value.  
-		 * It usually makes more sense to pass a function, when the scrollPosition calculation is not defined by the containers scrollTop or scrollLeft values.  
-		 * This may be the case for mobile applications using iScroll, as there a child container is moved, instead of actually scrolling the container.  
-		 * Please also mind that your function should return y values for vertical scrolls an x for horizontals.
+		 * Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.  
+		 * For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.
+		 * 1. If a `number` is supplied the container will scroll to the new scroll offset.
+		 * 2. If a `ScrollScene` is supplied the container will scroll to the start of this scene.
+		 * 3. If a `function` is supplied this function will be used as a callback for future scroll position modifications.  
+		 *    This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.  
+		 *    The callback receives the new scroll position as a parameter and a reference to the container element using `this`.
+		 * @public
+		 *
+		 * @example
+		 * // scroll to an offset of 100
+		 * var scrollPos = controller.scrollTo(100);
+		 *
+		 * // scroll to the beginning of a scene
+		 * var scene = new ScrollScene({offset: 200});
+		 * var scrollPos = controller.scrollTo(scene);
+		 *
+	 	 * // define a new scroll position modification function (animate instead of jump)
+		 * controller.scrollTo(function (newScrollPos) {
+		 *	$("body").animate({scrollTop: newScrollPos});
+		 * });
+		 *
+		 * @param {(number|ScrollScene|function)} [newScrollPos] - A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.
+		 * @returns {ScrollMagic} Parent object for chaining.
+		 */
+		this.scrollTo = function (newScrollPos) {
+			if (newScrollPos instanceof ScrollScene) {
+				if (newScrollPos.parent() === ScrollMagic) { // check if this controller is the parent
+					ScrollMagic.scrollTo(newScrollPos.scrollOffset());
+				} else {
+					log (1, "The supplied scene does not belong to this controller.");
+				}
+			} else if ($.isFunction(newScrollPos)) {
+				setScrollPos = newScrollPos;
+			} else {
+				setScrollPos.call(_options.container[0], newScrollPos);
+			}
+			return ScrollMagic;
+		};
+
+		/**
+		 * **Get** the current scrollPosition or **Set** a new method to calculate it.  
+		 * -> **GET**:
+		 * When used as a getter this function will return the current scroll position.  
+		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated on tick to save on performance.
+		 * For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.
+		 *
+		 * -> **SET**:
+		 * When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.  
+		 * A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.  
+		 * Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.  
+		 * By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.  
+		 * Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.
+		 *
+		 * To change the current scroll position please use `ScrollMagic.scrollTo()`.
 		 * @public
 		 *
 		 * @example
 		 * // get the current scroll Position
 		 * var scrollPos = controller.scrollPos();
 		 *
-	 	 * // set a new scrollPos calculation function
+	 	 * // set a new scroll position calculation method
 		 * controller.scrollPos(function () {
 		 *	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x
 		 * });
 		 *
-		 * @param {(number|function)} [newLoglevel] - The new value or function used for the scroll position of the container.
+		 * @param {function} [scrollPosMethod] - The function to be used for the scroll position calculation of the container.
 		 * @returns {(number|ScrollMagic)} Current scroll position or parent object for chaining.
 		 */
-		this.scrollPos = function (newScrollPos) {
+		this.scrollPos = function (scrollPosMethod) {
 			if (!arguments.length) { // get
 				return getScrollPos.call(ScrollMagic);
 			} else { // set
-				if (!$.isFunction(newScrollPos)) {
-					newScrollPos = function () {return newScrollPos;};
+				if ($.isFunction(scrollPosMethod)) {
+					getScrollPos = scrollPosMethod;
+				} else {
+					log(2, "Provided value for method 'scrollPos' is not a function. To change the current scroll position use 'scrollTo()'.");
 				}
-				getScrollPos = newScrollPos;
 			}
 			return ScrollMagic;
 		};
