@@ -77,7 +77,7 @@ To find out just open your Console (MacOsX Terminal) and type `node -v`.
 	* `/dev/src` all the ScrollMagic source files
 	* `/dev/tests` testing environment
 		* `/dev/tests/fixtures` html files for usage in tests
-		* `/dev/tests/spec` contains all the spec files written in [jasemine](http://jasmine.github.io)
+		* `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
 
 ## Prepare Development environment
 Open your console and navigate to the ScrollMagic directory. Then change to the dev directory.
