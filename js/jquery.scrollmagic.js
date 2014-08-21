@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.0.9
+ScrollMagic v1.1.0
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.0.9
+@version	1.1.0
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -50,6 +50,7 @@ Greensock License info at http://www.greensock.com/licensing/
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
+	 * @param {boolean} [options.triggerPosUpdateInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -65,7 +66,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				container: window,
 				vertical: true,
 				globalSceneOptions: {},
-				loglevel: 2
+				loglevel: 2,
+				triggerPosUpdateInterval: 100
 			};
 
 		/*
@@ -84,7 +86,8 @@ Greensock License info at http://www.greensock.com/licensing/
 			_isDocument = true,
 			_viewPortSize = 0,
 			_tickerUsed = false,
-			_enabled = true;
+			_enabled = true,
+			_triggerPosUpdateInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -106,7 +109,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_options.container = $(_options.container).first();
 			// check ScrolContainer
 			if (_options.container.length === 0) {
-				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
+				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 				return; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
@@ -120,6 +123,15 @@ Greensock License info at http://www.greensock.com/licensing/
 			} catch (e) {
 				_options.container.on("scroll resize", onTick); // okay then just update on scroll/resize...
 				_tickerUsed = false;
+			}
+
+			_options.triggerPosUpdateInterval = parseInt(_options.triggerPosUpdateInterval);
+			if (_options.triggerPosUpdateInterval > 0) {
+				window.setInterval(function () {
+					$.each(_sceneObjects, function (index, scene) {
+						scene.updateTriggerElementPosition();
+					});
+				}, _options.triggerPosUpdateInterval);
 			}
 
 			log(3, "added new " + NAMESPACE + " controller");
@@ -525,6 +537,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
+			window.clearTimeout(_triggerPosUpdateInterval);
 			while (_sceneObjects.length > 0) {
 				var scene = _sceneObjects[_sceneObjects.length - 1];
 				scene.destroy(resetScenes);
@@ -618,6 +631,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_state = 'BEFORE',
 			_progress = 0,
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
+			_triggerOffset = 0,
 			_enabled = true,
 			_parent,
 			_tween,
@@ -641,8 +655,11 @@ Greensock License info at http://www.greensock.com/licensing/
 			// internal event listeners
 			ScrollScene.on("change.internal", function (e) {
 				checkOptionsValidity();
-				if (e.what != "loglevel" && e.what != "tweenChanges") { // no need for a scene update scene with these options...
-					if (e.what != "reverse" && _options.triggerElement === null) { // otherwise not necessary or it will be updated in ScrollScene.update()
+				if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
+					if (e.what === "triggerElement") {
+						ScrollScene.updateTriggerElementPosition();
+					}
+					if (e.what === "offset" || e.what === "duration" || e.what === "triggerHook") {
 						updateScrollOffset();
 					}
 					ScrollScene.update();
@@ -730,11 +747,16 @@ Greensock License info at http://www.greensock.com/licensing/
 		/**
 		 * Update the start and end scrollOffset of the container.
 		 * The positions reflect what the parent's scroll position will be at the start and end respectively.
+		 * Is called, when:
+		 *   - ScrollScene event "change" is called with: offset, triggerHook, duration 
+		 *   - scroll container event "resize" is called
+		 *   - the position of the triggerElement changes
+		 *   - the parent changes -> addTo()
 		 * @private
 		 */
 		var updateScrollOffset = function () {
-			_scrollOffset = {start: ScrollScene.triggerOffset()};
-			if (_parent) {
+			_scrollOffset = {start: _triggerOffset + _options.offset};
+			if (_parent && _options.triggerElement) {
 				// take away triggerHook portion to get relative to top
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
 			}
@@ -749,8 +771,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @return {boolean} true if the Tween was updated. 
 		 */
 		var updateTweenProgress = function (to) {
-			var progress = (to >= 0 && to <= 1) ? to : _progress;
 			if (_tween) {
+				var progress = (to >= 0 && to <= 1) ? to : _progress;
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
 					if ((_state === "DURING" || (_state === "AFTER" && _options.duration === 0)) && _tween.paused()) {
@@ -764,7 +786,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					// no infinite loop - so should we just play or go to a specific point in time?
 					if (_options.duration === 0) {
 						// play the animation
-						if (_state == "AFTER") { // play from 0 to 1
+						if (_state === "AFTER") { // play from 0 to 1
 							_tween.play();
 						} else { // play from 1 to 0
 							_tween.reverse();
@@ -1187,18 +1209,9 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.state = function () {
 			return _state;
 		};
-		
-		/**
-		 * **Get** the trigger offset of the scene.  
-		 * @public
-		 * @deprecated Method is deprecated since 1.0.7. You should now use {@link ScrollScene.triggerOffset}
-		 */
-		this.startPosition = function () {
-			return this.triggerOffset();
-		};
 
 		/**
-		 * **Get** the trigger offset of the scene.  
+		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
 		 * @public
 		 * @example
 		 * // get the scene's trigger offset
@@ -1207,34 +1220,15 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {number} Start position of the scene. Top position value for vertical and left position value for horizontal scrolls.
 		 */
 		this.triggerOffset = function () {
-			var pos = _options.offset;
+			var pos = _options.offset; // the offset is the basis
 			if (_parent) {
-				var containerInfo = _parent.info();
 				// get the trigger position
-				if (_options.triggerElement === null) {
-					// return the triggerHook to start right at the beginning
-					pos += containerInfo.size * ScrollScene.triggerHook();
-				} else {
+				if (_options.triggerElement) {
 					// Element as trigger
-					var
-						element = $(_options.triggerElement).first(),
-						containerOffset = getOffset(_parent.info("container")); // container position is needed because element offset is returned in relation to document, not in relation to container.
-						
-					// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-					while (element.parent().data("ScrollMagicPinSpacer")) {
-						element = element.parent();
-					}
-
-					var elementOffset = getOffset(element);
-
-					if (!containerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-						containerOffset.top -= containerInfo.scrollPos;
-						containerOffset.left -= containerInfo.scrollPos;
-					}
-
-					pos += containerInfo.vertical ?
-						  elementOffset.top - containerOffset.top
-						: elementOffset.left - containerOffset.left;
+					pos += _triggerOffset;
+				} else {
+					// return the height of the triggerHook to start at the beginning
+					pos += _parent.info("size") * ScrollScene.triggerHook();
 				}
 			}
 			return pos;
@@ -1289,10 +1283,6 @@ Greensock License info at http://www.greensock.com/licensing/
 						var
 							scrollPos = _parent.info("scrollPos"),
 							newProgress;
-						// if triggerElement is set we need to update the start position as it may have changed.
-						if (_options.triggerElement !== null) {
-							updateScrollOffset();
-						}
 
 						if (_options.duration > 0) {
 							newProgress = (scrollPos - _scrollOffset.start)/(_scrollOffset.end - _scrollOffset.start);
@@ -1312,6 +1302,59 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 			return ScrollScene;
 		};
+
+
+		/**
+		 * Updates the position of the triggerElement, if present.
+		 * This method is automatically called ...
+		 *  - ... when the triggerElement is changed
+		 *  - ... when the scene is added to a (new) controller
+		 *  - ... in regular intervals from the controller (TODO: SEE XYZ)
+		 * 
+		 * You can call it to minimize lag, when you intentionally change the position of the triggerElement.
+		 * @public
+		 * @since v1.1.0
+		 * @example
+		 * scene = new ScrollScene({triggerElement: "#trigger"});
+		 * 
+		 * // change the position of the trigger
+		 * $("#trigger").css("top", 500);
+		 * // immediately let the scene know of this change
+		 * scene.updateTriggerElementPosition();
+		 *
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		this.updateTriggerElementPosition = function () {
+			var elementPos = 0;
+			if (_parent && _options.triggerElement) {
+				var
+					element = $(_options.triggerElement).first(),
+					controllerInfo = _parent.info(),
+					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+					
+				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (element.parent().data("ScrollMagicPinSpacer")) {
+					element = element.parent();
+				}
+
+				var elementOffset = getOffset(element);
+
+				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+					containerOffset[param] -= controllerInfo.scrollPos;
+				}
+
+				elementPos = elementOffset[param] - containerOffset[param];
+			}
+			var changed = elementPos != _triggerOffset;
+			_triggerOffset = elementPos;
+			if (changed) {
+				updateScrollOffset();
+				ScrollScene.update();
+			}
+			return ScrollScene;
+		};
+
 
 		/**
 		 * **Get** or **Set** the scene's progress.  
@@ -1632,9 +1675,11 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 				_parent = controller;
 				checkOptionsValidity();
+				ScrollScene.updateTriggerElementPosition();
 				updateScrollOffset();
 				updatePinSpacerSize();
 				_parent.info("container").on("resize", updateRelativePinSpacer);
+				_parent.info("container").on("resize", updateScrollOffset);
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
@@ -1682,6 +1727,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		this.remove = function () {
 			if (_parent) {
 				_parent.info("container").off("resize", updateRelativePinSpacer);
+				_parent.info("container").off("resize", updateScrollOffset);
 				var tmpParent = _parent;
 				_parent = undefined;
 				log(3, "removed " + NAMESPACE + " from controller");

@@ -20,6 +20,7 @@
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
+	 * @param {boolean} [options.triggerPosUpdateInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -35,7 +36,8 @@
 				container: window,
 				vertical: true,
 				globalSceneOptions: {},
-				loglevel: 2
+				loglevel: 2,
+				triggerPosUpdateInterval: 100
 			};
 
 		/*
@@ -54,7 +56,8 @@
 			_isDocument = true,
 			_viewPortSize = 0,
 			_tickerUsed = false,
-			_enabled = true;
+			_enabled = true,
+			_triggerPosUpdateInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -76,7 +79,7 @@
 			_options.container = $(_options.container).first();
 			// check ScrolContainer
 			if (_options.container.length === 0) {
-				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
+				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 				return; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
@@ -90,6 +93,15 @@
 			} catch (e) {
 				_options.container.on("scroll resize", onTick); // okay then just update on scroll/resize...
 				_tickerUsed = false;
+			}
+
+			_options.triggerPosUpdateInterval = parseInt(_options.triggerPosUpdateInterval);
+			if (_options.triggerPosUpdateInterval > 0) {
+				window.setInterval(function () {
+					$.each(_sceneObjects, function (index, scene) {
+						scene.updateTriggerElementPosition();
+					});
+				}, _options.triggerPosUpdateInterval);
 			}
 
 			log(3, "added new " + NAMESPACE + " controller");
@@ -495,6 +507,7 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
+			window.clearTimeout(_triggerPosUpdateInterval);
 			while (_sceneObjects.length > 0) {
 				var scene = _sceneObjects[_sceneObjects.length - 1];
 				scene.destroy(resetScenes);
