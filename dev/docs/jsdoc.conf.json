@@ -21,5 +21,19 @@
 	"markdown"  : {
 		"parser"   : "gfm",
 		"hardwrap" : true
+	},
+	"methodGroupDefinitions" : {
+		"ScrollMagic" : {
+			"Control Methods" : "Methods",
+			"Parameters (getter / setter)" : ["enabled", "loglevel", "scrollPos"],
+			"Properties (getter)" : ["info"]
+		},
+		"ScrollScene" : {
+			"Scene Control Methods" : "Methods",
+			"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook", "tweenChanges"],
+			"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset"],
+			"Event Handling" : ["off", "on", "trigger"],
+			"Debuging" : ["addIndicators"]
+		}
 	}
 }

@@ -750,7 +750,7 @@
 		 * This method is automatically called ...
 		 *  - ... when the triggerElement is changed
 		 *  - ... when the scene is added to a (new) controller
-		 *  - ... in regular intervals from the controller (TODO: SEE XYZ)
+		 *  - ... in regular intervals from the controller. See {@link ScrollMagic} option `triggerPosUpdateInterval`.
 		 * 
 		 * You can call it to minimize lag, when you intentionally change the position of the triggerElement.
 		 * @public
