@@ -5952,15 +5952,18 @@ code {
 .member-collapsed .type-signature a {
   color: white;
 }
-.tag-source {
+.tag-source, .tag-since {
   font-size: 11px;
   font-weight: normal;
   display: inline-block;
   margin-left: 0;
 }
-.tag-source ul {
+.tag-source ul, .tag-since ul {
   list-style: none;
   margin-left: 0;
+}
+.tag-since ul {
+  font-weight: bold;
 }
 dl.details {
   margin-bottom: 10px;
