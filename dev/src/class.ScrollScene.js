@@ -72,7 +72,7 @@
 			_state = 'BEFORE',
 			_progress = 0,
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
-			_triggerOffset = 0,
+			_triggerPos = 0,
 			_enabled = true,
 			_parent,
 			_tween,
@@ -198,7 +198,7 @@
 		 * @private
 		 */
 		var updateScrollOffset = function () {
-			_scrollOffset = {start: _triggerOffset + _options.offset};
+			_scrollOffset = {start: _triggerPos + _options.offset};
 			if (_parent && _options.triggerElement) {
 				// take away triggerHook portion to get relative to top
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
@@ -661,21 +661,21 @@
 		};
 
 		/**
-		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
+		 * **Get** the trigger position of the scene (including the value of the `offset` option).  
 		 * @public
 		 * @example
-		 * // get the scene's trigger offset
-		 * var triggerOffset = scene.triggerOffset();
+		 * // get the scene's trigger position
+		 * var triggerPosition = scene.triggerPosition();
 		 *
 		 * @returns {number} Start position of the scene. Top position value for vertical and left position value for horizontal scrolls.
 		 */
-		this.triggerOffset = function () {
+		this.triggerPosition = function () {
 			var pos = _options.offset; // the offset is the basis
 			if (_parent) {
 				// get the trigger position
 				if (_options.triggerElement) {
 					// Element as trigger
-					pos += _triggerOffset;
+					pos += _triggerPos;
 				} else {
 					// return the height of the triggerHook to start at the beginning
 					pos += _parent.info("size") * ScrollScene.triggerHook();
@@ -685,9 +685,18 @@
 		};
 
 		/**
+		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
+		 * @public
+		 * @deprecated Method is deprecated since 1.10.0. You should now use {@link ScrollScene.triggerPosition}
+		 */
+		this.triggerOffset = function () {
+			return ScrollScene.triggerPosition();
+		};
+
+		/**
 		 * **Get** the current scroll offset for the start of the scene.  
 		 * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
-		 * This means, that resizing the container will influence the scene's start offset.
+		 * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
 		 * @public
 		 * @example
 		 * // get the current scroll offset for the start and end of the scene.
@@ -797,8 +806,8 @@
 
 				elementPos = elementOffset[param] - containerOffset[param];
 			}
-			var changed = elementPos != _triggerOffset;
-			_triggerOffset = elementPos;
+			var changed = elementPos != _triggerPos;
+			_triggerPos = elementPos;
 			if (changed) {
 				ScrollScene.trigger("shift");
 			}

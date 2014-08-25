@@ -31,7 +31,7 @@
 		"ScrollScene" : {
 			"Scene Control Methods" : "Methods",
 			"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook", "tweenChanges"],
-			"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset"],
+			"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
 			"Event Handling" : ["off", "on", "trigger"],
 			"Debuging" : ["addIndicators"]
 		}
