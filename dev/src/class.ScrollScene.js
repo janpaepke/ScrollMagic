@@ -1041,6 +1041,7 @@
 			}
 
 			// set the pin Options
+			var pinInlineCSS = _pin[0].style;
 			_pinOptions = {
 				spacer: spacer,
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
@@ -1049,7 +1050,13 @@
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
-				origStyle: _pin.attr("style"), // save old styles (for reset)
+				origStyle: {
+					position: pinInlineCSS.position || "",
+					top: pinInlineCSS.position || "",
+					left: pinInlineCSS.position || "",
+					bottom: pinInlineCSS.position || "",
+					right: pinInlineCSS.position || ""
+				}, // save old styles (for reset)
 				pinnedClass: settings.pinnedClass // the class that should be added to the element when pinned
 			};
 
@@ -1101,7 +1108,7 @@
 			if (_pin) {
 				if (reset || !_parent) { // if there's no parent no progress was made anyway...
 					_pin.insertBefore(_pinOptions.spacer)
-						.attr("style", _pinOptions.origStyle);
+						.css(_pinOptions.origStyle);
 					_pinOptions.spacer.remove();
 				} else {
 					if (_state === "DURING") {
