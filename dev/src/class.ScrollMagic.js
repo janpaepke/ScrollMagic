@@ -12,7 +12,7 @@
 	 * var controller = new ScrollMagic({container: "#myContainer", loglevel: 3});
 	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
-	 * @param {(string|object)} [options.container=window] - A selector, DOM Object or a jQuery object that references the main container for scrolling.
+	 * @param {(string|object)} [options.container=window] - A selector, DOM object or a jQuery object that references the main container for scrolling.
 	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollScene}.
 	 * @param {number} [options.loglevel=2] Loglevel for debugging:
@@ -354,42 +354,58 @@
 		};
 
 		/**
-		 * Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.  
+		 * Scroll to a numeric scroll offset, a DOM element, the start of a scene or provide an alternate method for scrolling.  
 		 * For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.
-		 * 1. If a `number` is supplied the container will scroll to the new scroll offset.
-		 * 2. If a `ScrollScene` is supplied the container will scroll to the start of this scene.
-		 * 3. If a `function` is supplied this function will be used as a callback for future scroll position modifications.  
-		 *    This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.  
-		 *    The callback receives the new scroll position as a parameter and a reference to the container element using `this`.
 		 * @public
 		 *
+		 * @since 1.10.0
 		 * @example
 		 * // scroll to an offset of 100
-		 * var scrollPos = controller.scrollTo(100);
+		 * controller.scrollTo(100);
+		 *
+		 * // scroll to a DOM element
+		 * controller.scrollTo("#anchor");
 		 *
 		 * // scroll to the beginning of a scene
 		 * var scene = new ScrollScene({offset: 200});
-		 * var scrollPos = controller.scrollTo(scene);
+		 * controller.scrollTo(scene);
 		 *
 	 	 * // define a new scroll position modification function (animate instead of jump)
 		 * controller.scrollTo(function (newScrollPos) {
 		 *	$("body").animate({scrollTop: newScrollPos});
 		 * });
 		 *
-		 * @param {(number|ScrollScene|function)} [newScrollPos] - A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.
+		 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
+		 * 1. `number` -> The container will scroll to this new scroll offset.
+		 * 2. `string` or `object` -> Can be a selector, a DOM object or a jQuery element.  
+		 *  The container will scroll to the position of this element.
+		 * 3. `ScrollScene` -> The container will scroll to the start of this scene.
+		 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  
+		 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using `this`.  
+		 *  _**NOTE:** All other options will still work as expected, using the new function to scroll._
 		 * @returns {ScrollMagic} Parent object for chaining.
 		 */
-		this.scrollTo = function (newScrollPos) {
-			if (newScrollPos instanceof ScrollScene) {
-				if (newScrollPos.parent() === ScrollMagic) { // check if this controller is the parent
-					ScrollMagic.scrollTo(newScrollPos.scrollOffset());
+		this.scrollTo = function (scrollTarget) {
+			if (scrollTarget instanceof ScrollScene) {
+				if (scrollTarget.parent() === ScrollMagic) { // check if this controller is the parent
+					ScrollMagic.scrollTo(scrollTarget.scrollOffset());
 				} else {
-					log (1, "The supplied scene does not belong to this controller.");
+					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
-			} else if ($.isFunction(newScrollPos)) {
-				setScrollPos = newScrollPos;
+			} else if ($.type(scrollTarget) === "string" || isDomElement(scrollTarget) || scrollTarget instanceof $) {
+				console.log(scrollTarget);
+				var $elm = $(scrollTarget).first();
+				if ($elm[0]) {
+					var
+						offset = $elm.offset();
+					ScrollMagic.scrollTo(_options.vertical ? offset.top : offset.left);
+				} else {
+					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", newScrollPos);
+				}
+			} else if ($.isFunction(scrollTarget)) {
+				setScrollPos = scrollTarget;
 			} else {
-				setScrollPos.call(_options.container[0], newScrollPos);
+				setScrollPos.call(_options.container[0], scrollTarget);
 			}
 			return ScrollMagic;
 		};

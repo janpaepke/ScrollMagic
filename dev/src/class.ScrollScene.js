@@ -23,7 +23,7 @@
 	 * @param {number} [options.duration=0] - The duration of the scene.  
 	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
-	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM Object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
+	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
 	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
 	 															  Can also be defined using a string:
 	 															  ** `"onEnter"` => `1`
@@ -507,7 +507,7 @@
 		 * scene.triggerElement("#trigger");
 	 	 * // set a new triggerElement using a jQuery Object
 		 * scene.triggerElement($("#trigger"));
-	 	 * // set a new triggerElement using a DOM Object
+	 	 * // set a new triggerElement using a DOM object
 		 * scene.triggerElement(document.getElementById("trigger"));
 		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
@@ -974,7 +974,7 @@
 		 * // pin element and keeping all following elements in their place. The pinned element will move past them.
 		 * scene.setPin("#pin", {pushFollowers: false});
 		 *
-		 * @param {(string|object)} element - A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.
+		 * @param {(string|object)} element - A Selctor, a DOM object or a jQuery object for the object that is supposed to be pinned.
 		 * @param {object} [settings] - settings for the pin
 		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
 		 												   Ignored, when duration is `0`.
