@@ -864,24 +864,37 @@
 					// fire events
 					var
 						eventVars = {progress: _progress, state: _state, scrollDirection: scrollDirection},
-						stateChanged = _state != oldState,
-						instantReverse = (_state === 'BEFORE' && _options.duration === 0);
+						stateChanged = _state != oldState;
 
-					if (stateChanged) {
-						if (_state === 'DURING' || _options.duration === 0) {
-							ScrollScene.trigger("enter", eventVars);
-						}
-						if (_state === 'BEFORE' || oldState === 'BEFORE') {
-							ScrollScene.trigger(instantReverse ? "end" : "start", eventVars);
+					var trigger = function (eventName) { // tmp helper to simplify code
+						ScrollScene.trigger(eventName, eventVars);
+					};
+
+					if (stateChanged) { // enter events
+						if (_options.duration === 0) {
+							if (_state === 'AFTER') {
+								trigger("enter");
+								trigger("start");
+							}
+						} else {
+							if (oldState !== 'DURING') {
+								trigger("enter");
+								trigger(oldState === 'BEFORE' ? "start" : "end");
+							}
 						}
 					}
-					ScrollScene.trigger("progress", eventVars);
-					if (stateChanged) {
-						if (_state === 'AFTER' || oldState === 'AFTER') {
-							ScrollScene.trigger(instantReverse ? "start" : "end", eventVars);
-						}
-						if (_state !== 'DURING' || _options.duration === 0) {
-							ScrollScene.trigger("leave", eventVars);
+					trigger("progress");
+					if (stateChanged) { // leave events
+						if (_options.duration === 0) {
+							if (_state === 'BEFORE') {
+								trigger("start");
+								trigger("leave");
+							}
+						} else {
+							if (_state !== 'DURING') {
+								trigger(_state === 'AFTER' ? "end" : "start");
+								trigger("leave");
+							}
 						}
 					}
 				}
