@@ -463,7 +463,7 @@
 			} else if (_options.duration != newDuration) { // set
 				_options.duration = newDuration;
 				ScrollScene.trigger("change", {what: "duration", newval: newDuration});
-				ScrollScene.trigger("shift");
+				ScrollScene.trigger("shift", {reason: "duration"});
 			}
 			return ScrollScene;
 		};
@@ -490,7 +490,7 @@
 			} else if (_options.offset != newOffset) { // set
 				_options.offset = newOffset;
 				ScrollScene.trigger("change", {what: "offset", newval: newOffset});
-				ScrollScene.trigger("shift");
+				ScrollScene.trigger("shift", {reason: "offset"});
 			}
 			return ScrollScene;
 		};
@@ -567,7 +567,7 @@
 			} else if (_options.triggerHook != newTriggerHook) { // set
 				_options.triggerHook = newTriggerHook;
 				ScrollScene.trigger("change", {what: "triggerHook", newval: newTriggerHook}); // fire event
-				ScrollScene.trigger("shift");
+				ScrollScene.trigger("shift", {reason: "triggerHook"});
 			}
 			return ScrollScene;
 		};
@@ -809,7 +809,7 @@
 			var changed = elementPos != _triggerPos;
 			_triggerPos = elementPos;
 			if (changed) {
-				ScrollScene.trigger("shift");
+				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
 			}
 			return ScrollScene;
 		};
@@ -1143,7 +1143,7 @@
 				_parent.info("container").on("resize." + NAMESPACE, function () {
 					updateRelativePinSpacer();
 					if (ScrollScene.triggerHook() > 0) {
-						updateScrollOffset();
+						ScrollScene.trigger("shift", {reason: "containerSize"});
 					}
 				});
 				log(3, "added " + NAMESPACE + " to controller");
@@ -1370,12 +1370,13 @@
 		 *
 		 * @example
 		 * scene.on("shift", function (event) {
-		 * 		console.log("Scene has moved! (The " + event.what + " position has changed.)");
+		 * 		console.log("Scene moved, because the " + event.reason + " has changed.)");
 		 * });
 		 *
 		 * @property {object} event - The event Object passed to each callback
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
+		 * @property {ScrollScene} event.reason - Indicates why the scene has shifted
 		 */
 		 
 		 /**
