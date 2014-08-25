@@ -762,7 +762,6 @@
 			return ScrollScene;
 		};
 
-
 		/**
 		 * Updates the position of the triggerElement, if present.
 		 * This method is automatically called ...
@@ -781,10 +780,12 @@
 		 * // immediately let the scene know of this change
 		 * scene.updateTriggerElementPosition();
 		 *
-		 * @fires {@link ScrollScene.shift}, if the position changed
+		 * @fires {@link ScrollScene.shift}, if the position changed and suppressEvents is false
+		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.updateTriggerElementPosition = function () {
+		 // @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed. no doc export...
+		this.updateTriggerElementPosition = function (suppressEvents) {
 			var elementPos = 0;
 			if (_parent && _options.triggerElement) {
 				var
@@ -808,12 +809,11 @@
 			}
 			var changed = elementPos != _triggerPos;
 			_triggerPos = elementPos;
-			if (changed) {
+			if (changed && !suppressEvents) {
 				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
 			}
 			return ScrollScene;
 		};
-
 
 		/**
 		 * **Get** or **Set** the scene's progress.  
@@ -1154,11 +1154,8 @@
 				}
 				_parent = controller;
 				checkOptionsValidity();
-				if (_options.triggerElement) {
-					ScrollScene.updateTriggerElementPosition();
-				} else {
-					updateScrollOffset();
-				}
+				ScrollScene.updateTriggerElementPosition(true);
+				updateScrollOffset();
 				updatePinSpacerSize();
 				_parent.info("container").on("resize." + NAMESPACE, function () {
 					updateRelativePinSpacer();
