@@ -133,14 +133,20 @@
 		var onTick = function (e) {
 			if (_updateScenesOnNextTick && _enabled) {
 				var
-					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects,
+					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects.slice(0),
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
 				var deltaScroll = _scrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll === 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+				if (deltaScroll < 0) { // reverse order if scrolling reverse
+					scenesToUpdate.reverse();
+				}
 				// update scenes
-				ScrollMagic.updateScene(scenesToUpdate, true);
+				$.each(scenesToUpdate, function (index, scene) {
+					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
+					scene.update(true);
+				});
 				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
@@ -177,6 +183,25 @@
 			}
 		};
 
+		/**
+		 * Sort scenes in ascending order of their start offset.
+		 * @private
+		 *
+		 * @param {array} ScrollScenesArray - an array of ScrollScenes that should be sorted
+		 * @return {array} The sorted array of ScrollScenes.
+		 */
+		var sortScenes = function (ScrollScenesArray) {
+			if (ScrollScenesArray.length <= 1) {
+				return ScrollScenesArray;
+			} else {
+				var scenes = ScrollScenesArray.slice(0);
+				scenes.sort(function(a, b) {
+					return a.scrollOffset() > b.scrollOffset() ? 1 : -1;
+				});
+				return scenes;
+			}
+		};
+
 		/*
 		 * ----------------------------------------------------------------
 		 * public functions
@@ -210,7 +235,11 @@
 					ScrollScene.addTo(ScrollMagic);
 				} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
 					// new scene
-					_sceneObjects.push(ScrollScene);
+					_sceneObjects.push(ScrollScene); // add to array
+					_sceneObjects = sortScenes(_sceneObjects); // sort
+					ScrollScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
+						_sceneObjects = sortScenes(_sceneObjects);
+					});
 					// insert Global defaults.
 					$.each(_options.globalSceneOptions, function (key, value) {
 						if (ScrollScene[key]) {
@@ -245,6 +274,7 @@
 			} else {
 				var index = $.inArray(ScrollScene, _sceneObjects);
 				if (index > -1) {
+					ScrollScene.off("shift." + NAMESPACE + "_sort");
 					_sceneObjects.splice(index, 1);
 					ScrollScene.remove();
 					log(3, "removed Scene (" + _sceneObjects.length + " total)");
@@ -278,19 +308,20 @@
 		this.updateScene = function (ScrollScene, immediately) {
 			if ($.isArray(ScrollScene)) {
 				$.each(ScrollScene, function (index, scene) {
-					log(3, "updating Scene " + (index + 1) + "/" + ScrollScene.length + " (" + _sceneObjects.length + " total)");
 					ScrollMagic.updateScene(scene, immediately);
 				});
 			} else {
 				if (immediately) {
 					ScrollScene.update(true);
 				} else {
+					// prep array for next update cycle
 					if (!$.isArray(_updateScenesOnNextTick)) {
 						_updateScenesOnNextTick = [];
 					}
 					if ($.inArray(ScrollScene, _updateScenesOnNextTick) == -1) {
 						_updateScenesOnNextTick.push(ScrollScene);	
 					}
+					_updateScenesOnNextTick = sortScenes(_updateScenesOnNextTick); // sort
 				}
 			}
 			return ScrollMagic;

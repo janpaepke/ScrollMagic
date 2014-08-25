@@ -5,7 +5,6 @@
 @author		Jan Paepke - e-mail@janpaepke.de
 
 @todo: bug: removing pin during pin doesnt work
-@todo: sort scenes before updating. Do on change event of any scene or just do always? -> http://jsfiddle.net/janpaepke/p4nsLnkx/2/
 @todo: issues with min width on first page load (check main demo page)
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
