@@ -112,11 +112,15 @@ You can pass in various arguments to customize the build:
  	Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
  	example: node build -d
 ```
-So in most cases your build command will look like this:
+For new releases the build command is this
 ```Shell
 $ node build -v=1.0.10 -d
 ```
-This will update the version to 1.0.10 and also generate new docs.
+This will update the version to 1.0.10 and also generate new docs.  
+But in most cases you will only need to call this
+```Shell
+$ node build
+```
 
 ## Test ScrollMagic
 ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.
