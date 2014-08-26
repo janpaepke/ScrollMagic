@@ -97,17 +97,40 @@ var OUTPUT = {
 			"class.ScrollScene.js",
 			"utils.js"
 		],
-		minified: { // also create a minified version
-			filename: "jquery.scrollmagic.min.js",
+		docInclude: true
+	},
+	minified: {
+		filename: "jquery.scrollmagic.min.js",
+		components: [
+			"core.ScrollMagic.js"
+		],
+		inserts: [
+			"class.ScrollMagic.js",
+			"class.ScrollScene.js",
+			"utils.js"
+		],
+		regReplace: [
+			{ // remove log messages
+				match: /\s*log\([0-3],.+;.*$/gm,
+				replace: ""
+			},
+			{ // remove log messages
+				match: /\/\/ \(BUILD\) - REMOVE IN MINIFY - START[^]*?\/\/ \(BUILD\) - REMOVE IN MINIFY - END/gm,
+				replace: ""
+			}
+		],
+		minify: {
 			preamble: "header.min.js"
-		}
+		},
+		docInclude: false
 	},
 	debug: {
 		filename: "jquery.scrollmagic.debug.js",
 		components: [
 			"header.regular.js",
 			"class.ScrollScene.extend.debug.js"
-		]
+		],
+		docInclude: true
 	}
 };
 
@@ -185,7 +208,7 @@ var build = function (release) {
 	if (release.inserts) {
 		release.inserts.forEach(function (insert) {
 			var
-				search = "// INSERT POINT: "+insert.substring(0, insert.lastIndexOf(".")),
+				search = "// (BUILD) - INSERT POINT: "+insert.substring(0, insert.lastIndexOf(".")),
 				replace = fs.readFileSync(DIR.source + "/" + insert, 'utf-8');
 			inserts[search] = replace;
 		});
@@ -196,13 +219,20 @@ var build = function (release) {
 		content = replaceAll(content, insert, inserts[insert]);
 	}
 
-	// do replaces
+	// do general replaces
 	for (var needle in replaces) {
 		content = replaceAll(content, needle, replaces[needle]);
 	}
 
-	// save file
-	fs.writeFileSync(options.folderOut + "/" + release.filename, content);
+	// do specific replaces
+	if (release.regReplace) {
+		release.regReplace.forEach(function(replaceObj) {
+			content = content.replace(replaceObj.match, replaceObj.replace);
+		});
+	}
+
+	// remove remaining build notes
+	content = content.replace(/[\t ]*\/\/ \(BUILD\).*$\r?\n?/gm, "");
 
 	// JSHint
 	if ( !hint(content) ) {
@@ -216,19 +246,21 @@ var build = function (release) {
 		log.exit("JS Errors detected.");
 	}
 
-	// make minified version
-	if (release.minified) {
-		log.info("Minifying '" + release.filename + "' and saving to '" + release.minified.filename + "'");
-		var 
+	// minify ?
+	if (release.minify) {
+		var
 			ugly = uglify.minify(content, {fromString: true}),
-			preamble = fs.readFileSync(DIR.source + "/" + release.minified.preamble, 'utf-8');
+			preamble = fs.readFileSync(DIR.source + "/" + release.minify.preamble, 'utf-8');
 
 		for (var search in replaces) {
 			preamble = replaceAll(preamble, search, replaces[search]);
 		}
 
-		fs.writeFileSync(options.folderOut + "/" + release.minified.filename, preamble + "\n" + ugly.code);
+		content = preamble + "\n" + ugly.code;
 	}
+
+	// save file
+	fs.writeFileSync(options.folderOut + "/" + release.filename, content);
 
 };
 
@@ -277,7 +309,9 @@ if (options.updateDocs) {
 		conf = '-c "' + abspath('docs/jsdoc.conf.json') + '"',
 		template = '-t "' + abspath('docs/template') + '"';
 	for (var release in OUTPUT) {
-		docIn += ' "' + options.folderOut + "/" + OUTPUT[release].filename + '"';
+		if (OUTPUT[release].docInclude) {
+			docIn += ' "' + options.folderOut + "/" + OUTPUT[release].filename + '"';
+		}
 	}
 	var cmd = [bin, docIn, conf, template, docOut].join(" ");
 	var child = exec(cmd,

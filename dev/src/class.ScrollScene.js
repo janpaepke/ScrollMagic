@@ -32,7 +32,7 @@
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
 	 												   Does not affect animations where duration is `0`.
-	 * @param {number} [options.loglevel=2] - Loglevel for debugging.
+	 * @param {number} [options.loglevel=2] - Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
 	 										  ** `0` => silent
 	 										  ** `1` => errors
 	 										  ** `2` => errors, warnings
@@ -119,7 +119,8 @@
 					updatePinState();
 				});
 		};
-
+		
+		// (BUILD) - REMOVE IN MINIFY - START
 		/**
 		 * Send a debug message to the console.
 		 * @private
@@ -137,6 +138,7 @@
 				func.apply(window, args);
 			}
 		};
+		// (BUILD) - REMOVE IN MINIFY - END
 
 		/**
 		 * Check the validity of all options and reset to default if neccessary.
@@ -167,11 +169,13 @@
 				log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
 				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
 			}
+			// (BUILD) - REMOVE IN MINIFY - START
 			if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 				var wrongval = _options.loglevel;
 				_options.loglevel = DEFAULT_OPTIONS.loglevel;
 				log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 			}
+			// (BUILD) - REMOVE IN MINIFY - END
 			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
 				// check if there are position tweens defined for the trigger and warn about it :)
 				var

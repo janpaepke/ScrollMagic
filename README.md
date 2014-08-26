@@ -41,8 +41,9 @@ For deployment use the minified version __instead__:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
 ```
+_**NOTE:** The logging feature is removed in the minified version for obvious file size considerations._
 
-And to have access to the debugging extension during development, include this file __additionally__:
+To have access to the debugging extension during development, include this file __additionally__:
 ```html
 <script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
 ```

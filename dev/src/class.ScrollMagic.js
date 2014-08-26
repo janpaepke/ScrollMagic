@@ -15,7 +15,7 @@
 	 * @param {(string|object)} [options.container=window] - A selector, DOM object or a jQuery object that references the main container for scrolling.
 	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollScene}.
-	 * @param {number} [options.loglevel=2] Loglevel for debugging:
+	 * @param {number} [options.loglevel=2] Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
 											 ** `0` => silent
 											 ** `1` => errors
 											 ** `2` => errors, warnings
@@ -165,6 +165,7 @@
 			_updateScenesOnNextTick = true;
 		};
 
+		// (BUILD) - REMOVE IN MINIFY - START
 		/**
 		 * Send a debug message to the console.
 		 * @private
@@ -182,6 +183,7 @@
 				func.apply(window, args);
 			}
 		};
+		// (BUILD) - REMOVE IN MINIFY - END
 
 		/**
 		 * Sort scenes in ascending order of their start offset.

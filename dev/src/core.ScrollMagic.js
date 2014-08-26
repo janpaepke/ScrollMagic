@@ -18,9 +18,9 @@
 	
 	"use strict";
 
-// INSERT POINT: class.ScrollMagic
+// (BUILD) - INSERT POINT: class.ScrollMagic
 
-// INSERT POINT: class.ScrollScene
+// (BUILD) - INSERT POINT: class.ScrollScene
 
 	// store version
 	ScrollMagic.version = "%VERSION%";
@@ -28,6 +28,6 @@
 	window.ScrollScene = ScrollScene;
 	window.ScrollMagic = ScrollMagic;
 
-// INSERT POINT: utils
+// (BUILD) - INSERT POINT: utils
 
 })(jQuery, window);

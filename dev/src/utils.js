@@ -3,6 +3,8 @@
 	 * global logging functions and making sure no console errors occur
 	 * ----------------------------------------------------------------
 	 */
+
+	// (BUILD) - REMOVE IN MINIFY - START
 	var
 		console = (window.console = window.console || {}),
 		loglevels = [
@@ -30,6 +32,7 @@
 		args.unshift(time);
 		func.apply(console, args);
 	};
+	// (BUILD) - REMOVE IN MINIFY - END
 	// a helper function that should generally be faster than jQuery.offset() and can also return position in relation to viewport.
 	var getOffset = function ($elem, relativeToViewport) {
 		var  offset = {
