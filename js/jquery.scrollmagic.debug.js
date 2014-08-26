@@ -196,7 +196,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			
 			if (!triggerOnly) {
 				var
-					startPos = scene.triggerOffset(),
+					startPos = scene.triggerPosition(),
 					endPos = startPos + scene.duration(),
 					resetCSS = {
 						"border": "none",
