@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.1.0
+ScrollMagic v1.1.0-alpha
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.1.0
+@version	1.1.0-alpha
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -2190,7 +2190,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	};
 
 	// store version
-	ScrollMagic.version = "1.1.0";
+	ScrollMagic.version = "1.1.0-alpha";
 	// make global references available
 	window.ScrollScene = ScrollScene;
 	window.ScrollMagic = ScrollMagic;

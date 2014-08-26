@@ -360,7 +360,7 @@
 		 * For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.
 		 * @public
 		 *
-		 * @since 1.10.0
+		 * @since 1.1.0
 		 * @example
 		 * // scroll to an offset of 100
 		 * controller.scrollTo(100);

@@ -736,7 +736,7 @@
 		/**
 		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
 		 * @public
-		 * @deprecated Method is deprecated since 1.10.0. You should now use {@link ScrollScene.triggerPosition}
+		 * @deprecated Method is deprecated since 1.1.0. You should now use {@link ScrollScene.triggerPosition}
 		 */
 		this.triggerOffset = function () {
 			return ScrollScene.triggerPosition();
@@ -820,7 +820,7 @@
 		 * 
 		 * You can call it to minimize lag, when you intentionally change the position of the triggerElement.
 		 * @public
-		 * @since v1.1.0
+		 * @since 1.1.0
 		 * @example
 		 * scene = new ScrollScene({triggerElement: "#trigger"});
 		 * 
@@ -1487,7 +1487,7 @@
 		 * It will also fire implicitly when the size of the container changes and the triggerHook is anything other than `onLeave`.
 		 *
 		 * @event ScrollScene.shift
-		 * @since 1.10.0
+		 * @since 1.1.0
 		 *
 		 * @example
 		 * scene.on("shift", function (event) {
