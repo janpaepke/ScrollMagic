@@ -77,7 +77,9 @@
 			_parent,
 			_tween,
 			_pin,
-			_pinOptions;
+			_pinOptions,
+			_cssClasses,
+			_cssClassElm;
 
 
 		/*
@@ -977,8 +979,8 @@
 
 		/**
 		 * Pin an element for the duration of the tween.  
-		 * If the scene duration is 0 the element will never be unpinned.  
-		 * Note, that pushFollowers has no effect, when the scene duration is 0.
+		 * If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.  
+		 * _**NOTE:** The option `pushFollowers` has no effect, when the scene duration is 0._
 		 * @public
 		 * @example
 		 * // pin element and push all following elements down by the amount of the pin duration.
@@ -987,7 +989,7 @@
 		 * // pin element and keeping all following elements in their place. The pinned element will move past them.
 		 * scene.setPin("#pin", {pushFollowers: false});
 		 *
-		 * @param {(string|object)} element - A Selctor, a DOM object or a jQuery object for the object that is supposed to be pinned.
+		 * @param {(string|object)} element - A Selector targeting an element, a DOM object or a jQuery object that is supposed to be pinned.
 		 * @param {object} [settings] - settings for the pin
 		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
 		 												   Ignored, when duration is `0`.
@@ -1011,7 +1013,7 @@
 				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 				return ScrollScene; // cancel
 			} else if (element.css("position") == "fixed") {
-				log(1, "ERROR: Pin does not work with elements that are positioned 'fixed'.");
+				log(1, "ERROR calling method 'setPin()': Pin does not work with elements that are positioned 'fixed'.");
 				return ScrollScene; // cancel
 			}
 
@@ -1136,6 +1138,60 @@
 		};
 
 		/**
+		 * Define a css class modification while the scene is active.  
+		 * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
+		 * If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.
+		 * @public
+		 * @example
+		 * // add the class 'myclass' to the element with the id 'my-elem' for the duration of the scene
+		 * scene.setClassToggle("#my-elem", "myclass");
+		 *
+		 * // add multiple classes to multiple elements defined by the selector '.classChange'
+		 * scene.setClassToggle(".classChange", "class1 class2 class3");
+		 *
+		 * @param {(string|object)} element - A Selector targeting one or more elements, a DOM object or a jQuery object that is supposed to be modified.
+		 * @param {string} classes - One or more Classnames (separated by space) that should be added to the element during the scene.
+		 *
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		this.setClassToggle = function (element, classes) {
+			var $elm = $(element);
+			if ($elm.length === 0 || $.type(classes) !== "string") {
+				log(1, "ERROR calling method 'setClassToggle()': Invalid " + ($elm.length === 0 ? "element" : "classes") + " supplied.");
+				return ScrollScene;
+			}
+			_cssClasses = classes;
+			_cssClassElm = $elm;
+			ScrollScene.on("enter.internal_class leave.internal_class", function (e) {
+				_cssClassElm.toggleClass(_cssClasses, e.type === "enter");
+			});
+			return ScrollScene;
+		};
+
+		/**
+		 * Remove the class binding from the scene.
+		 * @public
+		 * @example
+		 * // remove class binding from the scene without reset
+		 * scene.removeClassToggle();
+		 *
+		 * // remove class binding and remove the changes it caused
+		 * scene.removeClassToggle(true);
+		 *
+		 * @param {boolean} [reset=false] - If `false` and the classes are currently active, they will remain on the element. If `true` they will be removed.
+		 * @returns {ScrollScene} Parent object for chaining.
+		 */
+		this.removeClassToggle = function (reset) {
+			if (reset) {
+				_cssClassElm.removeClass(_cssClasses);
+			}
+			ScrollScene.off("start.internal_class end.internal_class");
+			_cssClasses = undefined;
+			_cssClassElm = undefined;
+			return ScrollScene;
+		};
+
+		/**
 		 * Add the scene to a controller.  
 		 * This is the equivalent to `ScrollMagic.addScene(scene)`.
 		 * @public
@@ -1234,6 +1290,7 @@
 		this.destroy = function (reset) {
 			this.removeTween(reset);
 			this.removePin(reset);
+			this.removeClassToggle(reset);
 			this.remove();
 			this.off("start end enter leave progress change update shift shift.internal change.internal progress.internal");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
