@@ -81,6 +81,69 @@
 			_cssClasses,
 			_cssClassElm;
 
+		// object containing validator functions for various options
+		var _validate = {
+			"unknownOptionSupplied" : function () {
+					$.each(_options, function (key, value) {
+					if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
+						log(2, "WARNING: Unknown option \"" + key + "\"");
+						delete _options[key];
+					}
+				});
+			},
+			"duration" : function () {
+				_options.duration = parseFloat(_options.duration);
+				if (!$.isNumeric(_options.duration) || _options.duration < 0) {
+					log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
+					_options.duration = DEFAULT_OPTIONS.duration;
+				}
+			},
+			"offset" : function () {
+				_options.offset = parseFloat(_options.offset);
+				if (!$.isNumeric(_options.offset)) {
+					log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
+					_options.offset = DEFAULT_OPTIONS.offset;
+				}
+			},
+			"triggerElement" : function () {
+				if (_options.triggerElement !== null && $(_options.triggerElement).length === 0) {
+					log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
+					_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
+				}
+			},
+			"triggerHook" : function () {
+				if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
+					log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
+					_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
+				}
+			},
+			"loglevel" : function () {
+				// (BUILD) - REMOVE IN MINIFY - START
+				if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
+					var wrongval = _options.loglevel;
+					_options.loglevel = DEFAULT_OPTIONS.loglevel;
+					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
+				}
+				// (BUILD) - REMOVE IN MINIFY - END
+			},
+			"checkIfPinnedElementIsTweened" : function () {
+				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
+					// check if there are position tweens defined for the trigger and warn about it :)
+					var
+						triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
+						vertical = _parent.info("vertical");
+					$.each(triggerTweens, function (index, value) {
+						var
+							tweenvars = value.vars.css || value.vars,
+							condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
+						if (condition) {
+							log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
+							return false;
+						}
+					});
+				}
+			},
+		};
 
 		/*
 		 * ----------------------------------------------------------------
@@ -98,7 +161,6 @@
 			// internal event listeners
 			ScrollScene
 				.on("change.internal", function (e) {
-					checkOptionsValidity();
 					if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
 						if (e.what === "triggerElement") {
 							ScrollScene.updateTriggerElementPosition();
@@ -141,56 +203,23 @@
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		/**
-		 * Check the validity of all options and reset to default if neccessary.
+		 * Checks the validity of a specific or all options and reset to default if neccessary.
 		 * @private
 		 */
-		var checkOptionsValidity = function () {
-			$.each(_options, function (key, value) {
-				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
-					log(2, "WARNING: Unknown option \"" + key + "\"");
-					delete _options[key];
+		var checkOptionsValidity = function (check) {
+			if (!arguments.length) {
+				check = [];
+				for (var key in _validate){
+					check.push(key);
+				}
+			} else if (!$.isArray(check)) {
+				check = [check];
+			}
+			$.each(check, function (key, value) {
+				if (_validate[value]) {
+					_validate[value]();
 				}
 			});
-			_options.duration = parseFloat(_options.duration);
-			if (!$.isNumeric(_options.duration) || _options.duration < 0) {
-				log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
-				_options.duration = DEFAULT_OPTIONS.duration;
-			}
-			_options.offset = parseFloat(_options.offset);
-			if (!$.isNumeric(_options.offset)) {
-				log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
-				_options.offset = DEFAULT_OPTIONS.offset;
-			}
-			if (_options.triggerElement !== null && $(_options.triggerElement).length === 0) {
-				log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
-				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
-			}
-			if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
-				log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
-				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
-			}
-			// (BUILD) - REMOVE IN MINIFY - START
-			if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
-				var wrongval = _options.loglevel;
-				_options.loglevel = DEFAULT_OPTIONS.loglevel;
-				log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
-			}
-			// (BUILD) - REMOVE IN MINIFY - END
-			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
-				// check if there are position tweens defined for the trigger and warn about it :)
-				var
-					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
-					vertical = _parent.info("vertical");
-				$.each(triggerTweens, function (index, value) {
-					var
-						tweenvars = value.vars.css || value.vars,
-						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
-					if (condition) {
-						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
-						return false;
-					}
-				});
-			}
 		};
 
 		/**
@@ -467,9 +496,11 @@
 			if (!arguments.length) { // get
 				return _options.duration;
 			} else if (_options.duration != newDuration) { // set
-				_options.duration = newDuration;
-				ScrollScene.trigger("change", {what: "duration", newval: newDuration});
-				ScrollScene.trigger("shift", {reason: "duration"});
+				var varname = "duration";
+				_options[varname] = newDuration;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+				ScrollScene.trigger("shift", {reason: varname});
 			}
 			return ScrollScene;
 		};
@@ -494,9 +525,11 @@
 			if (!arguments.length) { // get
 				return _options.offset;
 			} else if (_options.offset != newOffset) { // set
-				_options.offset = newOffset;
-				ScrollScene.trigger("change", {what: "offset", newval: newOffset});
-				ScrollScene.trigger("shift", {reason: "offset"});
+				var varname = "offset";
+				_options[varname] = newOffset;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+				ScrollScene.trigger("shift", {reason: varname});
 			}
 			return ScrollScene;
 		};
@@ -525,8 +558,10 @@
 			if (!arguments.length) { // get
 				return _options.triggerElement;
 			} else if (_options.triggerElement != newTriggerElement) { // set
-				_options.triggerElement = newTriggerElement;
-				ScrollScene.trigger("change", {what: "triggerElement", newval: newTriggerElement});
+				var varname = "triggerElement";
+				_options[varname] = newTriggerElement;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
 		};
@@ -571,9 +606,11 @@
 				}
 				return triggerPoint;
 			} else if (_options.triggerHook != newTriggerHook) { // set
-				_options.triggerHook = newTriggerHook;
-				ScrollScene.trigger("change", {what: "triggerHook", newval: newTriggerHook}); // fire event
-				ScrollScene.trigger("shift", {reason: "triggerHook"});
+				var varname = "triggerHook";
+				_options[varname] = newTriggerHook;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+				ScrollScene.trigger("shift", {reason: varname});
 			}
 			return ScrollScene;
 		};
@@ -597,8 +634,10 @@
 			if (!arguments.length) { // get
 				return _options.reverse;
 			} else if (_options.reverse != newReverse) { // set
-				_options.reverse = newReverse;
-				ScrollScene.trigger("change", {what: "reverse", newval: newReverse}); // fire event
+				var varname = "reverse";
+				_options[varname] = !!newReverse;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
 		};
@@ -622,8 +661,10 @@
 			if (!arguments.length) { // get
 				return _options.tweenChanges;
 			} else if (_options.tweenChanges != newTweenChanges) { // set
-				_options.tweenChanges = newTweenChanges;
-				ScrollScene.trigger("change", {what: "tweenChanges", newval: newTweenChanges}); // fire event
+				var varname = "tweenChanges";
+				_options[varname] = !!newTweenChanges;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
 		};
@@ -647,8 +688,10 @@
 			if (!arguments.length) { // get
 				return _options.loglevel;
 			} else if (_options.loglevel != newLoglevel) { // set
-				_options.loglevel = newLoglevel;
-				ScrollScene.trigger("change", {what: "loglevel", newval: newLoglevel}); // fire event
+				var varname = "loglevel";
+				_options[varname] = newLoglevel;
+				checkOptionsValidity(varname);
+				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
 		};
@@ -949,7 +992,7 @@
 						_tween.yoyo(TweenMaxObject.yoyo());
 					}
 				}
-				checkOptionsValidity();
+				checkOptionsValidity("checkIfPinnedElementIsTweened");
 				log(3, "added tween");
 				updateTweenProgress();
 				return ScrollScene;
