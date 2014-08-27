@@ -117,7 +117,7 @@
         var methods = self.find({kind: 'function', memberof: member});
         var methodsOutput = {};
         var methodsInGroups = [];
-        var groupDefinitions = this.env.conf.methodGroupDefinitions || {};
+        var groupDefinitions = this.env.conf._custom.methodGroupDefinitions || {};
         var methodGroups = groupDefinitions[member];
         
         if (methods && methods.length && methods.forEach) {

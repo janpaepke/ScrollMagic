@@ -483,6 +483,11 @@
 			}
 		};
 
+		/**
+		 * Is called, when the mousewhel is used while over a pinned element.
+		 * If the scene is in fixed state scroll events used to be ignored. This forwards the event to the scroll container.
+		 * @private
+		 */
 		var onMousewheelOverPin = function (e) {
 			if (_parent && _pin && (_state === "DURING" || _state === "AFTER" && _options.duration === 0)) { // in pin state
 				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
@@ -771,8 +776,9 @@
 		 * Updates the Scene in the parent Controller to reflect the current state.  
 		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`.  
 		 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
-		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
-		 * *Note:* This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.
+		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
+		 * This means an update doesn't necessarily result in a progress change. The `progress` event will be fired if the progress has indeed changed between this update and the last.  
+		 * _**NOTE:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
 		 * // update the scene on next tick
@@ -868,7 +874,32 @@
 
 		/**
 		 * **Get** or **Set** the scene's progress.  
-		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().
+		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().  
+		 * The order in which the events are fired depends on the duration of the scene:
+		 *  1. Scenes with `duration == 0`:  
+		 *  Scenes that have no duration by definition have no ending. Thus the `end` event will never be fired.  
+		 *  When the trigger position of the scene is passed the events are always fired in this order:  
+		 *  `enter`, `start`, `progress` when scrolling forward  
+		 *  and  
+		 *  `progress`, `start`, `leave` when scrolling in reverse
+		 *  2. Scenes with `duration > 0`:  
+		 *  Scenes with a set duration have a defined start and end point.  
+		 *  When scrolling past the start position of the scene it will fire these events in this order:  
+		 *  `enter`, `start`, `progress`  
+		 *  When continuing to scroll and passing the end point it will fire these events:  
+		 *  `progress`, `end`, `leave`  
+		 *  When reversing through the end point these events are fired:  
+		 *  `enter`, `end`, `progress`  
+		 *  And when continuing to scroll past the start position in reverse it will fire:  
+		 *  `progress`, `start`, `leave`  
+		 *  In between start and end the `progress` event will be called constantly, whenever the progress changes.
+		 * 
+		 * In short:  
+		 * `enter` events will always trigger **before** the progress update and `leave` envents will trigger **after** the progress update.  
+		 * `start` and `end` will always trigger at their respective position.
+		 * 
+		 * Please review the event descriptions for details on the events and the event object that is passed to the callback.
+		 * 
 		 * @public
 		 * @example
 		 * // get the current scene progress
@@ -1360,6 +1391,8 @@
 		 * Fires whenever the scroll position its the starting point of the scene.  
 		 * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
+		 *
 		 * @event ScrollScene.start
 		 *
 		 * @example
@@ -1378,6 +1411,8 @@
 		 * Scene end event.  
 		 * Fires whenever the scroll position its the ending point of the scene.  
 		 * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.end
 		 *
@@ -1398,6 +1433,8 @@
 		 * Fires whenever the scene enters the "DURING" state.  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
 		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
+		 *
 		 * @event ScrollScene.enter
 		 *
 		 * @example
@@ -1416,6 +1453,8 @@
 		 * Scene leave event.  
 		 * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.leave
 		 *
@@ -1452,6 +1491,8 @@
 		/**
 		 * Scene progress event.  
 		 * Fires whenever the progress of the scene changes.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.progress
 		 *
