@@ -4,10 +4,8 @@
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
-- endTrigger
 @todo: document event fire order (enter, start/end, progress, start/end, leave)
 @todo: issues with min width on first page load (check main demo page)
-@todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)

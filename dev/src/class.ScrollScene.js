@@ -136,10 +136,9 @@
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 				}
 			},
-			// (BUILD) - REMOVE IN MINIFY - END
-			"checkIfPinnedElementIsTweened" : function () {
+			"checkIfTriggerElementIsTweened" : function () {
+				// check if there are position tweens defined for the trigger and warn about it :)
 				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
-					// check if there are position tweens defined for the trigger and warn about it :)
 					var
 						triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
 						vertical = _parent.info("vertical");
@@ -154,6 +153,7 @@
 					});
 				}
 			},
+			// (BUILD) - REMOVE IN MINIFY - END
 		};
 
 		/*
@@ -988,7 +988,7 @@
 						_tween.yoyo(TweenMaxObject.yoyo());
 					}
 				}
-				validateOption("checkIfPinnedElementIsTweened");
+				validateOption("checkIfTriggerElementIsTweened");
 				log(3, "added tween");
 				updateTweenProgress();
 				return ScrollScene;
