@@ -758,13 +758,6 @@ a.viewsource:before {
 	margin-top: 20px;
 }
 
-.disablePointerEvents {
-	pointer-events: none;
-}
-.disablePointerEvents a {
-	pointer-events: auto;
-}
-
 /*
 
 Codehighlighting

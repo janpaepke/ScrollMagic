@@ -472,14 +472,20 @@
 		 * @private
 		 */
 		var updateRelativePinSpacer = function () {
-			if (   _parent && _pin &&// well, duh
-				(_state === "DURING" || _state === "AFTER" && _options.duration === 0) &&// element in pinned state?
-				( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+			if ( _parent && _pin &&// well, duh
+					(_state === "DURING" || _state === "AFTER" && _options.duration === 0) &&// element in pinned state?
+					( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 						(_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()) ||
 						(_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
 					)
 			) {
 				updatePinSpacerSize();
+			}
+		};
+
+		var onMousewheelOverPin = function (e) {
+			if (_parent && _pin && (_state === "DURING" || _state === "AFTER" && _options.duration === 0)) { // in pin state
+				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
 			}
 		};
 
@@ -1140,6 +1146,8 @@
 
 			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
+			// add mousewheel listener to catch scrolls over fixed elements
+			_pin.on("mousewheel DOMMouseScroll", onMousewheelOverPin);
 
 			log(3, "added pin");
 
@@ -1174,6 +1182,7 @@
 					}
 				}
 				$(window).off("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin");
+				_pin.off("mousewheel DOMMouseScroll", onMousewheelOverPin);
 				_pin = undefined;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
