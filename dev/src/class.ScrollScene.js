@@ -926,23 +926,31 @@
 				var
 					doUpdate = false,
 					oldState = _state,
-					scrollDirection = _parent ? _parent.info("scrollDirection") : 'PAUSED';
-				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
-					// go back to initial state
-					_progress = 0;
-					_state = 'BEFORE';
-					doUpdate = true;
-				} else if (progress > 0 && (progress < 1 || (_options.duration === 0 && _state !== 'DURING')) && (progress >= _progress || _options.reverse)) {
-					_progress = progress;
-					_state = 'DURING';
-					doUpdate = true;
-				} else if (progress >= 1 && _state !== 'AFTER' && _options.duration > 0) {
-					_progress = 1;
-					_state = 'AFTER';
-					doUpdate = true;
-				} else if (_state === 'DURING' && !_options.reverse) {
-					// TODO: check if works
-					updatePinState(); // in case we scrolled back and reverse is disabled => update the pin position, so it doesn't scroll back as well.
+					scrollDirection = _parent ? _parent.info("scrollDirection") : 'PAUSED',
+					reverseOrForward = _options.reverse || progress >= _progress;
+				if (_options.duration === 0) {
+					// zero duration scenes
+					_progress = progress < 1 && reverseOrForward ? 0 : 1;
+					_state = _progress === 0 ? 'BEFORE' : 'DURING';
+					doUpdate = _state != oldState;
+				} else {
+					// scenes with start and end
+					if (progress <= 0 && _state !== 'BEFORE' && reverseOrForward) {
+						// go back to initial state
+						_progress = 0;
+						_state = 'BEFORE';
+						doUpdate = true;
+					} else if (progress > 0 && progress < 1 && reverseOrForward) {
+						_progress = progress;
+						_state = 'DURING';
+						doUpdate = true;
+					} else if (progress >= 1 && _state !== 'AFTER') {
+						_progress = 1;
+						_state = 'AFTER';
+						doUpdate = true;
+					} else if (_state === 'DURING' && !reverseOrForward) {
+						updatePinState(); // in case we scrolled backwards mid-scene and reverse is disabled => update the pin position, so it doesn't move back as well.
+					}
 				}
 				if (doUpdate) {
 					// fire events
