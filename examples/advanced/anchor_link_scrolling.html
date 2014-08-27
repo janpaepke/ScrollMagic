@@ -69,14 +69,18 @@
 											.setTween(tween)
 											.addTo(controller);
 
-							// change behaviour of anchor links to scroll instead of jump
+							// change behaviour of controller to animate scroll instead of jump
+							controller.scrollTo(function (newpos) {
+								TweenMax.to(window, 0.5, {scrollTo: {y: newpos}});
+							});
+
+							//  bind scroll to anchor links
 							$(document).on("click", "a[href^=#]", function (e) {
-								var
-									id = $(this).attr("href"),
-									$elem = $(id);
-								if ($elem.length > 0) {
+								var id = $(this).attr("href");
+								if ($(id).length > 0) {
 									e.preventDefault();
-									TweenMax.to(window, 0.5, {scrollTo: {y: $elem.offset().top}});
+									controller.scrollTo(id);
+
 									if (window.history && window.history.pushState) {
 										// if supported by the browser we can even update the URL.
 										history.pushState("", document.title, id);
