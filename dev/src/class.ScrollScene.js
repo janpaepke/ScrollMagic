@@ -178,8 +178,9 @@
 						} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
 							ScrollScene.update();
 						}
-						if ((_state !== "DURING" && e.what == "duration") || (_state === "AFTER" && _options.duration === 0)) { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
+						if (_state !== "DURING" && e.what == "duration") { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
 							// TODO: CHECK if still working (change is called before shift and so this might not have the right values...)
+							// TODO: also before it was a different check (during and duration change) OR (after and 0 duration)... so find out exaact coditions for this.
 							updatePinState();
 						}
 					}
@@ -281,7 +282,7 @@
 				var progress = (to >= 0 && to <= 1) ? to : _progress;
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if ((_state === "DURING" || (_state === "AFTER" && _options.duration === 0)) && _tween.paused()) {
+					if (_state === "DURING" && _tween.paused()) {
 						_tween.play();
 					} else if (_state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
@@ -292,7 +293,7 @@
 					// no infinite loop - so should we just play or go to a specific point in time?
 					if (_options.duration === 0) {
 						// play the animation
-						if (_state === "AFTER") { // play from 0 to 1
+						if (_state === "DURING") { // play from 0 to 1
 							_tween.play();
 						} else { // play from 1 to 0
 							_tween.reverse();
@@ -325,7 +326,7 @@
 				var 
 					containerInfo = _parent.info();
 
-				if (!forceUnpin && (_state === "DURING" || (_state === "AFTER" && _options.duration === 0))) { // during scene or if duration is 0 and we are past the trigger
+				if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					if (_pin.css("position") != "fixed") {
 						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
@@ -365,7 +366,7 @@
 					
 					if (!_pinOptions.pushFollowers) {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
-					} else {
+					} else if (_options.duration > 0) { // only concerns scenes with duration
 						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) === 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
 						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) === 0) { // before
@@ -472,8 +473,8 @@
 		 * @private
 		 */
 		var updateRelativePinSpacer = function () {
-			if ( _parent && _pin &&// well, duh
-					(_state === "DURING" || _state === "AFTER" && _options.duration === 0) &&// element in pinned state?
+			if ( _parent && _pin && // well, duh
+					_state === "DURING" && // element in pinned state?
 					( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 						(_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()) ||
 						(_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
@@ -489,7 +490,7 @@
 		 * @private
 		 */
 		var onMousewheelOverPin = function (e) {
-			if (_parent && _pin && (_state === "DURING" || _state === "AFTER" && _options.duration === 0)) { // in pin state
+			if (_parent && _pin && _state === "DURING") { // in pin state
 				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
 			}
 		};
@@ -925,21 +926,22 @@
 				var
 					doUpdate = false,
 					oldState = _state,
-					scrollDirection = _parent ? _parent.info("scrollDirection") : "PAUSED";
+					scrollDirection = _parent ? _parent.info("scrollDirection") : 'PAUSED';
 				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
 					// go back to initial state
 					_progress = 0;
 					_state = 'BEFORE';
 					doUpdate = true;
-				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
+				} else if (progress > 0 && (progress < 1 || (_options.duration === 0 && _state !== 'DURING')) && (progress >= _progress || _options.reverse)) {
 					_progress = progress;
 					_state = 'DURING';
 					doUpdate = true;
-				} else if (progress >= 1 && _state !== 'AFTER') {
+				} else if (progress >= 1 && _state !== 'AFTER' && _options.duration > 0) {
 					_progress = 1;
 					_state = 'AFTER';
 					doUpdate = true;
-				} else if (_state === "DURING" && !_options.reverse) {
+				} else if (_state === 'DURING' && !_options.reverse) {
+					// TODO: check if works
 					updatePinState(); // in case we scrolled back and reverse is disabled => update the pin position, so it doesn't scroll back as well.
 				}
 				if (doUpdate) {
@@ -953,30 +955,16 @@
 					};
 
 					if (stateChanged) { // enter events
-						if (_options.duration === 0) {
-							if (_state === 'AFTER') {
-								trigger("enter");
-								trigger("start");
-							}
-						} else {
-							if (oldState !== 'DURING') {
-								trigger("enter");
-								trigger(oldState === 'BEFORE' ? "start" : "end");
-							}
+						if (oldState !== 'DURING') {
+							trigger("enter");
+							trigger(oldState === 'BEFORE' ? "start" : "end");
 						}
 					}
 					trigger("progress");
 					if (stateChanged) { // leave events
-						if (_options.duration === 0) {
-							if (_state === 'BEFORE') {
-								trigger("start");
-								trigger("leave");
-							}
-						} else {
-							if (_state !== 'DURING') {
-								trigger(_state === 'AFTER' ? "end" : "start");
-								trigger("leave");
-							}
+						if (_state !== 'DURING') {
+							trigger(_state === 'BEFORE' ? "start" : "end");
+							trigger("leave");
 						}
 					}
 				}
