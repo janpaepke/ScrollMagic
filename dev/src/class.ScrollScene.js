@@ -48,13 +48,13 @@
 		 */
 
 		var
-			TRIGGER_HOOK_STRINGS = ["onCenter", "onEnter", "onLeave"],
+			TRIGGER_HOOK_VALUES = {"onCenter" : 0.5, "onEnter" : 1, "onLeave" : 0},
 			NAMESPACE = "ScrollScene",
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
 				triggerElement: null,
-				triggerHook: TRIGGER_HOOK_STRINGS[0],
+				triggerHook: "onCenter",
 				reverse: true,
 				tweenChanges: false,
 				loglevel: 2
@@ -112,20 +112,31 @@
 				}
 			},
 			"triggerHook" : function () {
-				if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
-					log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
-					_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
+				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
+					if ($.isNumeric(_options.triggerHook)) {
+						_options.triggerHook = parseFloat(_options.triggerHook);
+					} else {
+						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
+						_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
+					}
 				}
 			},
+			"reverse" : function () {
+				_options.reverse = !!_options.reverse; // force boolean
+			},
+			"tweenChanges" : function () {
+				_options.tweenChanges = !!_options.tweenChanges; // force boolean
+			},
+			// (BUILD) - REMOVE IN MINIFY - START
 			"loglevel" : function () {
-				// (BUILD) - REMOVE IN MINIFY - START
+				_options.loglevel = parseInt(_options.loglevel);
 				if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 					var wrongval = _options.loglevel;
 					_options.loglevel = DEFAULT_OPTIONS.loglevel;
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 				}
-				// (BUILD) - REMOVE IN MINIFY - END
 			},
+			// (BUILD) - REMOVE IN MINIFY - END
 			"checkIfPinnedElementIsTweened" : function () {
 				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
 					// check if there are position tweens defined for the trigger and warn about it :)
@@ -156,7 +167,7 @@
 		 * @private
 		 */
 		var construct = function () {
-			checkOptionsValidity();
+			validateOption();
 
 			// internal event listeners
 			ScrollScene
@@ -164,10 +175,11 @@
 					if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
 						if (e.what === "triggerElement") {
 							ScrollScene.updateTriggerElementPosition();
-						} else if (e.what === "reverse") { // the only property left that may have an impect on the current scene state. Everything else is handled in the shift event.
+						} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
 							ScrollScene.update();
 						}
 						if ((_state !== "DURING" && e.what == "duration") || (_state === "AFTER" && _options.duration === 0)) { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
+							// TODO: CHECK if still working (change is called before shift and so this might not have the right values...)
 							updatePinState();
 						}
 					}
@@ -206,7 +218,7 @@
 		 * Checks the validity of a specific or all options and reset to default if neccessary.
 		 * @private
 		 */
-		var checkOptionsValidity = function (check) {
+		var validateOption = function (check) {
 			if (!arguments.length) {
 				check = [];
 				for (var key in _validate){
@@ -220,6 +232,22 @@
 					_validate[value]();
 				}
 			});
+		};
+
+		/**
+		 * Helper used by the setter/getters for scene options
+		 * @private
+		 */
+		var changeOption = function(varname, newval) {
+			var
+				changed = false,
+				oldval = _options[varname];
+			if (_options[varname] != newval) {
+				_options[varname] = newval;
+				validateOption(varname); // resets to default if necessary
+				changed = oldval != _options[varname];
+			}
+			return changed;
 		};
 
 		/**
@@ -493,12 +521,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.duration = function (newDuration) {
+			var varname = "duration";
 			if (!arguments.length) { // get
-				return _options.duration;
-			} else if (_options.duration != newDuration) { // set
-				var varname = "duration";
-				_options[varname] = newDuration;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newDuration)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
 			}
@@ -522,12 +548,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.offset = function (newOffset) {
+			var varname = "offset";
 			if (!arguments.length) { // get
-				return _options.offset;
-			} else if (_options.offset != newOffset) { // set
-				var varname = "offset";
-				_options[varname] = newOffset;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newOffset)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
 			}
@@ -536,7 +560,7 @@
 
 		/**
 		 * **Get** or **Set** the triggerElement option value.
-		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.updateTriggerElementPosition()`.
+		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.updateTriggerElementPosition()`, which is automatically triggered.
 		 * @public
 		 * @example
 		 * // get the current triggerElement
@@ -555,12 +579,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerElement = function (newTriggerElement) {
+			var varname = "triggerElement";
 			if (!arguments.length) { // get
-				return _options.triggerElement;
-			} else if (_options.triggerElement != newTriggerElement) { // set
-				var varname = "triggerElement";
-				_options[varname] = newTriggerElement;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newTriggerElement)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -585,30 +607,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerHook = function (newTriggerHook) {
+			var varname = "triggerHook";
 			if (!arguments.length) { // get
-				var triggerPoint;
-				if ($.isNumeric(_options.triggerHook)) {
-					triggerPoint = _options.triggerHook;
-				} else {
-					switch(_options.triggerHook) {
-						case "onCenter":
-							triggerPoint = 0.5;
-							break;
-						case "onLeave":
-							triggerPoint = 0;
-							break;
-						case "onEnter":
-							/* falls through */
-						default:
-							triggerPoint = 1;
-							break;
-					}
-				}
-				return triggerPoint;
-			} else if (_options.triggerHook != newTriggerHook) { // set
-				var varname = "triggerHook";
-				_options[varname] = newTriggerHook;
-				checkOptionsValidity(varname);
+				return $.isNumeric(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
+			} else if (changeOption(varname, newTriggerHook)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
 			}
@@ -631,12 +633,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.reverse = function (newReverse) {
+			var varname = "reverse";
 			if (!arguments.length) { // get
-				return _options.reverse;
-			} else if (_options.reverse != newReverse) { // set
-				var varname = "reverse";
-				_options[varname] = !!newReverse;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newReverse)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -658,12 +658,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.tweenChanges = function (newTweenChanges) {
+			var varname = "tweenChanges";
 			if (!arguments.length) { // get
-				return _options.tweenChanges;
-			} else if (_options.tweenChanges != newTweenChanges) { // set
-				var varname = "tweenChanges";
-				_options[varname] = !!newTweenChanges;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newTweenChanges)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -685,12 +683,10 @@
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.loglevel = function (newLoglevel) {
+			var varname = "loglevel";
 			if (!arguments.length) { // get
-				return _options.loglevel;
-			} else if (_options.loglevel != newLoglevel) { // set
-				var varname = "loglevel";
-				_options[varname] = newLoglevel;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newLoglevel)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -992,7 +988,7 @@
 						_tween.yoyo(TweenMaxObject.yoyo());
 					}
 				}
-				checkOptionsValidity("checkIfPinnedElementIsTweened");
+				validateOption("checkIfPinnedElementIsTweened");
 				log(3, "added tween");
 				updateTweenProgress();
 				return ScrollScene;
@@ -1256,7 +1252,7 @@
 					_parent.removeScene(ScrollScene);
 				}
 				_parent = controller;
-				checkOptionsValidity();
+				validateOption();
 				ScrollScene.updateTriggerElementPosition(true);
 				updateScrollOffset();
 				updatePinSpacerSize();
