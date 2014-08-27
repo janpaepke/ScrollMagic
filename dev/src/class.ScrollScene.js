@@ -178,16 +178,15 @@
 						} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
 							ScrollScene.update();
 						}
-						if (_state !== "DURING" && e.what == "duration") { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
-							// TODO: CHECK if still working (change is called before shift and so this might not have the right values...)
-							// TODO: also before it was a different check (during and duration change) OR (after and 0 duration)... so find out exaact coditions for this.
-							updatePinState();
-						}
 					}
 				})
 				.on("shift.internal", function (e) {
 					updateScrollOffset();
 					ScrollScene.update(); // update scene to reflect new position
+					if ((_state === "AFTER" && e.reason === "duration") || (_state === 'DURING' && _options.duration === 0)) {
+						// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
+						updatePinState();
+					}
 				})
 				.on("progress.internal", function (e) {
 					updateTweenProgress();
