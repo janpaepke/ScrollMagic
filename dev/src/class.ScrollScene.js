@@ -191,6 +191,9 @@
 				.on("progress.internal", function (e) {
 					updateTweenProgress();
 					updatePinState();
+				})
+				.on("destroy", function (e) {
+					e.preventDefault(); // otherwise jQuery would call target.destroy() by default.
 				});
 		};
 		
@@ -1369,8 +1372,9 @@
 			this.removeTween(reset);
 			this.removePin(reset);
 			this.removeClassToggle(reset);
+			ScrollScene.trigger("destroy", {reset: reset});
 			this.remove();
-			this.off("start end enter leave progress change update shift shift.internal change.internal progress.internal");
+			this.off("start end enter leave progress change update shift destroy shift.internal change.internal progress.internal");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
@@ -1539,6 +1543,31 @@
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {ScrollScene} event.reason - Indicates why the scene has shifted
+		 */
+		/**
+		 * Scene destroy event.  
+		 * Fires whenvever the scene is destroyed.
+		 * This can be used to tidy up custom behaviour used in events.
+		 *
+		 * @event ScrollScene.destroy
+		 * @since 1.1.0
+		 *
+		 * @example
+		 * scene.on("enter", function (event) {
+		 *        // add custom action
+		 *        $("#my-elem").left("200");
+		 *      })
+		 *      .on("destroy", function (event) {
+		 *        // reset my element to start position
+		 *        if (event.reset) {
+		 *          $("#my-elem").left("0");
+		 *        }
+		 *      });
+		 *
+		 * @property {object} event - The event Object passed to each callback
+		 * @property {string} event.type - The name of the event
+		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
+		 * @property {ScrollScene} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
 		 */
 		 
 		 /**
