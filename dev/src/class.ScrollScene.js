@@ -20,8 +20,9 @@
 	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
 	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
 	 							   When a scene is added to the controller the options defined using the ScrollScene constructor will be overwritten by those set in `globalSceneOptions`.
-	 * @param {number} [options.duration=0] - The duration of the scene.  
-	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
+	 * @param {(number|function)} [options.duration=0] - The duration of the scene. 
+	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.  
+	 										  A function retuning the duration value is also supported. Please see `ScrollScene.duration()` for details.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
 	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
 	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
@@ -74,6 +75,7 @@
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
 			_triggerPos = 0,
 			_enabled = true,
+			_durationUpdateMethod,
 			_parent,
 			_tween,
 			_pin,
@@ -92,10 +94,21 @@
 				});
 			},
 			"duration" : function () {
-				_options.duration = parseFloat(_options.duration);
-				if (!$.isNumeric(_options.duration) || _options.duration < 0) {
-					log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
-					_options.duration = DEFAULT_OPTIONS.duration;
+				if ($.isFunction(_options.duration)) {
+					_durationUpdateMethod = _options.duration;
+					try {
+						_options.duration = parseFloat(_durationUpdateMethod());
+					} catch (e) {
+						log(1, "ERROR: Invalid return value of supplied function for option \"duration\":", _options.duration);
+						_durationUpdateMethod = undefined;
+						_options.duration = DEFAULT_OPTIONS.duration;
+					}
+				} else {
+					_options.duration = parseFloat(_options.duration);
+					if (!$.isNumeric(_options.duration) || _options.duration < 0) {
+						log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
+						_options.duration = DEFAULT_OPTIONS.duration;
+					}
 				}
 			},
 			"offset" : function () {
@@ -169,12 +182,12 @@
 		var construct = function () {
 			validateOption();
 
-			// internal event listeners
+			// event listeners
 			ScrollScene
 				.on("change.internal", function (e) {
 					if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
 						if (e.what === "triggerElement") {
-							ScrollScene.updateTriggerElementPosition();
+							updateTriggerElementPosition();
 						} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
 							ScrollScene.update();
 						}
@@ -270,6 +283,66 @@
 				_scrollOffset.start -= _parent.info("size") * ScrollScene.triggerHook();
 			}
 			_scrollOffset.end = _scrollOffset.start + _options.duration;
+		};
+
+		/**
+		 * Updates the duration if set to a dynamic function.
+		 * This method is called when the scene is added to a controller and in regular intervals from the controller through scene.refresh().
+		 * 
+		 * @fires {@link ScrollScene.change}, if the duration changed
+		 * @fires {@link ScrollScene.shift}, if the duration changed
+		 *
+		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 */
+		var updateDuration = function (suppressEvents) {
+			// update duration
+			if (_durationUpdateMethod) {
+				var varname = "duration";
+				if (changeOption(varname, _durationUpdateMethod()) && !suppressEvents) { // set
+					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+					ScrollScene.trigger("shift", {reason: varname});
+				}
+			}
+		};
+
+		/**
+		 * Updates the position of the triggerElement, if present.
+		 * This method is called ...
+		 *  - ... when the triggerElement is changed
+		 *  - ... when the scene is added to a (new) controller
+		 *  - ... in regular intervals from the controller through scene.refresh().
+		 * 
+		 * @fires {@link ScrollScene.shift}, if the position changed
+		 *
+		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 */
+		var updateTriggerElementPosition = function (suppressEvents) {
+			var elementPos = 0;
+			if (_parent && _options.triggerElement) {
+				var
+					element = $(_options.triggerElement).first(),
+					controllerInfo = _parent.info(),
+					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+					
+				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (element.parent().data("ScrollMagicPinSpacer")) {
+					element = element.parent();
+				}
+
+				var elementOffset = getOffset(element);
+
+				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+					containerOffset[param] -= controllerInfo.scrollPos;
+				}
+
+				elementPos = elementOffset[param] - containerOffset[param];
+			}
+			var changed = elementPos != _triggerPos;
+			_triggerPos = elementPos;
+			if (changed && !suppressEvents) {
+				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
+			}
 		};
 
 		/**
@@ -520,6 +593,13 @@
 
 		/**
 		 * **Get** or **Set** the duration option value.
+		 * As a setter it also accepts a function returning a numeric value.  
+		 * This is particularly useful for responsive setups.
+		 *
+		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `sceneRefreshInterval`).  
+		 * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
+		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)_
+		 *
 		 * @public
 		 * @example
 		 * // get the current duration value
@@ -528,9 +608,21 @@
 	 	 * // set a new duration
 		 * scene.duration(300);
 		 *
+		 * // use a function to automatically adjust the duration to the window height.
+		 * var durationValueCache;
+		 * function getDuration () {
+		 *   return durationValueCache;
+		 * }
+		 * function updateDuration (e) {
+		 *   durationValueCache = $(window).innerHeight();
+		 * }
+		 * $(window).on("resize", updateDuration); // update the duration when the window size changes
+		 * $(window).triggerHandler("resize"); // set to initial value
+		 * scene.duration(getDuration); // supply duration method
+		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @fires {@link ScrollScene.shift}, when used as setter
-		 * @param {number} [newDuration] - The new duration of the scene.
+		 * @param {(number|function)} [newDuration] - The new duration of the scene.
 		 * @returns {number} `get` -  Current scene duration.
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
@@ -538,9 +630,14 @@
 			var varname = "duration";
 			if (!arguments.length) { // get
 				return _options[varname];
-			} else if (changeOption(varname, newDuration)) { // set
-				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
-				ScrollScene.trigger("shift", {reason: varname});
+			} else {
+				if (!$.isFunction(newDuration)) {
+					_durationUpdateMethod = undefined;
+				}
+				if (changeOption(varname, newDuration)) { // set
+					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+					ScrollScene.trigger("shift", {reason: varname});
+				}
 			}
 			return ScrollScene;
 		};
@@ -574,7 +671,7 @@
 
 		/**
 		 * **Get** or **Set** the triggerElement option value.
-		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.updateTriggerElementPosition()`, which is automatically triggered.
+		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.refresh()`, which is automatically triggered.
 		 * @public
 		 * @example
 		 * // get the current triggerElement
@@ -823,13 +920,12 @@
 		};
 
 		/**
-		 * Updates the position of the triggerElement, if present.
-		 * This method is automatically called ...
-		 *  - ... when the triggerElement is changed
-		 *  - ... when the scene is added to a (new) controller
-		 *  - ... in regular intervals from the controller. See {@link ScrollMagic} option `triggerPosUpdateInterval`.
+		 * Updates dynamic scene variables like the trigger element position or the duration.
+		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `sceneRefreshInterval`.
 		 * 
-		 * You can call it to minimize lag, when you intentionally change the position of the triggerElement.
+		 * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
+		 * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
+		 *
 		 * @public
 		 * @since 1.1.0
 		 * @example
@@ -838,40 +934,17 @@
 		 * // change the position of the trigger
 		 * $("#trigger").css("top", 500);
 		 * // immediately let the scene know of this change
-		 * scene.updateTriggerElementPosition();
+		 * scene.refresh();
 		 *
-		 * @fires {@link ScrollScene.shift}, if the position changed and suppressEvents is false
+		 * @fires {@link ScrollScene.shift}, if the trigger element position or the duration changed
+		 * @fires {@link ScrollScene.change}, if the duration changed
 		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		 // @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed. no doc export...
-		this.updateTriggerElementPosition = function (suppressEvents) {
-			var elementPos = 0;
-			if (_parent && _options.triggerElement) {
-				var
-					element = $(_options.triggerElement).first(),
-					controllerInfo = _parent.info(),
-					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
-					
-				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (element.parent().data("ScrollMagicPinSpacer")) {
-					element = element.parent();
-				}
-
-				var elementOffset = getOffset(element);
-
-				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-					containerOffset[param] -= controllerInfo.scrollPos;
-				}
-
-				elementPos = elementOffset[param] - containerOffset[param];
-			}
-			var changed = elementPos != _triggerPos;
-			_triggerPos = elementPos;
-			if (changed && !suppressEvents) {
-				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
-			}
+		this.refresh = function () {
+			updateDuration();
+			updateTriggerElementPosition();
+			// update trigger element position
 			return ScrollScene;
 		};
 
@@ -1263,7 +1336,7 @@
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.removeClassToggle = function (reset) {
-			if (reset) {
+			if (_cssClassElm && reset) {
 				_cssClassElm.removeClass(_cssClasses);
 			}
 			ScrollScene.off("start.internal_class end.internal_class");
@@ -1291,7 +1364,8 @@
 				}
 				_parent = controller;
 				validateOption();
-				ScrollScene.updateTriggerElementPosition(true);
+				updateDuration(true);
+				updateTriggerElementPosition(true);
 				updateScrollOffset();
 				updatePinSpacerSize();
 				_parent.info("container").on("resize." + NAMESPACE, function () {
@@ -1369,12 +1443,12 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (reset) {
-			this.removeTween(reset);
-			this.removePin(reset);
-			this.removeClassToggle(reset);
+			ScrollScene.removeTween(reset);
+			ScrollScene.removePin(reset);
+			ScrollScene.removeClassToggle(reset);
 			ScrollScene.trigger("destroy", {reset: reset});
-			this.remove();
-			this.off("start end enter leave progress change update shift destroy shift.internal change.internal progress.internal");
+			ScrollScene.remove();
+			ScrollScene.off("start end enter leave progress change update shift destroy shift.internal change.internal progress.internal");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
@@ -1542,7 +1616,7 @@
 		 * @property {object} event - The event Object passed to each callback
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
-		 * @property {ScrollScene} event.reason - Indicates why the scene has shifted
+		 * @property {string} event.reason - Indicates why the scene has shifted
 		 */
 		/**
 		 * Scene destroy event.  
@@ -1567,7 +1641,7 @@
 		 * @property {object} event - The event Object passed to each callback
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
-		 * @property {ScrollScene} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
+		 * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
 		 */
 		 
 		 /**
@@ -1590,7 +1664,7 @@
 			if ($.isFunction(callback)) {
 				var names = $.trim(name).toLowerCase()
 							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-							.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
+							.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE ); // add namespace to regulars.
 				$(ScrollScene).on(names, callback);
 			} else {
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
@@ -1618,7 +1692,7 @@
 		 this.off = function (name, callback) {
 			var names = $.trim(name).toLowerCase()
 						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
+						.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
 			$(ScrollScene).off(names, callback);
 			return ScrollScene;
 		 };
@@ -1636,14 +1710,7 @@
 		 */
 		 this.trigger = function (name, vars) {
 			log(3, 'event fired:', name, "->", vars);
-			var event = {
-				type: $.trim(name).toLowerCase(),
-				target: ScrollScene
-			};
-			if ($.isPlainObject(vars)) {
-				event = $.extend({}, vars, event);
-			}
-			// fire all callbacks of the event
+			var event = $.Event($.trim(name).toLowerCase(), vars);
 			$(ScrollScene).trigger(event);
 			return ScrollScene;
 		 };
