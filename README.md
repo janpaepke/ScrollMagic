@@ -31,7 +31,7 @@ The major perks of using ScrollMagic include:
 * extensive debugging and logging capabilities
 
 ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, if you're just starting out with javascript.  
-If you don't really care about any of the points above and are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
+If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
 ## Installation
 Aside from [jQuery](http://jquery.com/) make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
