@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=500" />
+	<meta name="keywords" content="ScrollMagic, example, scrolling, attaching, scrollbar, tween, tweenmax" />
+	<meta name="author"	content="Jan Paepke (www.janpaepke.de)" />
+	<title>Bezier Path Animation - Examples - ScrollMagic</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="../../css/style.css" type="text/css">
+	<link rel="stylesheet" href="../../css/examples.css" type="text/css">
+	<script type="text/javascript" src="../../js/_dependent/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../../js/_dependent/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/_examples/general.js"></script>
+	<script type="text/javascript" src="../../js/_examples/highlight.pack.js"></script>
+	<script type="text/javascript" src="../../js/_examples/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.scrollmagic.js"></script>
+	<script type="text/javascript" src="../../js/jquery.scrollmagic.debug.js"></script>
+</head>
+<body>
+	<ul id="menu"></ul>
+	<div id="content-wrapper">
+		<div id="example-wrapper">
+			<div class="scrollContent">
+				<section id="titlechart">
+					<div id="description">
+						<h1>Bezier Path Animation</h1>
+						<h2>Animate along a curve – plane and simple</h2>
+						<p>
+							Because ScrollMagic can handle anything GSAP throws at it, you can also make use of its awesome bezier plugin.<br>
+							Simply define the curve points and supply them in your tween definition.
+						</p>
+						<p>
+							To learn more about the GSAP Bezier plugin <a href="http://greensock.com/docs/#/HTML5/GSAP/Plugins/BezierPlugin/" taget="_blank">click here</a>.
+						</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+				</section>
+				<section class="demo" id="bezier">
+					<div class="spacer s2"></div>
+					<div class="spacer s0" id="trigger"></div>
+					<div id="target">
+						<img id="plane" src="../../img/example_bezier.png" />
+						<a href="#" class="viewsource">view source</a>
+					</div>
+					<div class="spacer s2"></div>
+					<script>
+						$(document).ready(function($) {
+
+							var flightpath = {
+								entry : {
+									curviness: 1.25,
+									autoRotate: true,
+									values: [
+											{x: 100,	y: -20},
+											{x: 300,	y: 10}
+										]
+								},
+								looping : {
+									curviness: 1.25,
+									autoRotate: true,
+									values: [
+											{x: 510,	y: 60},
+											{x: 620,	y: -60},
+											{x: 500,	y: -100},
+											{x: 380,	y: 20},
+											{x: 500,	y: 60},
+											{x: 580,	y: 20},
+											{x: 620,	y: 15}
+										]
+								},
+								leave : {
+									curviness: 1.25,
+									autoRotate: true,
+									values: [
+											{x: 660,	y: 20},
+											{x: 800,	y: 130},
+											{x: $(window).width() + 300,	y: -100},
+										]
+								}
+							};
+							// init controller
+							var controller = new ScrollMagic();
+
+							// create tween
+							var tween = new TimelineMax()
+								.add(TweenMax.to($("#plane"), 1.2, {css:{bezier:flightpath.entry}, ease:Power1.easeInOut}))
+								.add(TweenMax.to($("#plane"), 2, {css:{bezier:flightpath.looping}, ease:Power1.easeInOut}))
+								.add(TweenMax.to($("#plane"), 1, {css:{bezier:flightpath.leave}, ease:Power1.easeInOut}));
+
+							// build scene
+							var scene = new ScrollScene({triggerElement: "#trigger", duration: 500, offset: 100})
+											.setPin("#target")
+											.setTween(tween)
+											.addTo(controller);
+
+							// show indicators (requires debug extension)
+							scene.addIndicators();
+						});
+					</script>
+				</section>
+				<div class="spacer s_viewport"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
+		ga('send', 'pageview');
+	</script>
+</body>
+</html>

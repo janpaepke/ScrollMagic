@@ -75,6 +75,13 @@ section#titlechart #description a.viewsource {
 	display: block;
 	margin-bottom: 20px;
 }
+section#titlechart #description code {
+	background-color: #E1F1FF;
+	padding-left: 2px;
+	padding-right: 2px;
+	white-space: nowrap;
+}
+
 section#titlechart #description ol, section#titlechart #description p {
 	text-align: left;
 	max-width: 400px;
@@ -212,6 +219,7 @@ section.demo.doublewidth, .spacer.doublewidth {
 	border-radius: 8px;
 	text-align: center;
 	vertical-align: middle;
+	padding: 0 5px;
 }
 .box1 {
 	min-width: 100px;
@@ -384,6 +392,9 @@ form fieldset legend {
 }
 .move * {
 	cursor: auto;
+}
+.move label {
+	cursor: default;
 }
 
 /*
@@ -756,6 +767,28 @@ a.viewsource:before {
 }
 #multiDirect .box1 p:first-child {
 	margin-top: 20px;
+}
+
+#imagesequence {
+	height: 300px;
+}
+
+.copyright {
+	font-variant: italic;
+	font-size: 11px;
+}
+
+#bezier {
+	overflow: hidden;
+	position: relative;
+}
+#bezier #plane {
+	position: absolute;
+	left: -100px;
+}
+#bezier a.viewsource {
+	margin: 100px;
+	display: inline-block;
 }
 
 /*
