@@ -474,7 +474,7 @@
 					pinned = (_pin.css("position") == "fixed"),
 					vertical = _parent.info("vertical"),
 					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
-					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
+					marginCollapse = isMarginCollapseType(_pinOptions.spacer.css("display")),
 					css = {};
 
 				if (marginCollapse) {
@@ -486,11 +486,11 @@
 
 				// set new size
 				// if relsize: spacer -> pin | else: pin -> spacer
-				if (_pinOptions.relSize.width) {
+				if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 					if (pinned) {
 						if ($(window).width() == _pinOptions.spacer.parent().width()) {
 							// relative to body
-							_pin.css("width", "inherit");
+							_pin.css("width", _pinOptions.relSize.autoFullWidth ? "100%" : "inherit");
 						} else {
 							// not relative to body -> need to calculate
 							_pin.css("width", _pinOptions.spacer.width());
@@ -499,7 +499,9 @@
 						_pin.css("width", "100%");
 					}
 				} else {
-					css["min-width"] = $spacercontent.outerWidth(true); // needed for cascading pins
+					// minwidth is needed for cascading pins.
+					// margin is only included if it's a cascaded pin to resolve an IE9 bug
+					css["min-width"] = $spacercontent.outerWidth(!$spacercontent.is(_pin));
 					css.width = pinned ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
@@ -524,7 +526,6 @@
 					css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 					css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 				}
-
 				_pinOptions.spacer.css(css);
 			}
 		};
@@ -551,7 +552,7 @@
 			if ( _parent && _pin && // well, duh
 					_state === "DURING" && // element in pinned state?
 					( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-						(_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()) ||
+						((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && $(window).width() != _pinOptions.spacer.parent().width()) ||
 						(_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
 					)
 			) {
@@ -1188,6 +1189,14 @@
 				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
 
+			if (sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)) {
+				// log (2, "WARNING: Your pinned element probably needs a defined width or it might collapse during pin.");
+			}
+			if (!inFlow && settings.pushFollowers) {
+				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
+				settings.pushFollowers = false;
+			}
+
 			// create spacer
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
@@ -1202,22 +1211,19 @@
 						"-webkit-box-sizing": "content-box"
 					});
 
-			if (!inFlow && settings.pushFollowers) {
-				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
-				settings.pushFollowers = false;
-			}
-
 			// set the pin Options
 			var pinInlineCSS = _pin[0].style;
 			_pinOptions = {
 				spacer: spacer,
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
 					width: sizeCSS.width.slice(-1) === "%",
-					height: sizeCSS.height.slice(-1) === "%"
+					height: sizeCSS.height.slice(-1) === "%",
+					autoFullWidth: sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
 				origStyle: {
+					width: pinInlineCSS.width || "",
 					position: pinInlineCSS.position || "",
 					top: pinInlineCSS.position || "",
 					left: pinInlineCSS.position || "",

@@ -65,3 +65,6 @@
 			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
 		);
 	};
+	var isMarginCollapseType = function (str) {
+		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
+	};
