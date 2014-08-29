@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -246,7 +254,7 @@
                 </td>
             
 
-            <td class="description last"><p>A selector, DOM Object or a jQuery object that references the main container for scrolling.</p></td>
+            <td class="description last"><p>A selector, DOM object or a jQuery object that references the main container for scrolling.</p></td>
         </tr>
 
 	
@@ -363,7 +371,7 @@
                 </td>
             
 
-            <td class="description last"><p>Loglevel for debugging:</p>
+            <td class="description last"><p>Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.</p>
 <ul>
 <li><code>0</code> =&gt; silent</li>
 <li><code>1</code> =&gt; errors</li>
@@ -376,7 +384,7 @@
 
         <tr>
             
-                <td class="name"><code>triggerPosUpdateInterval</code></td>
+                <td class="name"><code>_sceneRefreshInterval</code></td>
             
 
             <td class="type">
@@ -447,7 +455,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-56">line 56</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-52">line 52</a>
     </li></ul></dd>
     
 
@@ -592,7 +600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-233">line 233</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-254">line 254</a>
     </li></ul></dd>
     
 
@@ -751,7 +759,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-539">line 539</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-583">line 583</a>
     </li></ul></dd>
     
 
@@ -893,7 +901,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-270">line 270</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-297">line 297</a>
     </li></ul></dd>
     
 
@@ -942,7 +950,7 @@
         
             
 <dt>
-    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">newScrollPos</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">scrollTarget</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -950,12 +958,7 @@
     
     
     <div class="description">
-        <p>Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.<br>For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.</p>
-<ol>
-<li>If a <code>number</code> is supplied the container will scroll to the new scroll offset.</li>
-<li>If a <code>ScrollScene</code> is supplied the container will scroll to the start of this scene.</li>
-<li>If a <code>function</code> is supplied this function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.<br>The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.</li>
-</ol>
+        <p>Scroll to a numeric scroll offset, a DOM element, the start of a scene or provide an alternate method for scrolling.<br>For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.</p>
     </div>
     
 
@@ -991,19 +994,13 @@
 
         <tr>
             
-                <td class="name"><code>newScrollPos</code></td>
+                <td class="name"><code>scrollTarget</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
-|
-
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-|
-
-<span class="param-type">function</span>
+<span class="param-type">mixed</span>
 
 
             
@@ -1023,7 +1020,13 @@
 
             
 
-            <td class="description last"><p>A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.</p></td>
+            <td class="description last"><p>The supplied argument can be one of these types:</p>
+<ol>
+<li><code>number</code> -&gt; The container will scroll to this new scroll offset.</li>
+<li><code>string</code> or <code>object</code> -&gt; Can be a selector, a DOM object or a jQuery element.<br>The container will scroll to the position of this element.</li>
+<li><code>ScrollScene</code> -&gt; The container will scroll to the start of this scene.</li>
+<li><code>function</code> -&gt; This function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.<br><em><strong>NOTE:</strong> All other options will still work as expected, using the new function to scroll.</em></li>
+</ol></td>
         </tr>
 
 	
@@ -1038,6 +1041,9 @@
 
     
 
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.1.0</dd><br>
     
 
     
@@ -1055,7 +1061,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-381">line 381</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-416">line 416</a>
     </li></ul></dd>
     
 
@@ -1095,7 +1101,7 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100var scrollPos = controller.scrollTo(100);// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});var scrollPos = controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
+    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
 
 
     
@@ -1215,7 +1221,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-347">line 347</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-376">line 376</a>
     </li></ul></dd>
     
 
@@ -1272,7 +1278,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     
     <div class="description">
-        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em>Note:</em> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</p>
+        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em><strong>Note:</strong> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</em></p>
     </div>
     
 
@@ -1409,7 +1415,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-308">line 308</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-336">line 336</a>
     </li></ul></dd>
     
 
@@ -1564,7 +1570,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-515">line 515</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-559">line 559</a>
     </li></ul></dd>
     
 
@@ -1718,7 +1724,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-491">line 491</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-535">line 535</a>
     </li></ul></dd>
     
 
@@ -1876,7 +1882,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-425">line 425</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-469">line 469</a>
     </li></ul></dd>
     
 
@@ -2042,7 +2048,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-458">line 458</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-502">line 502</a>
     </li></ul></dd>
     
 
@@ -2146,8 +2152,8 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -2188,10 +2194,13 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -2200,7 +2209,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

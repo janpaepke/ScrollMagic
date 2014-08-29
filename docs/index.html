@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -142,9 +150,11 @@
 <li>support for scrolling inside div containers (even multiple on one page)</li>
 <li>extensive debugging and logging capabilities</li>
 </ul>
+<p>ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple &quot;scroll scenes&quot; to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, if you're just starting out with javascript.<br>If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome <a href="http://prinzhorn.github.io/skrollr/">skrollr</a> project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.</p>
 <h2>Installation</h2><p>Aside from <a href="http://jquery.com/">jQuery</a> make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;>&lt;/script></code></pre><p>And to have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
+<p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
 <h2>Usage</h2><pre class="prettyprint source lang-javascript"><code>// init controller
 var controller = new ScrollMagic();
@@ -210,7 +220,7 @@ controller.addScene([
 
     
     <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>1.1.0</li></ul></dd>
+    <dd class="tag-version"><ul class="dummy"><li>1.1.0-alpha</li></ul></dd>
     
 
     
@@ -322,8 +332,8 @@ controller.addScene([
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -364,10 +374,13 @@ controller.addScene([
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -376,7 +389,7 @@ controller.addScene([
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

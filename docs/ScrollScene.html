@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -218,6 +226,9 @@
             
                 
 <span class="param-type">number</span>
+|
+
+<span class="param-type">function</span>
 
 
             
@@ -243,7 +254,8 @@
                 </td>
             
 
-            <td class="description last"><p>The duration of the scene.<br>                                               If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.</p></td>
+            <td class="description last"><p>The duration of the scene. 
+                                               If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.<br>                                               A function retuning the duration value is also supported. Please see <code>ScrollScene.duration()</code> for details.</p></td>
         </tr>
 
 	
@@ -324,7 +336,7 @@
                 </td>
             
 
-            <td class="description last"><p>Selector, DOM Object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).</p></td>
+            <td class="description last"><p>Selector, DOM object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).</p></td>
         </tr>
 
 	
@@ -488,7 +500,7 @@
                 </td>
             
 
-            <td class="description last"><p>Loglevel for debugging.</p>
+            <td class="description last"><p>Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.</p>
 <ul>
 <li><code>0</code> =&gt; silent</li>
 <li><code>1</code> =&gt; errors</li>
@@ -533,7 +545,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-601">line 601</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-646">line 646</a>
     </li></ul></dd>
     
 
@@ -675,7 +687,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1670">line 1670</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1965">line 1965</a>
     </li></ul></dd>
     
 
@@ -834,7 +846,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1752">line 1752</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2051">line 2051</a>
     </li></ul></dd>
     
 
@@ -891,7 +903,13 @@
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the scene's progress.<br>Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the scene's progress.<br>Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().<br>The order in which the events are fired depends on the duration of the scene:</p>
+<ol>
+<li>Scenes with <code>duration == 0</code>:<br>Scenes that have no duration by definition have no ending. Thus the <code>end</code> event will never be fired.<br>When the trigger position of the scene is passed the events are always fired in this order:<br><code>enter</code>, <code>start</code>, <code>progress</code> when scrolling forward<br>and<br><code>progress</code>, <code>start</code>, <code>leave</code> when scrolling in reverse</li>
+<li>Scenes with <code>duration &gt; 0</code>:<br>Scenes with a set duration have a defined start and end point.<br>When scrolling past the start position of the scene it will fire these events in this order:<br><code>enter</code>, <code>start</code>, <code>progress</code><br>When continuing to scroll and passing the end point it will fire these events:<br><code>progress</code>, <code>end</code>, <code>leave</code><br>When reversing through the end point these events are fired:<br><code>enter</code>, <code>end</code>, <code>progress</code><br>And when continuing to scroll past the start position in reverse it will fire:<br><code>progress</code>, <code>start</code>, <code>leave</code><br>In between start and end the <code>progress</code> event will be called constantly, whenever the progress changes.</li>
+</ol>
+<p>In short:<br><code>enter</code> events will always trigger <strong>before</strong> the progress update and <code>leave</code> envents will trigger <strong>after</strong> the progress update.<br><code>start</code> and <code>end</code> will always trigger at their respective position.</p>
+<p>Please review the event descriptions for details on the events and the event object that is passed to the callback.</p>
     </div>
     
 
@@ -985,7 +1003,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1380">line 1380</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1598">line 1598</a>
     </li></ul></dd>
     
 
@@ -1060,6 +1078,109 @@
         
             
 <dt>
+    <h4 class="name" id="refresh"><span class="type-signature"></span>refresh<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Updates dynamic scene variables like the trigger element position or the duration.
+This method is automatically called in regular intervals from the controller. See <a href="ScrollMagic.html"><code>ScrollMagic</code></a> option <code>sceneRefreshInterval</code>.</p>
+<p>You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
+If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.1.0</dd><br>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1545">line 1545</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, if the trigger element position or the duration changed</li>
+    
+        <li><a href="ScrollScene.html#event:change"><code>ScrollScene.event:change</code></a>, if the duration changed</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene = new ScrollScene({triggerElement: "#trigger"});// change the position of the trigger$("#trigger").css("top", 500);// immediately let the scene know of this changescene.refresh();</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="remove"><span class="type-signature"></span>remove<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
     
     
@@ -1103,7 +1224,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1727">line 1727</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2027">line 2027</a>
     </li></ul></dd>
     
 
@@ -1144,6 +1265,165 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// remove the scene from its parent controllerscene.remove();</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeClassToggle"><span class="type-signature"></span>removeClassToggle<span class="signature">(<span class="optional">reset</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Remove the class binding from the scene.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If <code>false</code> and the classes are currently active, they will remain on the element. If <code>true</code> they will be removed.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1944">line 1944</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove class binding from the scene without resetscene.removeClassToggle();// remove class binding and remove the changes it causedscene.removeClassToggle(true);</pre>
 
 
     
@@ -1262,7 +1542,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1641">line 1641</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1881">line 1881</a>
     </li></ul></dd>
     
 
@@ -1421,7 +1701,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1494">line 1494</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1720">line 1720</a>
     </li></ul></dd>
     
 
@@ -1470,6 +1750,172 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
         
             
 <dt>
+    <h4 class="name" id="setClassToggle"><span class="type-signature"></span>setClassToggle<span class="signature">(element, classes)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Define a css class modification while the scene is active.<br>When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
+If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A Selector targeting one or more elements, a DOM object or a jQuery object that is supposed to be modified.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>classes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>One or more Classnames (separated by space) that should be added to the element during the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1917">line 1917</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// add the class 'myclass' to the element with the id 'my-elem' for the duration of the scenescene.setClassToggle("#my-elem", "myclass");// add multiple classes to multiple elements defined by the selector '.classChange'scene.setClassToggle(".classChange", "class1 class2 class3");</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="setPin"><span class="type-signature"></span>setPin<span class="signature">(element, <span class="optional">settings</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
     
     
@@ -1478,7 +1924,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     
     <div class="description">
-        <p>Pin an element for the duration of the tween.<br>If the scene duration is 0 the element will never be unpinned.<br>Note, that pushFollowers has no effect, when the scene duration is 0.</p>
+        <p>Pin an element for the duration of the tween.<br>If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.<br><em><strong>NOTE:</strong> The option <code>pushFollowers</code> has no effect, when the scene duration is 0.</em></p>
     </div>
     
 
@@ -1541,7 +1987,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
 
             
 
-            <td class="description last"><p>A Selctor, a DOM Object or a jQuery object for the object that is supposed to be pinned.</p></td>
+            <td class="description last"><p>A Selector targeting an element, a DOM object or a jQuery object that is supposed to be pinned.</p></td>
         </tr>
 
 	
@@ -1753,7 +2199,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1527">line 1527</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1753">line 1753</a>
     </li></ul></dd>
     
 
@@ -1892,7 +2338,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1455">line 1455</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1681">line 1681</a>
     </li></ul></dd>
     
 
@@ -1949,7 +2395,8 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     
     <div class="description">
-        <p>Updates the Scene in the parent Controller to reflect the current state.<br>This is the equivalent to <code>ScrollMagic.updateScene(scene, immediately)</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em>Note:</em> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</p>
+        <p>Updates the Scene in the parent Controller to reflect the current state.<br>This is the equivalent to <code>ScrollMagic.updateScene(scene, immediately)</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
+This means an update doesn't necessarily result in a progress change. The <code>progress</code> event will be fired if the progress has indeed changed between this update and the last.<br><em><strong>NOTE:</strong> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</em></p>
     </div>
     
 
@@ -2051,7 +2498,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1279">line 1279</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1496">line 1496</a>
     </li></ul></dd>
     
 
@@ -2105,7 +2552,7 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
         
             
 <dt>
-    <h4 class="name" id="updateTriggerElementPosition"><span class="type-signature"></span>updateTriggerElementPosition<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ScrollScene.html">ScrollScene</a>}</span></h4>
+    <h4 class="name" id="updateDuration"><span class="type-signature">&lt;inner> </span>updateDuration<span class="signature">(<span class="optional">suppressEvents</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -2113,14 +2560,8 @@ To remove the pin or the tween you need to call removeTween() or removePin() res
     
     
     <div class="description">
-        <p>Updates the position of the triggerElement, if present.
-This method is automatically called ...</p>
-<ul>
-<li>... when the triggerElement is changed</li>
-<li>... when the scene is added to a (new) controller</li>
-<li>... in regular intervals from the controller. See <a href="ScrollMagic.html"><code>ScrollMagic</code></a> option <code>triggerPosUpdateInterval</code>.</li>
-</ul>
-<p>You can call it to minimize lag, when you intentionally change the position of the triggerElement.</p>
+        <p>Updates the duration if set to a dynamic function.
+This method is called when the scene is added to a controller and in regular intervals from the controller through scene.refresh().</p>
     </div>
     
 
@@ -2129,6 +2570,75 @@ This method is automatically called ...</p>
     
     
     
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>suppressEvents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true the shift event will be suppressed.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
     
     
 <dl class="details">
@@ -2136,9 +2646,6 @@ This method is automatically called ...</p>
 
     
 
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>v1.1.0</dd>
     
 
     
@@ -2156,7 +2663,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1327">line 1327</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-896">line 896</a>
     </li></ul></dd>
     
 
@@ -2169,36 +2676,171 @@ This method is automatically called ...</p>
 
     
     
-
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:change"><code>ScrollScene.event:change</code></a>, if the duration changed</li>
+    
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, if the duration changed</li>
+    </ul>
     
 
     
+
     
     
     
     
-    <h5>Returns:</h5>
     
+    
+    
+</dd>
+
+        
             
-<div class="param-desc tag-returns">
-    <p>Parent object for chaining.</p>
-
-	{
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-
-}
-
-</div>
-
-
-        
+<dt>
+    <h4 class="name" id="updateTriggerElementPosition"><span class="type-signature">&lt;inner> </span>updateTriggerElementPosition<span class="signature">(<span class="optional">suppressEvents</span>)</span><span class="type-signature"></span></h4>
     
     
-        <h5>Example</h5>
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Updates the position of the triggerElement, if present.
+This method is called ...</p>
+<ul>
+<li>... when the triggerElement is changed</li>
+<li>... when the scene is added to a (new) controller</li>
+<li>... in regular intervals from the controller through scene.refresh().</li>
+</ul>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
-    <pre class="sunlight-highlight-javascript">scene = new ScrollScene({triggerElement: "#trigger"});// change the position of the trigger$("#trigger").css("top", 500);// immediately let the scene know of this changescene.updateTriggerElementPosition();</pre>
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>suppressEvents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
 
 
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true the shift event will be suppressed.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-918">line 918</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, if the position changed</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
     
 </dd>
 
@@ -2217,7 +2859,9 @@ This method is automatically called ...</p>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.
+As a setter it also accepts a function returning a numeric value.<br>This is particularly useful for responsive setups.</p>
+<p>The duration is updated using the supplied function every time <code>ScrollScene.refresh()</code> is called, which happens periodically from the controller (see ScrollMagic option <code>sceneRefreshInterval</code>).<br><em><strong>NOTE:</strong> Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.<br>Even for size and position calculations it is recommended to use a variable to cache the value. (see example)<br>This counts double if you use the same function for multiple scenes.</em></p>
     </div>
     
 
@@ -2260,6 +2904,9 @@ This method is automatically called ...</p>
             
                 
 <span class="param-type">number</span>
+|
+
+<span class="param-type">function</span>
 
 
             
@@ -2311,7 +2958,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1016">line 1016</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1230">line 1230</a>
     </li></ul></dd>
     
 
@@ -2327,6 +2974,8 @@ This method is automatically called ...</p>
     <h5>Fires:</h5>
     <ul>
         <li><a href="ScrollScene.html#event:change"><code>ScrollScene.event:change</code></a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, when used as setter</li>
     </ul>
     
 
@@ -2369,7 +3018,7 @@ This method is automatically called ...</p>
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// get the current duration valuevar duration = scene.duration();// set a new durationscene.duration(300);</pre>
+    <pre class="sunlight-highlight-javascript">// get the current duration valuevar duration = scene.duration();// set a new durationscene.duration(300);// use a function to automatically adjust the duration to the window height.var durationValueCache;function getDuration () {  return durationValueCache;}function updateDuration (e) {  durationValueCache = $(window).innerHeight();}$(window).on("resize", updateDuration); // update the duration when the window size changes$(window).triggerHandler("resize"); // set to initial valuescene.duration(getDuration); // supply duration method</pre>
 
 
     
@@ -2480,7 +3129,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1705">line 1705</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2005">line 2005</a>
     </li></ul></dd>
     
 
@@ -2634,7 +3283,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1190">line 1190</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1397">line 1397</a>
     </li></ul></dd>
     
 
@@ -2803,7 +3452,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1041">line 1041</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1262">line 1262</a>
     </li></ul></dd>
     
 
@@ -2819,6 +3468,8 @@ This method is automatically called ...</p>
     <h5>Fires:</h5>
     <ul>
         <li><a href="ScrollScene.html#event:change"><code>ScrollScene.event:change</code></a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, when used as setter</li>
     </ul>
     
 
@@ -2972,7 +3623,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1140">line 1140</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1347">line 1347</a>
     </li></ul></dd>
     
 
@@ -3047,7 +3698,8 @@ This method is automatically called ...</p>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the triggerElement option value.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the triggerElement option value.
+Does <strong>not</strong> fire <code>ScrollScene.shift</code>, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in <code>ScrollScene.refresh()</code>, which is automatically triggered.</p>
     </div>
     
 
@@ -3144,7 +3796,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1070">line 1070</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1293">line 1293</a>
     </li></ul></dd>
     
 
@@ -3205,7 +3857,7 @@ This method is automatically called ...</p>
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// get the current triggerElementvar triggerElement = scene.triggerElement();// set a new triggerElement using a selectorscene.triggerElement("#trigger");// set a new triggerElement using a jQuery Objectscene.triggerElement($("#trigger"));// set a new triggerElement using a DOM Objectscene.triggerElement(document.getElementById("trigger"));</pre>
+    <pre class="sunlight-highlight-javascript">// get the current triggerElementvar triggerElement = scene.triggerElement();// set a new triggerElement using a selectorscene.triggerElement("#trigger");// set a new triggerElement using a jQuery Objectscene.triggerElement($("#trigger"));// set a new triggerElement using a DOM objectscene.triggerElement(document.getElementById("trigger"));</pre>
 
 
     
@@ -3319,7 +3971,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1097">line 1097</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1321">line 1321</a>
     </li></ul></dd>
     
 
@@ -3335,6 +3987,8 @@ This method is automatically called ...</p>
     <h5>Fires:</h5>
     <ul>
         <li><a href="ScrollScene.html#event:change"><code>ScrollScene.event:change</code></a>, when used as setter</li>
+    
+        <li><a href="ScrollScene.html#event:shift"><code>ScrollScene.event:shift</code></a>, when used as setter</li>
     </ul>
     
 
@@ -3488,7 +4142,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1165">line 1165</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1372">line 1372</a>
     </li></ul></dd>
     
 
@@ -3600,7 +4254,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-996">line 996</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1189">line 1189</a>
     </li></ul></dd>
     
 
@@ -3657,7 +4311,7 @@ This method is automatically called ...</p>
     
     
     <div class="description">
-        <p><strong>Get</strong> the current scroll offset for the start of the scene.<br>Mind, that the scrollOffset is related to the size of the container, if <code>triggerHook</code> is bigger than <code>0</code> (or <code>&quot;onLeave&quot;</code>).<br>This means, that resizing the container will influence the scene's start offset.</p>
+        <p><strong>Get</strong> the current scroll offset for the start of the scene.<br>Mind, that the scrollOffset is related to the size of the container, if <code>triggerHook</code> is bigger than <code>0</code> (or <code>&quot;onLeave&quot;</code>).<br>This means, that resizing the container or changing the <code>triggerHook</code> will influence the scene's start offset.</p>
     </div>
     
 
@@ -3690,7 +4344,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1250">line 1250</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1466">line 1466</a>
     </li></ul></dd>
     
 
@@ -3780,7 +4434,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1209">line 1209</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1416">line 1416</a>
     </li></ul></dd>
     
 
@@ -3829,7 +4483,7 @@ This method is automatically called ...</p>
         
             
 <dt>
-    <h4 class="name" id="triggerOffset"><span class="type-signature"></span>triggerOffset<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    <h4 class="name" id="triggerOffset"><span class="type-signature"></span>triggerOffset<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -3838,6 +4492,77 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p><strong>Get</strong> the trigger offset of the scene (including the value of the <code>offset</code> option).</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Method is deprecated since 1.1.0. You should now use <code>ScrollScene.triggerPosition</code></li><ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1449">line 1449</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="triggerPosition"><span class="type-signature"></span>triggerPosition<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> the trigger position of the scene (including the value of the <code>offset</code> option).</p>
     </div>
     
 
@@ -3870,7 +4595,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1222">line 1222</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1429">line 1429</a>
     </li></ul></dd>
     
 
@@ -3910,7 +4635,7 @@ This method is automatically called ...</p>
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// get the scene's trigger offsetvar triggerOffset = scene.triggerOffset();</pre>
+    <pre class="sunlight-highlight-javascript">// get the scene's trigger positionvar triggerPosition = scene.triggerPosition();</pre>
 
 
     
@@ -4056,7 +4781,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1942">line 1942</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2298">line 2298</a>
     </li></ul></dd>
     
 
@@ -4218,7 +4943,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1913">line 1913</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2269">line 2269</a>
     </li></ul></dd>
     
 
@@ -4400,7 +5125,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1961">line 1961</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2317">line 2317</a>
     </li></ul></dd>
     
 
@@ -5113,7 +5838,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1879">line 1879</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2190">line 2190</a>
     </li></ul></dd>
     
 
@@ -5147,6 +5872,231 @@ This method is automatically called ...</p>
         
             
 <dt>
+    <h4 class="name" id="event:destroy">destroy</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene destroy event.<br>Fires whenvever the scene is destroyed.
+This can be used to tidy up custom behaviour used in events.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates if the destroy method was called with reset <code>true</code> or <code>false</code>.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.1.0</dd><br>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2227">line 2227</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("enter", function (event) {       // add custom action       $("#my-elem").left("200");     })     .on("destroy", function (event) {       // reset my element to start position       if (event.reset) {         $("#my-elem").left("0");       }     });</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="event:end">end</h4>
     
     
@@ -5156,6 +6106,7 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p>Scene end event.<br>Fires whenever the scroll position its the ending point of the scene.<br>It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
+<p>For details on this event and the order in which it is fired, please review the <code>ScrollScene.progress</code> method.</p>
     </div>
     
 
@@ -5380,7 +6331,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1786">line 1786</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2089">line 2089</a>
     </li></ul></dd>
     
 
@@ -5423,6 +6374,7 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p>Scene enter event.<br>Fires whenever the scene enters the &quot;DURING&quot; state.<br>Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.</p>
+<p>For details on this event and the order in which it is fired, please review the <code>ScrollScene.progress</code> method.</p>
     </div>
     
 
@@ -5647,7 +6599,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1805">line 1805</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2110">line 2110</a>
     </li></ul></dd>
     
 
@@ -5690,6 +6642,7 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p>Scene leave event.<br>Fires whenever the scene's state goes from &quot;DURING&quot; to either &quot;BEFORE&quot; or &quot;AFTER&quot;.<br>Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.</p>
+<p>For details on this event and the order in which it is fired, please review the <code>ScrollScene.progress</code> method.</p>
     </div>
     
 
@@ -5914,7 +6867,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1824">line 1824</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2131">line 2131</a>
     </li></ul></dd>
     
 
@@ -5957,6 +6910,7 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p>Scene progress event.<br>Fires whenever the progress of the scene changes.</p>
+<p>For details on this event and the order in which it is fired, please review the <code>ScrollScene.progress</code> method.</p>
     </div>
     
 
@@ -6181,7 +7135,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1861">line 1861</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2170">line 2170</a>
     </li></ul></dd>
     
 
@@ -6215,6 +7169,233 @@ This method is automatically called ...</p>
         
             
 <dt>
+    <h4 class="name" id="event:shift">shift</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Scene shift event.<br>Fires whenvever the start or end <strong>scroll offset</strong> of the scene change.
+This happens explicitely, when one of these values change: <code>offset</code>, <code>duration</code> or <code>triggerHook</code>.
+It will fire implicitly when the <code>triggerElement</code> changes, if the new element has a different position (most cases).
+It will also fire implicitly when the size of the container changes and the triggerHook is anything other than <code>onLeave</code>.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event Object passed to each callback</p>
+                <h6>Properties</h6>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The ScrollScene object that triggered this event</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>reason</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Indicates why the scene has shifted</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.1.0</dd><br>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2207">line 2207</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">scene.on("shift", function (event) {		console.log("Scene moved, because the " + event.reason + " has changed.)");});</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="event:start">start</h4>
     
     
@@ -6224,6 +7405,7 @@ This method is automatically called ...</p>
     
     <div class="description">
         <p>Scene start event.<br>Fires whenever the scroll position its the starting point of the scene.<br>It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.</p>
+<p>For details on this event and the order in which it is fired, please review the <code>ScrollScene.progress</code> method.</p>
     </div>
     
 
@@ -6448,7 +7630,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1767">line 1767</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2068">line 2068</a>
     </li></ul></dd>
     
 
@@ -6715,7 +7897,7 @@ This method is automatically called ...</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-1843">line 1843</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-2152">line 2152</a>
     </li></ul></dd>
     
 
@@ -6797,8 +7979,8 @@ This method is automatically called ...</p>
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -6839,10 +8021,13 @@ This method is automatically called ...</p>
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -6851,7 +8036,7 @@ This method is automatically called ...</p>
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

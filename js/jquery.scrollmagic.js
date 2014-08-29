@@ -16,17 +16,9 @@ Greensock License info at http://www.greensock.com/licensing/
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
-- endTrigger
-@todo: document event fire order (enter, start/end, progress, start/end, leave)
-@todo: issues with min width on first page load (check main demo page)
-@todo: feature: have different tweens, when scrolling up, than when scrolling down
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
-@todo: bug: pin positioning problems with centered pins in IE9 (i.e. in examples)
-@toto: improvement: check if its possible to take the recalculation of the start point out of the scene update, while still making sure it is always up to date (performance)
 @todo: feature: optimize performance on debug plugin (huge drawbacks, when using many scenes)
-@todo: feature: consider public method to trigger pinspacerresize (in case size changes during pin)
-@todo: feature: make pins work with -webkit-transform of parent for mobile applications. Might be possible by temporarily removing the pin element from its container and attaching it to the body during pin. Reverting might be difficult though (cascaded pins).
 */
 (function($, window) {
 	
@@ -54,7 +46,7 @@ Greensock License info at http://www.greensock.com/licensing/
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
-	 * @param {boolean} [options.triggerPosUpdateInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
+	 * @param {boolean} [options._sceneRefreshInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -71,7 +63,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				vertical: true,
 				globalSceneOptions: {},
 				loglevel: 2,
-				triggerPosUpdateInterval: 100
+				sceneRefreshInterval: 100
 			};
 
 		/*
@@ -91,7 +83,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_viewPortSize = 0,
 			_tickerUsed = false,
 			_enabled = true,
-			_triggerPosUpdateInterval;
+			_sceneRefreshInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -129,13 +121,13 @@ Greensock License info at http://www.greensock.com/licensing/
 				_tickerUsed = false;
 			}
 
-			_options.triggerPosUpdateInterval = parseInt(_options.triggerPosUpdateInterval);
-			if (_options.triggerPosUpdateInterval > 0) {
-				window.setInterval(function () {
+			_options.sceneRefreshInterval = parseInt(_options.sceneRefreshInterval);
+			if (_options.sceneRefreshInterval > 0) {
+				_sceneRefreshInterval = window.setInterval(function () {
 					$.each(_sceneObjects, function (index, scene) {
-						scene.updateTriggerElementPosition();
+						scene.refresh();
 					});
-				}, _options.triggerPosUpdateInterval);
+				}, _options.sceneRefreshInterval);
 			}
 
 			log(3, "added new " + NAMESPACE + " controller");
@@ -259,29 +251,31 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @param {(ScrollScene|array)} ScrollScene - ScrollScene or Array of ScrollScenes to be added to the controller.
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
-		this.addScene = function (ScrollScene) {
-			if ($.isArray(ScrollScene)) {
-				$.each(ScrollScene, function (index, scene) {
+		this.addScene = function (newScene) {
+			if ($.isArray(newScene)) {
+				$.each(newScene, function (index, scene) {
 					ScrollMagic.addScene(scene);
 				});
-			} else {
-				if (ScrollScene.parent() != ScrollMagic) {
-					ScrollScene.addTo(ScrollMagic);
-				} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
+			} else if (newScene instanceof ScrollScene) {
+				if (newScene.parent() != ScrollMagic) {
+					newScene.addTo(ScrollMagic);
+				} else if ($.inArray(_sceneObjects, newScene) == -1){
 					// new scene
-					_sceneObjects.push(ScrollScene); // add to array
+					_sceneObjects.push(newScene); // add to array
 					_sceneObjects = sortScenes(_sceneObjects); // sort
-					ScrollScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
+					newScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
 						_sceneObjects = sortScenes(_sceneObjects);
 					});
 					// insert Global defaults.
 					$.each(_options.globalSceneOptions, function (key, value) {
-						if (ScrollScene[key]) {
-							ScrollScene[key].call(ScrollScene, value);
+						if (newScene[key]) {
+							newScene[key].call(newScene, value);
 						}
 					});
 					log(3, "added Scene (" + _sceneObjects.length + " total)");
 				}
+			} else {
+				log(1, "ERROR: invalid argument supplied for '.addScene()'");
 			}
 			return ScrollMagic;
 		};
@@ -322,7 +316,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * This is the equivalent to `ScrollScene.update()`.  
 		 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
 		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
-		 * *Note:* This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.
+		 * _**Note:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
 		 * // update a specific scene on next tick
@@ -392,7 +386,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.
 		 * @public
 		 *
-		 * @since 1.10.0
+		 * @since 1.1.0
 		 * @example
 		 * // scroll to an offset of 100
 		 * controller.scrollTo(100);
@@ -427,14 +421,13 @@ Greensock License info at http://www.greensock.com/licensing/
 					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
 			} else if ($.type(scrollTarget) === "string" || isDomElement(scrollTarget) || scrollTarget instanceof $) {
-				console.log(scrollTarget);
 				var $elm = $(scrollTarget).first();
 				if ($elm[0]) {
 					var
 						offset = $elm.offset();
 					ScrollMagic.scrollTo(_options.vertical ? offset.top : offset.left);
 				} else {
-					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", newScrollPos);
+					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
 				}
 			} else if ($.isFunction(scrollTarget)) {
 				setScrollPos = scrollTarget;
@@ -588,10 +581,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
-			window.clearTimeout(_triggerPosUpdateInterval);
-			while (_sceneObjects.length > 0) {
-				var scene = _sceneObjects[_sceneObjects.length - 1];
-				scene.destroy(resetScenes);
+			window.clearTimeout(_sceneRefreshInterval);
+			var i = _sceneObjects.length;
+			while (i--) {
+				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
 			if (_tickerUsed) {
@@ -630,8 +623,9 @@ Greensock License info at http://www.greensock.com/licensing/
 	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
 	 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
 	 							   When a scene is added to the controller the options defined using the ScrollScene constructor will be overwritten by those set in `globalSceneOptions`.
-	 * @param {number} [options.duration=0] - The duration of the scene.  
-	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.
+	 * @param {(number|function)} [options.duration=0] - The duration of the scene. 
+	 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.  
+	 										  A function retuning the duration value is also supported. Please see `ScrollScene.duration()` for details.
 	 * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
 	 * @param {(string|object)} [options.triggerElement=null] - Selector, DOM object or jQuery Object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
 	 * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
@@ -658,13 +652,13 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 
 		var
-			TRIGGER_HOOK_STRINGS = ["onCenter", "onEnter", "onLeave"],
+			TRIGGER_HOOK_VALUES = {"onCenter" : 0.5, "onEnter" : 1, "onLeave" : 0},
 			NAMESPACE = "ScrollScene",
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
 				triggerElement: null,
-				triggerHook: TRIGGER_HOOK_STRINGS[0],
+				triggerHook: "onCenter",
 				reverse: true,
 				tweenChanges: false,
 				loglevel: 2
@@ -684,6 +678,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
 			_triggerPos = 0,
 			_enabled = true,
+			_durationUpdateMethod,
 			_parent,
 			_tween,
 			_pin,
@@ -702,10 +697,21 @@ Greensock License info at http://www.greensock.com/licensing/
 				});
 			},
 			"duration" : function () {
-				_options.duration = parseFloat(_options.duration);
-				if (!$.isNumeric(_options.duration) || _options.duration < 0) {
-					log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
-					_options.duration = DEFAULT_OPTIONS.duration;
+				if ($.isFunction(_options.duration)) {
+					_durationUpdateMethod = _options.duration;
+					try {
+						_options.duration = parseFloat(_durationUpdateMethod());
+					} catch (e) {
+						log(1, "ERROR: Invalid return value of supplied function for option \"duration\":", _options.duration);
+						_durationUpdateMethod = undefined;
+						_options.duration = DEFAULT_OPTIONS.duration;
+					}
+				} else {
+					_options.duration = parseFloat(_options.duration);
+					if (!$.isNumeric(_options.duration) || _options.duration < 0) {
+						log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
+						_options.duration = DEFAULT_OPTIONS.duration;
+					}
 				}
 			},
 			"offset" : function () {
@@ -722,21 +728,32 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 			},
 			"triggerHook" : function () {
-				if (!$.isNumeric(_options.triggerHook) && $.inArray(_options.triggerHook, TRIGGER_HOOK_STRINGS) == -1) {
-					log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
-					_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
+				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
+					if ($.isNumeric(_options.triggerHook)) {
+						_options.triggerHook = parseFloat(_options.triggerHook);
+					} else {
+						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
+						_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
+					}
 				}
 			},
+			"reverse" : function () {
+				_options.reverse = !!_options.reverse; // force boolean
+			},
+			"tweenChanges" : function () {
+				_options.tweenChanges = !!_options.tweenChanges; // force boolean
+			},
 			"loglevel" : function () {
+				_options.loglevel = parseInt(_options.loglevel);
 				if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 					var wrongval = _options.loglevel;
 					_options.loglevel = DEFAULT_OPTIONS.loglevel;
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 				}
 			},
-			"checkIfPinnedElementIsTweened" : function () {
+			"checkIfTriggerElementIsTweened" : function () {
+				// check if there are position tweens defined for the trigger and warn about it :)
 				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
-					// check if there are position tweens defined for the trigger and warn about it :)
 					var
 						triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
 						vertical = _parent.info("vertical");
@@ -764,29 +781,33 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var construct = function () {
-			checkOptionsValidity();
+			validateOption();
 
-			// internal event listeners
+			// event listeners
 			ScrollScene
 				.on("change.internal", function (e) {
 					if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
 						if (e.what === "triggerElement") {
-							ScrollScene.updateTriggerElementPosition();
-						} else if (e.what === "reverse") { // the only property left that may have an impect on the current scene state. Everything else is handled in the shift event.
+							updateTriggerElementPosition();
+						} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
 							ScrollScene.update();
-						}
-						if ((_state !== "DURING" && e.what == "duration") || (_state === "AFTER" && _options.duration === 0)) { // if duration changed outside of scene (inside scene progress updates pin position) or duration is 0, we are beyond trigger and some other value changed.
-							updatePinState();
 						}
 					}
 				})
 				.on("shift.internal", function (e) {
 					updateScrollOffset();
 					ScrollScene.update(); // update scene to reflect new position
+					if ((_state === "AFTER" && e.reason === "duration") || (_state === 'DURING' && _options.duration === 0)) {
+						// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
+						updatePinState();
+					}
 				})
 				.on("progress.internal", function (e) {
 					updateTweenProgress();
 					updatePinState();
+				})
+				.on("destroy", function (e) {
+					e.preventDefault(); // otherwise jQuery would call target.destroy() by default.
 				});
 		};
 		
@@ -812,7 +833,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Checks the validity of a specific or all options and reset to default if neccessary.
 		 * @private
 		 */
-		var checkOptionsValidity = function (check) {
+		var validateOption = function (check) {
 			if (!arguments.length) {
 				check = [];
 				for (var key in _validate){
@@ -826,6 +847,22 @@ Greensock License info at http://www.greensock.com/licensing/
 					_validate[value]();
 				}
 			});
+		};
+
+		/**
+		 * Helper used by the setter/getters for scene options
+		 * @private
+		 */
+		var changeOption = function(varname, newval) {
+			var
+				changed = false,
+				oldval = _options[varname];
+			if (_options[varname] != newval) {
+				_options[varname] = newval;
+				validateOption(varname); // resets to default if necessary
+				changed = oldval != _options[varname];
+			}
+			return changed;
 		};
 
 		/**
@@ -848,6 +885,66 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
+		 * Updates the duration if set to a dynamic function.
+		 * This method is called when the scene is added to a controller and in regular intervals from the controller through scene.refresh().
+		 * 
+		 * @fires {@link ScrollScene.change}, if the duration changed
+		 * @fires {@link ScrollScene.shift}, if the duration changed
+		 *
+		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 */
+		var updateDuration = function (suppressEvents) {
+			// update duration
+			if (_durationUpdateMethod) {
+				var varname = "duration";
+				if (changeOption(varname, _durationUpdateMethod()) && !suppressEvents) { // set
+					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+					ScrollScene.trigger("shift", {reason: varname});
+				}
+			}
+		};
+
+		/**
+		 * Updates the position of the triggerElement, if present.
+		 * This method is called ...
+		 *  - ... when the triggerElement is changed
+		 *  - ... when the scene is added to a (new) controller
+		 *  - ... in regular intervals from the controller through scene.refresh().
+		 * 
+		 * @fires {@link ScrollScene.shift}, if the position changed
+		 *
+		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 */
+		var updateTriggerElementPosition = function (suppressEvents) {
+			var elementPos = 0;
+			if (_parent && _options.triggerElement) {
+				var
+					element = $(_options.triggerElement).first(),
+					controllerInfo = _parent.info(),
+					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+					
+				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (element.parent().data("ScrollMagicPinSpacer")) {
+					element = element.parent();
+				}
+
+				var elementOffset = getOffset(element);
+
+				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+					containerOffset[param] -= controllerInfo.scrollPos;
+				}
+
+				elementPos = elementOffset[param] - containerOffset[param];
+			}
+			var changed = elementPos != _triggerPos;
+			_triggerPos = elementPos;
+			if (changed && !suppressEvents) {
+				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
+			}
+		};
+
+		/**
 		 * Update the tween progress.
 		 * @private
 		 *
@@ -859,7 +956,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				var progress = (to >= 0 && to <= 1) ? to : _progress;
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if ((_state === "DURING" || (_state === "AFTER" && _options.duration === 0)) && _tween.paused()) {
+					if (_state === "DURING" && _tween.paused()) {
 						_tween.play();
 					} else if (_state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
@@ -870,7 +967,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					// no infinite loop - so should we just play or go to a specific point in time?
 					if (_options.duration === 0) {
 						// play the animation
-						if (_state === "AFTER") { // play from 0 to 1
+						if (_state === "DURING") { // play from 0 to 1
 							_tween.play();
 						} else { // play from 1 to 0
 							_tween.reverse();
@@ -903,7 +1000,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				var 
 					containerInfo = _parent.info();
 
-				if (!forceUnpin && (_state === "DURING" || (_state === "AFTER" && _options.duration === 0))) { // during scene or if duration is 0 and we are past the trigger
+				if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
 					if (_pin.css("position") != "fixed") {
 						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
@@ -943,7 +1040,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					
 					if (!_pinOptions.pushFollowers) {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
-					} else {
+					} else if (_options.duration > 0) { // only concerns scenes with duration
 						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) === 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
 						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) === 0) { // before
@@ -976,7 +1073,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					pinned = (_pin.css("position") == "fixed"),
 					vertical = _parent.info("vertical"),
 					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
-					marginCollapse = ($.inArray(_pinOptions.spacer.css("display"), ["block", "flex", "list-item", "table", "-webkit-box"]) > -1),
+					marginCollapse = isMarginCollapseType(_pinOptions.spacer.css("display")),
 					css = {};
 
 				if (marginCollapse) {
@@ -988,11 +1085,11 @@ Greensock License info at http://www.greensock.com/licensing/
 
 				// set new size
 				// if relsize: spacer -> pin | else: pin -> spacer
-				if (_pinOptions.relSize.width) {
+				if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 					if (pinned) {
 						if ($(window).width() == _pinOptions.spacer.parent().width()) {
 							// relative to body
-							_pin.css("width", "inherit");
+							_pin.css("width", _pinOptions.relSize.autoFullWidth ? "100%" : "inherit");
 						} else {
 							// not relative to body -> need to calculate
 							_pin.css("width", _pinOptions.spacer.width());
@@ -1001,7 +1098,9 @@ Greensock License info at http://www.greensock.com/licensing/
 						_pin.css("width", "100%");
 					}
 				} else {
-					css["min-width"] = $spacercontent.outerWidth(true); // needed for cascading pins
+					// minwidth is needed for cascading pins.
+					// margin is only included if it's a cascaded pin to resolve an IE9 bug
+					css["min-width"] = $spacercontent.outerWidth(!$spacercontent.is(_pin));
 					css.width = pinned ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
@@ -1026,7 +1125,6 @@ Greensock License info at http://www.greensock.com/licensing/
 					css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 					css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 				}
-
 				_pinOptions.spacer.css(css);
 			}
 		};
@@ -1050,14 +1148,25 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @private
 		 */
 		var updateRelativePinSpacer = function () {
-			if (   _parent && _pin &&// well, duh
-				(_state === "DURING" || _state === "AFTER" && _options.duration === 0) &&// element in pinned state?
-				( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-						(_pinOptions.relSize.width && $(window).width() != _pinOptions.spacer.parent().width()) ||
+			if ( _parent && _pin && // well, duh
+					_state === "DURING" && // element in pinned state?
+					( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+						((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && $(window).width() != _pinOptions.spacer.parent().width()) ||
 						(_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
 					)
 			) {
 				updatePinSpacerSize();
+			}
+		};
+
+		/**
+		 * Is called, when the mousewhel is used while over a pinned element.
+		 * If the scene is in fixed state scroll events used to be ignored. This forwards the event to the scroll container.
+		 * @private
+		 */
+		var onMousewheelOverPin = function (e) {
+			if (_parent && _pin && _state === "DURING") { // in pin state
+				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
 			}
 		};
 
@@ -1084,6 +1193,14 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * **Get** or **Set** the duration option value.
+		 * As a setter it also accepts a function returning a numeric value.  
+		 * This is particularly useful for responsive setups.
+		 *
+		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `sceneRefreshInterval`).  
+		 * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
+		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
+		 * This counts double if you use the same function for multiple scenes._
+		 *
 		 * @public
 		 * @example
 		 * // get the current duration value
@@ -1092,21 +1209,36 @@ Greensock License info at http://www.greensock.com/licensing/
 	 	 * // set a new duration
 		 * scene.duration(300);
 		 *
+		 * // use a function to automatically adjust the duration to the window height.
+		 * var durationValueCache;
+		 * function getDuration () {
+		 *   return durationValueCache;
+		 * }
+		 * function updateDuration (e) {
+		 *   durationValueCache = $(window).innerHeight();
+		 * }
+		 * $(window).on("resize", updateDuration); // update the duration when the window size changes
+		 * $(window).triggerHandler("resize"); // set to initial value
+		 * scene.duration(getDuration); // supply duration method
+		 *
 		 * @fires {@link ScrollScene.change}, when used as setter
 		 * @fires {@link ScrollScene.shift}, when used as setter
-		 * @param {number} [newDuration] - The new duration of the scene.
+		 * @param {(number|function)} [newDuration] - The new duration of the scene.
 		 * @returns {number} `get` -  Current scene duration.
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.duration = function (newDuration) {
+			var varname = "duration";
 			if (!arguments.length) { // get
-				return _options.duration;
-			} else if (_options.duration != newDuration) { // set
-				var varname = "duration";
-				_options[varname] = newDuration;
-				checkOptionsValidity(varname);
-				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
-				ScrollScene.trigger("shift", {reason: varname});
+				return _options[varname];
+			} else {
+				if (!$.isFunction(newDuration)) {
+					_durationUpdateMethod = undefined;
+				}
+				if (changeOption(varname, newDuration)) { // set
+					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
+					ScrollScene.trigger("shift", {reason: varname});
+				}
 			}
 			return ScrollScene;
 		};
@@ -1128,12 +1260,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.offset = function (newOffset) {
+			var varname = "offset";
 			if (!arguments.length) { // get
-				return _options.offset;
-			} else if (_options.offset != newOffset) { // set
-				var varname = "offset";
-				_options[varname] = newOffset;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newOffset)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
 			}
@@ -1142,7 +1272,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * **Get** or **Set** the triggerElement option value.
-		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.updateTriggerElementPosition()`.
+		 * Does **not** fire `ScrollScene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `ScrollScene.refresh()`, which is automatically triggered.
 		 * @public
 		 * @example
 		 * // get the current triggerElement
@@ -1161,12 +1291,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerElement = function (newTriggerElement) {
+			var varname = "triggerElement";
 			if (!arguments.length) { // get
-				return _options.triggerElement;
-			} else if (_options.triggerElement != newTriggerElement) { // set
-				var varname = "triggerElement";
-				_options[varname] = newTriggerElement;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newTriggerElement)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -1191,30 +1319,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.triggerHook = function (newTriggerHook) {
+			var varname = "triggerHook";
 			if (!arguments.length) { // get
-				var triggerPoint;
-				if ($.isNumeric(_options.triggerHook)) {
-					triggerPoint = _options.triggerHook;
-				} else {
-					switch(_options.triggerHook) {
-						case "onCenter":
-							triggerPoint = 0.5;
-							break;
-						case "onLeave":
-							triggerPoint = 0;
-							break;
-						case "onEnter":
-							/* falls through */
-						default:
-							triggerPoint = 1;
-							break;
-					}
-				}
-				return triggerPoint;
-			} else if (_options.triggerHook != newTriggerHook) { // set
-				var varname = "triggerHook";
-				_options[varname] = newTriggerHook;
-				checkOptionsValidity(varname);
+				return $.isNumeric(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
+			} else if (changeOption(varname, newTriggerHook)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
 			}
@@ -1237,12 +1345,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.reverse = function (newReverse) {
+			var varname = "reverse";
 			if (!arguments.length) { // get
-				return _options.reverse;
-			} else if (_options.reverse != newReverse) { // set
-				var varname = "reverse";
-				_options[varname] = !!newReverse;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newReverse)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -1264,12 +1370,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.tweenChanges = function (newTweenChanges) {
+			var varname = "tweenChanges";
 			if (!arguments.length) { // get
-				return _options.tweenChanges;
-			} else if (_options.tweenChanges != newTweenChanges) { // set
-				var varname = "tweenChanges";
-				_options[varname] = !!newTweenChanges;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newTweenChanges)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -1291,12 +1395,10 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} `set` -  Parent object for chaining.
 		 */
 		this.loglevel = function (newLoglevel) {
+			var varname = "loglevel";
 			if (!arguments.length) { // get
-				return _options.loglevel;
-			} else if (_options.loglevel != newLoglevel) { // set
-				var varname = "loglevel";
-				_options[varname] = newLoglevel;
-				checkOptionsValidity(varname);
+				return _options[varname];
+			} else if (changeOption(varname, newLoglevel)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 			}
 			return ScrollScene;
@@ -1342,7 +1444,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		/**
 		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
 		 * @public
-		 * @deprecated Method is deprecated since 1.10.0. You should now use {@link ScrollScene.triggerPosition}
+		 * @deprecated Method is deprecated since 1.1.0. You should now use {@link ScrollScene.triggerPosition}
 		 */
 		this.triggerOffset = function () {
 			return ScrollScene.triggerPosition();
@@ -1375,8 +1477,9 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Updates the Scene in the parent Controller to reflect the current state.  
 		 * This is the equivalent to `ScrollMagic.updateScene(scene, immediately)`.  
 		 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
-		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
-		 * *Note:* This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.
+		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
+		 * This means an update doesn't necessarily result in a progress change. The `progress` event will be fired if the progress has indeed changed between this update and the last.  
+		 * _**NOTE:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
 		 * // update the scene on next tick
@@ -1418,61 +1521,62 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Updates the position of the triggerElement, if present.
-		 * This method is automatically called ...
-		 *  - ... when the triggerElement is changed
-		 *  - ... when the scene is added to a (new) controller
-		 *  - ... in regular intervals from the controller. See {@link ScrollMagic} option `triggerPosUpdateInterval`.
+		 * Updates dynamic scene variables like the trigger element position or the duration.
+		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `sceneRefreshInterval`.
 		 * 
-		 * You can call it to minimize lag, when you intentionally change the position of the triggerElement.
+		 * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
+		 * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
+		 *
 		 * @public
-		 * @since v1.1.0
+		 * @since 1.1.0
 		 * @example
 		 * scene = new ScrollScene({triggerElement: "#trigger"});
 		 * 
 		 * // change the position of the trigger
 		 * $("#trigger").css("top", 500);
 		 * // immediately let the scene know of this change
-		 * scene.updateTriggerElementPosition();
+		 * scene.refresh();
 		 *
-		 * @fires {@link ScrollScene.shift}, if the position changed and suppressEvents is false
+		 * @fires {@link ScrollScene.shift}, if the trigger element position or the duration changed
+		 * @fires {@link ScrollScene.change}, if the duration changed
 		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		 // @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed. no doc export...
-		this.updateTriggerElementPosition = function (suppressEvents) {
-			var elementPos = 0;
-			if (_parent && _options.triggerElement) {
-				var
-					element = $(_options.triggerElement).first(),
-					controllerInfo = _parent.info(),
-					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
-					
-				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (element.parent().data("ScrollMagicPinSpacer")) {
-					element = element.parent();
-				}
-
-				var elementOffset = getOffset(element);
-
-				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-					containerOffset[param] -= controllerInfo.scrollPos;
-				}
-
-				elementPos = elementOffset[param] - containerOffset[param];
-			}
-			var changed = elementPos != _triggerPos;
-			_triggerPos = elementPos;
-			if (changed && !suppressEvents) {
-				ScrollScene.trigger("shift", {reason: "triggerElementPosition"});
-			}
+		this.refresh = function () {
+			updateDuration();
+			updateTriggerElementPosition();
+			// update trigger element position
 			return ScrollScene;
 		};
 
 		/**
 		 * **Get** or **Set** the scene's progress.  
-		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().
+		 * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().  
+		 * The order in which the events are fired depends on the duration of the scene:
+		 *  1. Scenes with `duration == 0`:  
+		 *  Scenes that have no duration by definition have no ending. Thus the `end` event will never be fired.  
+		 *  When the trigger position of the scene is passed the events are always fired in this order:  
+		 *  `enter`, `start`, `progress` when scrolling forward  
+		 *  and  
+		 *  `progress`, `start`, `leave` when scrolling in reverse
+		 *  2. Scenes with `duration > 0`:  
+		 *  Scenes with a set duration have a defined start and end point.  
+		 *  When scrolling past the start position of the scene it will fire these events in this order:  
+		 *  `enter`, `start`, `progress`  
+		 *  When continuing to scroll and passing the end point it will fire these events:  
+		 *  `progress`, `end`, `leave`  
+		 *  When reversing through the end point these events are fired:  
+		 *  `enter`, `end`, `progress`  
+		 *  And when continuing to scroll past the start position in reverse it will fire:  
+		 *  `progress`, `start`, `leave`  
+		 *  In between start and end the `progress` event will be called constantly, whenever the progress changes.
+		 * 
+		 * In short:  
+		 * `enter` events will always trigger **before** the progress update and `leave` envents will trigger **after** the progress update.  
+		 * `start` and `end` will always trigger at their respective position.
+		 * 
+		 * Please review the event descriptions for details on the events and the event object that is passed to the callback.
+		 * 
 		 * @public
 		 * @example
 		 * // get the current scene progress
@@ -1498,22 +1602,31 @@ Greensock License info at http://www.greensock.com/licensing/
 				var
 					doUpdate = false,
 					oldState = _state,
-					scrollDirection = _parent ? _parent.info("scrollDirection") : "PAUSED";
-				if (progress <= 0 && _state !== 'BEFORE' && (progress >= _progress || _options.reverse)) {
-					// go back to initial state
-					_progress = 0;
-					_state = 'BEFORE';
-					doUpdate = true;
-				} else if (progress > 0 && progress < 1 && (progress >= _progress || _options.reverse)) {
-					_progress = progress;
-					_state = 'DURING';
-					doUpdate = true;
-				} else if (progress >= 1 && _state !== 'AFTER') {
-					_progress = 1;
-					_state = 'AFTER';
-					doUpdate = true;
-				} else if (_state === "DURING" && !_options.reverse) {
-					updatePinState(); // in case we scrolled back and reverse is disabled => update the pin position, so it doesn't scroll back as well.
+					scrollDirection = _parent ? _parent.info("scrollDirection") : 'PAUSED',
+					reverseOrForward = _options.reverse || progress >= _progress;
+				if (_options.duration === 0) {
+					// zero duration scenes
+					doUpdate = _progress != progress;
+					_progress = progress < 1 && reverseOrForward ? 0 : 1;
+					_state = _progress === 0 ? 'BEFORE' : 'DURING';
+				} else {
+					// scenes with start and end
+					if (progress <= 0 && _state !== 'BEFORE' && reverseOrForward) {
+						// go back to initial state
+						_progress = 0;
+						_state = 'BEFORE';
+						doUpdate = true;
+					} else if (progress > 0 && progress < 1 && reverseOrForward) {
+						_progress = progress;
+						_state = 'DURING';
+						doUpdate = true;
+					} else if (progress >= 1 && _state !== 'AFTER') {
+						_progress = 1;
+						_state = 'AFTER';
+						doUpdate = true;
+					} else if (_state === 'DURING' && !reverseOrForward) {
+						updatePinState(); // in case we scrolled backwards mid-scene and reverse is disabled => update the pin position, so it doesn't move back as well.
+					}
 				}
 				if (doUpdate) {
 					// fire events
@@ -1526,30 +1639,16 @@ Greensock License info at http://www.greensock.com/licensing/
 					};
 
 					if (stateChanged) { // enter events
-						if (_options.duration === 0) {
-							if (_state === 'AFTER') {
-								trigger("enter");
-								trigger("start");
-							}
-						} else {
-							if (oldState !== 'DURING') {
-								trigger("enter");
-								trigger(oldState === 'BEFORE' ? "start" : "end");
-							}
+						if (oldState !== 'DURING') {
+							trigger("enter");
+							trigger(oldState === 'BEFORE' ? "start" : "end");
 						}
 					}
 					trigger("progress");
 					if (stateChanged) { // leave events
-						if (_options.duration === 0) {
-							if (_state === 'BEFORE') {
-								trigger("start");
-								trigger("leave");
-							}
-						} else {
-							if (_state !== 'DURING') {
-								trigger(_state === 'AFTER' ? "end" : "start");
-								trigger("leave");
-							}
+						if (_state !== 'DURING') {
+							trigger(_state === 'BEFORE' ? "start" : "end");
+							trigger("leave");
 						}
 					}
 				}
@@ -1598,7 +1697,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						_tween.yoyo(TweenMaxObject.yoyo());
 					}
 				}
-				checkOptionsValidity("checkIfPinnedElementIsTweened");
+				validateOption("checkIfTriggerElementIsTweened");
 				log(3, "added tween");
 				updateTweenProgress();
 				return ScrollScene;
@@ -1689,6 +1788,14 @@ Greensock License info at http://www.greensock.com/licensing/
 				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
 
+			if (sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)) {
+				// log (2, "WARNING: Your pinned element probably needs a defined width or it might collapse during pin.");
+			}
+			if (!inFlow && settings.pushFollowers) {
+				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
+				settings.pushFollowers = false;
+			}
+
 			// create spacer
 			var spacer = $("<div></div>")
 					.addClass(settings.spacerClass)
@@ -1703,22 +1810,19 @@ Greensock License info at http://www.greensock.com/licensing/
 						"-webkit-box-sizing": "content-box"
 					});
 
-			if (!inFlow && settings.pushFollowers) {
-				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
-				settings.pushFollowers = false;
-			}
-
 			// set the pin Options
 			var pinInlineCSS = _pin[0].style;
 			_pinOptions = {
 				spacer: spacer,
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
 					width: sizeCSS.width.slice(-1) === "%",
-					height: sizeCSS.height.slice(-1) === "%"
+					height: sizeCSS.height.slice(-1) === "%",
+					autoFullWidth: sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
 				origStyle: {
+					width: pinInlineCSS.width || "",
 					position: pinInlineCSS.position || "",
 					top: pinInlineCSS.position || "",
 					left: pinInlineCSS.position || "",
@@ -1750,6 +1854,8 @@ Greensock License info at http://www.greensock.com/licensing/
 
 			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
+			// add mousewheel listener to catch scrolls over fixed elements
+			_pin.on("mousewheel DOMMouseScroll", onMousewheelOverPin);
 
 			log(3, "added pin");
 
@@ -1784,6 +1890,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					}
 				}
 				$(window).off("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin");
+				_pin.off("mousewheel DOMMouseScroll", onMousewheelOverPin);
 				_pin = undefined;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
@@ -1835,7 +1942,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.removeClassToggle = function (reset) {
-			if (reset) {
+			if (_cssClassElm && reset) {
 				_cssClassElm.removeClass(_cssClasses);
 			}
 			ScrollScene.off("start.internal_class end.internal_class");
@@ -1862,8 +1969,9 @@ Greensock License info at http://www.greensock.com/licensing/
 					_parent.removeScene(ScrollScene);
 				}
 				_parent = controller;
-				checkOptionsValidity();
-				ScrollScene.updateTriggerElementPosition(true);
+				validateOption();
+				updateDuration(true);
+				updateTriggerElementPosition(true);
 				updateScrollOffset();
 				updatePinSpacerSize();
 				_parent.info("container").on("resize." + NAMESPACE, function () {
@@ -1941,11 +2049,12 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (reset) {
-			this.removeTween(reset);
-			this.removePin(reset);
-			this.removeClassToggle(reset);
-			this.remove();
-			this.off("start end enter leave progress change update shift shift.internal change.internal progress.internal");
+			ScrollScene.removeTween(reset);
+			ScrollScene.removePin(reset);
+			ScrollScene.removeClassToggle(reset);
+			ScrollScene.trigger("destroy", {reset: reset});
+			ScrollScene.remove();
+			ScrollScene.off("start end enter leave progress change update shift destroy shift.internal change.internal progress.internal");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
 		};
@@ -1960,6 +2069,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Scene start event.  
 		 * Fires whenever the scroll position its the starting point of the scene.  
 		 * It will also fire when scrolling back up going over the start position of the scene. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.start
 		 *
@@ -1980,6 +2091,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Fires whenever the scroll position its the ending point of the scene.  
 		 * It will also fire when scrolling back up from after the scene and going over its end position. If you want something to happen only when scrolling down/right, use the scrollDirection parameter passed to the callback.
 		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
+		 *
 		 * @event ScrollScene.end
 		 *
 		 * @example
@@ -1999,6 +2112,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Fires whenever the scene enters the "DURING" state.  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene enters its active scroll timeframe, regardless of the scroll-direction.
 		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
+		 *
 		 * @event ScrollScene.enter
 		 *
 		 * @example
@@ -2017,6 +2132,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * Scene leave event.  
 		 * Fires whenever the scene's state goes from "DURING" to either "BEFORE" or "AFTER".  
 		 * Keep in mind that it doesn't matter if the scene plays forward or backward: This event always fires when the scene leaves its active scroll timeframe, regardless of the scroll-direction.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.leave
 		 *
@@ -2053,6 +2170,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		/**
 		 * Scene progress event.  
 		 * Fires whenever the progress of the scene changes.
+		 *
+		 * For details on this event and the order in which it is fired, please review the {@link ScrollScene.progress} method.
 		 *
 		 * @event ScrollScene.progress
 		 *
@@ -2093,7 +2212,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * It will also fire implicitly when the size of the container changes and the triggerHook is anything other than `onLeave`.
 		 *
 		 * @event ScrollScene.shift
-		 * @since 1.10.0
+		 * @since 1.1.0
 		 *
 		 * @example
 		 * scene.on("shift", function (event) {
@@ -2103,7 +2222,32 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @property {object} event - The event Object passed to each callback
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
-		 * @property {ScrollScene} event.reason - Indicates why the scene has shifted
+		 * @property {string} event.reason - Indicates why the scene has shifted
+		 */
+		/**
+		 * Scene destroy event.  
+		 * Fires whenvever the scene is destroyed.
+		 * This can be used to tidy up custom behaviour used in events.
+		 *
+		 * @event ScrollScene.destroy
+		 * @since 1.1.0
+		 *
+		 * @example
+		 * scene.on("enter", function (event) {
+		 *        // add custom action
+		 *        $("#my-elem").left("200");
+		 *      })
+		 *      .on("destroy", function (event) {
+		 *        // reset my element to start position
+		 *        if (event.reset) {
+		 *          $("#my-elem").left("0");
+		 *        }
+		 *      });
+		 *
+		 * @property {object} event - The event Object passed to each callback
+		 * @property {string} event.type - The name of the event
+		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
+		 * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
 		 */
 		 
 		 /**
@@ -2126,7 +2270,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			if ($.isFunction(callback)) {
 				var names = $.trim(name).toLowerCase()
 							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-							.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
+							.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE ); // add namespace to regulars.
 				$(ScrollScene).on(names, callback);
 			} else {
 				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
@@ -2154,7 +2298,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 this.off = function (name, callback) {
 			var names = $.trim(name).toLowerCase()
 						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-						.replace(/( |^)(\w+)( |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
+						.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
 			$(ScrollScene).off(names, callback);
 			return ScrollScene;
 		 };
@@ -2172,14 +2316,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 */
 		 this.trigger = function (name, vars) {
 			log(3, 'event fired:', name, "->", vars);
-			var event = {
-				type: $.trim(name).toLowerCase(),
-				target: ScrollScene
-			};
-			if ($.isPlainObject(vars)) {
-				event = $.extend({}, vars, event);
-			}
-			// fire all callbacks of the event
+			var event = $.Event($.trim(name).toLowerCase(), vars);
 			$(ScrollScene).trigger(event);
 			return ScrollScene;
 		 };
@@ -2259,6 +2396,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
 			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
 		);
+	};
+	var isMarginCollapseType = function (str) {
+		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
 	};
 
 })(jQuery, window);
