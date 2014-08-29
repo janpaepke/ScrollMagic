@@ -227,29 +227,31 @@
 		 * @param {(ScrollScene|array)} ScrollScene - ScrollScene or Array of ScrollScenes to be added to the controller.
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
-		this.addScene = function (ScrollScene) {
-			if ($.isArray(ScrollScene)) {
-				$.each(ScrollScene, function (index, scene) {
+		this.addScene = function (newScene) {
+			if ($.isArray(newScene)) {
+				$.each(newScene, function (index, scene) {
 					ScrollMagic.addScene(scene);
 				});
-			} else {
-				if (ScrollScene.parent() != ScrollMagic) {
-					ScrollScene.addTo(ScrollMagic);
-				} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
+			} else if (newScene instanceof ScrollScene) {
+				if (newScene.parent() != ScrollMagic) {
+					newScene.addTo(ScrollMagic);
+				} else if ($.inArray(_sceneObjects, newScene) == -1){
 					// new scene
-					_sceneObjects.push(ScrollScene); // add to array
+					_sceneObjects.push(newScene); // add to array
 					_sceneObjects = sortScenes(_sceneObjects); // sort
-					ScrollScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
+					newScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
 						_sceneObjects = sortScenes(_sceneObjects);
 					});
 					// insert Global defaults.
 					$.each(_options.globalSceneOptions, function (key, value) {
-						if (ScrollScene[key]) {
-							ScrollScene[key].call(ScrollScene, value);
+						if (newScene[key]) {
+							newScene[key].call(newScene, value);
 						}
 					});
 					log(3, "added Scene (" + _sceneObjects.length + " total)");
 				}
+			} else {
+				log(1, "ERROR: invalid argument supplied for '.addScene()'");
 			}
 			return ScrollMagic;
 		};
@@ -395,14 +397,13 @@
 					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
 			} else if ($.type(scrollTarget) === "string" || isDomElement(scrollTarget) || scrollTarget instanceof $) {
-				console.log(scrollTarget);
 				var $elm = $(scrollTarget).first();
 				if ($elm[0]) {
 					var
 						offset = $elm.offset();
 					ScrollMagic.scrollTo(_options.vertical ? offset.top : offset.left);
 				} else {
-					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", newScrollPos);
+					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
 				}
 			} else if ($.isFunction(scrollTarget)) {
 				setScrollPos = scrollTarget;
