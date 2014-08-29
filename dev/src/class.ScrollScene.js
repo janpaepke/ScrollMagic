@@ -1007,9 +1007,9 @@
 					reverseOrForward = _options.reverse || progress >= _progress;
 				if (_options.duration === 0) {
 					// zero duration scenes
+					doUpdate = _progress != progress;
 					_progress = progress < 1 && reverseOrForward ? 0 : 1;
 					_state = _progress === 0 ? 'BEFORE' : 'DURING';
-					doUpdate = _state != oldState;
 				} else {
 					// scenes with start and end
 					if (progress <= 0 && _state !== 'BEFORE' && reverseOrForward) {
