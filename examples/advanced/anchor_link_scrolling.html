@@ -79,10 +79,12 @@
 								var id = $(this).attr("href");
 								if ($(id).length > 0) {
 									e.preventDefault();
+
+									// trigger scroll
 									controller.scrollTo(id);
 
-									if (window.history && window.history.pushState) {
 										// if supported by the browser we can even update the URL.
+									if (window.history && window.history.pushState) {
 										history.pushState("", document.title, id);
 									}
 								}

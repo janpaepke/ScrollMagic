@@ -46,13 +46,14 @@
 						<div class="spacer s3"></div>
 						<script>
 							$(document).ready(function($) {
+								// init controller
 								var controller1 = new ScrollMagic({container: "#container1"});
 
+								// build scene
 								var scene = new ScrollScene({triggerElement: "#trigger1", duration: 300})
 									.addTo(controller1)
 									.setTween(TweenMax.to("#container1 .animated", 0.5, {backgroundColor: "green"}))
 									.setPin("#container1 .animated");
-
 
 								// show indicators (requires debug extension)
 								scene.addIndicators();
@@ -75,13 +76,14 @@
 						<div class="spacer s4"></div>
 						<script>
 							$(document).ready(function($) {
+								// init controller
 								var controller2 = new ScrollMagic({container: "#container2", vertical: false});
 
+								// build scene
 								var scene2 = new ScrollScene({triggerElement: "#trigger2", duration: 300})
 									.addTo(controller2)
 									.setTween(TweenMax.to("#container2 .animated", 0.5, {backgroundColor: "green"}))
 									.setPin("#container2 .animated");
-
 
 								// show indicators (requires debug extension)
 								scene2.addIndicators();

@@ -63,9 +63,11 @@
 					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
-							// init controller
+							// define params
 							var duration = $("#parallax1").height() + $(window).height();
 							var bgPosMovement = "0 " + (duration*0.8) + "px";
+
+							// init controller
 							var controller = new ScrollMagic({globalSceneOptions: {triggerHook: "onEnter", duration: duration}});
 
 							// build scenes
@@ -73,10 +75,12 @@
 											.setTween(TweenMax.to("#parallax1", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
 											.addTo(controller)
 											.addIndicators({zindex: 1});
+
 							new ScrollScene({triggerElement: "#trigger2"})
 											.setTween(TweenMax.to("#parallax2", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
 											.addTo(controller)
 											.addIndicators({zindex: 1});
+
 							new ScrollScene({triggerElement: "#trigger3"})
 											.setTween(TweenMax.to("#parallax3", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
 											.addTo(controller)

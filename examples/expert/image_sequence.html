@@ -35,7 +35,7 @@
 							In production environments you would probably also use an image preloader to cache all images in the array.
 						</p>
 						<p>
-							The method shown here has the advantage that it will also work as an animation unbound from the scrollbar. Use the form to the left to toggle the duration if you're unsure what that means.
+							The method shown here can take advantage of the tweenmax repeat feature and will also work as an animation unbound from the scrollbar. Use the form to the left to toggle the duration if you're unsure what that means.
 						</p>
 						<p class="copyright">
 							Drawings are courtesy of <a href="http://edimassimo.blogspot.co.uk/" target="_blank">Eleonora Di Massimo</a>.
@@ -66,9 +66,6 @@
 					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
-							// init controller
-							var controller = new ScrollMagic();
-
 							// define images
 							var images = [
 								"../../img/example_imagesequence_01.png",
@@ -79,28 +76,26 @@
 								"../../img/example_imagesequence_06.png",
 								"../../img/example_imagesequence_07.png"
 							];
-							var obj = {curImg: 0};
-							var cycles = 3;
 
-							// repeat array to have multiple cycles
-							var img = [];
-							for (var i = 0; i < cycles; i++) {
-								img = img.concat(images);
-							}
-							images = img;
+							// TweenMax can tween any property of any object. We use this object to cycle through the array
+							var obj = {curImg: 0};
 
 							// create tween
-							var tween = TweenMax.to(obj, 1.5,
+							var tween = TweenMax.to(obj, 0.5,
 								{
-									immediateRender: true, // load first image automatically
-									curImg: images.length - 1, // go over all images 3 times
-									roundProps: "curImg", // only integers
-									ease: Linear.easeNone, // show every image the same ammount of time
+									curImg: images.length - 1,	// animate propery curImg to number of images
+									roundProps: "curImg",				// only integers so it can be used as an array index
+									repeat: 3,									// repeat 3 times
+									immediateRender: true,			// load first image automatically
+									ease: Linear.easeNone,			// show every image the same ammount of time
 									onUpdate: function () {
 									  $("#myimg").attr("src", images[obj.curImg]); // set the image source
 									}
 								}
 							);
+
+							// init controller
+							var controller = new ScrollMagic();
 
 							// build scene
 							var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
