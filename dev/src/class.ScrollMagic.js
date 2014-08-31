@@ -104,7 +104,7 @@
 				}, _options.sceneRefreshInterval);
 			}
 
-			log(3, "added new " + NAMESPACE + " controller");
+			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
 		/**
@@ -177,10 +177,9 @@
 			if (_options.loglevel >= loglevel) {
 				var
 					prefix = "(" + NAMESPACE + ") ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
+					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				func.apply(window, args);
+				debug.apply(window, args);
 			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END

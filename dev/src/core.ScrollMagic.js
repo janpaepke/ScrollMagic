@@ -17,7 +17,7 @@
 // (BUILD) - INSERT POINT: class.ScrollScene
 
 	// store version
-	ScrollMagic.version = "%VERSION%";
+	ScrollMagic.prototype.version = "%VERSION%";
 	// make global references available
 	window.ScrollScene = ScrollScene;
 	window.ScrollMagic = ScrollMagic;

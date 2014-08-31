@@ -222,10 +222,9 @@
 			if (_options.loglevel >= loglevel) {
 				var
 					prefix = "(" + NAMESPACE + ") ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
+					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				func.apply(window, args);
+				debug.apply(window, args);
 			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
@@ -298,7 +297,7 @@
 			// update duration
 			if (_durationUpdateMethod) {
 				var varname = "duration";
-				if (changeOption(varname, _durationUpdateMethod()) && !suppressEvents) { // set
+				if (changeOption(varname, _durationUpdateMethod.call(ScrollScene)) && !suppressEvents) { // set
 					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 					ScrollScene.trigger("shift", {reason: varname});
 				}
@@ -911,7 +910,7 @@
 						ScrollScene.trigger("update", {startPos: _scrollOffset.start, endPos: _scrollOffset.end, scrollPos: scrollPos});
 
 						ScrollScene.progress(newProgress);
-					} else if (_pin && _pin.css("position") == "fixed") {
+					} else if (_pin && _state === "DURING") {
 						updatePinState(true); // unpin in position
 					}
 				} else {

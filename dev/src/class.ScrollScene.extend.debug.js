@@ -4,7 +4,7 @@
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
-(function($) {
+(function($, ScrollScene) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
@@ -236,4 +236,4 @@
 			}
 		}
 	};
-})(jQuery);
+})(jQuery, ScrollScene);
