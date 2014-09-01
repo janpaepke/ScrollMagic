@@ -42,32 +42,45 @@
 				<section class="demo">
 					<div class="spacer s2"></div>
 					<div id="trigger1" class="spacer s0"></div>
-					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="500" height="200">
-						<path class="animate" style="stroke-linecap: round; stroke-linejoin: round;"
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="350" height="200">
+						<path id="word" style="stroke-linecap: round; stroke-linejoin: round;"
 						  fill="none" stroke="#000000" stroke-width="5" 
-						  d="M56.337,94.002
-								c-11.359-10.076-27.608-3.752-37.658,6.211c-20.677,20.499-0.572,49.962,26.401,45.203c43.92-7.75,22.436-71.982,25.039-100.888
-								c-3.649,24.669-5.204,49.2,6.271,72.063c5.668,11.294,23.577,30.529,38.855,26.317c17.805-4.908,6.263-35.484,27.236-39.883
-								c19.592-4.109,19.697,24.04,29.252,35.715c-0.698-13.509-6.779-32.65-10.894-45.832c14.446-0.987,27.63,6.366,43.303,3.968
-								c19.543-2.991,37.584-10.066,57.456-6.64c-10.891,0.045-26.666-2.283-35.821,4.998c-8.153,6.484-10.078,22.495-1.289,29.938
-								c19.918,16.865,49.255-5.832,41.257-28.524c-15.813,3.64,1.004,39.445,19.673,34.951c19.323-4.652-0.661-34.881,23.754-39.821
-								c10.008-2.024,19.26,4.159,22.691,13.815c3.279,9.228-3.513,14.677-2.354,22.53c4.247,28.77,53.517-3.352,31.584-16.531
-								c-4.058,24.478,35.777,34.776,48.723,16.531c11.053-15.577-0.105-26.747-12.144-35.217c22.996,18.246,63.188,4.49,87.323-5.171"/>
+						  d="M22.328,70.018c9.867-7.4,10.724,20.434,13.014,28.694c-0.08-9.105-1.308-31.463,11.936-31.886
+								c11.313-0.361,17.046,19.368,16.367,28.098c-1.432-10.289,6.234-30.682,18.163-25.671c11.505,4.833,8.682,26.772,20.071,31.964
+								c13.06,5.953,14.854-8.305,19.734-17.017c7.188-12.836,4.933-15.417,29.6-14.8c-8.954-3.842-37.42,1.728-28.539,20.1
+								c5.823,12.045,34.911,12.583,30.018-8.873c-5.385,17.174,24.01,23.104,24.01,9.123c0-9.867,3.816-15.937,16.034-18.5
+								c8.359-1.754,18.982,4.754,25.9,9.25c-10.361-4.461-51.941-13.776-37.749,12.357c9.435,17.372,50.559,2.289,33.477-6.063
+								c-2.871,19.008,32.415,31.684,30.695,54.439c-2.602,34.423-66.934,24.873-79.302,2.134c-13.11-24.101,38.981-36.781,54.798-40.941
+								c8.308-2.185,42.133-12.162,25.88-25.587c-2.779,17.058,19.275,28.688,29.963,12.911c6.862-10.131,6.783-25.284,30.833-19.117
+								c-9.404-0.429-32.624-0.188-32.864,18.472c-0.231,17.912,21.001,21.405,40.882,11.951"/>
+						<path id="dot" style="stroke-linecap: round; stroke-linejoin: round;"
+						  fill="none" stroke="#000000" stroke-width="5" 
+						  d="M247.003,38.567c-7.423,1.437-11.092,9.883-1.737,11.142c14.692,1.978,13.864-13.66,1.12-8.675"/>
 					</svg>
 					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
+							function pathPrepare ($el) {
+								var lineLength = $el[0].getTotalLength();
+								$el.css("stroke-dasharray", lineLength);
+								$el.css("stroke-dashoffset", lineLength);
+							}
+
+							var $word = $("path#word");
+							var $dot = $("path#dot");
+
 							// prepare SVG
-							var $path = $("path.animate");
-							var lineLength = $path[0].getTotalLength();
-							$path.css("stroke-dasharray", lineLength);
-							$path.css("stroke-dashoffset", lineLength);
+							pathPrepare($word);
+							pathPrepare($dot);
 
 							// init controller
 							var controller = new ScrollMagic();
 
 							// build tween
-							var tween = TweenMax.to($path, 0.8, {"stroke-dashoffset": 0, stroke: "#33629c", ease:Linear.easeNone});
+							var tween = new TimelineMax()
+								.add(TweenMax.to($word, 0.9, {"stroke-dashoffset": 0, ease:Linear.easeNone})) // draw word for 0.9
+								.add(TweenMax.to($dot, 0.1, {"stroke-dashoffset": 0, ease:Linear.easeNone}))  // draw dot for 0.1
+								.add(TweenMax.to("path", 1, {stroke: "#33629c", ease:Linear.easeNone}), 0);			// change color during the whole thing
 
 							// build scene
 							var scene = new ScrollScene({triggerElement: "#trigger1", duration: 200, tweenChanges: true})
