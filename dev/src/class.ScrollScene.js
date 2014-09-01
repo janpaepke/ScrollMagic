@@ -1205,9 +1205,7 @@
 						position: inFlow ? "relative" : "absolute",
 						"margin-left": "auto",
 						"margin-right": "auto",
-						"box-sizing": "content-box",
-						"-moz-box-sizing": "content-box",
-						"-webkit-box-sizing": "content-box"
+						"box-sizing": "content-box"
 					});
 
 			// set the pin Options
@@ -1224,10 +1222,13 @@
 				origStyle: {
 					width: pinInlineCSS.width || "",
 					position: pinInlineCSS.position || "",
-					top: pinInlineCSS.position || "",
-					left: pinInlineCSS.position || "",
-					bottom: pinInlineCSS.position || "",
-					right: pinInlineCSS.position || ""
+					top: pinInlineCSS.top || "",
+					left: pinInlineCSS.left || "",
+					bottom: pinInlineCSS.bottom || "",
+					right: pinInlineCSS.right || "",
+					"box-sizing": pinInlineCSS["box-sizing"] || "",
+					"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
+					"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
 				}, // save old styles (for reset)
 				pinnedClass: settings.pinnedClass // the class that should be added to the element when pinned
 			};
@@ -1251,6 +1252,10 @@
 						bottom: "auto",
 						right: "auto"
 					});
+			
+			if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
+				_pin.css("box-sizing", "border-box");
+			}
 
 			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
