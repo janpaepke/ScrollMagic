@@ -188,6 +188,23 @@ h3 {
 	top: 50%;
 	line-height: 80px;
 }
+#pin #draw {
+	width: 500px;
+	height: 150px;
+	top: 50%;
+	left: 50%;
+	margin-top: -75px;
+	margin-left: -250px;
+	position: absolute;
+
+}
+#pin #draw path {
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	fill: none;
+	stroke: #000000;
+	stroke-width: 5;
+}
 #pin #wipe {
 	height: 100%;
 	width: 0%;

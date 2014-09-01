@@ -23,12 +23,15 @@ The major perks of using ScrollMagic include:
 * optimized performance
 * flexibility
 * mobile compatibility
+* event management
 * ready for responsive webdesign
 * object oriented programming and object chaining
-* event management
+* readable, centralized code and intuitive development
 * support for both scroll directions (even different on one page)
 * support for scrolling inside div containers (even multiple on one page)
 * extensive debugging and logging capabilities
+* detailed documentation
+* many application examples
 
 ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.

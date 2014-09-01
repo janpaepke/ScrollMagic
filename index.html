@@ -244,6 +244,19 @@
 		</section>
 		<section id="pin">
 			<h3 id="hlpin">pin</h3>
+			<svg id="draw" version="1.1" xmlns="http://www.w3.org/2000/svg">
+				<path d="M51.713,72.403c-1.622-5.471-15.325-11.522-24.769-5.14c-16.533,11.172-12.433,31.738,6.063,36.36
+								c35.991,8.99,31.205-51.947,21.479-70.182c-1.62,12.967,7.633,87.508,25.587,66.966c6.993-7.998,6.745-35.383,19.554-29.091
+								c9.973,4.899,8.169,22.564,6.995,30.021c-3.728-6.878-5.335-18.52-4.454-26.344c1.245-11.048,0.889-10.807,12.54-8.506
+								c20.311,4.014,33.844,2.953,53.713,3.657c-4.955-1.354-12.235-6.866-22.47-0.07c-12.57,8.347-2.492,21.175,4.941,25.087
+								c17.507,9.217,34.261-10.65,19.294-20.983c0.11,9.545,10.947,31.365,22.074,23.29c11.401-8.273,10.204-36.378,29.913-24.916
+								c10.837,6.303-6.433,22.742,10.09,27.09c17.793,4.683,28.155-16.523,22.285-27.611c-12.284,13.806,17.74,34.652,29.168,25.599
+								c10.379-8.222,6.502-29.885-3.305-31.304c-2.262,18.13,54.154,5.197,61.863-11.228"/>
+				<path d="M441.024,44.507c-19.93-7.258-45.893,6.182-54.734,24.666c-17.688,36.97,24.234,46.259,52.571,45.826 c22.877-0.349,43.695-12.586,44.078-37.822c0.326-21.62-28.958-55.829-48.438-30.061"/>
+				<path d="M423.51,61.397c-13.762,12.405,8.817,14.292,9.433,1.616c-4.994-1.292-9.846,0.747-13.716,4.814"/>
+				<path d="M446.033,60.906c-4.726-0.108-7.893,5.725-2.393,6.725c8.5,2.167,15.249-7.857,2.664-8.642"/>
+				<path d="M404.499,81.032c11.811,18.518,58.615,25.933,57.396-6.522"/>
+			</svg>
 			<div id="wipe">
 				<h3>wipe</h3>
 			</div>
@@ -253,12 +266,27 @@
 			</div>
 			<h3 id="unpin">unpin</h3>
 			<script type="text/javascript">
+				// draw ani
+				var drawAni = new TimelineMax({delay: 0.2});
+				var distancePerSecond = 700;
+				$("svg#draw path").each(function () {
+					var lineLength = $(this)[0].getTotalLength();
+					$(this).css("stroke-dasharray", lineLength);
+					$(this).css("stroke-dashoffset", lineLength);
+					drawAni.add(TweenMax.to(this, lineLength / distancePerSecond, {"stroke-dashoffset": 0}));
+				});
+				console.log(drawAni.totalDuration());
 				// ani
 				var pinani = new TimelineMax()
 					// pin move down
 					.add(TweenMax.from("#pin>h3:first-child", 0.5, {top: "0%", marginTop: 0}))
+					// draw
+					.add([
+						drawAni,
+						TweenMax.to("#pin>h3:first-child", 0.3, {autoAlpha: 0})
+					])
 					// wipe
-					.add(TweenMax.to("#wipe", 1, {width: "100%"}))
+					.add(TweenMax.to("#wipe", 1, {width: "100%", delay: 0.2}))
 					// slide
 					.add(TweenMax.to("#slide", 1, {top: "0%", ease: Bounce.easeOut, delay: 0.2}))
 					// color
@@ -287,7 +315,7 @@
 				// pin
 				new ScrollScene({
 						triggerElement: "section#pin",
-						duration: 1100
+						duration: 1500
 					})
 					.on("progress", function () {
 						// keep centered even though width changes
@@ -373,12 +401,15 @@
 					<li>optimized performance</li>
 					<li>flexibility</li>
 					<li>mobile compatibility</li>
+					<li>event management</li>
 					<li>ready for responsive webdesign</li>
 					<li>object oriented programming and object chaining</li>
-					<li>event management</li>
+					<li>readable, centralized code and intuitive development</li>
 					<li>support for both scroll directions (even different on one page)</li>
 					<li>support for scrolling inside div containers (even multiple on one page)</li>
 					<li>extensive debugging and logging capabilities</li>
+					<li>detailed documentation</li>
+					<li>many application examples</li>
 				</ul>
 				<h3>Made with ScrollMagic</h3>
 				<p>
