@@ -72,21 +72,56 @@ describe('ScrollMagic', function() {
 		var getterOnly = ["info"];
 		var exception = ["destroy"];
 		it("is chainable if not a getter", function () {
+			var matchers = {
+				toBeChainableSetter: function(util, customEqualityTesters) {
+					return {
+						compare: function(method, obj) {
+							var result = {};
+							try {
+								result.pass = obj[method]("1") === obj;
+							} catch (e) {
+								result.pass = false;
+							}
+							if (result.pass) {
+								result.message = "Expected method '" + method + "' not to be chainable when used as setter";
+							} else {
+								result.message = "Expected method '" + method + "' to be chainable when used as setter";
+							}
+						 return result;
+						}  
+					}
+				},
+				toBeGetter: function(util, customEqualityTesters) {
+					return {
+						compare: function(method, obj) {
+							var result = {};
+							try {
+								result.pass = obj[method]() !== obj;
+							} catch (e) {
+								result.pass = false;
+							}
+							if (result.pass) {
+								result.message = "Expected method '" + method + "' not to be a getter";
+							} else {
+								result.message = "Expected method '" + method + "' to be a getter";
+							}
+						 return result;
+						}  
+					}
+				}
+			};
+			jasmine.addMatchers(matchers);
 			for (var m in ctrl) {
 				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0) {
-					var isGetter = getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1;
-					var isSetter = getterOnly.indexOf(m) < 0;
-					var get = ctrl[m]();
-					var set = ctrl[m]("1");
-					if (isGetter) {
-						expect(get).not.toBe(ctrl);
+					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
+						expect(m).toBeGetter(ctrl);
 					} else {
-						expect(get).toBe(ctrl);
+						expect(m).not.toBeGetter(ctrl);
 					}
-					if (isSetter) {
-						expect(set).toBe(ctrl);
+					if (getterOnly.indexOf(m) == -1) { // can be used as setter
+						expect(m).toBeChainableSetter(ctrl);
 					} else {
-						expect(set).not.toBe(ctrl);
+						expect(m).not.toBeChainableSetter(ctrl);
 					}
 				}
 			}

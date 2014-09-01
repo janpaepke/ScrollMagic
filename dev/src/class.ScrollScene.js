@@ -1368,7 +1368,9 @@
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.addTo = function (controller) {
-			if (_parent != controller) {
+			if (!(controller instanceof ScrollMagic)) {
+				log(1, "ERROR: supplied argument of 'addTo()' is not a valid ScrollMagic controller");
+			} else if (_parent != controller) {
 				// new parent
 				if (_parent) { // I had a parent before, so remove it...
 					_parent.removeScene(ScrollScene);
@@ -1388,8 +1390,8 @@
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
 		};
 
 		/**
