@@ -20,7 +20,9 @@
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
-	 * @param {boolean} [options._sceneRefreshInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
+	 * @param {boolean} [options._refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
+	 																										 This interval polls these parameters to fire the necessary events.  
+	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -37,7 +39,7 @@
 				vertical: true,
 				globalSceneOptions: {},
 				loglevel: 2,
-				sceneRefreshInterval: 100
+				refreshInterval: 100
 			};
 
 		/*
@@ -57,7 +59,7 @@
 			_viewPortSize = 0,
 			_tickerUsed = false,
 			_enabled = true,
-			_sceneRefreshInterval;
+			_refreshInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -77,10 +79,10 @@
 				}
 			});
 			_options.container = $(_options.container).first();
-			// check ScrolContainer
+			// check ScrollContainer
 			if (_options.container.length === 0) {
 				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
-				return; // cancel
+				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
 			// update container size immediately
@@ -95,13 +97,9 @@
 				_tickerUsed = false;
 			}
 
-			_options.sceneRefreshInterval = parseInt(_options.sceneRefreshInterval);
-			if (_options.sceneRefreshInterval > 0) {
-				_sceneRefreshInterval = window.setInterval(function () {
-					$.each(_sceneObjects, function (index, scene) {
-						scene.refresh();
-					});
-				}, _options.sceneRefreshInterval);
+			_options.refreshInterval = parseInt(_options.refreshInterval);
+			if (_options.refreshInterval > 0) {
+				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 			}
 
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
@@ -163,6 +161,17 @@
 				_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			}
 			_updateScenesOnNextTick = true;
+		};
+
+		var refresh = function () {
+			if (!_isDocument) {
+				if (_viewPortSize != (_options.vertical ? _options.container.height() : _options.container.width())) {
+					_options.container.trigger("resize");
+				}
+			}
+			$.each(_sceneObjects, function (index, scene) {// refresh all scenes
+				scene.refresh();
+			});
 		};
 
 		// (BUILD) - REMOVE IN MINIFY - START
@@ -234,7 +243,7 @@
 			} else if (newScene instanceof ScrollScene) {
 				if (newScene.parent() != ScrollMagic) {
 					newScene.addTo(ScrollMagic);
-				} else if ($.inArray(_sceneObjects, newScene) == -1){
+				} else if ($.inArray(newScene, _sceneObjects) < 0){
 					// new scene
 					_sceneObjects.push(newScene); // add to array
 					_sceneObjects = sortScenes(_sceneObjects); // sort
@@ -556,7 +565,7 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
-			window.clearTimeout(_sceneRefreshInterval);
+			window.clearTimeout(_refreshInterval);
 			var i = _sceneObjects.length;
 			while (i--) {
 				_sceneObjects[i].destroy(resetScenes);

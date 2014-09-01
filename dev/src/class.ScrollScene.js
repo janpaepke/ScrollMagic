@@ -596,7 +596,7 @@
 		 * As a setter it also accepts a function returning a numeric value.  
 		 * This is particularly useful for responsive setups.
 		 *
-		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `sceneRefreshInterval`).  
+		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `refreshInterval`).  
 		 * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
 		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
 		 * This counts double if you use the same function for multiple scenes._
@@ -922,7 +922,7 @@
 
 		/**
 		 * Updates dynamic scene variables like the trigger element position or the duration.
-		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `sceneRefreshInterval`.
+		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `refreshInterval`.
 		 * 
 		 * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
 		 * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
