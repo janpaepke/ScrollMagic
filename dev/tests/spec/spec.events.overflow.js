@@ -1,20 +1,35 @@
 describe('ScrollMagic - Events (Overflow)', function() {
 
-     beforeEach(function() {
+    var log = console.log; // loging from jasmine
+    beforeEach(function() {
+        // disable internal logging
+        spyOn(console, "log");
+        spyOn(console, "warn");
+        spyOn(console, "error");
+        // default setup
         loadFixtures('container-scroll.html');
+        $c = $('#scroll-container');
+        ctrl = new ScrollMagic({container: $c})
+    });
+
+
+    it("triggers container resize event", function(done) {
+        var resizeSpy = jasmine.createSpy('resizeSpy');
+        $c.height(300);
+        $c.on("resize", resizeSpy);
+        setTimeout(function(){
+            expect(resizeSpy).toHaveBeenCalled();
+            done();
+        }, 101);
     });
 
     it("should trigger only 'enter' and 'start' for a zero duration scene", function(done) {
-        $el = $('#scroll-container');
-
-        var controller = new ScrollMagic({container: $el});
-
         var scene = new ScrollScene(
             {
                 triggerElement: "#trigger",
                 duration: 0
             })
-            .addTo(controller);
+            .addTo(ctrl);
 
         var events = ["enter", "leave", "start", "end"];
         var spy = {};
@@ -23,7 +38,7 @@ describe('ScrollMagic - Events (Overflow)', function() {
             scene.on(val, spy[val]);
         });
 
-        $el.scrollTop(200);
+        $c.scrollTop(200);
 
         setTimeout(function(){
             expect(spy.enter).toHaveBeenCalled();
@@ -36,22 +51,18 @@ describe('ScrollMagic - Events (Overflow)', function() {
     });
 
     it('should trigger enter 2x for zero duration scenes', function(done) {
-        $el = $('#scroll-container');
-
-        var controller = new ScrollMagic({container: $el});
-
         var scene = new ScrollScene(
             {
                 triggerElement: "#trigger",
                 duration: 0
             })
-            .addTo(controller);
+            .addTo(ctrl);
 
         var triggerSpy = jasmine.createSpy('triggerSpy');
         scene.on("enter", triggerSpy);
 
-        var moveTop = function(){$el.scrollTop(0);};
-        var moveMid = function(){$el.scrollTop(155);};
+        var moveTop = function(){$c.scrollTop(0);};
+        var moveMid = function(){$c.scrollTop(155);};
 
         moveMid();
         setTimeout(moveTop, 100);
