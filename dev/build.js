@@ -283,10 +283,13 @@ for (var release in OUTPUT) {
 	build(OUTPUT[release]);
 }
 
-// update json file version numbers?
+// update version numbers?
 if (options.version !== pkg.version) {
-	log.info("Updating version numbers to", options.version);
+	// where?
 	var jsonFiles = ["package.json", "../bower.json", "../ScrollMagic.jquery.json"];
+	var readmeFile = "../README.md";
+	// go!
+	log.info("Updating version numbers to", options.version);
 	jsonFiles.forEach(function (file) {
 		var
 			fullpath = abspath(file),
@@ -295,8 +298,16 @@ if (options.version !== pkg.version) {
 			json = JSON.parse(content);
 
 		json.version = options.version;
-		fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
+		// fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
 	});
+	readmeFile = abspath(readmeFile);
+	var readme = fs.readFileSync(readmeFile, 'utf-8');
+	var readmeNew = readme.replace(/(<a .*class='version'.*>v)\d+\.\d+\.\d+(<\/a>)/gi, "$1" + options.version + "$2");
+	if (readme === readmeNew) {
+		log.warn("Didn't update version number in README.md");
+	} else {
+		fs.writeFileSync(readmeFile, readmeNew);
+	}
 }
 
 // do docs?
