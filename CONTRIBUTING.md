@@ -131,5 +131,4 @@ $ npm test
 ```
 *Tip:* In case you don't know – to quit the process use ctrl+c.
 
-When you added a new feature to ScrollMagic be sure to write a new test for it, if you are able to.  
-You'll find a stub spec file here: `dev/tests/spec/_spec.sample.js`.
+When you added a new feature to ScrollMagic be sure to write a new test for it, if you are able to.

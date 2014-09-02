@@ -33,6 +33,7 @@ The major perks of using ScrollMagic include:
 * detailed documentation
 * many application examples
 
+**Is ScrollMagic the right plugin for you?**  
 ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
@@ -56,13 +57,15 @@ To have access to the debugging extension during development, include this file 
 You can remove the debugging extension for actual deployment.
 
 ## Usage
-
+The basic ScrollMagic design pattern is one controller, which has several scenes attached.  
+Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.
 ```javascript
 // init controller
 var controller = new ScrollMagic();
 
 // assign handler "scene" and add it to Controller
 var scene = new ScrollScene({duration: 100})
+				.setPin("#my-sticky-element")	// pins the element for a scroll distance of 100px
 				.addTo(controller);
 
 // add multiple scenes at once
@@ -75,7 +78,7 @@ controller.addScene([
 ```
 Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for full reference.
 ##Help
-To get help please read the [support guidelines](CONTRIBUTING.md).  
+To get help please start by reading the [support guidelines](CONTRIBUTING.md).  
 If you still can't figure it out, please post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
 ##Browser Support
