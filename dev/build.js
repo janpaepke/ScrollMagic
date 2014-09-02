@@ -298,7 +298,7 @@ if (options.version !== pkg.version) {
 			json = JSON.parse(content);
 
 		json.version = options.version;
-		// fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
+		fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
 	});
 	readmeFile = abspath(readmeFile);
 	var readme = fs.readFileSync(readmeFile, 'utf-8');
