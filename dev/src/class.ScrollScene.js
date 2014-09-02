@@ -292,6 +292,7 @@
 		 * @fires {@link ScrollScene.shift}, if the duration changed
 		 *
 		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 * @private
 		 */
 		var updateDuration = function (suppressEvents) {
 			// update duration
@@ -314,6 +315,7 @@
 		 * @fires {@link ScrollScene.shift}, if the position changed
 		 *
 		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 * @private
 		 */
 		var updateTriggerElementPosition = function (suppressEvents) {
 			var elementPos = 0;
