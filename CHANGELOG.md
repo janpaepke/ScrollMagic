@@ -15,6 +15,7 @@ CHANGELOG
    To avoid confision, from now on "_offset_" will be used in connection with the scroll offset of the container, while "_position_" refers to the top / left values within the DOM.
  - **change event only fires when change actually happened**
    If a setter is used with the current value or the internal validator fails and defaults to the same value an option is already set to, no change event will be fired anymore.
+
 ### non-breaking changes
  - **scenes are sorted in controller**
    Scenes atached to the same controller are now updated in the order of their start position.  
@@ -38,6 +39,7 @@ CHANGELOG
  - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#duration) to support dynamic updates in responsive layouts
  - docs: grouped methods for more clear arrangement
  - docs: various additions and clarifications
+
 #### bugfixes:
  - removing and resetting pins during pin phase didn't work properly
  - using mousewheel to scroll over pinned elements in container (See issues [34](https://github.com/janpaepke/ScrollMagic/issues/34), [50](https://github.com/janpaepke/ScrollMagic/issues/50), [82](https://github.com/janpaepke/ScrollMagic/issues/82), [139](https://github.com/janpaepke/ScrollMagic/issues/139), [140](https://github.com/janpaepke/ScrollMagic/issues/140))
@@ -46,6 +48,7 @@ CHANGELOG
  - padding of pinned elements was added to relative width
  - event namespace issues
  - docs: fixed highlight & deeplink issues
+
 #### examples:
  - basic: [CSS Class Toggles](http://janpaepke.github.io/ScrollMagic/examples/basic/class_toggles.html)
  - advanced: [SVG Line Drawing](http://janpaepke.github.io/ScrollMagic/examples/examples/advanced/svg_drawing.html)
