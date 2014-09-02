@@ -1,4 +1,4 @@
-#ScrollMagic <a href='CHANGELOG.md' class='version' title='Whats New?'>v1.1.0</a> [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
+#ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/new-release/CHANGELOG.md' class='version' title='Whats New?'>v1.1.0</a> [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
 ###The jQuery plugin for magical scroll interactions.
 
@@ -34,7 +34,7 @@ The major perks of using ScrollMagic include:
 * many application examples
 
 **Is ScrollMagic the right plugin for you?**  
-ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, if you're just starting out with javascript.  
+ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, especially if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
 ## Installation
@@ -78,7 +78,7 @@ controller.addScene([
 ```
 Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for full reference.
 ##Help
-To get help please start by reading the [support guidelines](CONTRIBUTING.md).  
+To get help please start by reading the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/new-release/CONTRIBUTING.md).  
 If you still can't figure it out, please post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
 ##Browser Support
