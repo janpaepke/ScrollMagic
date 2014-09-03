@@ -127,7 +127,7 @@
 			"triggerHook" : function () {
 				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
 					if ($.isNumeric(_options.triggerHook)) {
-						_options.triggerHook = parseFloat(_options.triggerHook);
+						_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
 					} else {
 						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
 						_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
