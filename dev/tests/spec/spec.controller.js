@@ -15,55 +15,16 @@ describe('ScrollMagic', function() {
 		ctrl = new ScrollMagic({container: $c});
 	});
 
+	afterEach(function () {
+		ctrl.destroy();
+	});
+
 	describe("constructor", function () {
 		it("fails with invalid container", function() {
 			expect(function () {
 				new ScrollMagic({container: ""});
 			}).toThrow();
 		});
-
-		it("triggers onChange on container resize", function(done) {
-			// onchange updates the viewport size - so check if it does.
-			var height = ctrl.info("size");
-			$c.height(height + 100);
-			$c.on("resize", function() {
-				expect(ctrl.info("size")).toBe(height + 100);
-				done();
-			});
-		});
-
-		it("triggers onChange on container scroll", function(done) {
-			var scene = new ScrollScene().addTo(ctrl);
-			spyOn(scene, "update");
-			setTimeout(function () {
-				// update is also called after adding... so wait a little more
-				$c.scrollTop(50);
-				setTimeout(function () {
-					expect(scene.update).toHaveBeenCalled();
-					expect(scene.update.calls.count()).toBe(2);
-					done();
-				}, 50);
-			}, 50);
-		});
-
-		it("uses TweenMax ticker", function() {
-			spyOn(TweenMax.ticker, "addEventListener");
-			new ScrollMagic();
-			expect(TweenMax.ticker.addEventListener.calls.count()).toBe(1);
-		});
-
-		it("uses fallback events if TweenMax ticker is unavailable", function() {
-			var tmp = TweenLite;
-			TweenLite = undefined;
-			var ctrl = new ScrollMagic();
-			var scene = new ScrollScene().addTo(ctrl);
-			spyOn(scene, "update");
-			$c.trigger("resize");
-			$c.trigger("scroll");
-			expect(scene.update.calls.count()).toBe(3); // once for adding, once for each event
-			TweenLite = tmp;
-		});
-
 
 	});
 
@@ -72,45 +33,7 @@ describe('ScrollMagic', function() {
 		var getterOnly = ["info"];
 		var exception = ["destroy"];
 		it("is chainable if not a getter", function () {
-			var matchers = {
-				toBeChainableSetter: function(util, customEqualityTesters) {
-					return {
-						compare: function(method, obj) {
-							var result = {};
-							try {
-								result.pass = obj[method]("1") === obj;
-							} catch (e) {
-								result.pass = false;
-							}
-							if (result.pass) {
-								result.message = "Expected method '" + method + "' not to be chainable when used as setter";
-							} else {
-								result.message = "Expected method '" + method + "' to be chainable when used as setter";
-							}
-						 return result;
-						}  
-					}
-				},
-				toBeGetter: function(util, customEqualityTesters) {
-					return {
-						compare: function(method, obj) {
-							var result = {};
-							try {
-								result.pass = obj[method]() !== obj;
-							} catch (e) {
-								result.pass = false;
-							}
-							if (result.pass) {
-								result.message = "Expected method '" + method + "' not to be a getter";
-							} else {
-								result.message = "Expected method '" + method + "' to be a getter";
-							}
-						 return result;
-						}  
-					}
-				}
-			};
-			jasmine.addMatchers(matchers);
+			jasmine.addMatchers(globalMatchers.methodTests);
 			for (var m in ctrl) {
 				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0) {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
@@ -190,7 +113,7 @@ describe('ScrollMagic', function() {
 			ctrl.updateScene(scene);
 			ctrl.updateScene(scene);
 			expect(scene.update).not.toHaveBeenCalled();
-			setTimeout(function() {
+			setTimeout(function() { // wait for update tick to go through array
 				expect(scene.update.calls.count()).toBe(1);
 				done();
 			}, 50);
@@ -270,16 +193,12 @@ describe('ScrollMagic', function() {
 			expect(ctrl.scrollPos()).toBe(150);
 		});
 
-		it("is replaceable with an alternate function", function (done) {
-			ctrl.scrollTo(function(newpos){
-				$c.animate({scrollTop: newpos}, 500, null, function() {
-					expect(ctrl.scrollPos()).toBe(150);
-				});
-			});
+		it("is replaceable with an alternate function", function () {
+			var callback = jasmine.createSpy("cb");
+			ctrl.scrollTo(callback);
 			ctrl.scrollTo(150);
-			setTimeout(done, 600);
+			expect(callback).toHaveBeenCalledWith(150);
 		});
-
 	});
 
 	describe(".scrollPos()", function () {

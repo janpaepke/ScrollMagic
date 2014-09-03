@@ -1,4 +1,4 @@
-describe('ScrollMagic - Events (Overflow)', function() {
+describe('ScrollScene - Events', function() {
 
     var log = console.log; // loging from jasmine
     beforeEach(function() {
@@ -10,6 +10,29 @@ describe('ScrollMagic - Events (Overflow)', function() {
         loadFixtures('container-scroll.html');
         $c = $('#scroll-container');
         ctrl = new ScrollMagic({container: $c})
+    });
+
+    afterEach(function () {
+        ctrl.destroy();
+    });
+
+
+    describe("method", function () {
+        
+        describe(".on()", function () {
+            xit("doessomething", function () {
+            });
+        });
+        
+        describe(".off()", function () {
+            xit("doessomething", function () {
+            });
+        });
+
+        describe(".trigger()", function () {
+            xit("doessomething", function () {
+            });
+        });
     });
 
 
