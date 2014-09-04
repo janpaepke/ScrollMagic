@@ -70,7 +70,7 @@ html.touch div#content-wrapper {
 	/*height: 100%;*/
 }
 section {
-	height: 100%;
+	height: 100vh;
 }
 
 section#start {
