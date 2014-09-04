@@ -23,7 +23,7 @@
 "use strict";
 
 // vars
-var pkg = require('./package.json');
+var pkg = require('../package.json');
 
 // internals
 var fs = require('fs');
@@ -286,7 +286,7 @@ for (var release in OUTPUT) {
 // update version numbers?
 if (options.version !== pkg.version) {
 	// where?
-	var jsonFiles = ["package.json", "../bower.json", "../ScrollMagic.jquery.json"];
+	var jsonFiles = ["../package.json", "../bower.json", "../ScrollMagic.jquery.json"];
 	var readmeFile = "../README.md";
 	// go!
 	log.info("Updating version numbers to", options.version);
@@ -314,7 +314,7 @@ if (options.version !== pkg.version) {
 if (options.updateDocs) {
 	log.info("Generating new docs");
 	var
-		bin = '"' + abspath('node_modules/.bin/jsdoc') + '"',
+		bin = '"' + abspath('../node_modules/.bin/jsdoc') + '"',
 		docIn = '"' + abspath('../README.md') + '"',
 		docOut = '-d "' + options.folderDocsOut + '"',
 		conf = '-c "' + abspath('docs/jsdoc.conf.json') + '"',
