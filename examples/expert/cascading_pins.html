@@ -53,10 +53,8 @@
 							// show pin state
 							function updateBox (e) {
 								if (e.type == "enter") {
-									$("#pin").addClass("green");
 									$("#pin p").text("Pinned.");
 								} else {
-									$("#pin").removeClass("green");
 									$("#pin p").text("Unpinned.");
 								}
 							}
@@ -64,18 +62,21 @@
 							// build scenes
 							new ScrollScene({triggerElement: "#trigger", duration: 150})
 								.setPin("#pin")
+								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)
 								.addTo(controller)
 								.addIndicators(); // show indicators (requires debug extension)
 
 							new ScrollScene({triggerElement: "#trigger", duration: 150, offset: 300})
 								.setPin("#pin")
+								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)
 								.addTo(controller)
 								.addIndicators(); // show indicators (requires debug extension)
 
 							new ScrollScene({triggerElement: "#trigger", duration: 150, offset: 600})
 								.setPin("#pin")
+								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)
 								.addTo(controller)
 								.addIndicators(); // show indicators (requires debug extension)
