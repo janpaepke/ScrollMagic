@@ -694,6 +694,9 @@ a.viewsource:before {
 	font-style: normal;
 	font-weight: normal;
 }
+#parallax1, #parallax2, #parallax3 {
+	height: 100vh;
+}
 
 .dynamicContent #content {
 	width: 480px;
