@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## 1.1.0 (unreleased)
+## 1.1.0 (2014-09-04)
 
 #### potentially breaking changes:
  - **zero duration scene events & states**  
