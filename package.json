@@ -43,6 +43,7 @@
   },
   "scripts": {
     "pretest": "npm install",
-    "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js"
+    "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
+    "test-single-run": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js --single-run"
   }
 }

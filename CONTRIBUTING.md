@@ -72,19 +72,16 @@ Make sure you have [node.js](http://nodejs.org) installed and running on your sy
 To find out just open your Console (MacOsX Terminal) and type `node -v`.
 
 ## Directory Structure
-* `/dev` base folder of the development environment
+* `/dev` base folder for ScrollMagic development
 	* `/dev/docs` contains configuration and template files for the docs generation
 	* `/dev/src` all the ScrollMagic source files
 	* `/dev/tests` testing environment
 		* `/dev/tests/fixtures` html files for usage in tests
 		* `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
 
-## Prepare Development environment
-Open your console and navigate to the ScrollMagic directory. Then change to the dev directory.
-```Shell
-$ cd dev
-```
-To install all necessary components we use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager (comes with node).
+## Prepare the Development Environment
+Open your console and navigate to the ScrollMagic directory.  
+Now we need to install the necessary components using the <b>n</b>ode <b>p</b>ackage <b>m</b>anager (comes with node):
 ```Shell
 $ npm install
 ```
@@ -96,7 +93,7 @@ To combine all source files and store them in their correct location we need to 
 The build process also automatically checks for javascript errors and minifies the main file.
 This is achieved by calling:
 ```Shell
-$ node build
+$ node dev/build
 ```
 You can pass in various arguments to customize the build:
 ```
@@ -112,23 +109,30 @@ You can pass in various arguments to customize the build:
  	Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
  	example: node build -d
 ```
-For new releases the build command is this
+So for new releases the build command is this
 ```Shell
-$ node build -v=1.0.10 -d
+$ node dev/build -v=1.1.1 -d
 ```
-This will update the version to 1.0.10 and also generate new docs.  
-But in most cases you will only need to call this
+This will update the version to 1.1.1 and also generate new docs.  
+
+In most cases though you will only need to call the basic command:
 ```Shell
-$ node build
+$ node dev/build
 ```
 
 ## Test ScrollMagic
 ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.
-**NOTE**: For now only few features are speced out. More tests will follow in due time.  
-To run tests call:
+**NOTE**: The main scene methods have not been fully specced out yet, but will be added in the future.
+To start the test suite call:
 ```Shell
 $ npm test
 ```
+It will stay active an automatically restart the test cycle whenever you change something.
 *Tip:* In case you don't know – to quit the process use ctrl+c.
 
-When you added a new feature to ScrollMagic be sure to write a new test for it, if you are able to.
+To run only a single test cycle and exit after use this:
+```Shell
+$ npm run test-single-run
+```
+
+When you added a new feature to ScrollMagic please be sure to write a new test for it, if you are able to.
