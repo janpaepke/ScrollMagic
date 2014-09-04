@@ -9,6 +9,8 @@
 		"pin",
 		"fixed",
 		"scrollbar",
+		"scrub",
+		"sync",
 		"position",
 		"progress",
 		"parallax",

@@ -1,6 +1,6 @@
 {
 	"name": "ScrollMagic",
-	"version": "1.1.0-alpha",
+	"version": "1.1.0",
 	"description": "The jQuery plugin for magical scroll interactions.",
 	"homepage": "http://janpaepke.github.io/ScrollMagic/",
 	"authors": [
@@ -20,6 +20,8 @@
 		"pin",
 		"fixed",
 		"scrollbar",
+		"scrub",
+		"sync",
 		"position",
 		"progress",
 		"parallax",

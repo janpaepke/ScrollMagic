@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.1.0-alpha
+ScrollMagic v1.1.0
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,10 +12,11 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.1.0-alpha
+@version	1.1.0
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
+@todo: enhancement: remove dependencies and move to plugins -> 2.0
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: feature: optimize performance on debug plugin (huge drawbacks, when using many scenes)
@@ -46,7 +47,9 @@ Greensock License info at http://www.greensock.com/licensing/
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
-	 * @param {boolean} [options._sceneRefreshInterval=100] - Interval in which the position of the trigger elements of the scenes are updated. If you don't use trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
+	 * @param {boolean} [options._refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
+	 																										 This interval polls these parameters to fire the necessary events.  
+	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -63,7 +66,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				vertical: true,
 				globalSceneOptions: {},
 				loglevel: 2,
-				sceneRefreshInterval: 100
+				refreshInterval: 100
 			};
 
 		/*
@@ -83,7 +86,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			_viewPortSize = 0,
 			_tickerUsed = false,
 			_enabled = true,
-			_sceneRefreshInterval;
+			_refreshInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -103,10 +106,10 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 			});
 			_options.container = $(_options.container).first();
-			// check ScrolContainer
+			// check ScrollContainer
 			if (_options.container.length === 0) {
 				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
-				return; // cancel
+				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
 			// update container size immediately
@@ -121,16 +124,12 @@ Greensock License info at http://www.greensock.com/licensing/
 				_tickerUsed = false;
 			}
 
-			_options.sceneRefreshInterval = parseInt(_options.sceneRefreshInterval);
-			if (_options.sceneRefreshInterval > 0) {
-				_sceneRefreshInterval = window.setInterval(function () {
-					$.each(_sceneObjects, function (index, scene) {
-						scene.refresh();
-					});
-				}, _options.sceneRefreshInterval);
+			_options.refreshInterval = parseInt(_options.refreshInterval);
+			if (_options.refreshInterval > 0) {
+				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 			}
 
-			log(3, "added new " + NAMESPACE + " controller");
+			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
 		/**
@@ -191,6 +190,17 @@ Greensock License info at http://www.greensock.com/licensing/
 			_updateScenesOnNextTick = true;
 		};
 
+		var refresh = function () {
+			if (!_isDocument) {
+				if (_viewPortSize != (_options.vertical ? _options.container.height() : _options.container.width())) {
+					_options.container.trigger("resize");
+				}
+			}
+			$.each(_sceneObjects, function (index, scene) {// refresh all scenes
+				scene.refresh();
+			});
+		};
+
 		/**
 		 * Send a debug message to the console.
 		 * @private
@@ -202,10 +212,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (_options.loglevel >= loglevel) {
 				var
 					prefix = "(" + NAMESPACE + ") ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
+					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				func.apply(window, args);
+				debug.apply(window, args);
 			}
 		};
 
@@ -259,7 +268,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			} else if (newScene instanceof ScrollScene) {
 				if (newScene.parent() != ScrollMagic) {
 					newScene.addTo(ScrollMagic);
-				} else if ($.inArray(_sceneObjects, newScene) == -1){
+				} else if ($.inArray(newScene, _sceneObjects) < 0){
 					// new scene
 					_sceneObjects.push(newScene); // add to array
 					_sceneObjects = sortScenes(_sceneObjects); // sort
@@ -581,7 +590,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
-			window.clearTimeout(_sceneRefreshInterval);
+			window.clearTimeout(_refreshInterval);
 			var i = _sceneObjects.length;
 			while (i--) {
 				_sceneObjects[i].destroy(resetScenes);
@@ -730,7 +739,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			"triggerHook" : function () {
 				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
 					if ($.isNumeric(_options.triggerHook)) {
-						_options.triggerHook = parseFloat(_options.triggerHook);
+						_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
 					} else {
 						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
 						_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
@@ -822,10 +831,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (_options.loglevel >= loglevel) {
 				var
 					prefix = "(" + NAMESPACE + ") ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
+					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				func.apply(window, args);
+				debug.apply(window, args);
 			}
 		};
 
@@ -892,12 +900,13 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @fires {@link ScrollScene.shift}, if the duration changed
 		 *
 		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 * @private
 		 */
 		var updateDuration = function (suppressEvents) {
 			// update duration
 			if (_durationUpdateMethod) {
 				var varname = "duration";
-				if (changeOption(varname, _durationUpdateMethod()) && !suppressEvents) { // set
+				if (changeOption(varname, _durationUpdateMethod.call(ScrollScene)) && !suppressEvents) { // set
 					ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 					ScrollScene.trigger("shift", {reason: varname});
 				}
@@ -914,6 +923,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @fires {@link ScrollScene.shift}, if the position changed
 		 *
 		 * @param {boolean} [suppressEvents=false] - If true the shift event will be suppressed.
+		 * @private
 		 */
 		var updateTriggerElementPosition = function (suppressEvents) {
 			var elementPos = 0;
@@ -1196,7 +1206,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * As a setter it also accepts a function returning a numeric value.  
 		 * This is particularly useful for responsive setups.
 		 *
-		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `sceneRefreshInterval`).  
+		 * The duration is updated using the supplied function every time `ScrollScene.refresh()` is called, which happens periodically from the controller (see ScrollMagic option `refreshInterval`).  
 		 * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
 		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
 		 * This counts double if you use the same function for multiple scenes._
@@ -1510,7 +1520,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						ScrollScene.trigger("update", {startPos: _scrollOffset.start, endPos: _scrollOffset.end, scrollPos: scrollPos});
 
 						ScrollScene.progress(newProgress);
-					} else if (_pin && _pin.css("position") == "fixed") {
+					} else if (_pin && _state === "DURING") {
 						updatePinState(true); // unpin in position
 					}
 				} else {
@@ -1522,7 +1532,7 @@ Greensock License info at http://www.greensock.com/licensing/
 
 		/**
 		 * Updates dynamic scene variables like the trigger element position or the duration.
-		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `sceneRefreshInterval`.
+		 * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic} option `refreshInterval`.
 		 * 
 		 * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
 		 * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
@@ -1805,9 +1815,7 @@ Greensock License info at http://www.greensock.com/licensing/
 						position: inFlow ? "relative" : "absolute",
 						"margin-left": "auto",
 						"margin-right": "auto",
-						"box-sizing": "content-box",
-						"-moz-box-sizing": "content-box",
-						"-webkit-box-sizing": "content-box"
+						"box-sizing": "content-box"
 					});
 
 			// set the pin Options
@@ -1824,10 +1832,13 @@ Greensock License info at http://www.greensock.com/licensing/
 				origStyle: {
 					width: pinInlineCSS.width || "",
 					position: pinInlineCSS.position || "",
-					top: pinInlineCSS.position || "",
-					left: pinInlineCSS.position || "",
-					bottom: pinInlineCSS.position || "",
-					right: pinInlineCSS.position || ""
+					top: pinInlineCSS.top || "",
+					left: pinInlineCSS.left || "",
+					bottom: pinInlineCSS.bottom || "",
+					right: pinInlineCSS.right || "",
+					"box-sizing": pinInlineCSS["box-sizing"] || "",
+					"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
+					"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
 				}, // save old styles (for reset)
 				pinnedClass: settings.pinnedClass // the class that should be added to the element when pinned
 			};
@@ -1851,6 +1862,10 @@ Greensock License info at http://www.greensock.com/licensing/
 						bottom: "auto",
 						right: "auto"
 					});
+			
+			if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
+				_pin.css("box-sizing", "border-box");
+			}
 
 			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
@@ -1963,7 +1978,9 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.addTo = function (controller) {
-			if (_parent != controller) {
+			if (!(controller instanceof ScrollMagic)) {
+				log(1, "ERROR: supplied argument of 'addTo()' is not a valid ScrollMagic controller");
+			} else if (_parent != controller) {
 				// new parent
 				if (_parent) { // I had a parent before, so remove it...
 					_parent.removeScene(ScrollScene);
@@ -1983,8 +2000,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
-				return ScrollScene;
 			}
+			return ScrollScene;
 		};
 
 		/**
@@ -2327,7 +2344,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	};
 
 	// store version
-	ScrollMagic.version = "1.1.0-alpha";
+	ScrollMagic.prototype.version = "1.1.0";
 	// make global references available
 	window.ScrollScene = ScrollScene;
 	window.ScrollMagic = ScrollMagic;
