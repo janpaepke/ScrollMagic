@@ -51,7 +51,7 @@ CHANGELOG
 
 #### examples:
  - basic: [CSS Class Toggles](http://janpaepke.github.io/ScrollMagic/examples/basic/class_toggles.html)
- - advanced: [SVG Line Drawing](http://janpaepke.github.io/ScrollMagic/examples/examples/advanced/svg_drawing.html)
+ - advanced: [SVG Line Drawing](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html)
  - advanced: [Parallax Sections](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html)
  - expert: [Image Sequences](http://janpaepke.github.io/ScrollMagic/examples/expert/image_sequence.html)
  - expert: [Bezier Path Animations](http://janpaepke.github.io/ScrollMagic/examples/expert/bezier_path_animation.html)
