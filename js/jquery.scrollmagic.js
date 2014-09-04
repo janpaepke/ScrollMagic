@@ -942,7 +942,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				var elementOffset = getOffset(element);
 
 				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-					containerOffset[param] -= controllerInfo.scrollPos;
+					containerOffset[param] -= _parent.scrollPos();
 				}
 
 				elementPos = elementOffset[param] - containerOffset[param];
