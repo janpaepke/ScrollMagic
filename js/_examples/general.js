@@ -7,31 +7,36 @@ var
 				"simple_tweening.html" :	"Simple Tweening",
 				"simple_pinning.html" :		"Simple Pinning",
 				"going_horizontal.html" :	"Going Horizontal",
-				"debugging.html" :			"Debugging",
+				"debugging.html" :				"Debugging",
 				"custom_actions.html" :		"Custom Actions",
 				"scene_manipulation.html" :	"Scene Manipulation",
+				"class_toggles.html" :		"CSS Class Toggles",
 			}
 		},
 		"advanced": {
 			title: "Advanced",
 			sub: {
-				"advanced_tweening.html" :		"Advanced Tweening",
-				"custom_containers.html" :		"Custom Containers",
-				"mobile_basic.html" :			"Mobile Support (Basic)",
+				"advanced_tweening.html" :			"Advanced Tweening",
+				"custom_containers.html" :			"Custom Containers",
+				"mobile_basic.html" :						"Mobile Support (Basic)",
 				"anchor_link_scrolling.html" :	"Anchor Link Scrolling",
-				"parallax_scrolling.html" :		"Parallax Scrolling",
-				"infinite_scrolling.html" :		"Infinite Scrolling"
+				"parallax_scrolling.html" :			"Parallax Scrolling",
+				"parallax_sections.html" :			"Parallax Sections",
+				"infinite_scrolling.html" :			"Infinite Scrolling",
+				"svg_drawing.html" :						"SVG Drawing"
 			}
 		},
 		"expert": {
 			title: "Expert",
 			sub: {
-				"cascading_pins.html" :				"Cascading Pins",
-				"responsive_duration.html" :		"Responsive Duration",
-				"manipulating_tweens.html" :		"Manipulating Tweens",
+				"cascading_pins.html" :							"Cascading Pins",
+				"responsive_duration.html" :				"Responsive Duration",
+				"manipulating_tweens.html" :				"Manipulating Tweens",
+				"bezier_path_animation.html" :			"Bezier Path Animation",
 				"multiple_scroll_directions.html" :	"Multiple Scroll Directions",
-				"mobile_advanced.html" :			"Mobile Support (Advanced)",
-				"removing_and_destroying.html" :	"Removing and Destroying",
+				"mobile_advanced.html" :						"Mobile Support (Advanced)",
+				"image_sequence.html" :							"Image Sequence",
+				"removing_and_destroying.html" :		"Removing and Destroying",
 			}
 		}
 	};

@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.0.9
+ScrollMagic v1.1.0
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,11 +12,11 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /*
 	@overview Debug Extension for ScrollMagic.
-	@version	1.0.9
+	@version	1.1.0
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
-(function($) {
+(function($, ScrollScene) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
@@ -196,7 +196,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			
 			if (!triggerOnly) {
 				var
-					startPos = scene.triggerOffset(),
+					startPos = scene.triggerPosition(),
 					endPos = startPos + scene.duration(),
 					resetCSS = {
 						"border": "none",
@@ -248,4 +248,4 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		}
 	};
-})(jQuery);
+})(jQuery, ScrollScene);

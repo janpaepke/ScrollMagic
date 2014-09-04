@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -118,7 +126,7 @@
 
 
     <section>
-        <article><h1>ScrollMagic <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h1><h3>The jQuery plugin for magical scroll interactions.</h3><p>ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.<br>It's the plugin for you, if you want to ...</p>
+        <article><h1>ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v1.1.0</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1><h3>The jQuery plugin for magical scroll interactions. <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h3><p>ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.<br>It's the plugin for you, if you want to ...</p>
 <ul>
 <li>... start an animation at a specific scroll position.</li>
 <li>... synchronize an animation to the scrollbar movement.</li>
@@ -135,22 +143,29 @@
 <li>optimized performance</li>
 <li>flexibility</li>
 <li>mobile compatibility</li>
+<li>event management</li>
 <li>ready for responsive webdesign</li>
 <li>object oriented programming and object chaining</li>
-<li>event management</li>
+<li>readable, centralized code and intuitive development</li>
 <li>support for both scroll directions (even different on one page)</li>
 <li>support for scrolling inside div containers (even multiple on one page)</li>
 <li>extensive debugging and logging capabilities</li>
+<li>detailed documentation</li>
+<li>many application examples</li>
 </ul>
+<p><strong>Is ScrollMagic the right plugin for you?</strong><br>ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple &quot;scroll scenes&quot; to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, especially if you're just starting out with javascript.<br>If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome <a href="http://prinzhorn.github.io/skrollr/">skrollr</a> project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.</p>
 <h2>Installation</h2><p>Aside from <a href="http://jquery.com/">jQuery</a> make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;>&lt;/script></code></pre><p>And to have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
+<p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
-<h2>Usage</h2><pre class="prettyprint source lang-javascript"><code>// init controller
+<h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has several scenes attached.<br>Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.</p>
+<pre class="prettyprint source lang-javascript"><code>// init controller
 var controller = new ScrollMagic();
 
 // assign handler &quot;scene&quot; and add it to Controller
 var scene = new ScrollScene({duration: 100})
+                .setPin(&quot;#my-sticky-element&quot;)    // pins the element for a scroll distance of 100px
                 .addTo(controller);
 
 // add multiple scenes at once
@@ -160,11 +175,11 @@ controller.addScene([
     scene2 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
     new ScrollScene({offset: 20}) // add anonymous scene
 ]);</code></pre><p>Check out the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> or the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for full reference.</p>
-<h2>Help</h2><p>To get help please read the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">support guidelines</a>.<br>If you still can't figure it out, please post your questions in the <a href="https://github.com/janpaepke/ScrollMagic/issues">project's issues section</a>.</p>
+<h2>Help</h2><p>To get help please start by reading the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">support guidelines</a>.<br>If you still can't figure it out, please post your questions in the <a href="https://github.com/janpaepke/ScrollMagic/issues">project's issues section</a>.</p>
 <h2>Browser Support</h2><p>ScrollMagic aims to support all major browsers in recent versions:<br>Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+</p>
 <h2>About the Author</h2><p>I am a freelance Art Director based in Lausanne, Switzerland.<br>I started this project to intensify my knowledge of javascript.</p>
 <p><a href="http://www.janpaepke.de">Check out my website</a> or <a href="http://twitter.com/janpaepke">Follow me on Twitter</a></p>
-<h2>License</h2><p>ScrollMagic is dual licensed under the MIT license and GPL.<br>For more information click <a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">here</a>.<br>Click <a href="http://www.greensock.com/licensing/">here</a> to get more information on greensock licensing.</p></article>
+<h2>License</h2><p>ScrollMagic is dual licensed under the MIT license and GPL.<br>For more information click <a href="LICENSE.md">here</a>.<br>Click <a href="http://www.greensock.com/licensing/">here</a> to get more information on greensock licensing.</p></article>
     </section>
     <style type="text/css">
     	h1.page-title {
@@ -210,7 +225,7 @@ controller.addScene([
 
     
     <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>1.0.9</li></ul></dd>
+    <dd class="tag-version"><ul class="dummy"><li>1.1.0</li></ul></dd>
     
 
     
@@ -322,8 +337,8 @@ controller.addScene([
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -332,7 +347,8 @@ controller.addScene([
 				},
 				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
 				onScrollFinish : openDeeplinkedElement,
-				scrollOffset : 60
+				highlightOffset : 10,
+				scrollOffset: 60
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
@@ -363,10 +379,13 @@ controller.addScene([
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -375,7 +394,7 @@ controller.addScene([
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

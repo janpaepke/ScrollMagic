@@ -1,0 +1,20 @@
+{
+	"description": "The jQuery plugin for magical scroll interactions.",
+	"homepage": "http://janpaepke.github.io/ScrollMagic/",
+	"keywords": [
+		"scroll",
+		"scrolling",
+		"animation",
+		"sticky",
+		"pin",
+		"fixed",
+		"scrollbar",
+		"scrub",
+		"sync",
+		"position",
+		"progress",
+		"parallax",
+		"events",
+		"classes"
+	]
+}

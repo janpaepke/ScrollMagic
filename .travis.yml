@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+ - "0.10"
+script: ./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js --single-run
+before_install:
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+before_script:
+ - "node dev/build"
+notifications:
+  email: false

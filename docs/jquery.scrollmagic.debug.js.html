@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -99,7 +107,7 @@
     <section>
         <article>
             <pre class="sunlight-highlight-javascript linenums">/*
-ScrollMagic v1.0.9
+ScrollMagic v1.1.0
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License &amp; Info: http://janpaepke.github.io/ScrollMagic
@@ -112,11 +120,11 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /*
 	@overview Debug Extension for ScrollMagic.
-	@version	1.0.9
+	@version	1.1.0
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
-(function($) {
+(function($, ScrollScene) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
@@ -296,7 +304,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			
 			if (!triggerOnly) {
 				var
-					startPos = scene.triggerOffset(),
+					startPos = scene.triggerPosition(),
 					endPos = startPos + scene.duration(),
 					resetCSS = {
 						"border": "none",
@@ -348,7 +356,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		}
 	};
-})(jQuery);</pre>
+})(jQuery, ScrollScene);</pre>
         </article>
     </section>
 
@@ -394,8 +402,8 @@ Greensock License info at http://www.greensock.com/licensing/
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -404,7 +412,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				},
 				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
 				onScrollFinish : openDeeplinkedElement,
-				scrollOffset : 60
+				highlightOffset : 10,
+				scrollOffset: 60
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
@@ -435,10 +444,13 @@ Greensock License info at http://www.greensock.com/licensing/
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -447,7 +459,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

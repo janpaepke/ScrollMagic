@@ -111,15 +111,41 @@
     <?js } ?>
 
     <?js
-        var methods = self.find({kind: 'function', memberof: title === 'Global' ? {isUndefined: true} : doc.longname});
+
+        var methodsTitle = "Methods";
+        var member = title === 'Global' ? {isUndefined: true} : doc.longname;
+        var methods = self.find({kind: 'function', memberof: member});
+        var methodsOutput = {};
+        var methodsInGroups = [];
+        var groupDefinitions = this.env.conf._custom.methodGroupDefinitions || {};
+        var methodGroups = groupDefinitions[member];
+        
         if (methods && methods.length && methods.forEach) {
+
+            if (methodGroups) {
+                // filter out grouped methods
+                _.each(methodGroups, function(groupMethods, groupName) {
+                    if (_.isArray(groupMethods)) {
+                        methodsInGroups = methodsInGroups.concat(groupMethods);
+                        methodsOutput[groupName] = _.filter(methods, function (method) {return groupMethods.indexOf(method.name) > -1});
+                    } else if (groupMethods === methodsTitle) { // overwrite method title
+                        methodsTitle = groupName;
+                        methodsOutput[groupName] = [];
+                    }
+                });
+            }
+
+            methodsOutput[methodsTitle] = _.filter(methods, function (method) {return methodsInGroups.indexOf(method.name) === -1});
+
+            _.each(methodsOutput, function (methods, title) {
     ?>
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title"><?js= title ?></h3>
 
         <dl><?js methods.forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?></dl>
-    <?js } ?>
+    <?js    });
+         } ?>
 
     <?js
         var typedefs = self.find({kind: 'typedef', memberof: title === 'Global' ? {isUndefined: true} : doc.longname});

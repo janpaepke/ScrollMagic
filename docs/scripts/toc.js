@@ -37,10 +37,10 @@ $.fn.toc = function(options) {
         highlighted;
       headings.each(function(i, heading) {
         var $h = $(heading);
-        var htop = $h.offset().top - opts.scrollOffset - opts.highlightOffset;
+        var htop = $h.offset().top - opts.highlightOffset;
         if (htop >= top) {
           $('li', self).removeClass(activeClassName);
-          highlighted = $('li:eq('+(i-1)+')', self).addClass(activeClassName);
+          highlighted = $('li:eq('+(i)+')', self).addClass(activeClassName);
           opts.onHighlight(highlighted);
           return false;
         }

@@ -12,14 +12,17 @@
 	 * var controller = new ScrollMagic({container: "#myContainer", loglevel: 3});
 	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
-	 * @param {(string|object)} [options.container=window] - A selector, DOM Object or a jQuery object that references the main container for scrolling.
+	 * @param {(string|object)} [options.container=window] - A selector, DOM object or a jQuery object that references the main container for scrolling.
 	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollScene}.
-	 * @param {number} [options.loglevel=2] Loglevel for debugging:
+	 * @param {number} [options.loglevel=2] Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
 											 ** `0` => silent
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
+	 * @param {boolean} [options._refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
+	 																										 This interval polls these parameters to fire the necessary events.  
+	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
 	var ScrollMagic = function(options) {
@@ -35,7 +38,8 @@
 				container: window,
 				vertical: true,
 				globalSceneOptions: {},
-				loglevel: 2
+				loglevel: 2,
+				refreshInterval: 100
 			};
 
 		/*
@@ -54,7 +58,8 @@
 			_isDocument = true,
 			_viewPortSize = 0,
 			_tickerUsed = false,
-			_enabled = true;
+			_enabled = true,
+			_refreshInterval;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -74,10 +79,10 @@
 				}
 			});
 			_options.container = $(_options.container).first();
-			// check ScrolContainer
+			// check ScrollContainer
 			if (_options.container.length === 0) {
-				log(1, "ERROR creating object ScrollMagic: No valid scroll container supplied");
-				return; // cancel
+				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
+				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
 			// update container size immediately
@@ -92,7 +97,12 @@
 				_tickerUsed = false;
 			}
 
-			log(3, "added new " + NAMESPACE + " controller");
+			_options.refreshInterval = parseInt(_options.refreshInterval);
+			if (_options.refreshInterval > 0) {
+				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
+			}
+
+			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
 		/**
@@ -121,14 +131,20 @@
 		var onTick = function (e) {
 			if (_updateScenesOnNextTick && _enabled) {
 				var
-					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects,
+					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects.slice(0),
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
 				var deltaScroll = _scrollPos - oldScrollPos;
 				_scrollDirection = (deltaScroll === 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
+				if (deltaScroll < 0) { // reverse order if scrolling reverse
+					scenesToUpdate.reverse();
+				}
 				// update scenes
-				ScrollMagic.updateScene(scenesToUpdate, true);
+				$.each(scenesToUpdate, function (index, scene) {
+					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
+					scene.update(true);
+				});
 				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
@@ -147,6 +163,18 @@
 			_updateScenesOnNextTick = true;
 		};
 
+		var refresh = function () {
+			if (!_isDocument) {
+				if (_viewPortSize != (_options.vertical ? _options.container.height() : _options.container.width())) {
+					_options.container.trigger("resize");
+				}
+			}
+			$.each(_sceneObjects, function (index, scene) {// refresh all scenes
+				scene.refresh();
+			});
+		};
+
+		// (BUILD) - REMOVE IN MINIFY - START
 		/**
 		 * Send a debug message to the console.
 		 * @private
@@ -158,10 +186,29 @@
 			if (_options.loglevel >= loglevel) {
 				var
 					prefix = "(" + NAMESPACE + ") ->",
-					args = Array.prototype.splice.call(arguments, 1),
-					func = Function.prototype.bind.call(debug, window);
+					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				func.apply(window, args);
+				debug.apply(window, args);
+			}
+		};
+		// (BUILD) - REMOVE IN MINIFY - END
+
+		/**
+		 * Sort scenes in ascending order of their start offset.
+		 * @private
+		 *
+		 * @param {array} ScrollScenesArray - an array of ScrollScenes that should be sorted
+		 * @return {array} The sorted array of ScrollScenes.
+		 */
+		var sortScenes = function (ScrollScenesArray) {
+			if (ScrollScenesArray.length <= 1) {
+				return ScrollScenesArray;
+			} else {
+				var scenes = ScrollScenesArray.slice(0);
+				scenes.sort(function(a, b) {
+					return a.scrollOffset() > b.scrollOffset() ? 1 : -1;
+				});
+				return scenes;
 			}
 		};
 
@@ -188,25 +235,31 @@
 		 * @param {(ScrollScene|array)} ScrollScene - ScrollScene or Array of ScrollScenes to be added to the controller.
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
-		this.addScene = function (ScrollScene) {
-			if ($.isArray(ScrollScene)) {
-				$.each(ScrollScene, function (index, scene) {
+		this.addScene = function (newScene) {
+			if ($.isArray(newScene)) {
+				$.each(newScene, function (index, scene) {
 					ScrollMagic.addScene(scene);
 				});
-			} else {
-				if (ScrollScene.parent() != ScrollMagic) {
-					ScrollScene.addTo(ScrollMagic);
-				} else if ($.inArray(_sceneObjects, ScrollScene) == -1){
+			} else if (newScene instanceof ScrollScene) {
+				if (newScene.parent() != ScrollMagic) {
+					newScene.addTo(ScrollMagic);
+				} else if ($.inArray(newScene, _sceneObjects) < 0){
 					// new scene
-					_sceneObjects.push(ScrollScene);
+					_sceneObjects.push(newScene); // add to array
+					_sceneObjects = sortScenes(_sceneObjects); // sort
+					newScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
+						_sceneObjects = sortScenes(_sceneObjects);
+					});
 					// insert Global defaults.
 					$.each(_options.globalSceneOptions, function (key, value) {
-						if (ScrollScene[key]) {
-							ScrollScene[key].call(ScrollScene, value);
+						if (newScene[key]) {
+							newScene[key].call(newScene, value);
 						}
 					});
 					log(3, "added Scene (" + _sceneObjects.length + " total)");
 				}
+			} else {
+				log(1, "ERROR: invalid argument supplied for '.addScene()'");
 			}
 			return ScrollMagic;
 		};
@@ -233,6 +286,7 @@
 			} else {
 				var index = $.inArray(ScrollScene, _sceneObjects);
 				if (index > -1) {
+					ScrollScene.off("shift." + NAMESPACE + "_sort");
 					_sceneObjects.splice(index, 1);
 					ScrollScene.remove();
 					log(3, "removed Scene (" + _sceneObjects.length + " total)");
@@ -246,7 +300,7 @@
 		 * This is the equivalent to `ScrollScene.update()`.  
 		 * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
 		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.  
-		 * *Note:* This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.
+		 * _**Note:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
 		 * // update a specific scene on next tick
@@ -266,19 +320,20 @@
 		this.updateScene = function (ScrollScene, immediately) {
 			if ($.isArray(ScrollScene)) {
 				$.each(ScrollScene, function (index, scene) {
-					log(3, "updating Scene " + (index + 1) + "/" + ScrollScene.length + " (" + _sceneObjects.length + " total)");
 					ScrollMagic.updateScene(scene, immediately);
 				});
 			} else {
 				if (immediately) {
 					ScrollScene.update(true);
 				} else {
+					// prep array for next update cycle
 					if (!$.isArray(_updateScenesOnNextTick)) {
 						_updateScenesOnNextTick = [];
 					}
 					if ($.inArray(ScrollScene, _updateScenesOnNextTick) == -1) {
 						_updateScenesOnNextTick.push(ScrollScene);	
 					}
+					_updateScenesOnNextTick = sortScenes(_updateScenesOnNextTick); // sort
 				}
 			}
 			return ScrollMagic;
@@ -311,42 +366,57 @@
 		};
 
 		/**
-		 * Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.  
+		 * Scroll to a numeric scroll offset, a DOM element, the start of a scene or provide an alternate method for scrolling.  
 		 * For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.
-		 * 1. If a `number` is supplied the container will scroll to the new scroll offset.
-		 * 2. If a `ScrollScene` is supplied the container will scroll to the start of this scene.
-		 * 3. If a `function` is supplied this function will be used as a callback for future scroll position modifications.  
-		 *    This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.  
-		 *    The callback receives the new scroll position as a parameter and a reference to the container element using `this`.
 		 * @public
 		 *
+		 * @since 1.1.0
 		 * @example
 		 * // scroll to an offset of 100
-		 * var scrollPos = controller.scrollTo(100);
+		 * controller.scrollTo(100);
+		 *
+		 * // scroll to a DOM element
+		 * controller.scrollTo("#anchor");
 		 *
 		 * // scroll to the beginning of a scene
 		 * var scene = new ScrollScene({offset: 200});
-		 * var scrollPos = controller.scrollTo(scene);
+		 * controller.scrollTo(scene);
 		 *
 	 	 * // define a new scroll position modification function (animate instead of jump)
 		 * controller.scrollTo(function (newScrollPos) {
 		 *	$("body").animate({scrollTop: newScrollPos});
 		 * });
 		 *
-		 * @param {(number|ScrollScene|function)} [newScrollPos] - A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.
+		 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
+		 * 1. `number` -> The container will scroll to this new scroll offset.
+		 * 2. `string` or `object` -> Can be a selector, a DOM object or a jQuery element.  
+		 *  The container will scroll to the position of this element.
+		 * 3. `ScrollScene` -> The container will scroll to the start of this scene.
+		 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  
+		 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using `this`.  
+		 *  _**NOTE:** All other options will still work as expected, using the new function to scroll._
 		 * @returns {ScrollMagic} Parent object for chaining.
 		 */
-		this.scrollTo = function (newScrollPos) {
-			if (newScrollPos instanceof ScrollScene) {
-				if (newScrollPos.parent() === ScrollMagic) { // check if this controller is the parent
-					ScrollMagic.scrollTo(newScrollPos.scrollOffset());
+		this.scrollTo = function (scrollTarget) {
+			if (scrollTarget instanceof ScrollScene) {
+				if (scrollTarget.parent() === ScrollMagic) { // check if this controller is the parent
+					ScrollMagic.scrollTo(scrollTarget.scrollOffset());
 				} else {
-					log (1, "The supplied scene does not belong to this controller.");
+					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
-			} else if ($.isFunction(newScrollPos)) {
-				setScrollPos = newScrollPos;
+			} else if ($.type(scrollTarget) === "string" || isDomElement(scrollTarget) || scrollTarget instanceof $) {
+				var $elm = $(scrollTarget).first();
+				if ($elm[0]) {
+					var
+						offset = $elm.offset();
+					ScrollMagic.scrollTo(_options.vertical ? offset.top : offset.left);
+				} else {
+					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
+				}
+			} else if ($.isFunction(scrollTarget)) {
+				setScrollPos = scrollTarget;
 			} else {
-				setScrollPos.call(_options.container[0], newScrollPos);
+				setScrollPos.call(_options.container[0], scrollTarget);
 			}
 			return ScrollMagic;
 		};
@@ -495,9 +565,10 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
-			while (_sceneObjects.length > 0) {
-				var scene = _sceneObjects[_sceneObjects.length - 1];
-				scene.destroy(resetScenes);
+			window.clearTimeout(_refreshInterval);
+			var i = _sceneObjects.length;
+			while (i--) {
+				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
 			if (_tickerUsed) {

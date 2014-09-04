@@ -54,6 +54,10 @@
 						</li>
 						
 						<li>
+							<a href="ScrollScene.html#event:destroy">destroy</a>
+						</li>
+						
+						<li>
 							<a href="ScrollScene.html#event:end">end</a>
 						</li>
 						
@@ -67,6 +71,10 @@
 						
 						<li>
 							<a href="ScrollScene.html#event:progress">progress</a>
+						</li>
+						
+						<li>
+							<a href="ScrollScene.html#event:shift">shift</a>
 						</li>
 						
 						<li>
@@ -246,7 +254,7 @@
                 </td>
             
 
-            <td class="description last"><p>A selector, DOM Object or a jQuery object that references the main container for scrolling.</p></td>
+            <td class="description last"><p>A selector, DOM object or a jQuery object that references the main container for scrolling.</p></td>
         </tr>
 
 	
@@ -363,13 +371,52 @@
                 </td>
             
 
-            <td class="description last"><p>Loglevel for debugging:</p>
+            <td class="description last"><p>Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.</p>
 <ul>
 <li><code>0</code> =&gt; silent</li>
 <li><code>1</code> =&gt; errors</li>
 <li><code>2</code> =&gt; errors, warnings</li>
 <li><code>3</code> =&gt; errors, warnings, debuginfo</li>
 </ul></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>_refreshInterval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    100
+                
+                </td>
+            
+
+            <td class="description last"><p>Some changes don't call events by default, like changing the container size or moving a scene trigger element.<br>                                                                                                              This interval polls these parameters to fire the necessary events.<br>                                                                                                              If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.</p></td>
         </tr>
 
 	
@@ -455,7 +502,7 @@
     
 
     
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Control Methods</h3>
 
         <dl>
             
@@ -553,7 +600,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-221">line 221</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-263">line 263</a>
     </li></ul></dd>
     
 
@@ -712,7 +759,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-527">line 527</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-592">line 592</a>
     </li></ul></dd>
     
 
@@ -753,476 +800,6 @@
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// without resetting the scenescontroller = controller.destroy();// with scene resetcontroller = controller.destroy(true);</pre>
-
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="enabled"><span class="type-signature"></span>enabled<span class="signature">(<span class="optional">newState</span>)</span><span class="type-signature"> &rarr; {boolean|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the current enabled state of the controller.<br>This can be used to disable all Scenes connected to the controller without destroying or removing them.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>newState</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The new enabled state of the controller <code>true</code> or <code>false</code>.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-503">line 503</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc tag-returns">
-    <p>Current enabled state or parent object for chaining.</p>
-
-	{
-<span class="param-type">boolean</span>
-|
-
-<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
-
-}
-
-</div>
-
-
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">// get the current valuevar enabled = controller.enabled();// disable the controllercontroller.enabled(false);</pre>
-
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="info"><span class="type-signature"></span>info<span class="signature">(<span class="optional">about</span>)</span><span class="type-signature"> &rarr; {mixed|object}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p><strong>Get</strong> all infos or one in particular about the controller.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>about</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>If passed only this info will be returned instead of an object containing all.<br>                                      Valid options are:</p>
-<ul>
-<li><code>&quot;size&quot;</code> =&gt; the current viewport size of the container</li>
-<li><code>&quot;vertical&quot;</code> =&gt; true if vertical scrolling, otherwise false</li>
-<li><code>&quot;scrollPos&quot;</code> =&gt; the current scroll position</li>
-<li><code>&quot;scrollDirection&quot;</code> =&gt; the last known direction of the scroll</li>
-<li><code>&quot;container&quot;</code> =&gt; the container element</li>
-<li><code>&quot;isDocument&quot;</code> =&gt; true if container element is the document.</li>
-</ul></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-446">line 446</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc tag-returns">
-    <p>The requested info(s).</p>
-
-	{
-<span class="param-type">mixed</span>
-|
-
-<span class="param-type">object</span>
-
-}
-
-</div>
-
-
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">// returns the current scroll position (number)var scrollPos = controller.info("scrollPos");// returns all infos as an objectvar infos = controller.info();</pre>
-
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="loglevel"><span class="type-signature"></span>loglevel<span class="signature">(<span class="optional">newLoglevel</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the current loglevel option value.</p>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>newLoglevel</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>The new loglevel setting of the ScrollMagic controller. <code>[0-3]</code></p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-479">line 479</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc tag-returns">
-    <p>Current loglevel or parent object for chaining.</p>
-
-	{
-<span class="param-type">number</span>
-|
-
-<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
-
-}
-
-</div>
-
-
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">// get the current valuevar loglevel = controller.loglevel();// set a new valuecontroller.loglevel(3);</pre>
 
 
     
@@ -1324,7 +901,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-258">line 258</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-306">line 306</a>
     </li></ul></dd>
     
 
@@ -1373,7 +950,7 @@
         
             
 <dt>
-    <h4 class="name" id="scrollPos"><span class="type-signature"></span>scrollPos<span class="signature">(<span class="optional">scrollPosMethod</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">scrollTarget</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
     
     
 </dt>
@@ -1381,11 +958,7 @@
     
     
     <div class="description">
-        <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:
-When used as a getter this function will return the current scroll position.<br>To get a cached value use ScrollMagic.info(&quot;scrollPos&quot;), which will be updated on tick to save on performance.<br>For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
-<p>-&gt; <strong>SET</strong>:
-When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
-<p>To change the current scroll position please use <code>ScrollMagic.scrollTo()</code>.</p>
+        <p>Scroll to a numeric scroll offset, a DOM element, the start of a scene or provide an alternate method for scrolling.<br>For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.</p>
     </div>
     
 
@@ -1421,13 +994,13 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 
         <tr>
             
-                <td class="name"><code>scrollPosMethod</code></td>
+                <td class="name"><code>scrollTarget</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">mixed</span>
 
 
             
@@ -1447,172 +1020,13 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 
             
 
-            <td class="description last"><p>The function to be used for the scroll position calculation of the container.</p></td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-413">line 413</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc tag-returns">
-    <p>Current scroll position or parent object for chaining.</p>
-
-	{
-<span class="param-type">number</span>
-|
-
-<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
-
-}
-
-</div>
-
-
-        
-    
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scroll position calculation methodcontroller.scrollPos(function () {	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x});</pre>
-
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">newScrollPos</span>)</span><span class="type-signature"> &rarr; {<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        <p>Scroll to a new scroll offset, the start of a scene or provide an alternate method for scrolling.<br>For vertical controllers it will change the top scroll offset and for horizontal applications it will change the left offset.</p>
+            <td class="description last"><p>The supplied argument can be one of these types:</p>
 <ol>
-<li>If a <code>number</code> is supplied the container will scroll to the new scroll offset.</li>
-<li>If a <code>ScrollScene</code> is supplied the container will scroll to the start of this scene.</li>
-<li>If a <code>function</code> is supplied this function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation.<br>The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.</li>
-</ol>
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-		<th>Argument</th>
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>newScrollPos</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type"><a href="ScrollScene.html">ScrollScene</a></span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>A new scroll position or a scene to scroll to. Alternative: A function to be used for future scroll position modification.</p></td>
+<li><code>number</code> -&gt; The container will scroll to this new scroll offset.</li>
+<li><code>string</code> or <code>object</code> -&gt; Can be a selector, a DOM object or a jQuery element.<br>The container will scroll to the position of this element.</li>
+<li><code>ScrollScene</code> -&gt; The container will scroll to the start of this scene.</li>
+<li><code>function</code> -&gt; This function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.<br><em><strong>NOTE:</strong> All other options will still work as expected, using the new function to scroll.</em></li>
+</ol></td>
         </tr>
 
 	
@@ -1627,6 +1041,9 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 
     
 
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.1.0</dd><br>
     
 
     
@@ -1644,7 +1061,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-369">line 369</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-425">line 425</a>
     </li></ul></dd>
     
 
@@ -1684,7 +1101,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100var scrollPos = controller.scrollTo(100);// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});var scrollPos = controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
+    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
 
 
     
@@ -1804,7 +1221,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-335">line 335</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-385">line 385</a>
     </li></ul></dd>
     
 
@@ -1861,7 +1278,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     
     <div class="description">
-        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em>Note:</em> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</p>
+        <p>Update one ore more scene(s) according to the scroll position of the container.<br>This is the equivalent to <code>ScrollScene.update()</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br><em><strong>Note:</strong> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</em></p>
     </div>
     
 
@@ -1998,7 +1415,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-296">line 296</a>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-345">line 345</a>
     </li></ul></dd>
     
 
@@ -2039,6 +1456,642 @@ For this case there will also be the need to provide a custom function to calcul
         <h5>Example</h5>
         
     <pre class="sunlight-highlight-javascript">// update a specific scene on next tickcontroller.updateScene(scene);// update a specific scene immediatelycontroller.updateScene(scene, true);// update multiple scenes scene on next tickcontroller.updateScene([scene1, scene2, scene3]);</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Parameters (getter / setter)</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="enabled"><span class="type-signature"></span>enabled<span class="signature">(<span class="optional">newState</span>)</span><span class="type-signature"> &rarr; {boolean|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the current enabled state of the controller.<br>This can be used to disable all Scenes connected to the controller without destroying or removing them.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newState</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new enabled state of the controller <code>true</code> or <code>false</code>.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-568">line 568</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Current enabled state or parent object for chaining.</p>
+
+	{
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current valuevar enabled = controller.enabled();// disable the controllercontroller.enabled(false);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loglevel"><span class="type-signature"></span>loglevel<span class="signature">(<span class="optional">newLoglevel</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the current loglevel option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newLoglevel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new loglevel setting of the ScrollMagic controller. <code>[0-3]</code></p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-544">line 544</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Current loglevel or parent object for chaining.</p>
+
+	{
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current valuevar loglevel = controller.loglevel();// set a new valuecontroller.loglevel(3);</pre>
+
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scrollPos"><span class="type-signature"></span>scrollPos<span class="signature">(<span class="optional">scrollPosMethod</span>)</span><span class="type-signature"> &rarr; {number|<a href="ScrollMagic.html">ScrollMagic</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:
+When used as a getter this function will return the current scroll position.<br>To get a cached value use ScrollMagic.info(&quot;scrollPos&quot;), which will be updated on tick to save on performance.<br>For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
+<p>-&gt; <strong>SET</strong>:
+When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
+<p>To change the current scroll position please use <code>ScrollMagic.scrollTo()</code>.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>scrollPosMethod</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The function to be used for the scroll position calculation of the container.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-478">line 478</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>Current scroll position or parent object for chaining.</p>
+
+	{
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ScrollMagic.html">ScrollMagic</a></span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scroll position calculation methodcontroller.scrollPos(function () {	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x});</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Properties (getter)</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="info"><span class="type-signature"></span>info<span class="signature">(<span class="optional">about</span>)</span><span class="type-signature"> &rarr; {mixed|object}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> all infos or one in particular about the controller.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>about</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>If passed only this info will be returned instead of an object containing all.<br>                                      Valid options are:</p>
+<ul>
+<li><code>&quot;size&quot;</code> =&gt; the current viewport size of the container</li>
+<li><code>&quot;vertical&quot;</code> =&gt; true if vertical scrolling, otherwise false</li>
+<li><code>&quot;scrollPos&quot;</code> =&gt; the current scroll position</li>
+<li><code>&quot;scrollDirection&quot;</code> =&gt; the last known direction of the scroll</li>
+<li><code>&quot;container&quot;</code> =&gt; the container element</li>
+<li><code>&quot;isDocument&quot;</code> =&gt; true if container element is the document.</li>
+</ul></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-511">line 511</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc tag-returns">
+    <p>The requested info(s).</p>
+
+	{
+<span class="param-type">mixed</span>
+|
+
+<span class="param-type">object</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// returns the current scroll position (number)var scrollPos = controller.info("scrollPos");// returns all infos as an objectvar infos = controller.info();</pre>
 
 
     
@@ -2099,8 +2152,8 @@ For this case there will also be the need to provide a custom function to calcul
 	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
 
 	<script>
-		function openDeeplinkedElement () {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click");
+		function openDeeplinkedElement (skipAni) {
+			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -2109,7 +2162,8 @@ For this case there will also be the need to provide a custom function to calcul
 				},
 				selectors   : "h1:visible,h2:visible,h3:visible,h4:visible",
 				onScrollFinish : openDeeplinkedElement,
-				scrollOffset : 60
+				highlightOffset : 10,
+				scrollOffset: 60
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
@@ -2140,10 +2194,13 @@ For this case there will also be the need to provide a custom function to calcul
 				if (hash != $this.attr("id")) {
 					children.hide();
 				}
-				$this.toggle( function () {
+				$this.toggle( function (e, skipAni) {
+					var scrollPos = $(document).scrollTop();
+					window.location.hash = $(this).attr("id");
+					$(document).scrollTop(scrollPos);
 					icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
 					$this.addClass( "member-open" ).removeClass( "member-collapsed" );
-					children.slideDown();
+					children.slideDown(skipAni ? 0 : undefined);
 				}, function () {
 					icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
 					$this.addClass( "member-collapsed" ).removeClass( "member-open" );
@@ -2152,7 +2209,7 @@ For this case there will also be the need to provide a custom function to calcul
 			} );
 			// open if deeplinked
 			if (hash.length > 0)
-				openDeeplinkedElement();
+				openDeeplinkedElement(true);
 		} );
 	</script>
 	

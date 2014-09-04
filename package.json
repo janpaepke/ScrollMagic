@@ -1,0 +1,66 @@
+{
+  "name": "ScrollMagic",
+  "title": "ScrollMagic",
+  "version": "1.1.0",
+  "description": "The jQuery plugin for magical scroll interactions.",
+  "author": {
+    "name": "Jan Paepke",
+    "url": "http://www.janpaepke.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/janpaepke/ScrollMagic.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md"
+    },
+    {
+      "type": "GPL-3.0+",
+      "url": "http://www.gnu.org/licenses/gpl-3.0.html"
+    }
+  ],
+  "main": "js/jquery.scrollmagic.js",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "devDependencies": {
+    "chalk": "^0.5.1",
+    "detect-indent": "^0.2.0",
+    "jsdoc": "^3.3.0",
+    "jshint": "~2.5.1",
+    "karma": "^0.12.21",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "^0.2.2",
+    "karma-requirejs": "^0.2.2",
+    "semver": "^3.0.1",
+    "uglify-js": "~2.4.13"
+  },
+  "directories": {
+    "doc": "./doc",
+    "example": "./examples"
+  },
+  "scripts": {
+    "pretest": "npm install",
+    "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
+    "test-single-run": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js --single-run"
+  },
+  "homepage": "http://janpaepke.github.io/ScrollMagic/",
+  "keywords": [
+    "scroll",
+    "scrolling",
+    "animation",
+    "sticky",
+    "pin",
+    "fixed",
+    "scrollbar",
+    "scrub",
+    "sync",
+    "position",
+    "progress",
+    "parallax",
+    "events",
+    "classes"
+  ]
+}

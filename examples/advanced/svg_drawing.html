@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=500" />
+	<meta name="keywords" content="ScrollMagic, example, scrolling, attaching, scrollbar, tween, tweenmax" />
+	<meta name="author"	content="Jan Paepke (www.janpaepke.de)" />
+	<title>SVG Drawing - Examples - ScrollMagic</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="../../css/style.css" type="text/css">
+	<link rel="stylesheet" href="../../css/examples.css" type="text/css">
+
+	<script type="text/javascript" src="../../js/_dependent/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../../js/_dependent/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/_examples/general.js"></script>
+	<script type="text/javascript" src="../../js/_examples/highlight.pack.js"></script>
+  	<script type="text/javascript" src="../../js/_examples/modernizr.custom.min.js"></script>
+  	<script type="text/javascript" src="../../js/jquery.scrollmagic.js"></script>
+  	<script type="text/javascript" src="../../js/jquery.scrollmagic.debug.js"></script>
+</head>
+<body>
+	<ul id="menu"></ul>
+	<div id="content-wrapper">
+		<div id="example-wrapper">
+			<div class="scrollContent">
+				<section id="titlechart">
+					<div id="description">
+						<h1>SVG Drawing</h1>
+						<h2>Dynamic SVGs? No Problem!</h2>
+						<p>
+							To animate an SVG line simply set its CSS attributes of <code>stroke-dasharray</code> and <code>stroke-dashoffset</code> to the length of the path. Then create a tween that animates the <code>stroke-dashoffset</code> property to zero.
+						</p>
+						<p>
+							Of course you can also manipulate any other CSS property just like you'd expect. For more information about the special SVG CSS properties check out <a href="http://tutorials.jenkov.com/svg/svg-and-css.html" target="_blank">this great article</a>.
+						</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+				</section>
+				<section class="demo">
+					<div class="spacer s2"></div>
+					<div id="trigger1" class="spacer s0"></div>
+					<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="350" height="200">
+						<path id="word" style="stroke-linecap: round; stroke-linejoin: round;"
+						  fill="none" stroke="#000000" stroke-width="5" 
+						  d="M22.328,70.018c9.867-7.4,10.724,20.434,13.014,28.694c-0.08-9.105-1.308-31.463,11.936-31.886
+								c11.313-0.361,17.046,19.368,16.367,28.098c-1.432-10.289,6.234-30.682,18.163-25.671c11.505,4.833,8.682,26.772,20.071,31.964
+								c13.06,5.953,14.854-8.305,19.734-17.017c7.188-12.836,4.933-15.417,29.6-14.8c-8.954-3.842-37.42,1.728-28.539,20.1
+								c5.823,12.045,34.911,12.583,30.018-8.873c-5.385,17.174,24.01,23.104,24.01,9.123c0-9.867,3.816-15.937,16.034-18.5
+								c8.359-1.754,18.982,4.754,25.9,9.25c-10.361-4.461-51.941-13.776-37.749,12.357c9.435,17.372,50.559,2.289,33.477-6.063
+								c-2.871,19.008,32.415,31.684,30.695,54.439c-2.602,34.423-66.934,24.873-79.302,2.134c-13.11-24.101,38.981-36.781,54.798-40.941
+								c8.308-2.185,42.133-12.162,25.88-25.587c-2.779,17.058,19.275,28.688,29.963,12.911c6.862-10.131,6.783-25.284,30.833-19.117
+								c-9.404-0.429-32.624-0.188-32.864,18.472c-0.231,17.912,21.001,21.405,40.882,11.951"/>
+						<path id="dot" style="stroke-linecap: round; stroke-linejoin: round;"
+						  fill="none" stroke="#000000" stroke-width="5" 
+						  d="M247.003,38.567c-7.423,1.437-11.092,9.883-1.737,11.142c14.692,1.978,13.864-13.66,1.12-8.675"/>
+					</svg>
+					<div class="spacer s2"></div>
+					<script>
+						$(document).ready(function($) {
+							function pathPrepare ($el) {
+								var lineLength = $el[0].getTotalLength();
+								$el.css("stroke-dasharray", lineLength);
+								$el.css("stroke-dashoffset", lineLength);
+							}
+
+							var $word = $("path#word");
+							var $dot = $("path#dot");
+
+							// prepare SVG
+							pathPrepare($word);
+							pathPrepare($dot);
+
+							// init controller
+							var controller = new ScrollMagic();
+
+							// build tween
+							var tween = new TimelineMax()
+								.add(TweenMax.to($word, 0.9, {"stroke-dashoffset": 0, ease:Linear.easeNone})) // draw word for 0.9
+								.add(TweenMax.to($dot, 0.1, {"stroke-dashoffset": 0, ease:Linear.easeNone}))  // draw dot for 0.1
+								.add(TweenMax.to("path", 1, {stroke: "#33629c", ease:Linear.easeNone}), 0);			// change color during the whole thing
+
+							// build scene
+							var scene = new ScrollScene({triggerElement: "#trigger1", duration: 200, tweenChanges: true})
+											.setTween(tween)
+											.addTo(controller);
+
+							// show indicators (requires debug extension)
+							scene.addIndicators();
+						});
+					</script>
+				</section>
+				<div class="spacer s_viewport"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
+		ga('send', 'pageview');
+	</script>
+</body>
+</html>
