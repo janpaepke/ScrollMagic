@@ -153,7 +153,7 @@ process.argv.splice(2).forEach(function(val) {
 				if (semver.gte(x[1], options.version)) {
 					options.version = x[1];
 				} else {
-					log.exit("Supplied version is older than current (" + options.version + ")");
+					log.exit("Supplied version is older than current (" + options.version + "), defined in package.json");
 				}
 			} else {
 				log.exit("Invalid version number supplied");
@@ -283,13 +283,12 @@ for (var release in OUTPUT) {
 	build(OUTPUT[release]);
 }
 
-// update version numbers?
-if (options.version !== pkg.version) {
+// update JSON files
+var info = require("./sync_info.json");
+var jsonFiles = ["../package.json", "../bower.json", "../ScrollMagic.jquery.json"];
 	// where?
-	var jsonFiles = ["../package.json", "../bower.json", "../ScrollMagic.jquery.json"];
 	var readmeFile = "../README.md";
 	// go!
-	log.info("Updating version numbers to", options.version);
 	jsonFiles.forEach(function (file) {
 		var
 			fullpath = abspath(file),
@@ -297,9 +296,19 @@ if (options.version !== pkg.version) {
 			indent = detectIndent(content) || "\t",
 			json = JSON.parse(content);
 
-		json.version = options.version;
+		// copy from general info
+		for (var key in info) {
+			json[key] = info[key];
+		}
+
+		// update version?
+		if (options.version !== pkg.version) {
+			json.version = options.version;
+		}
 		fs.writeFileSync(fullpath, JSON.stringify(json, null, indent));
 	});
+if (options.version !== pkg.version) {
+	log.info("Updating version numbers to", options.version);
 	readmeFile = abspath(readmeFile);
 	var readme = fs.readFileSync(readmeFile, 'utf-8');
 	var readmeNew = readme.replace(/(<a .*class='version'.*>v)\d+\.\d+\.\d+(<\/a>)/gi, "$1" + options.version + "$2");
