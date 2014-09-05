@@ -28,7 +28,7 @@ Then use `scene.addIndicators()` to get visual indicators for where your scene s
 
 If you are sure that the scene is triggering when you want it to and the item is in view, then please...
 
-### 2.1 Make sure the problem is with ScrollMagic, not with TweenMax
+### 2.2 Make sure the problem is with ScrollMagic, not with TweenMax
 With most tween-related problems the issue lies with CSS, TweenMax or a misuse thereof.  
 For example a common mistake is that the selector for TweenMax turns up empty.
 
