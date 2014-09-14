@@ -78,8 +78,8 @@
 
 							// build tween
 							var tween = new TimelineMax()
-								.add(TweenMax.to($word, 0.9, {"stroke-dashoffset": 0, ease:Linear.easeNone})) // draw word for 0.9
-								.add(TweenMax.to($dot, 0.1, {"stroke-dashoffset": 0, ease:Linear.easeNone}))  // draw dot for 0.1
+								.add(TweenMax.to($word, 0.9, {strokeDashoffset: 0, ease:Linear.easeNone})) // draw word for 0.9
+								.add(TweenMax.to($dot, 0.1, {strokeDashoffset: 0, ease:Linear.easeNone}))  // draw dot for 0.1
 								.add(TweenMax.to("path", 1, {stroke: "#33629c", ease:Linear.easeNone}), 0);			// change color during the whole thing
 
 							// build scene

@@ -268,14 +268,14 @@
 			<script type="text/javascript">
 				// draw ani
 				var drawAni = new TimelineMax({delay: 0.2});
-				var distancePerSecond = 700;
+				var distancePerSecond = 500;
 				$("svg#draw path").each(function () {
 					var lineLength = $(this)[0].getTotalLength();
 					$(this).css("stroke-dasharray", lineLength);
 					$(this).css("stroke-dashoffset", lineLength);
-					drawAni.add(TweenMax.to(this, lineLength / distancePerSecond, {"stroke-dashoffset": 0}));
+					drawAni.add(TweenMax.to(this, lineLength / distancePerSecond, {strokeDashoffset: 0}));
 				});
-				console.log(drawAni.totalDuration());
+
 				// ani
 				var pinani = new TimelineMax()
 					// pin move down
@@ -315,7 +315,7 @@
 				// pin
 				new ScrollScene({
 						triggerElement: "section#pin",
-						duration: 1500
+						duration: 1700
 					})
 					.on("progress", function () {
 						// keep centered even though width changes
