@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.1.1
+ScrollMagic v1.1.2
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.1.1
+@version	1.1.2
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -433,8 +433,15 @@ Greensock License info at http://www.greensock.com/licensing/
 				var $elm = $(scrollTarget).first();
 				if ($elm[0]) {
 					var
-						offset = $elm.offset();
-					ScrollMagic.scrollTo(_options.vertical ? offset.top : offset.left);
+						param = _options.vertical ? "top" : "left", // which param is of interest ?
+						containerOffset = getOffset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+						elementOffset = getOffset($elm);
+
+					if (!_isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+						containerOffset[param] -= ScrollMagic.scrollPos();
+					}
+
+					ScrollMagic.scrollTo(elementOffset[param] - containerOffset[param]);
 				} else {
 					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
 				}
@@ -2344,7 +2351,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	};
 
 	// store version
-	ScrollMagic.prototype.version = "1.1.1";
+	ScrollMagic.prototype.version = "1.1.2";
 	// make global references available
 	window.ScrollScene = ScrollScene;
 	window.ScrollMagic = ScrollMagic;

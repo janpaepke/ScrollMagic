@@ -187,6 +187,13 @@ describe('ScrollMagic', function() {
 			expect(ctrl.scrollPos()).toBe(100);
 		});
 
+		it("scrolls to a certain element", function () {
+			ctrl.scrollTo(".step:eq(4)");
+			expect(ctrl.scrollPos()).toBe(200);
+			ctrl.scrollTo("#trigger");
+			expect(ctrl.scrollPos()).toBe(250);
+		});
+
 		it("scrolls to a certain scrollScene", function () {
 			var scene = new ScrollScene({offset: 150}).addTo(ctrl);
 			ctrl.scrollTo(scene);
@@ -205,6 +212,12 @@ describe('ScrollMagic', function() {
 		it("returns the correct scroll position", function() {
 			$c.scrollTop(100);
 			expect(ctrl.scrollPos()).toBe(100);
+		});
+		it("is replaceable with an alternate function", function () {
+			ctrl.scrollPos(function () {
+				return 10;
+			});
+			expect(ctrl.scrollPos()).toBe(10);
 		});
 	});
 
