@@ -20,7 +20,7 @@
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
-	 * @param {boolean} [options._refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
+	 * @param {boolean} [options.refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
 	 																										 This interval polls these parameters to fire the necessary events.  
 	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *

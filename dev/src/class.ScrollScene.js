@@ -562,12 +562,13 @@
 		};
 
 		/**
-		 * Is called, when the mousewhel is used while over a pinned element.
-		 * If the scene is in fixed state scroll events used to be ignored. This forwards the event to the scroll container.
+		 * Is called, when the mousewhel is used while over a pinned element inside a div container.
+		 * If the scene is in fixed state scroll events would be counted towards the body. This forwards the event to the scroll container.
 		 * @private
 		 */
 		var onMousewheelOverPin = function (e) {
-			if (_parent && _pin && _state === "DURING") { // in pin state
+			if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) { // in pin state
+				e.preventDefault();
 				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
 			}
 		};

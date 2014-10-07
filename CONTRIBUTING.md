@@ -122,13 +122,13 @@ $ node dev/build
 ```
 
 ## Test ScrollMagic
-ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.
+ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.  
 **NOTE**: The main scene methods have not been fully specced out yet, but will be added in the future.
 To start the test suite call:
 ```Shell
 $ npm test
 ```
-It will stay active an automatically restart the test cycle whenever you change something.
+It will stay active an automatically restart the test cycle whenever you change something.  
 *Tip:* In case you don't know – to quit the process use ctrl+c.
 
 To run only a single test cycle and exit after use this:
