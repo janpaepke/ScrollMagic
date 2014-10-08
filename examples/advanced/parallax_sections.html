@@ -31,15 +31,15 @@
 						<h1>Parallax Sections</h1>
 						<h2>The most common parallax application</h2>
 						<p>
-							To create a classic parallax page effect simply add sections with background pictures between your content section.<br>
-							Then use ScrollScenes to animate the background image's position down.
+							To create a classic parallax page effect simply add elements that contain the parallax background.<br>
+							Then use ScrollScenes to animate the child elements position.
 						</p>
 						<p>
 							The DOM is very straight forward and consists of consecutive containers.
 						</p>
 						<p>
 							<b>Please Note:</b> For brevity reasons this example uses fixed durations.<br>
-							This means the parallax movement won't exactly fit anymore, if the user resizes the window.<br>
+							This means the parallax movement won't exactly look the same, if the user resizes the window.<br>
 							To learn how to use dynamic durations, please check out the expert example <a href="../expert/responsive_duration.html">Responsive Duration</a>.
 						</p>
 						<a href="#" class="viewsource">view source</a>
@@ -47,7 +47,9 @@
 				</section>
 				<section class="demo">
 					<div class="spacer s0"></div>
-					<div id="parallax1" style="background-image: url(../../img/example_parallax_bg1.png);"></div>
+					<div id="parallax1">
+						<div style="background-image: url(../../img/example_parallax_bg1.png);"></div>
+					</div>
 					<div class="spacer s1">
 						<div class="box2 blue">
 							<p>Content 1</p>
@@ -55,7 +57,9 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax2" style="background-image: url(../../img/example_parallax_bg2.png);"></div>
+					<div id="parallax2">
+						<div style="background-image: url(../../img/example_parallax_bg2.png);"></div>
+					</div>
 					<div class="spacer s1">
 						<div class="box2 blue">
 							<p>Content 2</p>
@@ -63,30 +67,28 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax3" style="background-image: url(../../img/example_parallax_bg3.png);"></div>
+					<div id="parallax3">
+						<div style="background-image: url(../../img/example_parallax_bg3.png);"></div>
+					</div>
 					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
-							// define params
-							var duration = $("#parallax1").height() + $(window).height();
-							var bgPosMovement = "0 " + (duration*0.8) + "px";
-
 							// init controller
-							var controller = new ScrollMagic({globalSceneOptions: {triggerHook: "onEnter", duration: duration}});
+							var controller = new ScrollMagic({globalSceneOptions: {triggerHook: "onEnter", duration: $(window).height()*2}});
 
 							// build scenes
 							new ScrollScene({triggerElement: "#parallax1"})
-											.setTween(TweenMax.to("#parallax1", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
+											.setTween(TweenMax.from("#parallax1 > div", 1, {top: "-80%", ease: Linear.easeNone}))
 											.addTo(controller)
 											.addIndicators({zindex: 1, suffix: "1"});
 
 							new ScrollScene({triggerElement: "#parallax2"})
-											.setTween(TweenMax.to("#parallax2", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
+											.setTween(TweenMax.from("#parallax2 > div", 1, {top: "-80%", ease: Linear.easeNone}))
 											.addTo(controller)
 											.addIndicators({zindex: 1, suffix: "2"});
 
 							new ScrollScene({triggerElement: "#parallax3"})
-											.setTween(TweenMax.to("#parallax3", 1, {backgroundPosition: bgPosMovement, ease: Linear.easeNone}))
+											.setTween(TweenMax.from("#parallax3 > div", 1, {top: "-80%", ease: Linear.easeNone}))
 											.addTo(controller)
 											.addIndicators({zindex: 1, suffix: "3"});
 
