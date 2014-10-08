@@ -52,13 +52,13 @@
 			ScrollMagic = this,
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_sceneObjects = [],
-			_updateScenesOnNextTick = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
+			_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 			_scrollPos = 0,
 			_scrollDirection = "PAUSED",
 			_isDocument = true,
 			_viewPortSize = 0,
-			_tickerUsed = false,
 			_enabled = true,
+			_updateCycle,
 			_refreshInterval;
 
 		/*
@@ -89,19 +89,14 @@
 			_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			// set event handlers
 			_options.container.on("scroll resize", onChange);
-			try {
-				TweenLite.ticker.addEventListener("tick", onTick); // prefer TweenMax Ticker, but don't rely on it for basic functionality
-				_tickerUsed = true;
-			} catch (e) {
-				_options.container.on("scroll resize", onTick); // okay then just update on scroll/resize...
-				_tickerUsed = false;
-			}
 
 			_options.refreshInterval = parseInt(_options.refreshInterval);
 			if (_options.refreshInterval > 0) {
 				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 			}
 
+			// start checking for changes
+			_updateCycle = window.requestAnimationFrame(updateScenes);
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
@@ -125,13 +120,13 @@
 		};
 
 		/**
-		* Handle updates on tick instead of on scroll (performance)
+		* Handle updates in cycles instead of on scroll (performance)
 		* @private
 		*/
-		var onTick = function (e) {
-			if (_updateScenesOnNextTick && _enabled) {
+		var updateScenes = function () {
+			if (_enabled && _updateScenesOnNextCycle) {
 				var
-					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects.slice(0),
+					scenesToUpdate = $.isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
@@ -148,8 +143,9 @@
 				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
-				_updateScenesOnNextTick = false;
+				_updateScenesOnNextCycle = false;
 			}
+			_updateCycle = window.requestAnimationFrame(updateScenes);
 		};
 		
 		/**
@@ -160,7 +156,7 @@
 			if (e.type == "resize") {
 				_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			}
-			_updateScenesOnNextTick = true;
+			_updateScenesOnNextCycle = true;
 		};
 
 		var refresh = function () {
@@ -303,18 +299,18 @@
 		 * _**Note:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
-		 * // update a specific scene on next tick
+		 * // update a specific scene on next cycle
 	 	 * controller.updateScene(scene);
 	 	 *
 		 * // update a specific scene immediately
 		 * controller.updateScene(scene, true);
 	 	 *
-		 * // update multiple scenes scene on next tick
+		 * // update multiple scenes scene on next cycle
 		 * controller.updateScene([scene1, scene2, scene3]);
 		 *
 		 * @param {ScrollScene} ScrollScene - ScrollScene or Array of ScrollScenes that is/are supposed to be updated.
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick.  
-		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle.  
+		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.updateScene = function (ScrollScene, immediately) {
@@ -327,13 +323,13 @@
 					ScrollScene.update(true);
 				} else {
 					// prep array for next update cycle
-					if (!$.isArray(_updateScenesOnNextTick)) {
-						_updateScenesOnNextTick = [];
+					if (!$.isArray(_updateScenesOnNextCycle)) {
+						_updateScenesOnNextCycle = [];
 					}
-					if ($.inArray(ScrollScene, _updateScenesOnNextTick) == -1) {
-						_updateScenesOnNextTick.push(ScrollScene);	
+					if ($.inArray(ScrollScene, _updateScenesOnNextCycle) == -1) {
+						_updateScenesOnNextCycle.push(ScrollScene);	
 					}
-					_updateScenesOnNextTick = sortScenes(_updateScenesOnNextTick); // sort
+					_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
 				}
 			}
 			return ScrollMagic;
@@ -348,19 +344,19 @@
 		 * For this case there will also be the need to provide a custom function to calculate the correct scroll position. See `ScrollMagic.scrollPos()` for details.
 		 * @public
 		 * @example
-		 * // update the controller on next tick (saves performance)
+		 * // update the controller on next cycle (saves performance due to elimination of redundant updates)
 		 * controller.update();
 		 *
 	 	 * // update the controller immediately
 		 * controller.update(true);
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance)
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle (better performance)
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
-			onChange({type: "resize"}); // will update size and set _updateScenesOnNextTick to true
+			onChange({type: "resize"}); // will update size and set _updateScenesOnNextCycle to true
 			if (immediately) {
-				onTick();
+				updateScenes();
 			}
 			return ScrollMagic;
 		};
@@ -432,7 +428,7 @@
 		 * **Get** the current scrollPosition or **Set** a new method to calculate it.  
 		 * -> **GET**:
 		 * When used as a getter this function will return the current scroll position.  
-		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated on tick to save on performance.  
+		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated in the update cycle.  
 		 * For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.
 		 *
 		 * -> **SET**:
@@ -578,11 +574,7 @@
 				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
-			if (_tickerUsed) {
-				TweenLite.ticker.removeEventListener("tick", onTick);
-			} else {
-				_options.container.off("scroll resize", onTick);
-			}
+			window.cancelAnimationFrame(_updateCycle);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};

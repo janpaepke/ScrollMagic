@@ -43,10 +43,10 @@ describe('ScrollScene - Events', function() {
         setTimeout(function(){
             expect(resizeSpy).toHaveBeenCalled();
             done();
-        }, 101);
+        }, 101); // 100 is default val for refresh interval
     });
 
-    it("should trigger only 'enter' and 'start' for a zero duration scene", function(done) {
+    it("should trigger only 'enter' and 'start' for a zero duration scene", function() {
         var scene = new ScrollScene(
             {
                 triggerElement: "#trigger",
@@ -62,18 +62,16 @@ describe('ScrollScene - Events', function() {
         });
 
         $c.scrollTop(200);
+        ctrl.update(true);
 
-        setTimeout(function(){
-            expect(spy.enter).toHaveBeenCalled();
-            expect(spy.start).toHaveBeenCalled();
-            expect(spy.end).not.toHaveBeenCalled();
-            expect(spy.leave).not.toHaveBeenCalled();
-            done();
-        }, 50);
+        expect(spy.enter).toHaveBeenCalled();
+        expect(spy.start).toHaveBeenCalled();
+        expect(spy.end).not.toHaveBeenCalled();
+        expect(spy.leave).not.toHaveBeenCalled();
 
     });
 
-    it('should trigger enter 2x for zero duration scenes', function(done) {
+    it('should trigger enter 2x for zero duration scenes', function() {
         var scene = new ScrollScene(
             {
                 triggerElement: "#trigger",
@@ -88,15 +86,13 @@ describe('ScrollScene - Events', function() {
         var moveMid = function(){$c.scrollTop(155);};
 
         moveMid();
-        setTimeout(moveTop, 100);
-        setTimeout(moveMid, 200);
-
-        setTimeout(function(){
-            expect(triggerSpy).toHaveBeenCalled();
-            expect(triggerSpy.calls.count()).toBe(2);
-            done();
-        }, 300);
-
+        ctrl.update(true)
+        moveTop();
+        ctrl.update(true)
+        moveMid();
+        ctrl.update(true)
+        expect(triggerSpy).toHaveBeenCalled();
+        expect(triggerSpy.calls.count()).toBe(2);
     });
 
 });

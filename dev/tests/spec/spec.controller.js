@@ -104,7 +104,7 @@ describe('ScrollMagic', function() {
 	});
 
 	describe(".updateScene()", function () {
-		it("updates a scene with delay, but only once per tick", function (done) {
+		it("updates a scene with delay, but only once per cycle", function (done) {
 			var scene = new ScrollScene();
 			spyOn(scene, 'update');
 			ctrl.updateScene(scene);
@@ -113,10 +113,10 @@ describe('ScrollMagic', function() {
 			ctrl.updateScene(scene);
 			ctrl.updateScene(scene);
 			expect(scene.update).not.toHaveBeenCalled();
-			setTimeout(function() { // wait for update tick to go through array
+			window.requestAnimationFrame(function() { // wait for update cycle to go through array
 				expect(scene.update.calls.count()).toBe(1);
 				done();
-			}, 50);
+			});
 		});
 		it("updates a scene immediately", function () {
 			var scene = new ScrollScene();
@@ -137,20 +137,20 @@ describe('ScrollMagic', function() {
 	});
 
 	describe(".update()", function () {
-		it("forces an update on attached scenes, but only once per tick or if called with immediately=true", function (done) {
+		it("forces an update on attached scenes, but only once per update cycle or if called with immediately=true", function (done) {
 			var scene = new ScrollScene().addTo(ctrl);
 			spyOn(scene, "update");
-			setTimeout(function () {
+			window.requestAnimationFrame(function () {
 				ctrl.update();
 				ctrl.update(true);
 				ctrl.update();
 				ctrl.update();
-				setTimeout(function () {
-					// once when added, once when called with true and once on tick
+				window.requestAnimationFrame(function () {
+					// once when added, once when called with true and once per update cycle
 					expect(scene.update.calls.count()).toBe(3);
 					done();
-				}, 50);
-			}, 50);
+				});
+			});
 		});
 	});
 
@@ -236,27 +236,8 @@ describe('ScrollMagic', function() {
 		});
 	});
 
-	describe(".destroy()", function () {
-		it("removes the Ticker", function() {
-			spyOn(TweenMax.ticker, "removeEventListener");
-			ctrl.destroy();
-			expect(TweenMax.ticker.removeEventListener.calls.count()).toBe(1);
-		});
+	xdescribe(".destroy()", function () {
 
-		it("removes fallback events if TweenMax ticker is unavailable", function() {
-			console.log = log;
-			var tmp = TweenLite;
-			TweenLite = undefined;
-			var ctrl = new ScrollMagic();
-			var scene = new ScrollScene().addTo(ctrl);
-			ctrl.update(true);
-			ctrl.destroy();
-			spyOn(scene, "update");
-			$c.trigger("resize");
-			$c.trigger("scroll");
-			expect(scene.update).not.toHaveBeenCalled();
-			TweenLite = tmp;
-		});
 	});
 
 });
