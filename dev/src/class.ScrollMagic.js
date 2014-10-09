@@ -96,7 +96,7 @@
 			}
 
 			// start checking for changes
-			_updateCycle = window.requestAnimationFrame(updateScenes);
+			_updateCycle = animationFrameCallback(updateScenes);
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
@@ -145,7 +145,7 @@
 				}
 				_updateScenesOnNextCycle = false;
 			}
-			_updateCycle = window.requestAnimationFrame(updateScenes);
+			_updateCycle = animationFrameCallback(updateScenes);
 		};
 		
 		/**
@@ -574,7 +574,7 @@
 				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
-			window.cancelAnimationFrame(_updateCycle);
+			animationFrameCancelCallback(_updateCycle);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};

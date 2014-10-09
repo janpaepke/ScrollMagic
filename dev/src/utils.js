@@ -5,33 +5,29 @@
 	 */
 
 	// (BUILD) - REMOVE IN MINIFY - START
-	var
-		console = (window.console = window.console || {}),
-		loglevels = [
-			"error",
-			"warn",
-			"log"
-		];
-	if (!console.log) {
-		console.log = $.noop; // no console log, well - do nothing then...
-	}
-	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
-		if (!console[method]) {
-			console[method] = console.log; // prefer .log over nothing
+	var debug = (function (console) {
+		var loglevels = ["error", "warn", "log"];
+		if (!console.log) {
+			console.log = $.noop; // no console log, well - do nothing then...
 		}
-	});
-	// debugging function
-	var debug = function (loglevel) {
-		if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
-		var now = new Date(),
-			time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
-			method = loglevels[loglevel-1],
-			args = Array.prototype.splice.call(arguments, 1),
-			func = Function.prototype.bind.call(console[method], console);
+		$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
+			if (!console[method]) {
+				console[method] = console.log; // prefer .log over nothing
+			}
+		});
+		// debugging function
+		return function (loglevel) {
+			if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
+			var now = new Date(),
+				time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
+				method = loglevels[loglevel-1],
+				args = Array.prototype.splice.call(arguments, 1),
+				func = Function.prototype.bind.call(console[method], console);
 
-		args.unshift(time);
-		func.apply(console, args);
-	};
+			args.unshift(time);
+			func.apply(console, args);
+		};
+	}(window.console = window.console || {}));
 	// (BUILD) - REMOVE IN MINIFY - END
 	// a helper function that should generally be faster than jQuery.offset() and can also return position in relation to viewport.
 	var getOffset = function ($elem, relativeToViewport) {
@@ -68,35 +64,38 @@
 	var isMarginCollapseType = function (str) {
 		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
 	};
-	// requestAnimationFrame Polyfill
-	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
-	// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
-	// MIT license
-	(function (window, rAF, cAF) {
-		var lastTime = 0, vendors = ['ms', 'moz', 'webkit', 'o'], x;
+	// implementation of requestAnimationFrame
+	var animationFrameCallback = window.requestAnimationFrame;
+	var animationFrameCancelCallback = window.cancelAnimationFrame;
 
-		for (x = 0; x < vendors.length && !window[rAF]; ++x) {
-			window[rAF] = window[vendors[x] + 'RequestAnimationFrame'];
-			window[cAF] = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+	// polyfill -> based on https://gist.github.com/paulirish/1579671
+	(function (window) {
+		var
+			lastTime = 0,
+			vendors = ['ms', 'moz', 'webkit', 'o'],
+			i;
+
+		// try vendor prefixes if the above doesn't work
+		for (i = 0; !animationFrameCallback && i < vendors.length; ++i) {
+			console.log(vendors[i] + 'RequestAnimationFrame');
+			animationFrameCallback = window[vendors[i] + 'RequestAnimationFrame'];
+			animationFrameCancelCallback = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
 		}
 
-		if (!window[rAF]) {
-			window[rAF] = function (callback) {
+		// fallbacks
+		if (!animationFrameCallback) {
+			animationFrameCallback = function (callback) {
 				var
 					currTime = new Date().getTime(),
 					timeToCall = Math.max(0, 16 - (currTime - lastTime)),
 					id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
-
 				lastTime = currTime + timeToCall;
-
 				return id;
 			};
 		}
-
-		if (!window[cAF]) {
-			window[cAF] = function (id) {
+		if (!animationFrameCancelCallback) {
+			animationFrameCancelCallback = function (id) {
 				window.clearTimeout(id);
 			};
 		}
-	}(window, 'requestAnimationFrame', 'cancelAnimationFrame'));
+	}(window));
