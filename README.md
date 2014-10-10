@@ -2,6 +2,8 @@
 
 ###The jQuery plugin for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
+Hi, I am Andrew Lisowski and I ported this plugin to meteor. Mnay thanks to all the original author.
+
 ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.  
 It's the plugin for you, if you want to ...
 * ... start an animation at a specific scroll position.
@@ -38,23 +40,9 @@ ScrollMagic takes an object oriented approach using a controller for each scroll
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
 ## Installation
-Aside from [jQuery](http://jquery.com/) make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
-To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:
-```html
-<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
 ```
-
-For deployment use the minified version __instead__:
-```html
-<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
+meteor add hipstersmoothie:scrollmagic
 ```
-_**NOTE:** The logging feature is removed in the minified version for obvious file size considerations._
-
-To have access to the debugging extension during development, include this file __additionally__:
-```html
-<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
-```
-You can remove the debugging extension for actual deployment.
 
 ## Usage
 The basic ScrollMagic design pattern is one controller, which has several scenes attached.  
