@@ -1,3 +1,4 @@
+define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -40,7 +41,7 @@
 	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
-	var ScrollScene = function (options) {
+	ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -893,7 +894,7 @@
 		 *
 		 * @fires ScrollScene.update
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle (better performance).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
@@ -1735,3 +1736,5 @@
 		construct();
 		return ScrollScene;
 	};
+	return ScrollScene;
+});

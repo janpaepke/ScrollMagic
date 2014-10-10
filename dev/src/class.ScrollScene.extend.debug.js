@@ -4,7 +4,15 @@
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
-(function($, ScrollScene) {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['ScrollScene', 'jquery'], factory);
+    } else {
+    		// no browser global needed, just execute
+        factory(root.ScrollScene, root.jQuery);
+    }
+}(this, function(ScrollScene, $) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
@@ -236,4 +244,4 @@
 			}
 		}
 	};
-})(jQuery, ScrollScene);
+}));

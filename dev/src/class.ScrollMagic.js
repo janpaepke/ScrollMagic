@@ -1,3 +1,4 @@
+define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -25,7 +26,7 @@
 	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
-	var ScrollMagic = function(options) {
+	ScrollMagic = function(options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -581,5 +582,9 @@
 
 		// INIT
 		construct();
+		ScrollMagic.version = "%VERSION%"; // version number for each instance
 		return ScrollMagic;
 	};
+	ScrollMagic.version = "%VERSION%"; // version number for browser global
+	return ScrollMagic;
+});
