@@ -53,6 +53,19 @@ var replaceAll = function (string, find, replace) {
   return string.replace(new RegExp(find, 'g'), replace);
 };
 
+var runjshint = function (file) {
+	var content = fs.readFileSync(file, 'utf-8');
+	if ( !hint(content) ) {
+		var lines = content.split('\n');
+		hint.errors.forEach(function (err) {
+			log.warn(chalk.red('JSHint Error [' + err.code + ']') + ' in file \'' + file + ' at ' + chalk.blue(err.line + ':' + err.character) + '\n',
+			 '\tInfo: ' + err.reason + '\n',
+			 '\tCode: '+ chalk.yellow(lines[err.line-1].replace(/\t/g, ' ')));
+		});
+		log.exit("JS Errors detected.");
+	}
+};
+
 // log util
 var log = {
 	write: function (logList) {
@@ -198,6 +211,11 @@ var build = function (release) {
 	var
 		content = "",
 		inserts = {};
+
+	// jshint source files
+	release.components.forEach(function (filePath) {
+		runjshint(DIR.source + "/" + filePath);
+	});
 	
 	// Concatenate files
 	content = release.components.map(function (filePath) {
@@ -207,6 +225,7 @@ var build = function (release) {
 	// get inserts
 	if (release.inserts) {
 		release.inserts.forEach(function (insert) {
+			runjshint(DIR.source + "/" + insert); // jshint
 			var
 				search = "// (BUILD) - INSERT POINT: "+insert.substring(0, insert.lastIndexOf(".")),
 				replace = fs.readFileSync(DIR.source + "/" + insert, 'utf-8');
@@ -234,18 +253,6 @@ var build = function (release) {
 	// remove remaining build notes
 	content = content.replace(/[\t ]*\/\/ \(BUILD\).*$\r?\n?/gm, "");
 
-	// JSHint
-	if ( !hint(content) ) {
-		var lines = content.split('\n');
-		hint.errors.forEach(function (err) {
-			log.warn(chalk.red('JSHint Error [' + err.code + ']') + ' at ' + chalk.blue(err.line + ':' + err.character) + '\n',
-							 '\tInfo: ' + err.reason + '\n',
-							 '\tCode: '+ chalk.yellow(lines[err.line-1].replace(/\t/g, ' ')));
-		});
-
-		log.exit("JS Errors detected.");
-	}
-
 	// minify ?
 	if (release.minify) {
 		var
@@ -261,6 +268,11 @@ var build = function (release) {
 
 	// save file
 	fs.writeFileSync(options.folderOut + "/" + release.filename, content);
+
+	// JSHint output, if not minified, just to make sure building didn't break anything...
+	if (!release.minify) {
+		runjshint(options.folderOut + "/" + release.filename);
+	}
 
 };
 
