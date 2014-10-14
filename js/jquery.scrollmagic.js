@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.1.2
+ScrollMagic v1.2.0
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.1.2
+@version	1.2.0
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -21,10 +21,26 @@ Greensock License info at http://www.greensock.com/licensing/
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: feature: optimize performance on debug plugin (huge drawbacks, when using many scenes)
 */
-(function($, window) {
+(function(root) {
 	
 	"use strict";
 
+	var define = root.define, ScrollMagic, ScrollScene;
+  if (typeof define !== 'function' || !define.amd) {
+  	// No AMD loader -> Provide custom method to to register browser globals instead
+  	define = function (moduleName, dependencies, factory) {
+  		for (var x = 0, dependency; x<dependencies.length; x++) {
+  			dependency = dependencies[x];
+  			if (dependency === 'jquery') { // lowercase with require, but camel case as global
+  				dependency = 'jQuery';
+  			}
+  			dependencies[x] = root[dependency];
+  		}
+  		root[moduleName] = factory.apply(root, dependencies);
+  	};
+  }
+
+define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -47,12 +63,12 @@ Greensock License info at http://www.greensock.com/licensing/
 											 ** `1` => errors
 											 ** `2` => errors, warnings
 											 ** `3` => errors, warnings, debuginfo
-	 * @param {boolean} [options._refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
+	 * @param {boolean} [options.refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
 	 																										 This interval polls these parameters to fire the necessary events.  
 	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
-	var ScrollMagic = function(options) {
+	ScrollMagic = function(options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -79,13 +95,13 @@ Greensock License info at http://www.greensock.com/licensing/
 			ScrollMagic = this,
 			_options = $.extend({}, DEFAULT_OPTIONS, options),
 			_sceneObjects = [],
-			_updateScenesOnNextTick = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
+			_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 			_scrollPos = 0,
 			_scrollDirection = "PAUSED",
 			_isDocument = true,
 			_viewPortSize = 0,
-			_tickerUsed = false,
 			_enabled = true,
+			_updateCycle,
 			_refreshInterval;
 
 		/*
@@ -116,19 +132,14 @@ Greensock License info at http://www.greensock.com/licensing/
 			_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			// set event handlers
 			_options.container.on("scroll resize", onChange);
-			try {
-				TweenLite.ticker.addEventListener("tick", onTick); // prefer TweenMax Ticker, but don't rely on it for basic functionality
-				_tickerUsed = true;
-			} catch (e) {
-				_options.container.on("scroll resize", onTick); // okay then just update on scroll/resize...
-				_tickerUsed = false;
-			}
 
 			_options.refreshInterval = parseInt(_options.refreshInterval);
 			if (_options.refreshInterval > 0) {
 				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 			}
 
+			// start checking for changes
+			_updateCycle = animationFrameCallback(updateScenes);
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
@@ -152,13 +163,13 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		* Handle updates on tick instead of on scroll (performance)
+		* Handle updates in cycles instead of on scroll (performance)
 		* @private
 		*/
-		var onTick = function (e) {
-			if (_updateScenesOnNextTick && _enabled) {
+		var updateScenes = function () {
+			if (_enabled && _updateScenesOnNextCycle) {
 				var
-					scenesToUpdate = $.isArray(_updateScenesOnNextTick) ? _updateScenesOnNextTick : _sceneObjects.slice(0),
+					scenesToUpdate = $.isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
@@ -175,8 +186,9 @@ Greensock License info at http://www.greensock.com/licensing/
 				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
-				_updateScenesOnNextTick = false;
+				_updateScenesOnNextCycle = false;
 			}
+			_updateCycle = animationFrameCallback(updateScenes);
 		};
 		
 		/**
@@ -187,7 +199,7 @@ Greensock License info at http://www.greensock.com/licensing/
 			if (e.type == "resize") {
 				_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			}
-			_updateScenesOnNextTick = true;
+			_updateScenesOnNextCycle = true;
 		};
 
 		var refresh = function () {
@@ -328,18 +340,18 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * _**Note:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
 		 * @public
 		 * @example
-		 * // update a specific scene on next tick
+		 * // update a specific scene on next cycle
 	 	 * controller.updateScene(scene);
 	 	 *
 		 * // update a specific scene immediately
 		 * controller.updateScene(scene, true);
 	 	 *
-		 * // update multiple scenes scene on next tick
+		 * // update multiple scenes scene on next cycle
 		 * controller.updateScene([scene1, scene2, scene3]);
 		 *
 		 * @param {ScrollScene} ScrollScene - ScrollScene or Array of ScrollScenes that is/are supposed to be updated.
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick.  
-		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (onTick).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle.  
+		 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.updateScene = function (ScrollScene, immediately) {
@@ -352,13 +364,13 @@ Greensock License info at http://www.greensock.com/licensing/
 					ScrollScene.update(true);
 				} else {
 					// prep array for next update cycle
-					if (!$.isArray(_updateScenesOnNextTick)) {
-						_updateScenesOnNextTick = [];
+					if (!$.isArray(_updateScenesOnNextCycle)) {
+						_updateScenesOnNextCycle = [];
 					}
-					if ($.inArray(ScrollScene, _updateScenesOnNextTick) == -1) {
-						_updateScenesOnNextTick.push(ScrollScene);	
+					if ($.inArray(ScrollScene, _updateScenesOnNextCycle) == -1) {
+						_updateScenesOnNextCycle.push(ScrollScene);	
 					}
-					_updateScenesOnNextTick = sortScenes(_updateScenesOnNextTick); // sort
+					_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
 				}
 			}
 			return ScrollMagic;
@@ -373,19 +385,19 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * For this case there will also be the need to provide a custom function to calculate the correct scroll position. See `ScrollMagic.scrollPos()` for details.
 		 * @public
 		 * @example
-		 * // update the controller on next tick (saves performance)
+		 * // update the controller on next cycle (saves performance due to elimination of redundant updates)
 		 * controller.update();
 		 *
 	 	 * // update the controller immediately
 		 * controller.update(true);
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance)
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle (better performance)
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
-			onChange({type: "resize"}); // will update size and set _updateScenesOnNextTick to true
+			onChange({type: "resize"}); // will update size and set _updateScenesOnNextCycle to true
 			if (immediately) {
-				onTick();
+				updateScenes();
 			}
 			return ScrollMagic;
 		};
@@ -457,7 +469,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 * **Get** the current scrollPosition or **Set** a new method to calculate it.  
 		 * -> **GET**:
 		 * When used as a getter this function will return the current scroll position.  
-		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated on tick to save on performance.  
+		 * To get a cached value use ScrollMagic.info("scrollPos"), which will be updated in the update cycle.  
 		 * For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.
 		 *
 		 * -> **SET**:
@@ -603,20 +615,21 @@ Greensock License info at http://www.greensock.com/licensing/
 				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
-			if (_tickerUsed) {
-				TweenLite.ticker.removeEventListener("tick", onTick);
-			} else {
-				_options.container.off("scroll resize", onTick);
-			}
+			animationFrameCancelCallback(_updateCycle);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};
 
 		// INIT
 		construct();
+		ScrollMagic.version = "1.2.0"; // version number for each instance
 		return ScrollMagic;
 	};
+	ScrollMagic.version = "1.2.0"; // version number for browser global
+	return ScrollMagic;
+});
 
+define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -659,7 +672,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
-	var ScrollScene = function (options) {
+	ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -765,23 +778,6 @@ Greensock License info at http://www.greensock.com/licensing/
 					var wrongval = _options.loglevel;
 					_options.loglevel = DEFAULT_OPTIONS.loglevel;
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
-				}
-			},
-			"checkIfTriggerElementIsTweened" : function () {
-				// check if there are position tweens defined for the trigger and warn about it :)
-				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
-					var
-						triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
-						vertical = _parent.info("vertical");
-					$.each(triggerTweens, function (index, value) {
-						var
-							tweenvars = value.vars.css || value.vars,
-							condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
-						if (condition) {
-							log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
-							return false;
-						}
-					});
 				}
 			},
 		};
@@ -1177,12 +1173,13 @@ Greensock License info at http://www.greensock.com/licensing/
 		};
 
 		/**
-		 * Is called, when the mousewhel is used while over a pinned element.
-		 * If the scene is in fixed state scroll events used to be ignored. This forwards the event to the scroll container.
+		 * Is called, when the mousewhel is used while over a pinned element inside a div container.
+		 * If the scene is in fixed state scroll events would be counted towards the body. This forwards the event to the scroll container.
 		 * @private
 		 */
 		var onMousewheelOverPin = function (e) {
-			if (_parent && _pin && _state === "DURING") { // in pin state
+			if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) { // in pin state
+				e.preventDefault();
 				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
 			}
 		};
@@ -1507,7 +1504,7 @@ Greensock License info at http://www.greensock.com/licensing/
 		 *
 		 * @fires ScrollScene.update
 		 *
-		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next tweenmax tick (better performance).
+		 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle (better performance).
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.update = function (immediately) {
@@ -1692,33 +1689,69 @@ Greensock License info at http://www.greensock.com/licensing/
 		 *		.add(tween2);
 		 * scene.addTween(timeline);
 		 *
-		 * @param {object} TweenMaxObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.
+		 * @param {object} TweenObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.setTween = function (TweenMaxObject) {
+		this.setTween = function (TweenObject) {
 			if (_tween) { // kill old tween?
 				ScrollScene.removeTween();
 			}
 			try {
 				// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
 				_tween = new TimelineMax({smoothChildTiming: true})
-					.add(TweenMaxObject)
+					.add(TweenObject)
 					.pause();
 			} catch (e) {
-				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject");
+				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
 			} finally {
-				// some propertties need to be transferred it to the wrapper, otherwise they would get lost.
-				if (TweenMaxObject.repeat) { // TweenMax or TimelineMax Object?
-					if (TweenMaxObject.repeat() === -1) {
-						_tween.repeat(-1);
-						_tween.yoyo(TweenMaxObject.yoyo());
+				// some properties need to be transferred it to the wrapper, otherwise they would get lost.
+				if (TweenObject.repeat && TweenObject.repeat() === -1) {// TweenMax or TimelineMax Object?
+					_tween.repeat(-1);
+					_tween.yoyo(TweenObject.yoyo());
+				}
+			}
+			// Some tween validations and debugging helpers
+
+			// check if there are position tweens defined for the trigger and warn about it :)
+			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
+				var
+					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
+					vertical = _parent.info("vertical");
+				$.each(triggerTweens, function (index, value) {
+					var
+						tweenvars = value.vars.css || value.vars,
+						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
+					if (condition) {
+						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
+						return false;
+					}
+				});
+			}
+
+			// warn about tween overwrites, when an element is tweened multiple times
+			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
+				var
+					list = _tween.getChildren(true, true, false), // get all nested tween objects
+					newCallback = function () {
+						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
+					};
+				for (var i=0, thisTween, oldCallback; i<list.length; i++) {
+					/*jshint loopfunc: true */
+					thisTween = list[i];
+					if (oldCallback !== newCallback) { // if tweens is added more than once
+						oldCallback = thisTween.vars.onOverwrite;
+						thisTween.vars.onOverwrite = function () {
+							if (oldCallback) {
+								oldCallback.apply(this, arguments);
+							}
+							newCallback.apply(this, arguments);
+						};
 					}
 				}
-				validateOption("checkIfTriggerElementIsTweened");
-				log(3, "added tween");
-				updateTweenProgress();
-				return ScrollScene;
 			}
+			log(3, "added tween");
+			updateTweenProgress();
+			return ScrollScene;
 		};
 
 		/**
@@ -2349,12 +2382,8 @@ Greensock License info at http://www.greensock.com/licensing/
 		construct();
 		return ScrollScene;
 	};
-
-	// store version
-	ScrollMagic.prototype.version = "1.1.2";
-	// make global references available
-	window.ScrollScene = ScrollScene;
-	window.ScrollMagic = ScrollMagic;
+	return ScrollScene;
+});
 
 	/*
 	 * ----------------------------------------------------------------
@@ -2362,55 +2391,41 @@ Greensock License info at http://www.greensock.com/licensing/
 	 * ----------------------------------------------------------------
 	 */
 
-	var
-		console = (window.console = window.console || {}),
-		loglevels = [
-			"error",
-			"warn",
-			"log"
-		];
-	if (!console.log) {
-		console.log = $.noop; // no console log, well - do nothing then...
-	}
-	$.each(loglevels, function (index, method) { // make sure methods for all levels exist.
-		if (!console[method]) {
-			console[method] = console.log; // prefer .log over nothing
+	var debug = (function (console) {
+		var loglevels = ["error", "warn", "log"];
+		if (!console.log) {
+			console.log = function(){}; // no console log, well - do nothing then...
 		}
-	});
-	// debugging function
-	var debug = function (loglevel) {
-		if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
-		var now = new Date(),
-			time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
-			method = loglevels[loglevel-1],
-			args = Array.prototype.splice.call(arguments, 1),
-			func = Function.prototype.bind.call(console[method], console);
+		for(var i = 0, method; i<loglevels.length; i++) { // make sure methods for all levels exist.
+			method = loglevels[i];
+			if (!console[method]) {
+				console[method] = console.log; // prefer .log over nothing
+			}
+		}
+		// debugging function
+		return function (loglevel) {
+			if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
+			var now = new Date(),
+				time = ("0"+now.getHours()).slice(-2) + ":" + ("0"+now.getMinutes()).slice(-2) + ":" + ("0"+now.getSeconds()).slice(-2) + ":" + ("00"+now.getMilliseconds()).slice(-3),
+				method = loglevels[loglevel-1],
+				args = Array.prototype.splice.call(arguments, 1),
+				func = Function.prototype.bind.call(console[method], console);
 
-		args.unshift(time);
-		func.apply(console, args);
-	};
+			args.unshift(time);
+			func.apply(console, args);
+		};
+	}(window.console = window.console || {}));
 	// a helper function that should generally be faster than jQuery.offset() and can also return position in relation to viewport.
-	var getOffset = function ($elem, relativeToViewport) {
-		var  offset = {
-				top: 0,
-				left: 0
-			},
-			elem = $elem[0];
-		if (elem) {
-			if (elem.getBoundingClientRect) { // check if available
-				var  rect = elem.getBoundingClientRect();
-				offset.top = rect.top;
-				offset.left = rect.left;
-				if (!relativeToViewport) { // clientRect is by default relative to viewport...
-					offset.top += $(document).scrollTop();
-					offset.left += $(document).scrollLeft();
-				}
-			} else { // fall back to jquery
-				offset = $elem.offset() || offset; // if element has offset undefined (i.e. document) use 0 for top and left
-				if (relativeToViewport) { // jquery.offset is by default NOT relative to viewport...
-					offset.top -= $(document).scrollTop();
-					offset.left -= $(document).scrollLeft();
-				}
+	var getOffset = function (elem, relativeToViewport) {
+		var offset = {top: 0, left: 0};
+		elem = elem[0]; // tmp workaround until jQuery dependency is removed.
+		if (elem && elem.getBoundingClientRect) { // check if available
+			var rect = elem.getBoundingClientRect();
+			offset.top = rect.top;
+			offset.left = rect.left;
+			if (!relativeToViewport) { // clientRect is by default relative to viewport...
+				offset.top += (window.pageYOffset || document.scrollTop  || 0) - (document.clientTop  || 0);
+				offset.left += (window.pageXOffset || document.scrollLeft  || 0) - (document.clientLeft || 0);
 			}
 		}
 		return offset;
@@ -2424,5 +2439,40 @@ Greensock License info at http://www.greensock.com/licensing/
 	var isMarginCollapseType = function (str) {
 		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
 	};
+	// implementation of requestAnimationFrame
+	var animationFrameCallback = window.requestAnimationFrame;
+	var animationFrameCancelCallback = window.cancelAnimationFrame;
 
-})(jQuery, window);
+	// polyfill -> based on https://gist.github.com/paulirish/1579671
+	(function (window) {
+		var
+			lastTime = 0,
+			vendors = ['ms', 'moz', 'webkit', 'o'],
+			i;
+
+		// try vendor prefixes if the above doesn't work
+		for (i = 0; !animationFrameCallback && i < vendors.length; ++i) {
+			console.log(vendors[i] + 'RequestAnimationFrame');
+			animationFrameCallback = window[vendors[i] + 'RequestAnimationFrame'];
+			animationFrameCancelCallback = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
+		}
+
+		// fallbacks
+		if (!animationFrameCallback) {
+			animationFrameCallback = function (callback) {
+				var
+					currTime = new Date().getTime(),
+					timeToCall = Math.max(0, 16 - (currTime - lastTime)),
+					id = window.setTimeout(function () { callback(currTime + timeToCall); }, timeToCall);
+				lastTime = currTime + timeToCall;
+				return id;
+			};
+		}
+		if (!animationFrameCancelCallback) {
+			animationFrameCancelCallback = function (id) {
+				window.clearTimeout(id);
+			};
+		}
+	}(window));
+
+})(this || window);

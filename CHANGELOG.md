@@ -1,9 +1,28 @@
 CHANGELOG
 =========
 
+## 1.2.0 (2014-10-14)
+
+### features
+ - AMD loader support (See issue [160](https://github.com/janpaepke/ScrollMagic/issues/160))
+ - added warning for tweens being overwritten (See issue [145](https://github.com/janpaepke/ScrollMagic/issues/145))
+
+#### project changes:
+ - better code for mobile clicks (See issue [169](https://github.com/janpaepke/ScrollMagic/issues/169))
+ - updated [draw example](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html) to camel case to support Firefox
+ - updated [parralax sections example](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html) to moving divs instead of background position
+ - added new references
+ - added favicon
+
+#### bugfixes:
+ - scroll momentum increased in Firefox over fixed elements (See issue [164](https://github.com/janpaepke/ScrollMagic/issues/164))
+ - parallax example was juggy in Firefox and Safari -> removed reliance of TweenMax ticker in favor of requestAnimationFrame (See issue [167](https://github.com/janpaepke/ScrollMagic/issues/167))
+ - bugfix for pinned elements jittering if inside a container, because of the delayed position update in refreshInterval
+
+
 ## 1.1.0 (2014-09-04)
 
-#### potentially breaking changes:
+#### potentially breaking code changes:
  - **zero duration scene events & states**  
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
@@ -16,7 +35,7 @@ CHANGELOG
  - **`change` event only fires when change actually happened**  
    If a setter is used with the current value or the internal validator fails and defaults to the same value an option is already set to, no `change` event will be fired anymore.
 
-#### non-breaking changes
+#### non-breaking code changes
  - **scenes are sorted in controller**  
    Scenes attached to the same controller are now updated in the order of their start position.  
    This way DOM modifcations (e.g. tweens) that influence each other are sure to be called in the right order.  
