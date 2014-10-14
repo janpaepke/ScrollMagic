@@ -150,23 +150,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 				}
 			},
-			"checkIfTriggerElementIsTweened" : function () {
-				// check if there are position tweens defined for the trigger and warn about it :)
-				if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
-					var
-						triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
-						vertical = _parent.info("vertical");
-					$.each(triggerTweens, function (index, value) {
-						var
-							tweenvars = value.vars.css || value.vars,
-							condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
-						if (condition) {
-							log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
-							return false;
-						}
-					});
-				}
-			},
 			// (BUILD) - REMOVE IN MINIFY - END
 		};
 
@@ -1079,33 +1062,71 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 *		.add(tween2);
 		 * scene.addTween(timeline);
 		 *
-		 * @param {object} TweenMaxObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.
+		 * @param {object} TweenObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
-		this.setTween = function (TweenMaxObject) {
+		this.setTween = function (TweenObject) {
 			if (_tween) { // kill old tween?
 				ScrollScene.removeTween();
 			}
 			try {
 				// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
 				_tween = new TimelineMax({smoothChildTiming: true})
-					.add(TweenMaxObject)
+					.add(TweenObject)
 					.pause();
 			} catch (e) {
-				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenMaxObject");
+				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
 			} finally {
-				// some propertties need to be transferred it to the wrapper, otherwise they would get lost.
-				if (TweenMaxObject.repeat) { // TweenMax or TimelineMax Object?
-					if (TweenMaxObject.repeat() === -1) {
-						_tween.repeat(-1);
-						_tween.yoyo(TweenMaxObject.yoyo());
+				// some properties need to be transferred it to the wrapper, otherwise they would get lost.
+				if (TweenObject.repeat && TweenObject.repeat() === -1) {// TweenMax or TimelineMax Object?
+					_tween.repeat(-1);
+					_tween.yoyo(TweenObject.yoyo());
+				}
+			}
+			// (BUILD) - REMOVE IN MINIFY - START
+			// Some tween validations and debugging helpers
+
+			// check if there are position tweens defined for the trigger and warn about it :)
+			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
+				var
+					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
+					vertical = _parent.info("vertical");
+				$.each(triggerTweens, function (index, value) {
+					var
+						tweenvars = value.vars.css || value.vars,
+						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
+					if (condition) {
+						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
+						return false;
+					}
+				});
+			}
+
+			// warn about tween overwrites, when an element is tweened multiple times
+			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
+				var
+					list = _tween.getChildren(true, true, false), // get all nested tween objects
+					newCallback = function () {
+						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
+					};
+				for (var i=0, thisTween, oldCallback; i<list.length; i++) {
+					/*jshint loopfunc: true */
+					thisTween = list[i];
+					if (oldCallback !== newCallback) { // if tweens is added more than once
+						oldCallback = thisTween.vars.onOverwrite;
+						thisTween.vars.onOverwrite = function () {
+							if (oldCallback) {
+								oldCallback.apply(this, arguments);
+							}
+							newCallback.apply(this, arguments);
+						};
 					}
 				}
-				validateOption("checkIfTriggerElementIsTweened");
-				log(3, "added tween");
-				updateTweenProgress();
-				return ScrollScene;
 			}
+			// (BUILD) - REMOVE IN MINIFY - END
+			log(3, "added tween");
+			updateTweenProgress();
+			return ScrollScene;
 		};
 
 		/**
