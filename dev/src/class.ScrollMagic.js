@@ -86,6 +86,12 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
+			// prevent bubbling of fake resize event to window
+			if (!_isDocument) {
+				_options.container.on('resize', function ( e ) {
+          e.stopPropagation();
+        });
+			}
 			// update container size immediately
 			_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
 			// set event handlers
@@ -125,6 +131,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		* @private
 		*/
 		var updateScenes = function () {
+			_updateCycle = animationFrameCallback(updateScenes);
 			if (_enabled && _updateScenesOnNextCycle) {
 				var
 					scenesToUpdate = $.isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
@@ -146,7 +153,6 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				}
 				_updateScenesOnNextCycle = false;
 			}
-			_updateCycle = animationFrameCallback(updateScenes);
 		};
 		
 		/**
@@ -162,6 +168,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		var refresh = function () {
 			if (!_isDocument) {
+				// simulate resize event. Only works for viewport relevant param
 				if (_viewPortSize != (_options.vertical ? _options.container.height() : _options.container.width())) {
 					_options.container.trigger("resize");
 				}
