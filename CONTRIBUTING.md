@@ -58,7 +58,7 @@ But in order for us to be able to do that and also for future users to benefit f
  - **Description**: Try to describe your problem as simple as possible and always keep in mind that the people reading it have no idea of your project and it's parameters. How would you explain it to someone who doesn't even know ScrollMagic?
  - **Format**: Use Paragraphs and structure your text using all the great features of [GitHub markdown](https://help.github.com/articles/github-flavored-markdown). pay special attention to the tripple ticks (```) followed by a language name to ensure [syntax highlighting](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting).
  - **Code**: In almost all cases help can only be provided if the question is accompanied by the respective code. The VERY best way to do this is using [jsfiddle](http://jsfiddle.net/), [codepen](http://codepen.io/) or [Plunker](http://plnkr.co/edit). It provides an isolated showcase of the issue (which you already created in Step 3) and gives everyone else the opportunity to play around with the code to find out the problem. If feel you HAVE to post a link to your own environment, please make sure it's a special URL and try to keep it live even after development has finished. This way it will be available for future users with the same problem.  
-*__HINT:__ To save you some work here is a jsfiddle base template for you to fork and use for issue reports: http://jsfiddle.net/janpaepke/jm4v8esa (Please fork and then update.)*
+*__HINT:__ To save you some work here is a jsfiddle base template for you to fork and use for issue reports: http://jsfiddle.net/janpaepke/nouw0rgv (Please fork and then update.)*
 
 Thank you for helping me maintain this project by abiding by these rules.
 
