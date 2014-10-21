@@ -1066,6 +1066,10 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.setTween = function (TweenObject) {
+			if (!TimelineMax) {
+				log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
+				return ScrollScene;
+			}
 			if (_tween) { // kill old tween?
 				ScrollScene.removeTween();
 			}
