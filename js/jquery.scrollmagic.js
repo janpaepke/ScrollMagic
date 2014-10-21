@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.2.1
+ScrollMagic v1.2.2
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.2.1
+@version	1.2.2
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -115,6 +115,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @private
 		 */
 		var construct = function () {
+			ScrollMagic.version = ScrollMagic.constructor.version;
 			$.each(_options, function (key, value) {
 				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
 					log(2, "WARNING: Unknown option \"" + key + "\"");
@@ -629,10 +630,9 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		// INIT
 		construct();
-		ScrollMagic.version = "1.2.1"; // version number for each instance
 		return ScrollMagic;
 	};
-	ScrollMagic.version = "1.2.1"; // version number for browser global
+	ScrollMagic.version = "1.2.2"; // version number for browser global
 	return ScrollMagic;
 });
 
@@ -1700,6 +1700,10 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.setTween = function (TweenObject) {
+			if (!TimelineMax) {
+				log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
+				return ScrollScene;
+			}
 			if (_tween) { // kill old tween?
 				ScrollScene.removeTween();
 			}
