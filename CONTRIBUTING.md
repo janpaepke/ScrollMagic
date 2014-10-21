@@ -83,7 +83,7 @@ To find out just open your Console (MacOsX Terminal) and type `node -v`.
 ## Prepare the Development Environment
 Open your console and navigate to the ScrollMagic directory.  
 Now we need to install the necessary components using the <b>n</b>ode <b>p</b>ackage <b>m</b>anager (comes with node):
-```Shell
+```bash
 $ npm install
 ```
 Now watch the magic happen and once it's done so are you. You are ready to start building and testing.
@@ -93,7 +93,7 @@ For clarity reasons the ScrollMagic source files are split up and can be found i
 To combine all source files and store them in their correct location we need to run the build.js file from node.  
 The build process also automatically checks for javascript errors and minifies the main file.
 This is achieved by calling:
-```Shell
+```bash
 $ node dev/build
 ```
 You can pass in various arguments to customize the build:
@@ -111,13 +111,13 @@ You can pass in various arguments to customize the build:
  	example: node build -d
 ```
 So for new releases the build command is this
-```Shell
+```bash
 $ node dev/build -v=1.1.1 -d
 ```
 This will update the version to 1.1.1 and also generate new docs.  
 
 In most cases though you will only need to call the basic command:
-```Shell
+```bash
 $ node dev/build
 ```
 
@@ -125,14 +125,14 @@ $ node dev/build
 ScrollMagic comes with a test suite that makes sure that everything works as expected after changing the source code.  
 **NOTE**: The main scene methods have not been fully specced out yet, but will be added in the future.
 To start the test suite call:
-```Shell
+```bash
 $ npm test
 ```
 It will stay active an automatically restart the test cycle whenever you change something.  
 *Tip:* In case you don't know – to quit the process use ctrl+c.
 
 To run only a single test cycle and exit after use this:
-```Shell
+```bash
 $ npm run test-single-run
 ```
 
