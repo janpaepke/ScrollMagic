@@ -73,6 +73,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @private
 		 */
 		var construct = function () {
+			ScrollMagic.version = ScrollMagic.constructor.version;
 			$.each(_options, function (key, value) {
 				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
 					log(2, "WARNING: Unknown option \"" + key + "\"");
@@ -589,7 +590,6 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		// INIT
 		construct();
-		ScrollMagic.version = "%VERSION%"; // version number for each instance
 		return ScrollMagic;
 	};
 	ScrollMagic.version = "%VERSION%"; // version number for browser global
