@@ -293,10 +293,13 @@ h3 {
 	font-size: 22px;
 	margin-bottom: 10px;
 }
-#info #content {
+#info .content {
 	width: 645px;
 	text-align: left;
 	display: inline-block;
+}
+#info .darkside {
+	margin-top: 10px;
 }
 #info #sublinecover {
 	position: absolute;
