@@ -91,4 +91,29 @@
 			}
 		}
 	});
+
+	// turn over to the dark side
+	if (window.location.hostname === "janpaepke.github.io") {
+		$(document).ready (function () {
+			google_ad_client = "ca-pub-8286077135621931";
+			google_ad_slot = "4607084004";
+			google_ad_width = 728;
+			google_ad_height = 90;
+			var text = $("<div>")
+				.addClass("content")
+				.append("<h3>Support ScrollMagic</h3>")
+				.append("<p>Maintaning and updating ScrollMagic takes up a lot of my time. To be able to provide the project with the attention it deserves, I decided to experiment with including ads (feedback & evaluation pending).</p>")
+				.append("<p>If the plugin saved you some time or helped you to create something awesome, please consider making use of the donate button above. Alternatively you can have a closer look at the ad below, because every click and every donation helps me spend more time on ScrollMagic and you contribute to making it a little better each time.</p>")
+				.append("<p>Thank you!</p>");
+			var container = $("<div>")
+				.addClass("darkside")
+				.append(text)
+				.append('<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>')
+				.append('<ins class="adsbygoogle" style="display:inline-block;width:' + google_ad_width + 'px;height:' + google_ad_height + 'px" data-ad-client="' + google_ad_client + '" data-ad-slot="' + google_ad_slot + '"></ins>');
+		
+			$("section#info > div.content").first().after(container);
+			(adsbygoogle = window.adsbygoogle || []).push({});
+		});
+	}
+
 }(jQuery));
