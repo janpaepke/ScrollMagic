@@ -29,8 +29,8 @@
 		"classes"
 	],
 	"dependencies": {
-		"jquery": "~1.11.0",
-		"gsap": "~> 1.11.5"
+		"jquery": "~1.11",
+		"gsap": "~1.14"
 	},
 	"license": [
 		"MIT",
