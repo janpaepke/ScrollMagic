@@ -67,7 +67,6 @@
 
 		// try vendor prefixes if the above doesn't work
 		for (i = 0; !animationFrameCallback && i < vendors.length; ++i) {
-			console.log(vendors[i] + 'RequestAnimationFrame');
 			animationFrameCallback = window[vendors[i] + 'RequestAnimationFrame'];
 			animationFrameCancelCallback = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
 		}
