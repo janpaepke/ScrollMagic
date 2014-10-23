@@ -26,7 +26,7 @@
 		var destroyMe = function (me) {
 			me.remove();
 			me = null;
-		}
+		};
 
 		return this.each(function () {
 			var mainAni = new TimelineLite({delay: options.delay});
@@ -55,7 +55,7 @@
 								{x: flyX, y: flyY - jump},
 								{x: flyX * (Math.random() + 1), y: (flyY) + (radius * options.gravity)}
 							]
-					}
+					};
 				var ani = new TimelineLite({delay: options.duration/options.amount*i,onComplete: destroyMe, onCompleteParams: [$spark]})
 					.add([
 						TweenMax.to($spark, 0.0001, {autoAlpha: 1}),
@@ -63,7 +63,7 @@
 						TweenMax.to($spark, options.lifetime*0.3, {scale: options.scaleEnd}),
 						TweenMax.to($spark, options.lifetime*0.5, {autoAlpha: 0, delay: options.lifetime*0.5, ease: Power1.easeOut})
 					]);
-				mainAni.add(ani, 0)
+				mainAni.add(ani, 0);
 			}
 		});
 	};
@@ -80,7 +80,7 @@
 		if ($elem.length > 0) {
 			e.preventDefault();
 			if (Modernizr.touch && myScroll) { // mobile
-				myScroll.scrollTo(0, -$elem.offset().top-myScroll.y, 1000, IScroll.utils.ease.quadratic)
+				myScroll.scrollTo(0, -$elem.offset().top-myScroll.y, 1000, IScroll.utils.ease.quadratic);
 				// TweenMax.to(myScroll, 1, {y: -$elem.offset().top-$(".scrollContent").offset().top});
 			} else {
 				TweenMax.to(window, 1, {scrollTo: {y: $elem.offset().top}});
@@ -109,7 +109,7 @@
 				.addClass("darkside")
 				.append(text)
 				.append('<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>')
-				.append('<ins class="adsbygoogle" style="display:inline-block;width:' + google_ad_width + 'px;height:' + google_ad_height + 'px" data-ad-client="' + google_ad_client + '" data-ad-slot="' + google_ad_slot + '"></ins>');
+				.append('<ins class="adsbygoogle" style="display:block;width:' + google_ad_width + 'px;height:' + google_ad_height + 'px;margin: 20px auto 0 auto;" data-ad-client="' + google_ad_client + '" data-ad-slot="' + google_ad_slot + '"></ins>');
 		
 			$("section#info > div.content").first().after(container);
 			(adsbygoogle = window.adsbygoogle || []).push({});
