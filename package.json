@@ -1,7 +1,7 @@
 {
   "name": "ScrollMagic",
   "title": "ScrollMagic",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "The jQuery plugin for magical scroll interactions.",
   "author": {
     "name": "Jan Paepke",

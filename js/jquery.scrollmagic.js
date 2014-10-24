@@ -1,5 +1,5 @@
 /*
-ScrollMagic v1.2.2
+ScrollMagic v1.2.3
 The jQuery plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /**
 @overview	##Info
-@version	1.2.2
+@version	1.2.3
 @license	Dual licensed under MIT license and GPL.
 @author		Jan Paepke - e-mail@janpaepke.de
 
@@ -26,6 +26,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	"use strict";
 
 	var define = root.define, ScrollMagic, ScrollScene;
+  ScrollScene = ScrollMagic = function () {};
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
   	define = function (moduleName, dependencies, factory) {
@@ -632,7 +633,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		construct();
 		return ScrollMagic;
 	};
-	ScrollMagic.version = "1.2.2"; // version number for browser global
+	ScrollMagic.version = "1.2.3"; // version number for browser global
 	return ScrollMagic;
 });
 
@@ -2463,7 +2464,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		// try vendor prefixes if the above doesn't work
 		for (i = 0; !animationFrameCallback && i < vendors.length; ++i) {
-			console.log(vendors[i] + 'RequestAnimationFrame');
 			animationFrameCallback = window[vendors[i] + 'RequestAnimationFrame'];
 			animationFrameCancelCallback = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
 		}
