@@ -60,23 +60,29 @@ You can remove the debugging extension for actual deployment.
 The basic ScrollMagic design pattern is one controller, which has several scenes attached.  
 Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.
 ```javascript
+/*
+	Basic workflow example
+*/
+
 // init controller
 var controller = new ScrollMagic();
 
-// assign handler "scene" and add it to Controller
+// assign handler "scene" and add it to controller
 var scene = new ScrollScene({duration: 100})
-				.setPin("#my-sticky-element")	// pins the element for a scroll distance of 100px
-				.addTo(controller);
+				.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px
+				.addTo(controller); // add scene to controller
 
-// add multiple scenes at once
-var scene2;
+// adding multiple scenes at once
+var scene2 = new ScrollScene();
+var scene3;
 controller.addScene([
-	scene, // add above defined scene
-	scene2 = new ScrollScene({duration: 200}), // add scene and assign handler "scene2"
+	scene2,
+	scene3 = new ScrollScene({duration: 200}), // add scene and assign handler "scene2"
 	new ScrollScene({offset: 20}) // add anonymous scene
 ]);
 ```
-Check out the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for full reference.
+To get started check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
+Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 ##Help
 To get help please start by reading the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
 If you still can't figure it out, please post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).

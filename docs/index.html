@@ -161,21 +161,26 @@
 <p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
 <h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has several scenes attached.<br>Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.</p>
-<pre class="prettyprint source lang-javascript"><code>// init controller
+<pre class="prettyprint source lang-javascript"><code>/*
+    Basic workflow example
+*/
+
+// init controller
 var controller = new ScrollMagic();
 
-// assign handler &quot;scene&quot; and add it to Controller
+// assign handler &quot;scene&quot; and add it to controller
 var scene = new ScrollScene({duration: 100})
-                .setPin(&quot;#my-sticky-element&quot;)    // pins the element for a scroll distance of 100px
-                .addTo(controller);
+                .setPin(&quot;#my-sticky-element&quot;) // pins the element for a scroll distance of 100px
+                .addTo(controller); // add scene to controller
 
-// add multiple scenes at once
-var scene2;
+// adding multiple scenes at once
+var scene2 = new ScrollScene();
+var scene3;
 controller.addScene([
-    scene, // add above defined scene
-    scene2 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
+    scene2,
+    scene3 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
     new ScrollScene({offset: 20}) // add anonymous scene
-]);</code></pre><p>Check out the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> or the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for full reference.</p>
+]);</code></pre><p>To get started check out the available learning resources <a href="https://github.com/janpaepke/ScrollMagic/wiki">in the wiki section</a>.<br>Be sure to have a look at the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> to get source code pointers and make use of the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for a complete reference.</p>
 <h2>Help</h2><p>To get help please start by reading the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">support guidelines</a>.<br>If you still can't figure it out, please post your questions in the <a href="https://github.com/janpaepke/ScrollMagic/issues">project's issues section</a>.</p>
 <h2>Browser Support</h2><p>ScrollMagic aims to support all major browsers in recent versions:<br>Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+</p>
 <h2>About the Author</h2><p>I am a freelance Art Director based in Lausanne, Switzerland.<br>I started this project to intensify my knowledge of javascript.</p>
