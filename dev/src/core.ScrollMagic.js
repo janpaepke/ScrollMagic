@@ -14,6 +14,7 @@
 	"use strict";
 
 	var define = root.define, ScrollMagic, ScrollScene;
+  ScrollScene = ScrollMagic = function () {};
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
   	define = function (moduleName, dependencies, factory) {
