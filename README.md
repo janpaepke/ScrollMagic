@@ -81,11 +81,12 @@ controller.addScene([
 	new ScrollScene({offset: 20}) // add anonymous scene
 ]);
 ```
+##Help
 To get started check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
-##Help
-To get help please start by reading the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
-If you still can't figure it out, please post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
+
+If you're having trouble using ScrollMagic please read the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
+Should you still be unable to figure it out, feel free to post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
 ##Browser Support
 
@@ -95,7 +96,7 @@ Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
 ##About the Author
 
 I am a freelance Art Director based in Lausanne, Switzerland.  
-I started this project to intensify my knowledge of javascript.
+I started this project to deepen my understanding of javascript (which it has).
 
 [Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
 
