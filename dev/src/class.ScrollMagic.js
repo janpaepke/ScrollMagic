@@ -51,7 +51,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		var
 			ScrollMagic = this,
-			_options = $.extend({}, DEFAULT_OPTIONS, options),
+			_options = __extend({}, DEFAULT_OPTIONS, options),
 			_sceneObjects = [],
 			_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 			_scrollPos = 0,
@@ -74,12 +74,12 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		var construct = function () {
 			ScrollMagic.version = ScrollMagic.constructor.version;
-			$.each(_options, function (key, value) {
+			for (var key in _options) {
 				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
 					log(2, "WARNING: Unknown option \"" + key + "\"");
 					delete _options[key];
 				}
-			});
+			}
 			_options.container = $(_options.container).first();
 			// check ScrollContainer
 			if (_options.container.length === 0) {
@@ -87,6 +87,8 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !$.contains(document, _options.container.get(0));
+			// TODO: fix when jQuery elements aren't mandatory anymore
+			//_isDocument = !document.contains(_options.container) || document == _options.container
 			// prevent bubbling of fake resize event to window
 			if (!_isDocument) {
 				_options.container.on('resize', function ( e ) {
@@ -104,7 +106,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			}
 
 			// start checking for changes
-			_updateCycle = animationFrameCallback(updateScenes);
+			_updateCycle = __animationFrameCallback(updateScenes);
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
@@ -132,10 +134,10 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		* @private
 		*/
 		var updateScenes = function () {
-			_updateCycle = animationFrameCallback(updateScenes);
+			_updateCycle = __animationFrameCallback(updateScenes);
 			if (_enabled && _updateScenesOnNextCycle) {
 				var
-					scenesToUpdate = $.isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
+					scenesToUpdate = __isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
 					oldScrollPos = _scrollPos;
 				// update scroll pos & direction
 				_scrollPos = ScrollMagic.scrollPos();
@@ -145,7 +147,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					scenesToUpdate.reverse();
 				}
 				// update scenes
-				$.each(scenesToUpdate, function (index, scene) {
+				scenesToUpdate.forEach(function (scene, index) {
 					log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
 					scene.update(true);
 				});
@@ -174,7 +176,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					_options.container.trigger("resize");
 				}
 			}
-			$.each(_sceneObjects, function (index, scene) {// refresh all scenes
+			_sceneObjects.forEach(function (scene, index) {// refresh all scenes
 				scene.refresh();
 			});
 		};
@@ -193,7 +195,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					prefix = "(" + NAMESPACE + ") ->",
 					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				debug.apply(window, args);
+				__debug.apply(window, args);
 			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
@@ -241,14 +243,14 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.addScene = function (newScene) {
-			if ($.isArray(newScene)) {
-				$.each(newScene, function (index, scene) {
+			if (__isArray(newScene)) {
+				newScene.forEach(function (scene, index) {
 					ScrollMagic.addScene(scene);
 				});
 			} else if (newScene instanceof ScrollScene) {
 				if (newScene.parent() != ScrollMagic) {
 					newScene.addTo(ScrollMagic);
-				} else if ($.inArray(newScene, _sceneObjects) < 0){
+				} else if (__inArray(newScene, _sceneObjects) < 0){
 					// new scene
 					_sceneObjects.push(newScene); // add to array
 					_sceneObjects = sortScenes(_sceneObjects); // sort
@@ -256,11 +258,11 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 						_sceneObjects = sortScenes(_sceneObjects);
 					});
 					// insert Global defaults.
-					$.each(_options.globalSceneOptions, function (key, value) {
+					for (var key in _options.globalSceneOptions) {
 						if (newScene[key]) {
-							newScene[key].call(newScene, value);
+							newScene[key].call(newScene, _options.globalSceneOptions[key]);
 						}
-					});
+					}
 					log(3, "added Scene (" + _sceneObjects.length + " total)");
 				}
 			} else {
@@ -284,12 +286,12 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollMagic} Parent object for chaining.
 		 */
 		this.removeScene = function (ScrollScene) {
-			if ($.isArray(ScrollScene)) {
-				$.each(ScrollScene, function (index, scene) {
+			if (__isArray(ScrollScene)) {
+				ScrollScene.forEach(function (scene, index) {
 					ScrollMagic.removeScene(scene);
 				});
 			} else {
-				var index = $.inArray(ScrollScene, _sceneObjects);
+				var index = __inArray(ScrollScene, _sceneObjects);
 				if (index > -1) {
 					ScrollScene.off("shift." + NAMESPACE + "_sort");
 					_sceneObjects.splice(index, 1);
@@ -323,8 +325,8 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @return {ScrollMagic} Parent object for chaining.
 		 */
 		this.updateScene = function (ScrollScene, immediately) {
-			if ($.isArray(ScrollScene)) {
-				$.each(ScrollScene, function (index, scene) {
+			if (__isArray(ScrollScene)) {
+				ScrollScene.forEach(function (scene, index) {
 					ScrollMagic.updateScene(scene, immediately);
 				});
 			} else {
@@ -332,10 +334,10 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					ScrollScene.update(true);
 				} else {
 					// prep array for next update cycle
-					if (!$.isArray(_updateScenesOnNextCycle)) {
+					if (!__isArray(_updateScenesOnNextCycle)) {
 						_updateScenesOnNextCycle = [];
 					}
-					if ($.inArray(ScrollScene, _updateScenesOnNextCycle) == -1) {
+					if (__inArray(ScrollScene, _updateScenesOnNextCycle) == -1) {
 						_updateScenesOnNextCycle.push(ScrollScene);	
 					}
 					_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
@@ -409,13 +411,13 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				} else {
 					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
-			} else if ($.type(scrollTarget) === "string" || isDomElement(scrollTarget) || scrollTarget instanceof $) {
+			} else if (__isString(scrollTarget) || __isDomElement(scrollTarget) || scrollTarget instanceof $) {
 				var $elm = $(scrollTarget).first();
 				if ($elm[0]) {
 					var
 						param = _options.vertical ? "top" : "left", // which param is of interest ?
-						containerOffset = getOffset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-						elementOffset = getOffset($elm);
+						containerOffset = __getOffset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+						elementOffset = __getOffset($elm);
 
 					if (!_isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 						containerOffset[param] -= ScrollMagic.scrollPos();
@@ -425,7 +427,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				} else {
 					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
 				}
-			} else if ($.isFunction(scrollTarget)) {
+			} else if (__isFunction(scrollTarget)) {
 				setScrollPos = scrollTarget;
 			} else {
 				setScrollPos.call(_options.container[0], scrollTarget);
@@ -466,7 +468,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			if (!arguments.length) { // get
 				return getScrollPos.call(ScrollMagic);
 			} else { // set
-				if ($.isFunction(scrollPosMethod)) {
+				if (__isFunction(scrollPosMethod)) {
 					getScrollPos = scrollPosMethod;
 				} else {
 					log(2, "Provided value for method 'scrollPos' is not a function. To change the current scroll position use 'scrollTo()'.");
@@ -583,7 +585,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				_sceneObjects[i].destroy(resetScenes);
 			}
 			_options.container.off("scroll resize", onChange);
-			animationFrameCancelCallback(_updateCycle);
+			__animationFrameCancelCallback(_updateCycle);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};

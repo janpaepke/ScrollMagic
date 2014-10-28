@@ -70,7 +70,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 		var
 			ScrollScene = this,
-			_options = $.extend({}, DEFAULT_OPTIONS, options),
+			_options = __extend({}, DEFAULT_OPTIONS, options),
 			_state = 'BEFORE',
 			_progress = 0,
 			_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
@@ -87,15 +87,15 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		// object containing validator functions for various options
 		var _validate = {
 			"unknownOptionSupplied" : function () {
-					$.each(_options, function (key, value) {
+				for (var key in _options) {
 					if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
 						log(2, "WARNING: Unknown option \"" + key + "\"");
 						delete _options[key];
 					}
-				});
+				}
 			},
 			"duration" : function () {
-				if ($.isFunction(_options.duration)) {
+				if (__isFunction(_options.duration)) {
 					_durationUpdateMethod = _options.duration;
 					try {
 						_options.duration = parseFloat(_durationUpdateMethod());
@@ -106,7 +106,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					}
 				} else {
 					_options.duration = parseFloat(_options.duration);
-					if (!$.isNumeric(_options.duration) || _options.duration < 0) {
+					if (!__isNumber(_options.duration) || _options.duration < 0) {
 						log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
 						_options.duration = DEFAULT_OPTIONS.duration;
 					}
@@ -114,7 +114,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			},
 			"offset" : function () {
 				_options.offset = parseFloat(_options.offset);
-				if (!$.isNumeric(_options.offset)) {
+				if (!__isNumber(_options.offset)) {
 					log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
 					_options.offset = DEFAULT_OPTIONS.offset;
 				}
@@ -127,7 +127,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			},
 			"triggerHook" : function () {
 				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
-					if ($.isNumeric(_options.triggerHook)) {
+					if (__isNumber(_options.triggerHook)) {
 						_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
 					} else {
 						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
@@ -144,7 +144,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			// (BUILD) - REMOVE IN MINIFY - START
 			"loglevel" : function () {
 				_options.loglevel = parseInt(_options.loglevel);
-				if (!$.isNumeric(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
+				if (!__isNumber(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 					var wrongval = _options.loglevel;
 					_options.loglevel = DEFAULT_OPTIONS.loglevel;
 					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
@@ -208,7 +208,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					prefix = "(" + NAMESPACE + ") ->",
 					args = Array.prototype.splice.call(arguments, 1);
 				args.unshift(loglevel, prefix);
-				debug.apply(window, args);
+				__debug.apply(window, args);
 			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
@@ -223,10 +223,10 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				for (var key in _validate){
 					check.push(key);
 				}
-			} else if (!$.isArray(check)) {
+			} else if (!__isArray(check)) {
 				check = [check];
 			}
-			$.each(check, function (key, value) {
+			check.forEach(function (value, key) {
 				if (_validate[value]) {
 					_validate[value]();
 				}
@@ -307,7 +307,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				var
 					element = $(_options.triggerElement).first(),
 					controllerInfo = _parent.info(),
-					containerOffset = getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					containerOffset = __getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 					
 				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
@@ -315,7 +315,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					element = element.parent();
 				}
 
-				var elementOffset = getOffset(element);
+				var elementOffset = __getOffset(element);
 
 				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 					containerOffset[param] -= _parent.scrollPos();
@@ -398,7 +398,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					}
 
 					var
-						fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
+						fixedPos = __getOffset(_pinOptions.spacer, true), // get viewport position of spacer
  						scrollDistance = _options.reverse || _options.duration === 0 ?
  										 	 containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
@@ -459,7 +459,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					pinned = (_pin.css("position") == "fixed"),
 					vertical = _parent.info("vertical"),
 					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
-					marginCollapse = isMarginCollapseType(_pinOptions.spacer.css("display")),
+					marginCollapse = __isMarginCollapseType(_pinOptions.spacer.css("display")),
 					css = {};
 
 				if (marginCollapse) {
@@ -619,7 +619,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			if (!arguments.length) { // get
 				return _options[varname];
 			} else {
-				if (!$.isFunction(newDuration)) {
+				if (!__isFunction(newDuration)) {
 					_durationUpdateMethod = undefined;
 				}
 				if (changeOption(varname, newDuration)) { // set
@@ -708,7 +708,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		this.triggerHook = function (newTriggerHook) {
 			var varname = "triggerHook";
 			if (!arguments.length) { // get
-				return $.isNumeric(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
+				return __isNumber(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
 			} else if (changeOption(varname, newTriggerHook)) { // set
 				ScrollScene.trigger("change", {what: varname, newval: _options[varname]});
 				ScrollScene.trigger("shift", {reason: varname});
@@ -1095,7 +1095,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				var
 					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
 					vertical = _parent.info("vertical");
-				$.each(triggerTweens, function (index, value) {
+				triggerTweens.forEach(function (value, index) {
 					var
 						tweenvars = value.vars.css || value.vars,
 						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
@@ -1186,7 +1186,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					spacerClass: "scrollmagic-pin-spacer",
 					pinnedClass: ""
 				};
-			settings = $.extend({}, defaultSettings, settings);
+			settings = __extend({}, defaultSettings, settings);
 
 			// validate Element
 			element = $(element).first();
@@ -1217,7 +1217,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				sizeCSS = _pin.css(["width", "height"]);
 			_pin.parent().show(); // hack end.
 
-			if (sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)) {
+			if (sizeCSS.width === "0px" &&  inFlow && __isMarginCollapseType(pinCSS.display)) {
 				// log (2, "WARNING: Your pinned element probably needs a defined width or it might collapse during pin.");
 			}
 			if (!inFlow && settings.pushFollowers) {
@@ -1244,7 +1244,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
 					width: sizeCSS.width.slice(-1) === "%",
 					height: sizeCSS.height.slice(-1) === "%",
-					autoFullWidth: sizeCSS.width === "0px" &&  inFlow && isMarginCollapseType(pinCSS.display)
+					autoFullWidth: sizeCSS.width === "0px" &&  inFlow && __isMarginCollapseType(pinCSS.display)
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
@@ -1350,7 +1350,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		this.setClassToggle = function (element, classes) {
 			var $elm = $(element);
-			if ($elm.length === 0 || $.type(classes) !== "string") {
+			if ($elm.length === 0 || !__isString(classes)) {
 				log(1, "ERROR calling method 'setClassToggle()': Invalid " + ($elm.length === 0 ? "element" : "classes") + " supplied.");
 				return ScrollScene;
 			}
@@ -1703,8 +1703,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.on = function (name, callback) {
-			if ($.isFunction(callback)) {
-				var names = $.trim(name).toLowerCase()
+			if (__isFunction(callback)) {
+				var names = name.trim.toLowerCase()
 							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
 							.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE ); // add namespace to regulars.
 				$(ScrollScene).on(names, callback);
@@ -1732,7 +1732,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		 this.off = function (name, callback) {
-			var names = $.trim(name).toLowerCase()
+			var names = name.trim().toLowerCase()
 						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
 						.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
 			$(ScrollScene).off(names, callback);
@@ -1752,7 +1752,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		 this.trigger = function (name, vars) {
 			log(3, 'event fired:', name, "->", vars);
-			var event = $.Event($.trim(name).toLowerCase(), vars);
+			var event = $.Event(name.trim().toLowerCase(), vars);
 			$(ScrollScene).trigger(event);
 			return ScrollScene;
 		 };
