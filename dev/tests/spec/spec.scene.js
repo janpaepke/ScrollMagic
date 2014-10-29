@@ -15,7 +15,7 @@ describe('ScrollScene', function() {
 		$c = $('#scroll-container');
 		ctrl = new ScrollMagic({
 			refreshInterval: 9,
-			container: $c
+			container: $c[0]
 		});
 		scene = new ScrollScene({
 			triggerHook: "onLeave",
@@ -374,11 +374,17 @@ describe('ScrollScene', function() {
 		});
 		it("returns the correct value when container is resized", function (done) {
 			scene.triggerHook(1);
+      var resizeSpy = jasmine.createSpy('resizeSpy');
 			$c.height(100);
 			$c.on("resize", function () {
+				resizeSpy();
 				expect(scene.scrollOffset()).toBe(250 - $c.height());
 				done();
 			});
+      setTimeout(function(){
+          expect(resizeSpy).toHaveBeenCalled(); // fallback if event doesnt work break
+          done();
+      }, 101); // 100 is default val for refresh interval
 		});
 		it("returns the correct value when the position of the triggerElement changes", function () {
 			$("#trigger").css({

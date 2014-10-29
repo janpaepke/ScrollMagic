@@ -9,7 +9,7 @@ describe('ScrollScene - Events', function() {
         // default setup
         loadFixtures('container-scroll.html');
         $c = $('#scroll-container');
-        ctrl = new ScrollMagic({container: $c})
+        ctrl = new ScrollMagic({container: $c[0]});
     });
 
     afterEach(function () {

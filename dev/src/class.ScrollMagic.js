@@ -1,4 +1,4 @@
-define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
+define('ScrollMagic', [], function () {
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -80,25 +80,24 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					delete _options[key];
 				}
 			}
-			_options.container = $(_options.container).first();
+			_options.container = __getElements(_options.container)[0];
 			// check ScrollContainer
-			if (_options.container.length === 0) {
+			if (!_options.container) {
 				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 				throw NAMESPACE + " init failed."; // cancel
 			}
-			_isDocument = !$.contains(document, _options.container.get(0));
-			// TODO: fix when jQuery elements aren't mandatory anymore
-			//_isDocument = !document.contains(_options.container) || document == _options.container
-			// prevent bubbling of fake resize event to window
+			_isDocument = !document.contains(_options.container) || document == _options.container;
+			// prevent bubbling of fake resize event to window // TODO -> CHECK IF STILL NECESSARY with new custom event handling (can define as non-bubbling)
 			if (!_isDocument) {
-				_options.container.on('resize', function ( e ) {
+				_options.container.addEventListener('resize', function ( e ) {
           e.stopPropagation();
         });
 			}
 			// update container size immediately
-			_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
+			_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
 			// set event handlers
-			_options.container.on("scroll resize", onChange);
+			_options.container.addEventListener("resize", onChange);
+			_options.container.addEventListener("scroll", onChange);
 
 			_options.refreshInterval = parseInt(_options.refreshInterval);
 			if (_options.refreshInterval > 0) {
@@ -115,7 +114,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		* @private
 		*/
 		var getScrollPos = function () {
-			return _options.vertical ? _options.container.scrollTop() : _options.container.scrollLeft();
+			return _options.vertical ? __getScrollTop(_options.container) : __getScrollLeft(_options.container);
 		};
 		/**
 		* Default function to set scroll pos - overwriteable using `ScrollMagic.scrollTo(newFunction)`
@@ -123,9 +122,17 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		*/
 		var setScrollPos = function (pos) {
 			if (_options.vertical) {
-				_options.container.scrollTop(pos);
+				if (_isDocument) {
+					window.scrollTo(__getScrollLeft(), pos);
+				} else {
+					_options.container.scrollTop = pos;
+				}
 			} else {
-				_options.container.scrollLeft(pos);
+				if (_isDocument) {
+					window.scrollTo(pos, __getScrollTop);
+				} else {
+					_options.container.scrollLeft = pos;
+				}
 			}
 		};
 
@@ -164,7 +171,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		*/
 		var onChange = function (e) {
 			if (e.type == "resize") {
-				_viewPortSize = _options.vertical ? _options.container.height() : _options.container.width();
+				_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
 			}
 			_updateScenesOnNextCycle = true;
 		};
@@ -172,8 +179,9 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		var refresh = function () {
 			if (!_isDocument) {
 				// simulate resize event. Only works for viewport relevant param
-				if (_viewPortSize != (_options.vertical ? _options.container.height() : _options.container.width())) {
-					_options.container.trigger("resize");
+				if (_viewPortSize != (_options.vertical ? __getHeight(_options.container) : __getWidth(_options.container))) {
+					// TODO: correctly trigger custom resize event
+					// _options.container.trigger("resize");
 				}
 			}
 			_sceneObjects.forEach(function (scene, index) {// refresh all scenes
@@ -389,7 +397,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * var scene = new ScrollScene({offset: 200});
 		 * controller.scrollTo(scene);
 		 *
-	 	 * // define a new scroll position modification function (animate instead of jump)
+	 	 * // define a new scroll position modification function (jQuery animate instead of jump)
 		 * controller.scrollTo(function (newScrollPos) {
 		 *	$("body").animate({scrollTop: newScrollPos});
 		 * });
@@ -405,19 +413,23 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollMagic} Parent object for chaining.
 		 */
 		this.scrollTo = function (scrollTarget) {
-			if (scrollTarget instanceof ScrollScene) {
+			if (__isNumber(scrollTarget)) { // excecute
+				setScrollPos.call(_options.container, scrollTarget);
+			} else if (scrollTarget instanceof ScrollScene) { // scroll to scene
 				if (scrollTarget.parent() === ScrollMagic) { // check if this controller is the parent
 					ScrollMagic.scrollTo(scrollTarget.scrollOffset());
 				} else {
 					log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
-			} else if (__isString(scrollTarget) || __isDomElement(scrollTarget) || scrollTarget instanceof $) {
-				var $elm = $(scrollTarget).first();
-				if ($elm[0]) {
+			} else if (__isFunction(scrollTarget)) { // assign new scroll function
+				setScrollPos = scrollTarget;
+			} else { // scroll to element
+				var elem = __getElements(scrollTarget)[0];
+				if (elem) {
 					var
 						param = _options.vertical ? "top" : "left", // which param is of interest ?
 						containerOffset = __getOffset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-						elementOffset = __getOffset($elm);
+						elementOffset = __getOffset(elem);
 
 					if (!_isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 						containerOffset[param] -= ScrollMagic.scrollPos();
@@ -425,12 +437,8 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 					ScrollMagic.scrollTo(elementOffset[param] - containerOffset[param]);
 				} else {
-					log (2, "scrollTo(): The supplied element could not be found. Scroll cancelled.", scrollTarget);
+					log (2, "scrollTo(): The supplied argument is invalid. Scroll cancelled.", scrollTarget);
 				}
-			} else if (__isFunction(scrollTarget)) {
-				setScrollPos = scrollTarget;
-			} else {
-				setScrollPos.call(_options.container[0], scrollTarget);
 			}
 			return ScrollMagic;
 		};
@@ -458,7 +466,7 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 *
 	 	 * // set a new scroll position calculation method
 		 * controller.scrollPos(function () {
-		 *	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x
+		 *	return this.info("vertical") ? -mychildcontainer.y : -mychildcontainer.x
 		 * });
 		 *
 		 * @param {function} [scrollPosMethod] - The function to be used for the scroll position calculation of the container.
@@ -584,7 +592,8 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			while (i--) {
 				_sceneObjects[i].destroy(resetScenes);
 			}
-			_options.container.off("scroll resize", onChange);
+			_options.container.removeEventListener("resize", onChange);
+			_options.container.removeEventListener("scroll", onChange);
 			__animationFrameCancelCallback(_updateCycle);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;

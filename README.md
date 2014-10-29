@@ -91,7 +91,7 @@ Should you still be unable to figure it out, feel free to post your questions in
 ##Browser Support
 
 ScrollMagic aims to support all major browsers in recent versions:  
-Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+
+Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+
 
 ##About the Author
 

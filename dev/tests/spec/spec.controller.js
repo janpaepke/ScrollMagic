@@ -1,3 +1,27 @@
+describe('ScrollMagic constructor', function() {
+
+	it("fails with invalid container", function() {
+		spyOn(console, "error");
+		expect(function () {
+			new ScrollMagic({container: undefined});
+		}).toThrow();
+	});
+
+	it("works with a custom container", function() {
+		loadFixtures('container-scroll.html');
+		// as a DOM element
+		expect(function () {
+			new ScrollMagic({container: document.querySelector("#scroll-container")});
+		}).not.toThrow();
+		// as a selector
+		expect(function () {
+			new ScrollMagic({container: "#scroll-container"});
+		}).not.toThrow();
+	});
+
+
+});
+
 describe('ScrollMagic', function() {
 
 	var log = console.log; // loging from jasmine
@@ -12,21 +36,13 @@ describe('ScrollMagic', function() {
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
-		ctrl = new ScrollMagic({container: $c});
+		ctrl = new ScrollMagic({container: $c[0]});
 	});
 
 	afterEach(function () {
 		ctrl.destroy();
 	});
 
-	describe("constructor", function () {
-		it("fails with invalid container", function() {
-			expect(function () {
-				new ScrollMagic({container: ""});
-			}).toThrow();
-		});
-
-	});
 
 	describe("every method", function () {
 		var getterSetter = ["loglevel", "scrollPos", "enabled"];
@@ -163,10 +179,10 @@ describe('ScrollMagic', function() {
 				"vertical": true,
 				"scrollPos": 100,
 				"scrollDirection": "FORWARD",
-				"container": $c,
+				"container": $c[0],
 				"isDocument": false
 			};
-		})
+		});
 		it("returns a single info value", function () {
 			$c.scrollTop(infocheck.scrollPos);
 			ctrl.update(true);
@@ -188,7 +204,7 @@ describe('ScrollMagic', function() {
 		});
 
 		it("scrolls to a certain element", function () {
-			ctrl.scrollTo(".step:eq(4)");
+			ctrl.scrollTo($(".step:eq(4)")[0]);
 			expect(ctrl.scrollPos()).toBe(200);
 			ctrl.scrollTo("#trigger");
 			expect(ctrl.scrollPos()).toBe(250);
@@ -224,11 +240,11 @@ describe('ScrollMagic', function() {
 	describe(".enabled()", function () {
 		it("returns the current value", function () {
 			expect(ctrl.enabled()).toBe(true);
-			ctrl.enabled(false)
+			ctrl.enabled(false);
 			expect(ctrl.enabled()).toBe(false);
 		});
 		it("prevents scene updates when false", function () {
-			ctrl.enabled(false)
+			ctrl.enabled(false);
 			var scene = new ScrollScene().addTo(ctrl);
 			spyOn(scene, "update");
 			ctrl.update(true);

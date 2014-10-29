@@ -30,22 +30,6 @@
 		};
 	}(window.console = window.console || {}));
 	// (BUILD) - REMOVE IN MINIFY - END
-	// get element position (optionally relative to viewport)
-	var __getOffset = function (elem, relativeToViewport) {
-		var offset = {top: 0, left: 0};
-		elem = elem[0]; // tmp workaround until jQuery dependency is removed.
-		if (elem && elem.getBoundingClientRect) { // check if available
-			var rect = elem.getBoundingClientRect();
-			offset.top = rect.top;
-			offset.left = rect.left;
-			if (!relativeToViewport) { // clientRect is by default relative to viewport...
-				offset.top += (window.pageYOffset || document.scrollTop  || 0) - (document.clientTop  || 0);
-				offset.left += (window.pageXOffset || document.scrollLeft  || 0) - (document.clientLeft || 0);
-			}
-		}
-		return offset;
-	};
-
 	// type checkers
 	var __type = function (v) {
 		return Object.prototype.toString.call(v).replace(/^\[object (.+)\]$/, "$1").toLowerCase();
@@ -74,8 +58,8 @@
 	};
 
 	// helpers
-	var __extend = function (obj) {
-	  var out = out || {};
+	var __extend = function (out) {
+		out = out || {};
 		for (var i = 1; i < arguments.length; i++) {
 			if (!arguments[i]) {
 				continue;
@@ -88,8 +72,61 @@
 		}
 		return out;
 	};
+
+	// find an element in an array
 	var __inArray = function(needle, haystack) {
 		return haystack.indexOf(needle);
+	};
+
+	// get scroll top value
+	var __getScrollTop = function (elem) {
+		elem = elem || document;
+		return (window.pageYOffset || elem.scrollTop  || 0) - (elem.clientTop  || 0);
+	};
+	// get scroll left value
+	var __getScrollLeft = function (elem) {
+		elem = elem || document;
+		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
+	};
+	// get inner height
+	var __getHeight = function (elem) {
+		return elem.clientHeight || elem.innerHeight || 0;
+	};
+	// get inner width
+	var __getWidth = function (elem) {
+		return elem.clientWidth || elem.innerWidth || 0;
+	};
+
+	// get element position (optionally relative to viewport)
+	var __getOffset = function (elem, relativeToViewport) {
+		var offset = {top: 0, left: 0};
+		if (elem && elem.getBoundingClientRect) { // check if available
+			var rect = elem.getBoundingClientRect();
+			offset.top = rect.top;
+			offset.left = rect.left;
+			if (!relativeToViewport) { // clientRect is by default relative to viewport...
+				offset.top += __getScrollTop();
+				offset.left += __getScrollLeft();
+			}
+		}
+		return offset;
+	};
+
+	// normalizes node lists, elements and selectors to arrays of elements
+	var __getElements = function (selector) {
+		var arr = [];
+		if (__isString(selector)) {
+			selector = document.querySelectorAll(selector);
+		}
+		if (__type(selector) === 'nodelist') {
+			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) {
+				arr[i] = selector[i]; // array of elements
+			}
+		} else if (__isDomElement(selector) || selector === document || selector === window){
+			arr = [selector]; // only the element
+		}
+
+		return arr;
 	};
 
 	// implementation of requestAnimationFrame

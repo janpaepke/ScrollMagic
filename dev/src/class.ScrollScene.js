@@ -315,7 +315,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					element = element.parent();
 				}
 
-				var elementOffset = __getOffset(element);
+				var elementOffset = __getOffset(element[0]); // TODO: should be flat element instead of jquery
 
 				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 					containerOffset[param] -= _parent.scrollPos();
@@ -398,7 +398,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					}
 
 					var
-						fixedPos = __getOffset(_pinOptions.spacer, true), // get viewport position of spacer
+					// TODO: spacer should be flat element instead of jquery
+						fixedPos = __getOffset(_pinOptions.spacer[0], true), // get viewport position of spacer
  						scrollDistance = _options.reverse || _options.duration === 0 ?
  										 	 containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
@@ -1410,12 +1411,13 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				updateTriggerElementPosition(true);
 				updateScrollOffset();
 				updatePinSpacerSize();
-				_parent.info("container").on("resize." + NAMESPACE, function () {
-					updateRelativePinSpacer();
-					if (ScrollScene.triggerHook() > 0) {
-						ScrollScene.trigger("shift", {reason: "containerSize"});
-					}
-				});
+				//TODO: READD THIS WITH NAMESPACING
+				// _parent.info("container").on("resize." + NAMESPACE, function () {
+				// 	updateRelativePinSpacer();
+				// 	if (ScrollScene.triggerHook() > 0) {
+				// 		ScrollScene.trigger("shift", {reason: "containerSize"});
+				// 	}
+				// });
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
@@ -1462,7 +1464,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		this.remove = function () {
 			if (_parent) {
-				_parent.info("container").off("resize." + NAMESPACE);
+				// TODO -> remake with the correct listeners
+				// _parent.info("container").off("resize." + NAMESPACE);
 				var tmpParent = _parent;
 				_parent = undefined;
 				log(3, "removed " + NAMESPACE + " from controller");
@@ -1704,7 +1707,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		 this.on = function (name, callback) {
 			if (__isFunction(callback)) {
-				var names = name.trim.toLowerCase()
+				var names = name.trim().toLowerCase()
 							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
 							.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE ); // add namespace to regulars.
 				$(ScrollScene).on(names, callback);
