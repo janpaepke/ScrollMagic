@@ -93,10 +93,10 @@
 		if (elem === document)
 			elem = window;
 		which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
-		var d = outer ? elem['outer' + which] : elem['client' + which] || elem['inner' + which] || 0;
+		var d = outer ? elem['offset' + which] : elem['client' + which] || elem['inner' + which] || 0;
 		if (outer && includeMargin) {
 			var style = getComputedStyle(elem);
-			d += which === 'Height' ?  parseInt(style.marginTop) + parseInt(style.marginBottom) : parseInt(style.marginLeft) + parseInt(style.marginRight);
+			d += which === 'Height' ?  parseFloat(style.marginTop) + parseFloat(style.marginBottom) : parseFloat(style.marginLeft) + parseFloat(style.marginRight);
 		}
 		return d;
 	};
@@ -176,7 +176,11 @@
 			return obj;
 		} else {
 			for (var option in options) {
-				elem.style[option] = options[option];
+				var val = options[option];
+				if (val == parseFloat(val)) { // assume pixel for seemingly numerical values
+					val += 'px';
+				}
+				elem.style[option] = val;
 			}
 		}
 	};

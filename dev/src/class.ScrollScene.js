@@ -1,4 +1,4 @@
-define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
+define('ScrollScene', ['TweenMax', 'TimelineMax'], function (TweenMax, TimelineMax) {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -411,6 +411,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
  					// add scrollDistance
  					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
+
 					// set new values
 					__css(_pin, {
 						top: fixedPos.top,
@@ -546,6 +547,17 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		};
 
 		/**
+		 * Is called, when the scroll container is resized.
+		 * @private
+		 */
+		var onContainerResize = function (e) {
+			updateRelativePinSpacer();
+			if (ScrollScene.triggerHook() > 0) {
+				ScrollScene.trigger("shift", {reason: "containerResize"});
+			}
+		};
+
+		/**
 		 * Is called, when the mousewhel is used while over a pinned element inside a div container.
 		 * If the scene is in fixed state scroll events would be counted towards the body. This forwards the event to the scroll container.
 		 * @private
@@ -553,7 +565,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		var onMousewheelOverPin = function (e) {
 			if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) { // in pin state
 				e.preventDefault();
-				_parent.scrollTo(_parent.info("scrollPos") - (e.originalEvent.wheelDelta/3 || -e.originalEvent.detail*30));
+				_parent.scrollTo(_parent.info("scrollPos") - (e.wheelDelta/3 || -e.detail*30));
 			}
 		};
 
@@ -1227,7 +1239,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
 					width: sizeCSS.width.slice(-1) === "%",
 					height: sizeCSS.height.slice(-1) === "%",
-					autoFullWidth: sizeCSS.width === "0px" &&  inFlow && __isMarginCollapseType(pinCSS.display)
+					autoFullWidth: sizeCSS.width === "auto" && inFlow && __isMarginCollapseType(pinCSS.display)
 				},
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow, // stores if the element takes up space in the document flow
@@ -1242,7 +1254,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
 					"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
 				}, // save old styles (for reset)
-			};// TODO: make __css method use camel case
+			};// TODO: make __css method use camel case?
 
 			// if relative size, transfer it to spacer and make pin calculate it...
 			if (_pinOptions.relSize.width) {
@@ -1268,7 +1280,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			}
 
 			// add listener to document to update pin position in case controller is not the document.
-			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
+			window.addEventListener('scroll', updatePinInContainer);
+			window.addEventListener('resize', updatePinInContainer);
 			// add mousewheel listener to catch scrolls over fixed elements
 			_pin.addEventListener("mousewheel", onMousewheelOverPin);
 			_pin.addEventListener("DOMMouseScroll", onMousewheelOverPin);
@@ -1297,16 +1310,18 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		this.removePin = function (reset) {
 			if (_pin) {
 				if (reset || !_parent) { // if there's no parent no progress was made anyway...
-					_pin.insertBefore(_pinOptions.spacer)
-						.css(_pinOptions.origStyle);
-					_pinOptions.spacer.remove();
+					_pinOptions.spacer.parentNode.insertBefore(_pin, _pinOptions.spacer);
+					_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
+					__css(_pin, _pinOptions.origStyle);
 				} else {
 					if (_state === "DURING") {
 						updatePinState(true); // force unpin at position
 					}
 				}
-				$(window).off("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin");
-				_pin.off("mousewheel DOMMouseScroll", onMousewheelOverPin);
+				window.removeEventListener('scroll', updatePinInContainer);
+				window.removeEventListener('resize', updatePinInContainer);
+				_pin.removeEventListener("mousewheel", onMousewheelOverPin);
+				_pin.removeEventListener("DOMMouseScroll", onMousewheelOverPin);
 				_pin = undefined;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
@@ -1398,13 +1413,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				updateTriggerElementPosition(true);
 				updateScrollOffset();
 				updatePinSpacerSize();
-				//TODO: READD THIS WITH NAMESPACING
-				// _parent.info("container").on("resize." + NAMESPACE, function () {
-				// 	updateRelativePinSpacer();
-				// 	if (ScrollScene.triggerHook() > 0) {
-				// 		ScrollScene.trigger("shift", {reason: "containerSize"});
-				// 	}
-				// });
+				_parent.info("container").addEventListener('resize', onContainerResize);
 				log(3, "added " + NAMESPACE + " to controller");
 				controller.addScene(ScrollScene);
 				ScrollScene.update();
@@ -1451,8 +1460,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 */
 		this.remove = function () {
 			if (_parent) {
-				// TODO -> remake with the correct listeners
-				// _parent.info("container").off("resize." + NAMESPACE);
+				_parent.info("container").removeEventListener('resize', onContainerResize);
 				var tmpParent = _parent;
 				_parent = undefined;
 				log(3, "removed " + NAMESPACE + " from controller");
@@ -1682,7 +1690,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			for (var key in vars) {
 				this[key] = vars[key];
 			}
-			this.name = nameparts[0];
+			this.type = nameparts[0];
 			this.namespace = nameparts[1] || '';
 			this.timeStamp = Date.now();
 			return this;
@@ -1762,7 +1770,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					delete _listeners[eventname];
 				}
 			});
-			$(ScrollScene).off(names, callback);
 			return ScrollScene;
 		};
 
@@ -1780,8 +1787,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		this.trigger = function (name, vars) {
 			var
 				event = new ScrollMagicEvent(name, vars),
-				listeners = _listeners[event.name];
-			log(3, 'event fired:', event.name, "->", vars);
+				listeners = _listeners[event.type];
+			log(3, 'event fired:', event.type, "->", vars);
 			if (listeners) {
 				event.target = event.currentTarget = ScrollScene;
 				listeners.forEach(function (listener, key) {
@@ -1792,7 +1799,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			}
 			return ScrollScene;
 		};
-		
+
 		// INIT
 		construct();
 		return ScrollScene;

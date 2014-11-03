@@ -174,7 +174,7 @@ define('ScrollMagic', [], function () {
 			if (!_isDocument) {
 				// simulate resize event. Only works for viewport relevant param (performance)
 				if (_viewPortSize != (_options.vertical ? __getHeight(_options.container) : __getWidth(_options.container))) {
-					_options.container.dispatchEvent(new Event('resize', {bubbles: false, cancelable: false}));
+					_options.container.dispatchEvent(new Event('resize', {bubbles: false, cancelable: false})); // TODO check if polyfill needed for IE9
 				}
 			}
 			_sceneObjects.forEach(function (scene, index) {// refresh all scenes
