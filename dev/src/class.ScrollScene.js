@@ -55,7 +55,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
-				triggerElement: null,
+				triggerElement: undefined,
 				triggerHook: "onCenter",
 				reverse: true,
 				tweenChanges: false,
@@ -82,7 +82,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			_pin,
 			_pinOptions,
 			_cssClasses,
-			_cssClassElm;
+			_cssClassElems = [],
+			_listeners = {};
 
 		// object containing validator functions for various options
 		var _validate = {
@@ -120,9 +121,14 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				}
 			},
 			"triggerElement" : function () {
-				if (_options.triggerElement !== null && $(_options.triggerElement).length === 0) {
-					log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
-					_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
+				if (_options.triggerElement) {
+					var elem = __getElements(_options.triggerElement)[0];
+					if (elem) {
+						_options.triggerElement = elem;
+					} else {
+						log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
+						_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
+					}
 				}
 			},
 			"triggerHook" : function () {
@@ -188,9 +194,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				.on("progress.internal", function (e) {
 					updateTweenProgress();
 					updatePinState();
-				})
-				.on("destroy", function (e) {
-					e.preventDefault(); // otherwise jQuery would call target.destroy() by default.
 				});
 		};
 		
@@ -302,20 +305,21 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @private
 		 */
 		var updateTriggerElementPosition = function (suppressEvents) {
-			var elementPos = 0;
-			if (_parent && _options.triggerElement) {
+			var
+				elementPos = 0,
+				telem = _options.triggerElement;
+			if (_parent && telem) {
 				var
-					element = $(_options.triggerElement).first(),
 					controllerInfo = _parent.info(),
 					containerOffset = __getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 					
 				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (element.parent().data("ScrollMagicPinSpacer")) {
-					element = element.parent();
+				while (telem.parentNode.dataset.isScrollMagicPinSpacer) {
+					telem = telem.parentNode;
 				}
 
-				var elementOffset = __getOffset(element[0]); // TODO: should be flat element instead of jquery
+				var elementOffset = __getOffset(telem);
 
 				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 					containerOffset[param] -= _parent.scrollPos();
@@ -388,30 +392,27 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 
 				if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
 					// pinned state
-					if (_pin.css("position") != "fixed") {
+					if (__css(_pin, "position") != "fixed") {
 						// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
-						_pin.css("position", "fixed");
+						__css(_pin, {"position": "fixed"});
 						// update pin spacer
 						updatePinSpacerSize();
-						// add pinned class
-						_pin.addClass(_pinOptions.pinnedClass);
 					}
 
 					var
-					// TODO: spacer should be flat element instead of jquery
-						fixedPos = __getOffset(_pinOptions.spacer[0], true), // get viewport position of spacer
+						fixedPos = __getOffset(_pinOptions.spacer, true), // get viewport position of spacer
  						scrollDistance = _options.reverse || _options.duration === 0 ?
  										 	 containerInfo.scrollPos - _scrollOffset.start // quicker
  										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
  					
  					// remove spacer margin to get real position (in case marginCollapse mode)
- 					fixedPos.top -= parseFloat(_pinOptions.spacer.css("margin-top"));
+ 					fixedPos.top -= parseFloat(__css(_pinOptions.spacer, "margin-top"));
 
  					// add scrollDistance
  					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
 					// set new values
-					_pin.css({
+					__css(_pin, {
 						top: fixedPos.top,
 						left: fixedPos.left
 					});
@@ -423,22 +424,20 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 							top:  0,
 							left: 0
 						},
-						change = _pin.css("position") != newCSS.position;
+						change = __css(_pin, "position") != newCSS.position;
 					
 					if (!_pinOptions.pushFollowers) {
 						newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 					} else if (_options.duration > 0) { // only concerns scenes with duration
-						if (_state === "AFTER" && parseFloat(_pinOptions.spacer.css("padding-top")) === 0) {
+						if (_state === "AFTER" && parseFloat(__css(_pinOptions.spacer, "padding-top")) === 0) {
 							change = true; // if in after state but havent updated spacer yet (jumped past pin)
-						} else if (_state === "BEFORE" && parseFloat(_pinOptions.spacer.css("padding-bottom")) === 0) { // before
+						} else if (_state === "BEFORE" && parseFloat(__css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
 							change = true; // jumped past fixed state upward direction
 						}
 					}
 					// set new values
-					_pin.css(newCSS);
+					__css(_pin, newCSS);
 					if (change) {
-						// remove pinned class
-						_pin.removeClass(_pinOptions.pinnedClass);
 						// update pin spacer if state changed
 						updatePinSpacerSize();
 					}
@@ -457,15 +456,15 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					after = (_state === "AFTER"),
 					before = (_state === "BEFORE"),
 					during = (_state === "DURING"),
-					pinned = (_pin.css("position") == "fixed"),
+					pinned = (__css(_pin, "position") == "fixed"), // TODO: find out if necessary to check this way
 					vertical = _parent.info("vertical"),
-					$spacercontent = _pinOptions.spacer.children().first(), // usually the pined element but can also be another spacer (cascaded pins)
-					marginCollapse = __isMarginCollapseType(_pinOptions.spacer.css("display")),
+					spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
+					marginCollapse = __isMarginCollapseType(__css(_pinOptions.spacer, "display")),
 					css = {};
 
 				if (marginCollapse) {
-					css["margin-top"] = before || (during && pinned) ? _pin.css("margin-top") : "auto";
-					css["margin-bottom"] = after || (during && pinned) ? _pin.css("margin-bottom") : "auto";
+					css["margin-top"] = before || (during && pinned) ? __css(_pin, "margin-top") : "auto";
+					css["margin-bottom"] = after || (during && pinned) ? __css(_pin, "margin-bottom") : "auto";
 				} else {
 					css["margin-top"] = css["margin-bottom"] = "auto";
 				}
@@ -474,36 +473,36 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				// if relsize: spacer -> pin | else: pin -> spacer
 				if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 					if (pinned) {
-						if ($(window).width() == _pinOptions.spacer.parent().width()) {
+						if (__getWidth(window) == __getWidth(_pinOptions.spacer.parentNode)) {
 							// relative to body
-							_pin.css("width", _pinOptions.relSize.autoFullWidth ? "100%" : "inherit");
+							__css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
 						} else {
 							// not relative to body -> need to calculate
-							_pin.css("width", _pinOptions.spacer.width());
+							__css(_pin, {"width": __getWidth(_pinOptions.spacer)});
 						}
 					} else {
-						_pin.css("width", "100%");
+						__css(_pin, {"width": "100%"});
 					}
 				} else {
-					// minwidth is needed for cascading pins.
+					// minwidth is needed for cascaded pins.
 					// margin is only included if it's a cascaded pin to resolve an IE9 bug
-					css["min-width"] = $spacercontent.outerWidth(!$spacercontent.is(_pin));
+					css["min-width"] = __getWidth(spacerChild, true , spacerChild !== _pin);
 					css.width = pinned ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
 					if (pinned) {
-						if ($(window).height() == _pinOptions.spacer.parent().height()) {
+						if (__getHeight(window) == __getHeight(_pinOptions.spacer.parentNode)) {
 							// relative to body
-							_pin.css("height", "inherit");
+							__css(_pin, {"height": "inherit"});
 						} else {
 							// not relative to body -> need to calculate
-							_pin.css("height", _pinOptions.spacer.height());
+							__css(_pin, {"height": __getHeight(_pinOptions.spacer)});
 						}
 					} else {
-						_pin.css("height", "100%");
+						__css(_pin, {"height": "100%"});
 					}
 				} else {
-					css["min-height"] = $spacercontent.outerHeight(!marginCollapse); // needed for cascading pins
+					css["min-height"] = __getHeight(spacerChild, true , !marginCollapse); // needed for cascading pins
 					css.height = pinned ? css["min-height"] : "auto";
 				}
 
@@ -512,7 +511,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 					css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 				}
-				_pinOptions.spacer.css(css);
+				__css(_pinOptions.spacer, css);
 			}
 		};
 
@@ -538,8 +537,8 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			if ( _parent && _pin && // well, duh
 					_state === "DURING" && // element in pinned state?
 					( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-						((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && $(window).width() != _pinOptions.spacer.parent().width()) ||
-						(_pinOptions.relSize.height && $(window).height() != _pinOptions.spacer.parent().height())
+						((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && __getWidth(window) != __getWidth(_pinOptions.spacer.parentNode)) ||
+						(_pinOptions.relSize.height && __getHeight(window) != __getHeight(_pinOptions.spacer.parentNode))
 					)
 			) {
 				updatePinSpacerSize();
@@ -603,7 +602,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 *   return durationValueCache;
 		 * }
 		 * function updateDuration (e) {
-		 *   durationValueCache = $(window).innerHeight();
+		 *   durationValueCache = window.innerHeight;
 		 * }
 		 * $(window).on("resize", updateDuration); // update the duration when the window size changes
 		 * $(window).triggerHandler("resize"); // set to initial value
@@ -668,8 +667,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 *
 	 	 * // set a new triggerElement using a selector
 		 * scene.triggerElement("#trigger");
-	 	 * // set a new triggerElement using a jQuery Object
-		 * scene.triggerElement($("#trigger"));
 	 	 * // set a new triggerElement using a DOM object
 		 * scene.triggerElement(document.getElementById("trigger"));
 		 *
@@ -827,15 +824,6 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 				}
 			}
 			return pos;
-		};
-
-		/**
-		 * **Get** the trigger offset of the scene (including the value of the `offset` option).  
-		 * @public
-		 * @deprecated Method is deprecated since 1.1.0. You should now use {@link ScrollScene.triggerPosition}
-		 */
-		this.triggerOffset = function () {
-			return ScrollScene.triggerPosition();
 		};
 
 		/**
@@ -1094,7 +1082,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			// check if there are position tweens defined for the trigger and warn about it :)
 			if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
 				var
-					triggerTweens = _tween.getTweensOf($(_options.triggerElement)),
+					triggerTweens = _tween.getTweensOf(_options.triggerElement),
 					vertical = _parent.info("vertical");
 				triggerTweens.forEach(function (value, index) {
 					var
@@ -1175,8 +1163,7 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @param {object} [settings] - settings for the pin
 		 * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
 		 												   Ignored, when duration is `0`.
-		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element.  
-		 * @param {string} [settings.pinnedClass=""] - Classname that should be added to the pinned element during pin phase (and removed after).
+		 * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element.
 		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
@@ -1184,17 +1171,16 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			var
 				defaultSettings = {
 					pushFollowers: true,
-					spacerClass: "scrollmagic-pin-spacer",
-					pinnedClass: ""
+					spacerClass: "scrollmagic-pin-spacer"
 				};
 			settings = __extend({}, defaultSettings, settings);
 
 			// validate Element
-			element = $(element).first();
-			if (element.length === 0) {
+			element = __getElements(element)[0];
+			if (!element) {
 				log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 				return ScrollScene; // cancel
-			} else if (element.css("position") == "fixed") {
+			} else if (__css(element, "position") === "fixed") {
 				log(1, "ERROR calling method 'setPin()': Pin does not work with elements that are positioned 'fixed'.");
 				return ScrollScene; // cancel
 			}
@@ -1211,35 +1197,31 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			}
 			_pin = element;
 			
-			_pin.parent().hide(); // hack start to force jQuery css to return stylesheet values instead of calculated px values.
+			_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 			var
-				inFlow = _pin.css("position") != "absolute",
-				pinCSS = _pin.css(["display", "top", "left", "bottom", "right"]),
-				sizeCSS = _pin.css(["width", "height"]);
-			_pin.parent().show(); // hack end.
+				inFlow = __css(_pin, "position") != "absolute",
+				pinCSS = __css(_pin, ["display", "top", "left", "bottom", "right"]),
+				sizeCSS = __css(_pin, ["width", "height"]);
+			_pin.parentNode.style.display = ''; // hack end.
 
-			if (sizeCSS.width === "0px" &&  inFlow && __isMarginCollapseType(pinCSS.display)) {
-				// log (2, "WARNING: Your pinned element probably needs a defined width or it might collapse during pin.");
-			}
 			if (!inFlow && settings.pushFollowers) {
 				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
 				settings.pushFollowers = false;
 			}
 
-			// create spacer
-			var spacer = $("<div></div>")
-					.addClass(settings.spacerClass)
-					.css(pinCSS)
-					.data("ScrollMagicPinSpacer", true)
-					.css({
+			// create spacer and insert
+			var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
+			__css(spacer, __extend(pinCSS, {
 						position: inFlow ? "relative" : "absolute",
 						"margin-left": "auto",
 						"margin-right": "auto",
 						"box-sizing": "content-box"
-					});
+					}));
+			spacer.dataset.isScrollMagicPinSpacer = true; // TODO: check if dataset works in IE9
+			__addClass(spacer, settings.spacerClass);
 
 			// set the pin Options
-			var pinInlineCSS = _pin[0].style;
+			var pinInlineCSS = _pin.style;
 			_pinOptions = {
 				spacer: spacer,
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
@@ -1260,37 +1242,36 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 					"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
 					"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
 				}, // save old styles (for reset)
-				pinnedClass: settings.pinnedClass // the class that should be added to the element when pinned
-			};
+			};// TODO: make __css method use camel case
 
 			// if relative size, transfer it to spacer and make pin calculate it...
 			if (_pinOptions.relSize.width) {
-				spacer.css("width", sizeCSS.width);
+				__css(spacer, {width: sizeCSS.width});
 			}
 			if (_pinOptions.relSize.height) {
-				spacer.css("height", sizeCSS.height);
+				__css(spacer, {height: sizeCSS.height});
 			}
 
 			// now place the pin element inside the spacer	
-			_pin.before(spacer)
-					.appendTo(spacer)
-					// and set new css
-					.css({
-						position: inFlow ? "relative" : "absolute",
-						top: "auto",
-						left: "auto",
-						bottom: "auto",
-						right: "auto"
-					});
+			spacer.appendChild(_pin);
+			// and set new css
+			__css(_pin, {
+				position: inFlow ? "relative" : "absolute",
+				top: "auto",
+				left: "auto",
+				bottom: "auto",
+				right: "auto"
+			});
 			
 			if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
-				_pin.css("box-sizing", "border-box");
+				__css(_pin, {"box-sizing" : "border-box"});
 			}
 
 			// add listener to document to update pin position in case controller is not the document.
 			$(window).on("scroll." + NAMESPACE + "_pin resize." + NAMESPACE + "_pin", updatePinInContainer);
 			// add mousewheel listener to catch scrolls over fixed elements
-			_pin.on("mousewheel DOMMouseScroll", onMousewheelOverPin);
+			_pin.addEventListener("mousewheel", onMousewheelOverPin);
+			_pin.addEventListener("DOMMouseScroll", onMousewheelOverPin);
 
 			log(3, "added pin");
 
@@ -1349,16 +1330,20 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 *
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
+		 // TODO: check if removeClassToggle needs a definite element (what happens if you call setClassToggle two times for same or different elements?)
 		this.setClassToggle = function (element, classes) {
-			var $elm = $(element);
-			if ($elm.length === 0 || !__isString(classes)) {
-				log(1, "ERROR calling method 'setClassToggle()': Invalid " + ($elm.length === 0 ? "element" : "classes") + " supplied.");
+			var elems = __getElements(element);
+			if (elems.length === 0 || !__isString(classes)) {
+				log(1, "ERROR calling method 'setClassToggle()': Invalid " + (elems.length === 0 ? "element" : "classes") + " supplied.");
 				return ScrollScene;
 			}
 			_cssClasses = classes;
-			_cssClassElm = $elm;
+			_cssClassElems = elems;
 			ScrollScene.on("enter.internal_class leave.internal_class", function (e) {
-				_cssClassElm.toggleClass(_cssClasses, e.type === "enter");
+				var toggle = e.type === "enter" ? __addClass : __removeClass;
+				_cssClassElems.forEach(function (elem, key) {
+					toggle(elem, _cssClasses);
+				});
 			});
 			return ScrollScene;
 		};
@@ -1377,12 +1362,14 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @returns {ScrollScene} Parent object for chaining.
 		 */
 		this.removeClassToggle = function (reset) {
-			if (_cssClassElm && reset) {
-				_cssClassElm.removeClass(_cssClasses);
+			if (reset) {
+				_cssClassElems.forEach(function (elem, key) {
+					__removeClass(elem, _cssClasses);
+				});
 			}
 			ScrollScene.off("start.internal_class end.internal_class");
 			_cssClasses = undefined;
-			_cssClassElm = undefined;
+			_cssClassElems = [];
 			return ScrollScene;
 		};
 
@@ -1687,9 +1674,21 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @property {string} event.type - The name of the event
 		 * @property {ScrollScene} event.target - The ScrollScene object that triggered this event
 		 * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
-		 */
+		*/
 		 
-		 /**
+		var ScrollMagicEvent = function (name, vars) {
+			var nameparts = name.split('.');
+			vars = vars || {};
+			for (var key in vars) {
+				this[key] = vars[key];
+			}
+			this.name = nameparts[0];
+			this.namespace = nameparts[1] || '';
+			this.timeStamp = Date.now();
+			return this;
+		};
+
+		/**
 		 * Add one ore more event listener.  
 		 * The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.
 		 * @public
@@ -1704,20 +1703,30 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @param {string} name - The name or names of the event the callback should be attached to.
 		 * @param {function} callback - A function that should be executed, when the event is dispatched. An event object will be passed to the callback.
 		 * @returns {ScrollScene} Parent object for chaining.
-		 */
-		 this.on = function (name, callback) {
+		*/
+		this.on = function (name, callback) {
 			if (__isFunction(callback)) {
-				var names = name.trim().toLowerCase()
-							.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-							.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE ); // add namespace to regulars.
-				$(ScrollScene).on(names, callback);
+				var names = name.trim().split(' ');
+				names.forEach(function (fullname, key) {
+					var
+						nameparts = fullname.split('.'),
+						eventname = nameparts[0],
+						listener = {
+							namespace: nameparts[1] || '',
+							callback: callback
+						};
+					if (!_listeners[eventname]) {
+						_listeners[eventname] = [];
+					}
+					_listeners[eventname].push(listener);
+				});
 			} else {
-				log(1, "ERROR calling method 'on()': Supplied argument is not a valid callback!");
+				log(1, "ERROR calling method 'on()': Supplied callback is not a valid function!");
 			}
 			return ScrollScene;
-		 };
+		};
 
-		 /**
+		/**
 		 * Remove one or more event listener.
 		 * @public
 		 *
@@ -1733,14 +1742,29 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @param {string} name - The name or names of the event that should be removed.
 		 * @param {function} [callback] - A specific callback function that should be removed. If none is passed all callbacks to the event listener will be removed.
 		 * @returns {ScrollScene} Parent object for chaining.
-		 */
-		 this.off = function (name, callback) {
-			var names = name.trim().toLowerCase()
-						.replace(/(\w+)\.(\w+)/g, '$1.' + NAMESPACE + '_$2') // add custom namespace, if one is defined
-						.replace(/( |^)(\w+)(?= |$)/g, '$1$2.' + NAMESPACE + '$3'); // add namespace to regulars.
+		*/
+		this.off = function (name, callback) {
+			var names = name.trim().split(' ');
+			names.forEach(function (fullname, key) {
+				var
+					nameparts = fullname.split('.'),
+					eventname = nameparts[0],
+					namespace = nameparts[1] || '',
+					listeners = _listeners[eventname] || [],
+					i = listeners.length;
+				while (i--) {
+					var listener = listeners[i];
+					if (listener && (namespace === listener.namespace) && (!callback || callback == listener.callback)) {
+						listeners.splice(i, 1);
+					}
+				}
+				if (!listeners.length) {
+					delete _listeners[eventname];
+				}
+			});
 			$(ScrollScene).off(names, callback);
 			return ScrollScene;
-		 };
+		};
 
 		 /**
 		 * Trigger an event.
@@ -1752,14 +1776,23 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		 * @param {string} name - The name of the event that should be triggered.
 		 * @param {object} [vars] - An object containing info that should be passed to the callback.
 		 * @returns {ScrollScene} Parent object for chaining.
-		 */
-		 this.trigger = function (name, vars) {
-			log(3, 'event fired:', name, "->", vars);
-			var event = $.Event(name.trim().toLowerCase(), vars);
-			$(ScrollScene).trigger(event);
+		*/
+		this.trigger = function (name, vars) {
+			var
+				event = new ScrollMagicEvent(name, vars),
+				listeners = _listeners[event.name];
+			log(3, 'event fired:', event.name, "->", vars);
+			if (listeners) {
+				event.target = event.currentTarget = ScrollScene;
+				listeners.forEach(function (listener, key) {
+					if (!event.namespace || event.namespace === listener.namespace) {
+						listener.callback.call(ScrollScene, event);
+					}
+				});
+			}
 			return ScrollScene;
-		 };
-
+		};
+		
 		// INIT
 		construct();
 		return ScrollScene;

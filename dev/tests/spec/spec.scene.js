@@ -37,18 +37,17 @@ describe('ScrollScene', function() {
 		var getterSetter = ["duration", "offset", "triggerElement", "triggerHook", "reverse", "tweenChanges", "loglevel", "enabled", "progress"];
 		var getterOnly = ["parent", "state", "scrollOffset", "triggerOffset"];
 		if (new ScrollScene().triggerPosition) {
-			getterOnly.push("triggerPosition") // deprecated since 1.1.0
+			getterOnly.push("triggerPosition"); // deprecated since 1.1.0
 		} else {
 			log("remove test for triggerPosition!");
 		}
 		var exception = ["destroy"];
 		if (new ScrollScene().updateIndicators) {
-			exception.push("updateIndicators")
+			exception.push("updateIndicators");
 		} else {
 			log("remove test for updateIndicators!");
 		}
 		it("is chainable if not a getter", function () {
-			jasmine.addMatchers(globalMatchers.methodTests);
 			for (var m in scene) {
 				if (typeof scene[m] === 'function' && exception.indexOf(m) < 0) {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
@@ -263,8 +262,8 @@ describe('ScrollScene', function() {
 
 	describe(".triggerElement()", function () {
 		it("returns the correct value", function () {
-			expect(scene.triggerElement()).toBe("#trigger");
-			expect(new ScrollScene({triggerElement: $("#trigger")}).triggerElement()[0]).toBe($("#trigger")[0]);
+			expect(scene.triggerElement()).toBe(document.getElementById("trigger"));
+			expect(new ScrollScene({triggerElement: $("#trigger")[0]}).triggerElement()).toBe($("#trigger")[0]);
 		});
 		it("changes the value", function () {
 			scene.triggerElement(null);
@@ -275,13 +274,12 @@ describe('ScrollScene', function() {
 		});
 		it("converts to the right type", function () {
 			scene.triggerElement("unknownitem");
-			expect(scene.triggerElement()).toBeNull();
+			expect(scene.triggerElement()).toBeUndefined();
 			scene.triggerElement(undefined);
-			expect(scene.triggerElement()).toBeNull();
+			expect(scene.triggerElement()).toBeUndefined();
 			scene.triggerElement("#trigger");
-			expect(scene.triggerElement()).toBe("#trigger");
-			scene.triggerElement($("#trigger"));
-			expect(scene.triggerElement()).toEqual($("#trigger"));
+			expect(scene.triggerElement()).toBeOfType("htmldivelement");
+			expect(scene.triggerElement()).toEqual($("#trigger")[0]);
 		});
 	});
 
@@ -374,16 +372,13 @@ describe('ScrollScene', function() {
 		});
 		it("returns the correct value when container is resized", function (done) {
 			scene.triggerHook(1);
-      var resizeSpy = jasmine.createSpy('resizeSpy');
 			$c.height(100);
 			$c.on("resize", function () {
-				resizeSpy();
 				expect(scene.scrollOffset()).toBe(250 - $c.height());
 				done();
 			});
       setTimeout(function(){
-          expect(resizeSpy).toHaveBeenCalled(); // fallback if event doesnt work break
-          done();
+         expect("resize event").toBe("triggered by now");
       }, 101); // 100 is default val for refresh interval
 		});
 		it("returns the correct value when the position of the triggerElement changes", function () {

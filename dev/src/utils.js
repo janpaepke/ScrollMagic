@@ -88,13 +88,25 @@
 		elem = elem || document;
 		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
 	};
-	// get inner height
-	var __getHeight = function (elem) {
-		return elem.clientHeight || elem.innerHeight || 0;
+	// get element dimension (width or height)
+	var __getDimension = function (which, elem, outer, includeMargin) {
+		if (elem === document)
+			elem = window;
+		which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
+		var d = outer ? elem['outer' + which] : elem['client' + which] || elem['inner' + which] || 0;
+		if (outer && includeMargin) {
+			var style = getComputedStyle(elem);
+			d += which === 'Height' ?  parseInt(style.marginTop) + parseInt(style.marginBottom) : parseInt(style.marginLeft) + parseInt(style.marginRight);
+		}
+		return d;
 	};
-	// get inner width
-	var __getWidth = function (elem) {
-		return elem.clientWidth || elem.innerWidth || 0;
+	// get element height
+	var __getWidth = function (elem, outer, includeMargin) {
+		return __getDimension('width', elem, outer, includeMargin);
+	};
+	// get element width
+	var __getHeight = function (elem, outer, includeMargin) {
+		return __getDimension('height', elem, outer, includeMargin);
 	};
 
 	// get element position (optionally relative to viewport)
@@ -116,7 +128,11 @@
 	var __getElements = function (selector) {
 		var arr = [];
 		if (__isString(selector)) {
-			selector = document.querySelectorAll(selector);
+			try {
+				selector = document.querySelectorAll(selector);
+			} catch (e) { // invalid selector
+				return arr;
+			}
 		}
 		if (__type(selector) === 'nodelist') {
 			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) {
@@ -127,6 +143,42 @@
 		}
 
 		return arr;
+	};
+	var __addClass = function(elem, classname) {
+		if (classname) {
+			if (elem.classList)
+				elem.classList.add(classname);
+			else
+				elem.className += ' ' + classname;
+		}
+	};
+	var __removeClass = function(elem, classname) {
+		if (classname) {
+			if (elem.classList)
+				elem.classList.remove(classname);
+			else
+				elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+		}
+	};
+	// if options is string -> returns css value
+	// if options is array -> returns object with css value pairs
+	// if options is object -> set new css values
+	var __css = function (elem, options) {
+		if (__isString(options)) {
+			return getComputedStyle(elem)[options];
+		} else if (__isArray(options)) {
+			var
+				obj = {},
+				style = getComputedStyle(elem);
+			options.forEach(function(option, key) {
+				obj[option] = style[option];
+			});
+			return obj;
+		} else {
+			for (var option in options) {
+				elem.style[option] = options[option];
+			}
+		}
 	};
 
 	// implementation of requestAnimationFrame

@@ -49,7 +49,6 @@ describe('ScrollMagic', function() {
 		var getterOnly = ["info"];
 		var exception = ["destroy"];
 		it("is chainable if not a getter", function () {
-			jasmine.addMatchers(globalMatchers.methodTests);
 			for (var m in ctrl) {
 				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0) {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter

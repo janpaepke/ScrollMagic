@@ -87,12 +87,6 @@ define('ScrollMagic', [], function () {
 				throw NAMESPACE + " init failed."; // cancel
 			}
 			_isDocument = !document.contains(_options.container) || document == _options.container;
-			// prevent bubbling of fake resize event to window // TODO -> CHECK IF STILL NECESSARY with new custom event handling (can define as non-bubbling)
-			if (!_isDocument) {
-				_options.container.addEventListener('resize', function ( e ) {
-          e.stopPropagation();
-        });
-			}
 			// update container size immediately
 			_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
 			// set event handlers
@@ -178,10 +172,9 @@ define('ScrollMagic', [], function () {
 
 		var refresh = function () {
 			if (!_isDocument) {
-				// simulate resize event. Only works for viewport relevant param
+				// simulate resize event. Only works for viewport relevant param (performance)
 				if (_viewPortSize != (_options.vertical ? __getHeight(_options.container) : __getWidth(_options.container))) {
-					// TODO: correctly trigger custom resize event
-					// _options.container.trigger("resize");
+					_options.container.dispatchEvent(new Event('resize', {bubbles: false, cancelable: false}));
 				}
 			}
 			_sceneObjects.forEach(function (scene, index) {// refresh all scenes
