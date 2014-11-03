@@ -13,7 +13,7 @@ define('ScrollMagic', [], function () {
 	 * var controller = new ScrollMagic({container: "#myContainer", loglevel: 3});
 	 *
 	 * @param {object} [options] - An object containing one or more options for the controller.
-	 * @param {(string|object)} [options.container=window] - A selector, DOM object or a jQuery object that references the main container for scrolling.
+	 * @param {(string|object)} [options.container=window] - A selector, DOM object that references the main container for scrolling.
 	 * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
 	 * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollScene}.
 	 * @param {number} [options.loglevel=2] Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
@@ -397,7 +397,7 @@ define('ScrollMagic', [], function () {
 		 *
 		 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
 		 * 1. `number` -> The container will scroll to this new scroll offset.
-		 * 2. `string` or `object` -> Can be a selector, a DOM object or a jQuery element.  
+		 * 2. `string` or `object` -> Can be a selector or a DOM object.  
 		 *  The container will scroll to the position of this element.
 		 * 3. `ScrollScene` -> The container will scroll to the start of this scene.
 		 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  

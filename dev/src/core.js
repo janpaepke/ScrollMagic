@@ -18,20 +18,16 @@
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
   	define = function (moduleName, dependencies, factory) {
-  		for (var x = 0, dependency; x<dependencies.length; x++) {
-  			dependency = dependencies[x];
-  			if (dependency === 'jquery') { // lowercase with require, but camel case as global
-  				dependency = 'jQuery';
-  			}
-  			dependencies[x] = root[dependency];
+  		for (var x = 0; x<dependencies.length; x++) {
+  			dependencies[x] = root[dependencies[x]];
   		}
   		root[moduleName] = factory.apply(root, dependencies);
   	};
   }
 
-// (BUILD) - INSERT POINT: class.ScrollMagic
+// (BUILD) - INSERT POINT: ScrollMagic
 
-// (BUILD) - INSERT POINT: class.ScrollScene
+// (BUILD) - INSERT POINT: ScrollScene
 
 // (BUILD) - INSERT POINT: utils
 

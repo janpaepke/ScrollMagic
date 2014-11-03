@@ -102,12 +102,12 @@ var OUTPUT = {
 	main: {
 		filename: "jquery.scrollmagic.js",
 		components: [
-			"header.regular.js",
-			"core.ScrollMagic.js"
+			"banner.regular.js",
+			"core.js"
 		],
 		inserts: [
-			"class.ScrollMagic.js",
-			"class.ScrollScene.js",
+			"ScrollMagic.js",
+			"ScrollScene.js",
 			"utils.js"
 		],
 		docInclude: true
@@ -115,11 +115,11 @@ var OUTPUT = {
 	minified: {
 		filename: "jquery.scrollmagic.min.js",
 		components: [
-			"core.ScrollMagic.js"
+			"core.js"
 		],
 		inserts: [
-			"class.ScrollMagic.js",
-			"class.ScrollScene.js",
+			"ScrollMagic.js",
+			"ScrollScene.js",
 			"utils.js"
 		],
 		regReplace: [
@@ -133,15 +133,15 @@ var OUTPUT = {
 			}
 		],
 		minify: {
-			preamble: "header.min.js"
+			preamble: "banner.min.js"
 		},
 		docInclude: false
 	},
 	debug: {
 		filename: "jquery.scrollmagic.debug.js",
 		components: [
-			"header.regular.js",
-			"class.ScrollScene.extend.debug.js"
+			"banner.regular.js",
+			"plugins/SceneIndicators.js"
 		],
 		docInclude: true
 	}
