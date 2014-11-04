@@ -13,7 +13,7 @@
 	
 	"use strict";
 
-	var define = root.define, ScrollMagic, ScrollScene;
+	var ScrollMagic, ScrollScene;
   ScrollScene = ScrollMagic = function () {};
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
@@ -34,5 +34,12 @@
 // (BUILD) - INSERT POINT: class.ScrollScene
 
 // (BUILD) - INSERT POINT: utils
+
+	define(['ScrollMagic', 'ScrollScene'], function (ScrollMagic, ScrollScene) {
+		return {
+			"ScrollMagic": ScrollMagic,
+			"ScrollScene": ScrollScene
+		};
+	});
 
 })(this || window);
