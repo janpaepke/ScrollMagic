@@ -28,7 +28,7 @@
   "devDependencies": {
     "chalk": "^0.5.1",
     "detect-indent": "^0.2.0",
-    "jsdoc": "^3.3.0",
+    "jsdoc": "^3.3.0-alpha10",
     "jshint": "~2.5.1",
     "karma": "^0.12.21",
     "karma-chrome-launcher": "^0.1.4",
