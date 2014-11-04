@@ -25,7 +25,7 @@ Greensock License info at http://www.greensock.com/licensing/
 	
 	"use strict";
 
-	var define = root.define, ScrollMagic, ScrollScene;
+	var ScrollMagic, ScrollScene;
   ScrollScene = ScrollMagic = function () {};
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
@@ -2485,5 +2485,12 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 			};
 		}
 	}(window));
+
+	define(['ScrollMagic', 'ScrollScene'], function (ScrollMagic, ScrollScene) {
+		return {
+			"ScrollMagic": ScrollMagic,
+			"ScrollScene": ScrollScene
+		};
+	});
 
 })(this || window);
