@@ -13,11 +13,13 @@
 	
 	"use strict";
 
-	var define = root.define, ScrollMagic, ScrollScene;
+	var ScrollMagic, ScrollScene;
   ScrollScene = ScrollMagic = function () {};
   if (typeof define !== 'function' || !define.amd) {
   	// No AMD loader -> Provide custom method to to register browser globals instead
   	define = function (moduleName, dependencies, factory) {
+      if (typeof moduleName !== 'string') return;
+
   		for (var x = 0, dependency; x<dependencies.length; x++) {
   			dependency = dependencies[x];
   			if (dependency === 'jquery') { // lowercase with require, but camel case as global
@@ -34,5 +36,12 @@
 // (BUILD) - INSERT POINT: class.ScrollScene
 
 // (BUILD) - INSERT POINT: utils
+
+	define(['ScrollMagic', 'ScrollScene'], function (ScrollMagic, ScrollScene) {
+		return {
+			"ScrollMagic": ScrollMagic,
+			"ScrollScene": ScrollScene
+		};
+	});
 
 })(this || window);
