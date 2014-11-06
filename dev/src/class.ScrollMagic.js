@@ -1,4 +1,4 @@
-define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
+var ScrollMagic = function () {
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -594,4 +594,4 @@ define('ScrollMagic', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 	};
 	ScrollMagic.version = "%VERSION%"; // version number for browser global
 	return ScrollMagic;
-});
+}();

@@ -9,25 +9,18 @@
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 @todo: feature: optimize performance on debug plugin (huge drawbacks, when using many scenes)
 */
-(function(root) {
-	
-	"use strict";
+(function (root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['jquery', 'TweenMax', 'TimelineMax'], factory);
+	} else {
 
-	var define = root.define, ScrollMagic, ScrollScene;
-  ScrollScene = ScrollMagic = function () {};
-  if (typeof define !== 'function' || !define.amd) {
-  	// No AMD loader -> Provide custom method to to register browser globals instead
-  	define = function (moduleName, dependencies, factory) {
-  		for (var x = 0, dependency; x<dependencies.length; x++) {
-  			dependency = dependencies[x];
-  			if (dependency === 'jquery') { // lowercase with require, but camel case as global
-  				dependency = 'jQuery';
-  			}
-  			dependencies[x] = root[dependency];
-  		}
-  		root[moduleName] = factory.apply(root, dependencies);
-  	};
-  }
+		// Browser globals
+		var classes = factory(jQuery, TweenMax, TimelineMax);
+		root.ScrollMagic = classes.ScrollMagic;
+		root.ScrollScene = classes.ScrollScene;
+	}
+}(this, function ($, TweenMax, TimelineMax) {
 
 // (BUILD) - INSERT POINT: class.ScrollMagic
 
@@ -35,4 +28,8 @@
 
 // (BUILD) - INSERT POINT: utils
 
-})(this || window);
+	return {
+		ScrollMagic: ScrollMagic,
+		ScrollScene: ScrollScene,
+	};
+}));
