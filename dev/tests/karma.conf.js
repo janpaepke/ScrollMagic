@@ -7,10 +7,10 @@ module.exports = function(config) {
     // needed files
     files: [
       {pattern: 'fixtures/*.html', included: false},
-      '../../js/_dependent/jquery.min.js',
-      '../../js/_dependent/greensock/TweenMax.min.js',
-      '../../js/jquery.scrollmagic.js',
-      '../../js/jquery.scrollmagic.debug.js',
+      '../../js/lib/jquery.min.js',
+      '../../js/lib/greensock/TweenMax.min.js',
+      '../../scrollmagic/uncompressed/ScrollMagic.js',
+      '../../scrollmagic/uncompressed/plugins/SceneIndicators.js',
       'additional/vendor/**/*.js',
       'additional/settings.js',
       'spec/*.js'

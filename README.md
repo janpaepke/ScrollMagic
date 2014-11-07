@@ -41,18 +41,18 @@ If the above points are not crucial for you and you are just looking for a simpl
 Aside from [jQuery](http://jquery.com/) make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
 To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:
 ```html
-<script type="text/javascript" src="js/jquery.scrollmagic.js"></script>
+<script type="text/javascript" src="scrollmagic/uncompressed/ScrollMagic.js"></script>
 ```
 
 For deployment use the minified version __instead__:
 ```html
-<script type="text/javascript" src="js/jquery.scrollmagic.min.js"></script>
+<script type="text/javascript" src="scrollmagic/minified/ScrollMagic.min.js"></script>
 ```
 _**NOTE:** The logging feature is removed in the minified version for obvious file size considerations._
 
 To have access to the debugging extension during development, include this file __additionally__:
 ```html
-<script type="text/javascript" src="js/jquery.scrollmagic.debug.js"></script>
+<script type="text/javascript" src="scrollmagic/uncompressed/plugins/SceneIndicators.js"></script>
 ```
 You can remove the debugging extension for actual deployment.
 

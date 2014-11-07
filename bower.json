@@ -10,7 +10,7 @@
 		}
 	],
 	"main": [
-		"js/jquery.scrollmagic.js"
+		"scrollmagic/uncompressed/ScrollMagic.js"
 	],
 	"keywords": [
 		"scroll",

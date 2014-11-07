@@ -21,7 +21,7 @@
       "url": "http://www.gnu.org/licenses/gpl-3.0.html"
     }
   ],
-  "main": "js/jquery.scrollmagic.js",
+  "main": "scrollmagic/uncompressed/ScrollMagic.js",
   "engines": {
     "node": "0.10.x"
   },
