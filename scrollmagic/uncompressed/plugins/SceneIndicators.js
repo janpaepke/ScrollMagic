@@ -1,6 +1,6 @@
 /*
-ScrollMagic v1.2.3
-The jQuery plugin for doing magical scroll interactions.
+ScrollMagic v2.0.0-alpha (2014-10-07)
+The javascript plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
 	
@@ -12,7 +12,7 @@ Greensock License info at http://www.greensock.com/licensing/
 */
 /*
 	@overview Debug Extension for ScrollMagic.
-	@version	1.2.3
+	@version	2.0.0-alpha
 	@license	Dual licensed under MIT license and GPL.
 	@author		Jan Paepke - e-mail@janpaepke.de
 */
@@ -71,7 +71,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				suffix = (options.labelSuffix === "") ? "" : " " + options.suffix,
 				$container = $(options.parent).length > 0 ?
 						  $(options.parent)
-						: cParams.isDocument ? $("body") : cParams.container, // check if window element (then use body)
+						: cParams.isDocument ? $("body") : $(cParams.container), // check if window element (then use body)
 				$wrap = $("<div></div>")
 						.addClass("ScrollSceneIndicators")
 						.data("options", options)
@@ -127,7 +127,8 @@ Greensock License info at http://www.greensock.com/licensing/
 				}
 			};
 			scene.on("change.debug", callUpdate);
-			cParams.container.on("resize scroll", callUpdate);
+			cParams.container.addEventListener("scroll", callUpdate);
+			cParams.container.addEventListener("resize", callUpdate);
 			if (!cParams.isDocument) {
 				$(window).on("scroll resize", callUpdate);
 			}
@@ -148,7 +149,7 @@ Greensock License info at http://www.greensock.com/licensing/
 				$triggerHook = indicators.children(".hook"),
 				$start = indicators.children(".start"),
 				$end = indicators.children(".end"),
-				parentOffset = cParams.container.offset() || {top: 0, left: 0},
+				parentOffset = $(cParams.container).offset() || {top: 0, left: 0},
 				parentPos = cParams.vertical ? parentOffset.top : parentOffset.left,
 				hookPos = (cParams.size * scene.triggerHook()) + parentPos,
 				direction = cParams.vertical ? "v" : "h";
@@ -173,12 +174,12 @@ Greensock License info at http://www.greensock.com/licensing/
 				$triggerHook.hide();
 			} else {
 				$triggerHook.show();
-				var flip = hookPos > cParams.size*0.8; // put name above line?	
+				var flip = hookPos > cParams.size*0.8; // put name above line?
 				if (cParams.vertical) {
 					// triggerHook
 					$triggerHook.css({
 						top: flip ? hookPos - $triggerHook.height() - 2 : hookPos,
-						left: (cParams.isDocument ? cParams.container.width() : parentOffset.left + cParams.container.width() - $(document).scrollLeft()) - 70 - options.indent,
+						left: (cParams.isDocument ? cParams.container.innerWidth : parentOffset.left + cParams.container.clientWidth - $(document).scrollLeft()) - 70 - options.indent,
 						width: 40,
 						height: "auto",
 						padding: "0 8px 2px 8px",
@@ -189,7 +190,7 @@ Greensock License info at http://www.greensock.com/licensing/
 					});
 				} else {
 					$triggerHook.css({
-						top: (cParams.isDocument ? cParams.container.height() : parentOffset.top + cParams.container.height() - $(document).scrollTop()) - 40 - options.indent,
+						top: (cParams.isDocument ? cParams.container.innerHeight : parentOffset.top + cParams.container.clientHeight - $(document).scrollTop()) - 40 - options.indent,
 						left: flip ? hookPos - $triggerHook.width() - 9: hookPos,
 						width: "auto",
 						height: 20,
@@ -226,14 +227,14 @@ Greensock License info at http://www.greensock.com/licensing/
 					// start
 					$start.css({
 						top: startPos,
-						right: 71-cParams.container.scrollLeft() + options.indent,
+						right: 71-__getScrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						top: endPos,
-						right: 71-cParams.container.scrollLeft() + options.indent,
+						right: 71-__getScrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
@@ -241,14 +242,14 @@ Greensock License info at http://www.greensock.com/licensing/
 					// start
 					$start.css({
 						left: startPos,
-						bottom: 40-cParams.container.scrollTop() + options.indent,
+						bottom: 40-__getScrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						left: endPos,
-						bottom: 40-cParams.container.scrollTop() + options.indent,
+						bottom: 40-__getScrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
@@ -256,4 +257,18 @@ Greensock License info at http://www.greensock.com/licensing/
 			}
 		}
 	};
+
+	// UTILS
+
+	// get scroll top value
+	var __getScrollTop = function (elem) {
+		elem = elem || document;
+		return (window.pageYOffset || elem.scrollTop  || 0) - (elem.clientTop  || 0);
+	};
+	// get scroll left value
+	var __getScrollLeft = function (elem) {
+		elem = elem || document;
+		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
+	};
+
 }));

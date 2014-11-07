@@ -255,7 +255,7 @@
                 </td>
             
 
-            <td class="description last"><p>A selector, DOM object or a jQuery object that references the main container for scrolling.</p></td>
+            <td class="description last"><p>A selector, DOM object that references the main container for scrolling.</p></td>
         </tr>
 
 	
@@ -456,7 +456,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-72">line 72</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-68">line 68</a>
     </li></ul></dd>
     
 
@@ -601,7 +601,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-284">line 284</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-283">line 283</a>
     </li></ul></dd>
     
 
@@ -760,7 +760,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-620">line 620</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-619">line 619</a>
     </li></ul></dd>
     
 
@@ -902,7 +902,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-327">line 327</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-326">line 326</a>
     </li></ul></dd>
     
 
@@ -1024,7 +1024,7 @@
             <td class="description last"><p>The supplied argument can be one of these types:</p>
 <ol>
 <li><code>number</code> -&gt; The container will scroll to this new scroll offset.</li>
-<li><code>string</code> or <code>object</code> -&gt; Can be a selector, a DOM object or a jQuery element.<br>The container will scroll to the position of this element.</li>
+<li><code>string</code> or <code>object</code> -&gt; Can be a selector or a DOM object.<br>The container will scroll to the position of this element.</li>
 <li><code>ScrollScene</code> -&gt; The container will scroll to the start of this scene.</li>
 <li><code>function</code> -&gt; This function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.<br><em><strong>NOTE:</strong> All other options will still work as expected, using the new function to scroll.</em></li>
 </ol></td>
@@ -1062,7 +1062,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-446">line 446</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-445">line 445</a>
     </li></ul></dd>
     
 
@@ -1102,7 +1102,7 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
+    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollScene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (jQuery animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
 
 
     
@@ -1222,7 +1222,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-406">line 406</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-405">line 405</a>
     </li></ul></dd>
     
 
@@ -1416,7 +1416,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-366">line 366</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-365">line 365</a>
     </li></ul></dd>
     
 
@@ -1571,7 +1571,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-596">line 596</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-595">line 595</a>
     </li></ul></dd>
     
 
@@ -1725,7 +1725,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-572">line 572</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-571">line 571</a>
     </li></ul></dd>
     
 
@@ -1883,7 +1883,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-506">line 506</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-505">line 505</a>
     </li></ul></dd>
     
 
@@ -1926,7 +1926,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scroll position calculation methodcontroller.scrollPos(function () {	return this.info("vertical") ? -$mychildcontainer.y : -$mychildcontainer.x});</pre>
+    <pre class="sunlight-highlight-javascript">// get the current scroll Positionvar scrollPos = controller.scrollPos();// set a new scroll position calculation methodcontroller.scrollPos(function () {	return this.info("vertical") ? -mychildcontainer.y : -mychildcontainer.x});</pre>
 
 
     
@@ -2049,7 +2049,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-539">line 539</a>
+        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-538">line 538</a>
     </li></ul></dd>
     
 
@@ -2123,7 +2123,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-alpha9</a>
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-alpha10</a>
 		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
 		</span>
 				</footer>
