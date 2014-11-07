@@ -90,15 +90,14 @@
 	};
 	// get element dimension (width or height)
 	var __getDimension = function (which, elem, outer, includeMargin) {
-		if (elem === document)
-			elem = window;
+		elem = (elem === document) ? window : elem;
 		which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
-		var d = outer ? elem['offset' + which] : elem['client' + which] || elem['inner' + which] || 0;
+		var dimension = outer ? elem['offset' + which] : elem['client' + which] || elem['inner' + which] || 0;
 		if (outer && includeMargin) {
 			var style = getComputedStyle(elem);
-			d += which === 'Height' ?  parseFloat(style.marginTop) + parseFloat(style.marginBottom) : parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+			dimension += which === 'Height' ?  parseFloat(style.marginTop) + parseFloat(style.marginBottom) : parseFloat(style.marginLeft) + parseFloat(style.marginRight);
 		}
-		return d;
+		return dimension;
 	};
 	// get element height
 	var __getWidth = function (elem, outer, includeMargin) {

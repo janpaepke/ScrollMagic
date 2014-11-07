@@ -1,6 +1,6 @@
 /*
-ScrollMagic v%VERSION%
-The jQuery plugin for doing magical scroll interactions.
+ScrollMagic v%VERSION% (%YEAR%-%MONTH%-%DAY%)
+%DESCRIPTION%
 (c) %YEAR% Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
 	

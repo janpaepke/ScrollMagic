@@ -25,10 +25,10 @@
   	};
   }
 
-// (BUILD) - INSERT POINT: ScrollMagic
+// include('ScrollMagic.js')
 
-// (BUILD) - INSERT POINT: ScrollScene
+// include('ScrollScene.js')
 
-// (BUILD) - INSERT POINT: utils
+// include('utils.js')
 
 })(this || window);
