@@ -32,7 +32,7 @@ var
 var args = require('yargs')
 						.alias("d", "docs")		.default('d', false)
 						.alias("o", "out")		.default('o', './' + config.dirs.defaultOutput)
-						.alias("b", "ver")	.default('b', pkg.version)
+						.alias("b", "ver")	.default('b', config.version)
 						.argv; // TODO: document parameters
 
 
@@ -47,12 +47,12 @@ var options = {
 	folderDocsOut: args.docs.split ? args.docs : './' + config.dirs.defaultDocsOutput
 };
 
-var now = new Date();
+var now = config.version === options.version ? new Date(config.lastupdate) : new Date();
 var replaceVars = {
 	variables: {
 		"%VERSION%": options.version,
 		"%YEAR%": now.getFullYear(),
-		"%MONTH%": ("0"+now.getMonth()).slice(-2),
+		"%MONTH%": ("0"+(now.getMonth() + 1)).slice(-2),
 		"%DAY%": ("0"+now.getDate()).slice(-2),
 		"%DESCRIPTION%": config.info.description,
 	},
@@ -215,6 +215,19 @@ gulp.task('updatejsonfiles', function() {
 			.pipe(jeditor(config.info, {keep_array_indentation: true}))
 			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
 			.pipe(gulp.dest("./"));
+	if (config.version !== options.version) {
+		gulp.src("./dev/config.json")
+				.pipe(jeditor(
+					{
+						version: options.version,
+						lastupdate: now.getFullYear() + "-" + ("0"+(now.getMonth() + 1)).slice(-2) + "-" + ("0"+now.getDate()).slice(-2)
+					},
+					{
+						keep_array_indentation: true
+					}
+				))
+				.pipe(gulp.dest("./dev"));
+	}
 });
 
 gulp.task('updatereadme', function() {

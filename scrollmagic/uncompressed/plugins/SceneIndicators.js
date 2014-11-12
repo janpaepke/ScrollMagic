@@ -1,5 +1,5 @@
 /*
-ScrollMagic v2.0.0-alpha (2014-10-07)
+ScrollMagic v2.0.0-alpha (2014-11-07)
 The javascript plugin for doing magical scroll interactions.
 (c) 2014 Jan Paepke (@janpaepke)
 License & Info: http://janpaepke.github.io/ScrollMagic
