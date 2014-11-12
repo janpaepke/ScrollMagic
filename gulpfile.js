@@ -92,8 +92,8 @@ gulp.task('validateoptions', function() {
 	// version
 	if (!semver.valid(options.version)) {
 		log.exit("Invalid version number supplied");
-	} else if (semver.lt(options.version, pkg.version)) {
-		log.exit("Supplied version (" + options.version + ") is older than current (" + pkg.version + "), defined in package.json");
+	} else if (semver.lt(options.version, config.version)) {
+		log.exit("Supplied version (" + options.version + ") is older than current (" + config.version + "), defined in dev/config.json");
 	}
 	// output
 	if (!fs.existsSync(options.folderOut)) {
@@ -215,19 +215,17 @@ gulp.task('updatejsonfiles', function() {
 			.pipe(jeditor(config.info, {keep_array_indentation: true}))
 			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
 			.pipe(gulp.dest("./"));
-	if (config.version !== options.version) {
-		gulp.src("./dev/config.json")
-				.pipe(jeditor(
-					{
-						version: options.version,
-						lastupdate: now.getFullYear() + "-" + ("0"+(now.getMonth() + 1)).slice(-2) + "-" + ("0"+now.getDate()).slice(-2)
-					},
-					{
-						keep_array_indentation: true
-					}
-				))
-				.pipe(gulp.dest("./dev"));
-	}
+	gulp.src("./dev/config.json")
+			.pipe(jeditor(
+				{
+					version: options.version,
+					lastupdate: now.getFullYear() + "-" + ("0"+(now.getMonth() + 1)).slice(-2) + "-" + ("0"+now.getDate()).slice(-2)
+				},
+				{
+					keep_array_indentation: true
+				}
+			))
+			.pipe(gulp.dest("./dev"));
 });
 
 gulp.task('updatereadme', function() {
