@@ -1217,9 +1217,14 @@ define('ScrollScene', ['TweenMax', 'TimelineMax'], function (TweenMax, TimelineM
 			_pin.parentNode.style.display = ''; // hack end.
 
 			if (!inFlow && settings.pushFollowers) {
-				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers is disabled.");
+				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers will be disabled.");
 				settings.pushFollowers = false;
 			}
+			// (BUILD) - REMOVE IN MINIFY - START
+			if (_pin && _options.duration === 0 && settings.pushFollowers) {
+				log(2, "WARNING: pushFollowers has no effect, when scene duration is 0.");
+			}
+			// (BUILD) - REMOVE IN MINIFY - END
 
 			// create spacer and insert
 			var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
