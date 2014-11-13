@@ -14,11 +14,10 @@
 		// AMD. Register as an anonymous module.
 		define(['jquery', 'TweenMax', 'TimelineMax'], factory);
 	} else {
-
 		// Browser globals
-		var classes = factory(jQuery, TweenMax, TimelineMax);
-		root.ScrollMagic = classes.ScrollMagic;
-		root.ScrollScene = classes.ScrollScene;
+		var sm = factory(root.jQuery, root.TweenMax, root.TimelineMax);
+		root.ScrollMagic = sm.Controller;
+		root.ScrollScene = sm.Scene;
 	}
 }(this, function ($, TweenMax, TimelineMax) {
 
@@ -29,7 +28,7 @@
 // (BUILD) - INSERT POINT: utils
 
 	return {
-		ScrollMagic: ScrollMagic,
-		ScrollScene: ScrollScene,
+		Controller: ScrollMagic,
+		Scene: ScrollScene,
 	};
 }));

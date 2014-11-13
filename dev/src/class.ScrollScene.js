@@ -1,4 +1,3 @@
-var ScrollScene = function () {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -41,7 +40,7 @@ var ScrollScene = function () {
 	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
-	ScrollScene = function (options) {
+	var ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -1761,5 +1760,3 @@ var ScrollScene = function () {
 		construct();
 		return ScrollScene;
 	};
-	return ScrollScene;
-}();

@@ -1,4 +1,3 @@
-var ScrollMagic = function () {
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -26,7 +25,7 @@ var ScrollMagic = function () {
 	 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
-	ScrollMagic = function(options) {
+	var ScrollMagic = function(options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -593,5 +592,3 @@ var ScrollMagic = function () {
 		return ScrollMagic;
 	};
 	ScrollMagic.version = "%VERSION%"; // version number for browser global
-	return ScrollMagic;
-}();

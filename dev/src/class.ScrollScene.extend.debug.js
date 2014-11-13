@@ -7,13 +7,14 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['ScrollMagic', 'jquery'], factory);
+        define(['ScrollMagic', 'jquery'], function(sm, $) {
+        	factory(sm.Scene, $);
+        });
     } else {
-    		// no browser global needed, just execute
-        factory({ 'ScrollScene': root.ScrollScene}, root.jQuery);
+    		// no browser global export needed, just execute
+        factory(root.ScrollScene, root.jQuery);
     }
-}(this, function(scrollmagic, $) {
-	var ScrollScene = scrollmagic.ScrollScene;
+}(this, function(ScrollScene, $) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
