@@ -1,4 +1,4 @@
-define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenMax, TimelineMax) {
+var ScrollScene = function () {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -1762,4 +1762,4 @@ define('ScrollScene', ['jquery', 'TweenMax', 'TimelineMax'], function ($, TweenM
 		return ScrollScene;
 	};
 	return ScrollScene;
-});
+}();

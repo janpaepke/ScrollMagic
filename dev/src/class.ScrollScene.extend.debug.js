@@ -7,12 +7,13 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['ScrollScene', 'jquery'], factory);
+        define(['ScrollMagic', 'jquery'], factory);
     } else {
     		// no browser global needed, just execute
-        factory(root.ScrollScene, root.jQuery);
+        factory({ 'ScrollScene': root.ScrollScene}, root.jQuery);
     }
-}(this, function(ScrollScene, $) {
+}(this, function(scrollmagic, $) {
+	var ScrollScene = scrollmagic.ScrollScene;
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
