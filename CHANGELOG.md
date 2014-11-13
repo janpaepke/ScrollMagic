@@ -3,10 +3,10 @@ CHANGELOG
 
 ## 1.3.0 (2014-11-13)
 
- #### changes (potentially breaking):
+#### changes (potentially breaking):
  - changed AMD loader behavior to export only one object -> `{Controller: ScrollMagic, Scene: ScrollScene}`
 
- #### bugfixes:
+#### bugfixes:
  - added Error message for missing dependencies
  - fixed bubbling of pseudo-resize event of div containers
  - reference bug with AMD loading
