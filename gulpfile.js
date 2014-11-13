@@ -82,7 +82,7 @@ var log = {
 /* ############### MAIN TASKS ############### */
 /* ########################################## */
 
-gulp.task('default', ['validateoptions', 'lintsource', 'updatejsonfiles', 'updatereadme', 'build'], function () {
+gulp.task('default', ['validateoptions', 'lintsource', 'updatejsonfiles', 'updatereadme', 'clean', 'build'], function () {
 	if (options.version != pkg.version) {
 		log.info("Updated to version", options.version);
 	}
@@ -113,7 +113,7 @@ gulp.task('clean', function(callback) {
 	del(toclear, callback);
 });
 
-gulp.task('build', ['clean'], function(callback) {
+gulp.task('build', ['clean', 'validateoptions', 'lintsource'], function(callback) {
 	var filterMainFile = gulpFilter('core.js');
 
   var uncompressed = gulp.src(config.files, { base: config.dirs.source })
