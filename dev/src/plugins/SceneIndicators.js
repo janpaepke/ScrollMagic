@@ -7,9 +7,11 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['ScrollScene', 'jquery'], factory);
+        define(['ScrollMagic', 'jquery'], function(sm, $) {
+        	factory(sm.Scene, $);
+        });
     } else {
-    		// no browser global needed, just execute
+    		// no browser global export needed, just execute
         factory(root.ScrollScene, root.jQuery);
     }
 }(this, function(ScrollScene, $) {
@@ -245,7 +247,7 @@
 			}
 		}
 	};
-
+	
 	// UTILS
 
 	// get scroll top value

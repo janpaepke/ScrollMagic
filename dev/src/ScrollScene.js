@@ -1,4 +1,3 @@
-define('ScrollScene', ['TweenMax', 'TimelineMax'], function (TweenMax, TimelineMax) {
 	/**
 	 * A ScrollScene defines where the controller should react and how.
 	 *
@@ -41,7 +40,7 @@ define('ScrollScene', ['TweenMax', 'TimelineMax'], function (TweenMax, TimelineM
 	 										  ** `3` => errors, warnings, debuginfo
 	 * 
 	 */
-	ScrollScene = function (options) {
+	var ScrollScene = function (options) {
 
 		/*
 		 * ----------------------------------------------------------------
@@ -1809,5 +1808,3 @@ define('ScrollScene', ['TweenMax', 'TimelineMax'], function (TweenMax, TimelineM
 		construct();
 		return ScrollScene;
 	};
-	return ScrollScene;
-});

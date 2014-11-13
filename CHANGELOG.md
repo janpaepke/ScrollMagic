@@ -1,13 +1,23 @@
 CHANGELOG
 =========
 
+## 1.3.0 (2014-11-13)
+
+#### changes (potentially breaking):
+ - changed AMD loader behavior to export only one object -> `{Controller: ScrollMagic, Scene: ScrollScene}`
+
+#### bugfixes:
+ - added Error message for missing dependencies
+ - fixed bubbling of pseudo-resize event of div containers
+ - reference bug with AMD loading
+
 ## 1.2.0 (2014-10-14)
 
-### features
+#### features
  - AMD loader support (See issue [160](https://github.com/janpaepke/ScrollMagic/issues/160))
  - added warning for tweens being overwritten (See issue [145](https://github.com/janpaepke/ScrollMagic/issues/145))
 
-#### project changes:
+#### changes (non-breaking):
  - better code for mobile clicks (See issue [169](https://github.com/janpaepke/ScrollMagic/issues/169))
  - updated [draw example](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html) to camel case to support Firefox
  - updated [parralax sections example](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html) to moving divs instead of background position
@@ -22,7 +32,7 @@ CHANGELOG
 
 ## 1.1.0 (2014-09-04)
 
-#### potentially breaking code changes:
+#### changes (potentially breaking):
  - **zero duration scene events & states**  
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
@@ -35,7 +45,7 @@ CHANGELOG
  - **`change` event only fires when change actually happened**  
    If a setter is used with the current value or the internal validator fails and defaults to the same value an option is already set to, no `change` event will be fired anymore.
 
-#### non-breaking code changes
+#### changes (non-breaking)
  - **scenes are sorted in controller**  
    Scenes attached to the same controller are now updated in the order of their start position.  
    This way DOM modifcations (e.g. tweens) that influence each other are sure to be called in the right order.  
