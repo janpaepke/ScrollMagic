@@ -2,7 +2,7 @@
 	"version": "2.0.0-alpha",
 	"lastupdate": "2014-11-07",
 	"info": {
-		"description": "The javascript plugin for doing magical scroll interactions.",
+		"description": "The javascript library for doing magical scroll interactions.",
 		"homepage": "http://janpaepke.github.io/ScrollMagic/",
 		"keywords": [
 			"scroll",
