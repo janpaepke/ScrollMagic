@@ -1,5 +1,5 @@
 {
-  "name": "ScrollMagic",
+  "name": "scrollmagic",
   "title": "ScrollMagic",
   "version": "2.0.0-alpha",
   "description": "The javascript plugin for doing magical scroll interactions.",
@@ -34,7 +34,7 @@
     "gulp-file-include": "^0.5.1",
     "gulp-filter": "^1.0.2",
     "gulp-jshint": "^1.9.0",
-    "gulp-json-editor": "^2.1.1",
+    "gulp-json-editor": "^2.2.1",
     "gulp-open": "^0.3.0",
     "gulp-rename": "^1.2.0",
     "gulp-replace-task": "^0.1.0",
@@ -57,7 +57,7 @@
     "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
     "test-single-run": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js --single-run",
     "build": "node ./node_modules/gulp/bin/gulp",
-    "start": "node ./node_modules/gulp/bin/gulp openindex"
+    "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://janpaepke.github.io/ScrollMagic/",
   "keywords": [
