@@ -37,22 +37,21 @@ The major perks of using ScrollMagic include:
 ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple "scroll scenes" to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, especially if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
-## Installation
-Aside from [jQuery](http://jquery.com/) make sure you have loaded the [Greensock Animation Plattform (TweenMax)](http://www.greensock.com/gsap-js/).  
-To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:
+## Installation  
+To use ScrollMagic in your project simply copy the scrollmagic folder into your project's javascript folder and include it in the head section of your HTML file:
 ```html
-<script type="text/javascript" src="scrollmagic/uncompressed/ScrollMagic.js"></script>
+<script src="js/scrollmagic/uncompressed/ScrollMagic.js"></script>
 ```
 
 For deployment use the minified version __instead__:
 ```html
-<script type="text/javascript" src="scrollmagic/minified/ScrollMagic.min.js"></script>
+<script src="js/scrollmagic/minified/ScrollMagic.min.js"></script>
 ```
 _**NOTE:** The logging feature is removed in the minified version for obvious file size considerations._
 
 To have access to the debugging extension during development, include this file __additionally__:
 ```html
-<script type="text/javascript" src="scrollmagic/uncompressed/plugins/SceneIndicators.js"></script>
+<script src="js/scrollmagic/uncompressed/plugins/SceneIndicators.js"></script>
 ```
 You can remove the debugging extension for actual deployment.
 

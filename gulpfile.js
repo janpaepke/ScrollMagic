@@ -58,7 +58,7 @@ var args = require('yargs')
 
 var options = {
 	version: args.ver,
-	dodocs: args.doc === './' + config.dirs.defaultOutput,
+	dodocs: !!args.doc,
 	folderOut: args.out,
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
 	now: config.version === args.ver ? new Date(config.lastupdate) : new Date()
@@ -232,7 +232,7 @@ gulp.task('updatejsonfiles', ['validateoptions'], function() {
 					keep_array_indentation: true
 				}
 			))
-			.pipe(gulp.dest("./dev"));
+			.pipe(gulp.dest("./dev/build"));
 });
 
 gulp.task('updatereadme', ['validateoptions'], function() {

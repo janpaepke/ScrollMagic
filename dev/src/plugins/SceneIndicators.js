@@ -1,8 +1,5 @@
 /*
-	@overview Debug Extension for ScrollMagic.
-	@version	%VERSION%
-	@license	Dual licensed under MIT license and GPL.
-	@author		Jan Paepke - e-mail@janpaepke.de
+	Debug Extension for ScrollMagic.
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

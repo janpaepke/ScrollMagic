@@ -1,8 +1,8 @@
 /*
-	@overview ScrollMagic Animation Extension for GSAP.
-	@version	%VERSION%
-	@license	Dual licensed under MIT license and GPL.
-	@author		Jan Paepke - e-mail@janpaepke.de
+	ScrollMagic GSAP Animation Plugin.
+
+    Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
+    Greensock License info at http://www.greensock.com/licensing/
 */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

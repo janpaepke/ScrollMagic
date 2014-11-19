@@ -1,9 +1,5 @@
-/**
-@overview	##Info
-@version	%VERSION%
-@license	Dual licensed under MIT license and GPL.
-@author		Jan Paepke - e-mail@janpaepke.de
-
+/*
+@todo: remove todos on build
 @todo: enhancement: remove dependencies and move to plugins -> 2.0
 @todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
 @todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)

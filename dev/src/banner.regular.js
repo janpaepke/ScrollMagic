@@ -1,12 +1,10 @@
-/*
+/**
 ScrollMagic v%VERSION% (%YEAR%-%MONTH%-%DAY%)
 %DESCRIPTION%
 (c) %YEAR% Jan Paepke (@janpaepke)
-License & Info: http://janpaepke.github.io/ScrollMagic
-	
-Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
-http://johnpolacek.github.com/superscrollorama/
+Project Website: http://janpaepke.github.io/ScrollMagic
 
-Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
-Greensock License info at http://www.greensock.com/licensing/
+@version	%VERSION%
+@license	Dual licensed under MIT license and GPL.
+@author		Jan Paepke - e-mail@janpaepke.de
 */
