@@ -394,25 +394,25 @@
 						updatePinSpacerSize();
 						// add pinned class
 						_pin.addClass(_pinOptions.pinnedClass);
+
+            var
+              fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
+              scrollDistance = _options.reverse || _options.duration === 0 ?
+                         containerInfo.scrollPos - _scrollOffset.start // quicker
+                       : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
+            
+            // remove spacer margin to get real position (in case marginCollapse mode)
+            fixedPos.top -= parseFloat(_pinOptions.spacer.css("margin-top"));
+
+            // add scrollDistance
+            fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
+
+            // set new values
+            _pin.css({
+              top: fixedPos.top,
+              left: fixedPos.left
+            });
 					}
-
-					var
-						fixedPos = getOffset(_pinOptions.spacer, true), // get viewport position of spacer
- 						scrollDistance = _options.reverse || _options.duration === 0 ?
- 										 	 containerInfo.scrollPos - _scrollOffset.start // quicker
- 										 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
- 					
- 					// remove spacer margin to get real position (in case marginCollapse mode)
- 					fixedPos.top -= parseFloat(_pinOptions.spacer.css("margin-top"));
-
- 					// add scrollDistance
- 					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
-
-					// set new values
-					_pin.css({
-						top: fixedPos.top,
-						left: fixedPos.left
-					});
 				} else {
 					// unpinned state
 					var
