@@ -85,7 +85,11 @@
 				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 				throw NAMESPACE + " init failed."; // cancel
 			}
-			_isDocument = !document.contains(_options.container) || document == _options.container;
+			_isDocument = _options.container === window || _options.container === document.body || !document.contains(_options.container);
+			// normalize to window
+			if (_isDocument) {
+				_options.container = window;
+			}
 			// update container size immediately
 			_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
 			// set event handlers

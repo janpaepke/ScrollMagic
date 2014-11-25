@@ -1,4 +1,5 @@
 # Source
+ - css camel case stuff
  - change name structure
  - make tweens to be definable only in parameters (velocity-esque)
  - add error message, when plugin dependency isn't loaded (only for non-minified version)
@@ -17,6 +18,7 @@
  - split generation of files, minified files and jsdocs in seperate tasks
  - exclude Scene Indicators from minification?
  - add tests to gulp routine
+ - make travis-ci and dev gulp (dev gulp including source map)
 
 # Project
  - texte durchgehen
