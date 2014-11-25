@@ -56,6 +56,10 @@
 	var __isMarginCollapseType = function (str) {
 		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
 	};
+	// converts 'margin-top' into 'marginTop'
+	var __camelCase = function (str) {
+		return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+	};
 
 	// helpers
 	var __extend = function (out) {
@@ -164,13 +168,13 @@
 	// if options is object -> set new css values
 	var __css = function (elem, options) {
 		if (__isString(options)) {
-			return getComputedStyle(elem)[options];
+			return getComputedStyle(elem)[__camelCase(options)];
 		} else if (__isArray(options)) {
 			var
 				obj = {},
 				style = getComputedStyle(elem);
 			options.forEach(function(option, key) {
-				obj[option] = style[option];
+				obj[option] = style[__camelCase(option)];
 			});
 			return obj;
 		} else {
@@ -179,7 +183,7 @@
 				if (val == parseFloat(val)) { // assume pixel for seemingly numerical values
 					val += 'px';
 				}
-				elem.style[option] = val;
+				elem.style[__camelCase(option)] = val;
 			}
 		}
 	};

@@ -1,6 +1,8 @@
 # Source
- - css camel case stuff
  - change name structure
+ - make utils externally available
+ - make ScrollMagic.Event
+ - outsource scrollscene code
  - make tweens to be definable only in parameters (velocity-esque)
  - add error message, when plugin dependency isn't loaded (only for non-minified version)
  - Indicators plugin: end-indicator to above line and auto-suffix
