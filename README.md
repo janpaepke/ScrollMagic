@@ -38,7 +38,7 @@ ScrollMagic takes an object oriented approach using a controller for each scroll
 If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.
 
 ## Installation  
-To use ScrollMagic in your project simply copy the scrollmagic folder into your project's javascript folder and include it in the head section of your HTML file:
+To use ScrollMagic in your project simply copy the scrollmagic folder into your project's javascript folder and include it in your HTML file:
 ```html
 <script src="js/scrollmagic/uncompressed/ScrollMagic.js"></script>
 ```

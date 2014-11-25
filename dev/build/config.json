@@ -26,8 +26,12 @@
 		"defaultOutput": "scrollmagic",
 		"defaultDocsOutput": "docs"
 	},
+	"banner": {
+		"uncompressed": "dev/build/banner.regular.txt",
+		"minified": "dev/build/banner.min.txt"
+	},
 	"files": [
-		"dev/src/core.js",
+		"dev/src/*.js",
 		"dev/src/plugins/*.js"
 	]
 }

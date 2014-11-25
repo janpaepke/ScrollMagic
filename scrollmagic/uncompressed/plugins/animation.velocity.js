@@ -8,10 +8,10 @@
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
- * @file ScrollMagic GSAP Animation Plugin.
+ * @file ScrollMagic Velocity Animation Plugin.
  *
- * Powered by the Greensock Animation Platform (GSAP): http://www.greensock.com/js
- * Greensock License info at http://www.greensock.com/licensing/
+ * Powered by the VelocityJS: http://VelocityJS.org
+ * Velocity is published under MIT license.
  */
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {

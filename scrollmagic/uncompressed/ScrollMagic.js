@@ -1,28 +1,15 @@
-/*
-ScrollMagic v2.0.0-alpha (2014-11-07)
-The javascript plugin for doing magical scroll interactions.
-(c) 2014 Jan Paepke (@janpaepke)
-License & Info: http://janpaepke.github.io/ScrollMagic
-	
-Inspired by and partially based on SUPERSCROLLORAMA by John Polacek (@johnpolacek)
-http://johnpolacek.github.com/superscrollorama/
-
-Powered by the Greensock Tweening Platform (GSAP): http://www.greensock.com/js
-Greensock License info at http://www.greensock.com/licensing/
-*/
-/**
-@overview	##Info
-@version	2.0.0-alpha
-@license	Dual licensed under MIT license and GPL.
-@author		Jan Paepke - e-mail@janpaepke.de
-
-@todo: add ignore files to bower.json
-@todo: enhancement: remove dependencies and move to plugins -> 2.0
-@todo: bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
-@todo: bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
-@todo: feature: optimize performance on debug plugin (huge drawbacks, when using many scenes)
-*/
-
+/*!
+ * ScrollMagic v2.0.0-alpha (2014-11-07)
+ * The javascript library for doing magical scroll interactions.
+ * (c) 2014 Jan Paepke (@janpaepke)
+ * Project Website: http://janpaepke.github.io/ScrollMagic
+ * 
+ * @version 2.0.0-alpha
+ * @license Dual licensed under MIT license and GPL.
+ * @author Jan Paepke - e-mail@janpaepke.de
+ *
+ * @file ScrollMagic main library.
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.

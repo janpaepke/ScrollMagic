@@ -155,11 +155,11 @@
 <li>many application examples</li>
 </ul>
 <p><strong>Is ScrollMagic the right plugin for you?</strong><br>ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple &quot;scroll scenes&quot; to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, especially if you're just starting out with javascript.<br>If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome <a href="http://prinzhorn.github.io/skrollr/">skrollr</a> project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.</p>
-<h2>Installation</h2><p>Aside from <a href="http://jquery.com/">jQuery</a> make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;scrollmagic/uncompressed/ScrollMagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;scrollmagic/minified/ScrollMagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
+<h2>Installation</h2><p>To use ScrollMagic in your project simply copy the scrollmagic folder into your project's javascript folder and include it in your HTML file:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/ScrollMagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/minified/ScrollMagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
 <p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;scrollmagic/uncompressed/plugins/SceneIndicators.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/plugins/SceneIndicators.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
 <h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has several scenes attached.<br>Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.</p>
 <pre class="prettyprint source lang-javascript"><code>/*
     Basic workflow example
@@ -201,102 +201,6 @@ controller.addScene([
 
 
 
-
-
-
-
-
-	<h1 class="page-title">Documentation</h1>
-<section>
-
-<header>
-    <h2>
-    scrollmagic/uncompressed/ScrollMagic.js
-    </h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-
-    
-        
-            <div class="description"><h2>Info</h2></div>
-        
-
-        
-<dl class="details">
-    
-
-    
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>2.0.0-alpha</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>Jan Paepke - e-mail@janpaepke.de</li>
-        </ul>
-    </dd>
-    
-
-    
-
-    
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license"><ul class="dummy"><li>Dual licensed under MIT license and GPL.</li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scrollmagic_uncompressed_ScrollMagic.js.html">scrollmagic/uncompressed/ScrollMagic.js</a>, <a href="scrollmagic_uncompressed_ScrollMagic.js.html#sunlight-1-line-13">line 13</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
 
 
 
