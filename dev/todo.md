@@ -8,6 +8,7 @@
  - Indicators plugin: end-indicator to above line and auto-suffix
  - Indicators plugin: optimize performance (huge drawbacks, when using many scenes)
  - make jQuery plugin version
+ - make GSAP plugin work with LITE versions as well
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
@@ -26,3 +27,4 @@
  - texte durchgehen
  - rewrite tests to use require
  - test all variants (jquery, regular, minified)
+ - document gulpfile options and new dev structure (CONTRIBUTING.md)

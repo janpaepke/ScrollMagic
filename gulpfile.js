@@ -64,6 +64,10 @@ var options = {
 	banner: {
 		uncompressed: fs.readFileSync(config.banner.uncompressed, 'utf-8') + "\n",
 		minified: fs.readFileSync(config.banner.minified, 'utf-8') + "\n"
+	},
+	subfolder: {
+		uncompressed: "uncompressed",
+		minified: "minified"
 	}
 };
 options.replaceVars = {
@@ -88,7 +92,8 @@ options.replaceVars = {
 /* ############### MAIN TASKS ############### */
 /* ########################################## */
 
-gulp.task('default', ['validate-parameters', 'lintsource', 'clean', 'updatejsonfiles', 'updatereadme', 'build'], function () {
+// default build all
+gulp.task('default', ['validate-parameters', 'updatejsonfiles', 'updatereadme', 'build:uncompressed', 'build:minified', 'docs'], function () {
 	if (options.version != config.version) {
 		log.info("Updated to version", options.version);
 	}
@@ -116,23 +121,26 @@ gulp.task('validate-parameters', function() {
 	}
 });
 
-gulp.task('clean', ['validate-parameters'], function(callback) {
-	var toclear = [options.folderOut + "/*"];
+gulp.task('clean:uncompressed', function(callback) {
+	del(options.folderOut + "/"+ options.subfolder.uncompressed +"/*", callback);
+});
+gulp.task('clean:minified', function(callback) {
+	del(options.folderOut + "/"+ options.subfolder.minified +"/*", callback);
+});
+gulp.task('clean:docs', ['validate-parameters'], function(callback) {
 	if (options.dodocs) {
-		toclear.push(options.folderDocsOut + "/*");
+		del(options.folderDocsOut + "/*", callback);
 	}
-	del(toclear, callback);
 });
 
-gulp.task('lintsource', function() {
+gulp.task('lint', function() {
   gulp.src(config.dirs.source + "/**/*.js")
     .pipe(jshint())
   	.pipe(jshint.reporter('default'));
 });
 
-gulp.task('build', ['validate-parameters', 'lintsource', 'clean'], function(callback) {
-	// uncompressed files
-	var uncompressed = gulp.src(config.files, { base: config.dirs.source })
+gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompressed'], function() {
+	gulp.src(config.files, { base: config.dirs.source })
 		.pipe(include("// ")) // do file inclusions
 			.pipe(replace({
 			patterns: [
@@ -144,9 +152,10 @@ gulp.task('build', ['validate-parameters', 'lintsource', 'clean'], function(call
 		}))
 		.pipe(concat.header(options.banner.uncompressed))
 		.pipe(replace(options.replaceVars))
-		.pipe(gulp.dest(options.folderOut + "/uncompressed"));
+		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
+});
 
-
+gulp.task('build:minified', ['validate-parameters', 'lint', 'clean:minified'], function() {
 	// minified files
 	gulp.src(config.files, { base: config.dirs.source })
 		.pipe(include("// ")) // do file inclusions
@@ -166,33 +175,23 @@ gulp.task('build', ['validate-parameters', 'lintsource', 'clean'], function(call
 		.pipe(uglify())
 		.pipe(concat.header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
-		.pipe(gulp.dest(options.folderOut + "/minified"));
+		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
 
+});
 
+gulp.task('docs', ['validate-parameters', 'lint', 'clean:docs'], function(callback) {
 	if (options.dodocs) {
   	log.info("Generating new docs");
 
-	  // gulp-jsdoc only works with jsdoc-alpha5 which sucks.
-	 	// 	var jsdocconf = require('./dev/docs/jsdoc.conf.json');
-	 	// 	jsdocconf.templates.path = 'dev/docs/template';
-	 	// 	uncompressed
-	  //   	.pipe(addsrc('./README.md'))
-	  //   	.pipe(jsdoc(
-	  //   		options.folderDocsOut,
-	  //   		jsdocconf.templates,
-	  //   			{
-	  //   				plugins: jsdocconf.plugins
-	  //   			}
-	  //   		));
-
-		// gulp jsdoc doesnt work properly, so do it manually
 		var
 			bin = '"' + 'node_modules/.bin/jsdoc' + '"',
 			docIn = '"' + 'README.md' + '"',
 			docOut = '-d "' + options.folderDocsOut + '"',
 			conf = '-c "' + './dev/docs/jsdoc.conf.json' + '"',
 			template = '-t "' + './dev/docs/template' + '"';
-		uncompressed
+
+		// use uncompiled source files for now
+		gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
       .pipe(gutil.buffer(function(err, files){
       	files.forEach(function (file) {
       		docIn += ' "' + file.path + '"';
@@ -217,6 +216,22 @@ gulp.task('build', ['validate-parameters', 'lintsource', 'clean'], function(call
 		callback();
 	}
 
+	/*
+  	// gulp-jsdoc only works with jsdoc-alpha5 which sucks.
+  	// so do it manually for now
+
+ 		var jsdocconf = require('./dev/docs/jsdoc.conf.json');
+ 		jsdocconf.templates.path = 'dev/docs/template';
+ 		uncompressed
+    	.pipe(addsrc('./README.md'))
+    	.pipe(jsdoc(
+    		options.folderDocsOut,
+    		jsdocconf.templates,
+    			{
+    				plugins: jsdocconf.plugins
+    			}
+    		));
+	*/
 });
 
 gulp.task('updatejsonfiles', ['validate-parameters'], function() {
