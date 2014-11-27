@@ -15,6 +15,8 @@
 
 
 # Build (gulpfile.js)
+ - repair docs
+ - change includer to support relative paths
  - add error when lint fails.
  - custom reporter for jslint
  - make sourcemap for development phase

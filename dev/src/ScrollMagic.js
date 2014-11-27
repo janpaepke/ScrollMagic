@@ -22,6 +22,8 @@
 
 // include('ScrollMagic/Scene.js')
 
+// include('ScrollMagic/Event.js')
+
 // include('ScrollMagic/_utils.js')
 
 	return ScrollMagic;
