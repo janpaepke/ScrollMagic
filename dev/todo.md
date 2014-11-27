@@ -17,6 +17,7 @@
 # Build (gulpfile.js)
  - add error when lint fails.
  - custom reporter for jslint
+ - make sourcemap for development phase
  - make jsdoc generation properly
  - split generation of files, minified files and jsdocs in seperate tasks
  - exclude Scene Indicators from minification?

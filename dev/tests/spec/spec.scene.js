@@ -13,11 +13,11 @@ describe('ScrollScene', function() {
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
-		ctrl = new ScrollMagic({
+		ctrl = new ScrollMagic.Controller({
 			refreshInterval: 9,
 			container: $c[0]
 		});
-		scene = new ScrollScene({
+		scene = new ScrollMagic.Scene({
 			triggerHook: "onLeave",
 			triggerElement: "#trigger",
 			duration: 100
@@ -36,13 +36,13 @@ describe('ScrollScene', function() {
 	describe("every method", function () {
 		var getterSetter = ["duration", "offset", "triggerElement", "triggerHook", "reverse", "tweenChanges", "loglevel", "enabled", "progress"];
 		var getterOnly = ["parent", "state", "scrollOffset", "triggerOffset"];
-		if (new ScrollScene().triggerPosition) {
+		if (new ScrollMagic.Scene().triggerPosition) {
 			getterOnly.push("triggerPosition"); // deprecated since 1.1.0
 		} else {
 			log("remove test for triggerPosition!");
 		}
 		var exception = ["destroy"];
-		if (new ScrollScene().updateIndicators) {
+		if (new ScrollMagic.Scene().updateIndicators) {
 			exception.push("updateIndicators");
 		} else {
 			log("remove test for updateIndicators!");
@@ -132,7 +132,7 @@ describe('ScrollScene', function() {
 	describe(".duration()", function () {
 		it("returns the correct value", function () {
 			expect(scene.duration()).toBe(100);
-			expect(new ScrollScene().offset()).toBe(0);
+			expect(new ScrollMagic.Scene().offset()).toBe(0);
 		});
 		it("changes the value", function () {
 			scene.triggerHook("onEnter");
@@ -175,7 +175,7 @@ describe('ScrollScene', function() {
 	describe(".loglevel()", function () {
 		it("returns the correct value", function () {
 			expect(scene.loglevel()).toBe(2);
-			expect(new ScrollScene({loglevel: 3}).loglevel()).toBe(3);
+			expect(new ScrollMagic.Scene({loglevel: 3}).loglevel()).toBe(3);
 		});
 		it("changes the value", function () {
 			scene.triggerHook("onEnter");
@@ -188,9 +188,9 @@ describe('ScrollScene', function() {
 			expect(console.log.calls.count()).toBe(3); // no change for loglevel 2
 			
 			expect(console.warn.calls.count()).toBe(0); // warn of unknown option
-			var x = new ScrollScene({loglevel: 2, unkown: 4}); // produce warning
+			var x = new ScrollMagic.Scene({loglevel: 2, unkown: 4}); // produce warning
 			expect(console.warn.calls.count()).toBe(1); // warn of unknown option in scene x
-			x = new ScrollScene({loglevel: 1, unkown: 4}); // suppress warning
+			x = new ScrollMagic.Scene({loglevel: 1, unkown: 4}); // suppress warning
 			expect(console.warn.calls.count()).toBe(1); // no change
 
 			expect(console.error.calls.count()).toBe(0);
@@ -215,7 +215,7 @@ describe('ScrollScene', function() {
 	describe(".offset()", function () {
 		it("returns the correct value", function () {
 			expect(scene.offset()).toBe(0);
-			expect(new ScrollScene({offset: 100}).offset()).toBe(100);
+			expect(new ScrollMagic.Scene({offset: 100}).offset()).toBe(100);
 		});
 		it("changes the value", function () {
 			scene.triggerHook("onEnter");
@@ -238,7 +238,7 @@ describe('ScrollScene', function() {
 	describe(".reverse()", function () {
 		it("returns the correct value", function () {
 			expect(scene.reverse()).toBe(true);
-			expect(new ScrollScene({reverse: false}).reverse()).toBe(false);
+			expect(new ScrollMagic.Scene({reverse: false}).reverse()).toBe(false);
 		});
 		it("changes the value", function () {
 			scene.triggerHook("onEnter").reverse(false);
@@ -263,7 +263,7 @@ describe('ScrollScene', function() {
 	describe(".triggerElement()", function () {
 		it("returns the correct value", function () {
 			expect(scene.triggerElement()).toBe(document.getElementById("trigger"));
-			expect(new ScrollScene({triggerElement: $("#trigger")[0]}).triggerElement()).toBe($("#trigger")[0]);
+			expect(new ScrollMagic.Scene({triggerElement: $("#trigger")[0]}).triggerElement()).toBe($("#trigger")[0]);
 		});
 		it("changes the value", function () {
 			scene.triggerElement(null);
@@ -286,7 +286,7 @@ describe('ScrollScene', function() {
 	describe(".triggerHook()", function () {
 		it("returns the correct value", function () {
 			expect(scene.triggerHook()).toBe(0);
-			expect(new ScrollScene().triggerHook()).toBe(0.5);
+			expect(new ScrollMagic.Scene().triggerHook()).toBe(0.5);
 		});
 		it("changes the value", function () {
 			ctrl.scrollTo(scene.scrollOffset() - 1).update(true);
@@ -319,7 +319,7 @@ describe('ScrollScene', function() {
 	describe(".tweenChanges()", function () {
 		it("returns the correct value", function () {
 			expect(scene.tweenChanges()).toBe(false);
-			expect(new ScrollScene({tweenChanges: true}).tweenChanges()).toBe(true);
+			expect(new ScrollMagic.Scene({tweenChanges: true}).tweenChanges()).toBe(true);
 		});
 		it("changes the value", function () {
 			scene.setTween(TweenMax.to("#target", 1, {left: 100}));

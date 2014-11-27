@@ -4,14 +4,12 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['ScrollMagic', 'jquery'], function(sm, $) {
-        	factory(sm.Scene, $);
-        });
+        define(['ScrollMagic', 'jquery'], factory);
     } else {
     		// no browser global export needed, just execute
-        factory(root.ScrollScene, root.jQuery);
+        factory(root.ScrollMagic, root.jQuery);
     }
-}(this, function(ScrollScene, $) {
+}(this, function(ScrollMagic, $) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
@@ -35,7 +33,7 @@
 	 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
 	 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
 	*/
-	ScrollScene.prototype.addIndicators = function(opt) {
+	ScrollMagic.Scene.prototype.addIndicators = function(opt) {
 		var
 			DEFAULT_OPTIONS = {
 				parent: undefined,
@@ -124,7 +122,7 @@
 		}
 		return scene;
 	};
-	ScrollScene.prototype.updateIndicators = function(triggerOnly) {
+	ScrollMagic.Scene.prototype.updateIndicators = function(triggerOnly) {
 		var
 			scene = this,
 			controller = scene.parent(),

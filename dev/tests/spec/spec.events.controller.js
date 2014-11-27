@@ -12,7 +12,7 @@ describe('ScrollMagic', function() {
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
-		ctrl = new ScrollMagic({container: $c[0]});
+		ctrl = new ScrollMagic.Controller({container: $c[0]});
 	});
 
 	afterEach(function () {
@@ -30,7 +30,7 @@ describe('ScrollMagic', function() {
 	});
 
 	it("triggers onChange on container scroll", function(done) {
-		var scene = new ScrollScene().addTo(ctrl);
+		var scene = new ScrollMagic.Scene().addTo(ctrl);
 		spyOn(scene, "update");
 		window.requestAnimationFrame(function () {
 			// update is also called after adding... so wait a little more

@@ -9,7 +9,7 @@ describe('ScrollScene - Events', function() {
         // default setup
         loadFixtures('container-scroll.html');
         $c = $('#scroll-container');
-        ctrl = new ScrollMagic({container: $c[0]});
+        ctrl = new ScrollMagic.Controller({container: $c[0]});
     });
 
     afterEach(function () {
@@ -47,7 +47,7 @@ describe('ScrollScene - Events', function() {
     });
 
     it("should trigger only 'enter' and 'start' for a zero duration scene", function() {
-        var scene = new ScrollScene(
+        var scene = new ScrollMagic.Scene(
             {
                 triggerElement: "#trigger",
                 duration: 0
@@ -72,7 +72,7 @@ describe('ScrollScene - Events', function() {
     });
 
     it('should trigger enter 2x for zero duration scenes', function() {
-        var scene = new ScrollScene(
+        var scene = new ScrollMagic.Scene(
             {
                 triggerElement: "#trigger",
                 duration: 0

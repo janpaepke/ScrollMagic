@@ -7,11 +7,11 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['ScrollScene'], factory);
+        define(['ScrollMagic'], factory);
     } else {
         // Browser globals
-        factory(root.ScrollScene);
+        factory(root.ScrollMagic);
     }
-}(this, function(ScrollScene) {
+}(this, function(ScrollMagic) {
 
 }));

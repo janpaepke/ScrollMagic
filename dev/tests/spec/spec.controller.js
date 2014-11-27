@@ -3,7 +3,7 @@ describe('ScrollMagic constructor', function() {
 	it("fails with invalid container", function() {
 		spyOn(console, "error");
 		expect(function () {
-			new ScrollMagic({container: undefined});
+			new ScrollMagic.Controller({container: undefined});
 		}).toThrow();
 	});
 
@@ -11,11 +11,11 @@ describe('ScrollMagic constructor', function() {
 		loadFixtures('container-scroll.html');
 		// as a DOM element
 		expect(function () {
-			new ScrollMagic({container: document.querySelector("#scroll-container")});
+			new ScrollMagic.Controller({container: document.querySelector("#scroll-container")});
 		}).not.toThrow();
 		// as a selector
 		expect(function () {
-			new ScrollMagic({container: "#scroll-container"});
+			new ScrollMagic.Controller({container: "#scroll-container"});
 		}).not.toThrow();
 	});
 
@@ -36,7 +36,7 @@ describe('ScrollMagic', function() {
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
-		ctrl = new ScrollMagic({container: $c[0]});
+		ctrl = new ScrollMagic.Controller({container: $c[0]});
 	});
 
 	afterEach(function () {
@@ -68,7 +68,7 @@ describe('ScrollMagic', function() {
 
 	describe(".addScene()", function () {
 		it("adds a new scene", function () {
-			var scene = new ScrollScene();
+			var scene = new ScrollMagic.Scene();
 			spyOn(scene, 'addTo');
 			ctrl.addScene(scene);
 			expect(scene.addTo).toHaveBeenCalledWith(ctrl);
@@ -77,14 +77,14 @@ describe('ScrollMagic', function() {
 			var scenes = [];
 			var addTo = jasmine.createSpy("addTo");
 			for (var i = 0; i<10; i++) {
-				scenes[i] = new ScrollScene();
+				scenes[i] = new ScrollMagic.Scene();
 				scenes[i].addTo = addTo;
 			}
 			ctrl.addScene(scenes);
 			expect(addTo.calls.count()).toBe(10);
 		});
 		it("rejects duplicate scenes", function () {
-			var scene = new ScrollScene();
+			var scene = new ScrollMagic.Scene();
 			spyOn(scene, 'addTo').and.callThrough();
 			ctrl.addScene(scene);
 			ctrl.addScene(scene);
@@ -97,7 +97,7 @@ describe('ScrollMagic', function() {
 
 	describe(".removeScene()", function () {
 		it("removes a scene if it's attached to the controller", function () {
-			var scene = new ScrollScene();
+			var scene = new ScrollMagic.Scene();
 			spyOn(scene, 'remove');
 			ctrl.removeScene(scene);
 			expect(scene.remove).not.toHaveBeenCalled();
@@ -109,7 +109,7 @@ describe('ScrollMagic', function() {
 			var scenes = [];
 			var remove = jasmine.createSpy("remove");
 			for (var i = 0; i<10; i++) {
-				scenes[i] = new ScrollScene();
+				scenes[i] = new ScrollMagic.Scene();
 				scenes[i].remove = remove;
 				ctrl.addScene(scenes[i]);
 			}
@@ -120,7 +120,7 @@ describe('ScrollMagic', function() {
 
 	describe(".updateScene()", function () {
 		it("updates a scene with delay, but only once per cycle", function (done) {
-			var scene = new ScrollScene();
+			var scene = new ScrollMagic.Scene();
 			spyOn(scene, 'update');
 			ctrl.updateScene(scene);
 			ctrl.updateScene(scene);
@@ -134,7 +134,7 @@ describe('ScrollMagic', function() {
 			});
 		});
 		it("updates a scene immediately", function () {
-			var scene = new ScrollScene();
+			var scene = new ScrollMagic.Scene();
 			spyOn(scene, 'update');
 			ctrl.updateScene(scene, true);
 			expect(scene.update).toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe('ScrollMagic', function() {
 			var scenes = [];
 			var update = jasmine.createSpy("update");
 			for (var i = 0; i<10; i++) {
-				scenes[i] = new ScrollScene();
+				scenes[i] = new ScrollMagic.Scene();
 				scenes[i].update = update;
 			}
 			ctrl.updateScene(scenes, true);
@@ -153,7 +153,7 @@ describe('ScrollMagic', function() {
 
 	describe(".update()", function () {
 		it("forces an update on attached scenes, but only once per update cycle or if called with immediately=true", function (done) {
-			var scene = new ScrollScene().addTo(ctrl);
+			var scene = new ScrollMagic.Scene().addTo(ctrl);
 			spyOn(scene, "update");
 			window.requestAnimationFrame(function () {
 				ctrl.update();
@@ -210,7 +210,7 @@ describe('ScrollMagic', function() {
 		});
 
 		it("scrolls to a certain scrollScene", function () {
-			var scene = new ScrollScene({offset: 150}).addTo(ctrl);
+			var scene = new ScrollMagic.Scene({offset: 150}).addTo(ctrl);
 			ctrl.scrollTo(scene);
 			expect(ctrl.scrollPos()).toBe(150);
 		});
@@ -244,7 +244,7 @@ describe('ScrollMagic', function() {
 		});
 		it("prevents scene updates when false", function () {
 			ctrl.enabled(false);
-			var scene = new ScrollScene().addTo(ctrl);
+			var scene = new ScrollMagic.Scene().addTo(ctrl);
 			spyOn(scene, "update");
 			ctrl.update(true);
 			expect(scene.update).not.toHaveBeenCalled();
