@@ -141,7 +141,7 @@ gulp.task('lint', function() {
 
 gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompressed'], function() {
 	gulp.src(config.files, { base: config.dirs.source })
-		.pipe(include("// ")) // do file inclusions
+		.pipe(include("// @")) // do file inclusions
 			.pipe(replace({
 			patterns: [
 				{ // remove build notes
@@ -158,7 +158,7 @@ gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompres
 gulp.task('build:minified', ['validate-parameters', 'lint', 'clean:minified'], function() {
 	// minified files
 	gulp.src(config.files, { base: config.dirs.source })
-		.pipe(include("// ")) // do file inclusions
+		.pipe(include("// @")) // do file inclusions
 		.pipe(rename({suffix: ".min"}))
 		.pipe(replace({
 			patterns: [

@@ -30,7 +30,7 @@
     "gulp": "^3.8.10",
     "gulp-add-src": "^0.1.1",
     "gulp-concat-util": "^0.5.1",
-    "gulp-file-include": "^0.5.1",
+    "gulp-file-include": "^0.6.0",
     "gulp-filter": "^1.0.2",
     "gulp-jshint": "^1.9.0",
     "gulp-json-editor": "^2.2.1",

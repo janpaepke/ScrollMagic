@@ -10,7 +10,7 @@
         define(['ScrollMagic'], factory);
     } else {
         // Browser globals
-        factory(root.ScrollMagic);
+        factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
     }
 }(this, function(ScrollMagic) {
 

@@ -1,3 +1,4 @@
+var _listeners = {};
 /**
  * Scene start event.  
  * Fires whenever the scroll position its the starting point of the scene.  

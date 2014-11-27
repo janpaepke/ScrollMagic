@@ -7,7 +7,7 @@
         define(['ScrollMagic', 'jquery'], factory);
     } else {
     		// no browser global export needed, just execute
-        factory(root.ScrollMagic, root.jQuery);
+        factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.jQuery);
     }
 }(this, function(ScrollMagic, $) {
 	/**

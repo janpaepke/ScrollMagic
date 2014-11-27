@@ -18,13 +18,13 @@
 
 	ScrollMagic.version = "%VERSION%";
 
-// include('ScrollMagic/Controller.js')
+// @include('ScrollMagic/Controller.js')
 
-// include('ScrollMagic/Scene.js')
+// @include('ScrollMagic/Scene.js')
 
-// include('ScrollMagic/Event.js')
+// @include('ScrollMagic/Event.js')
 
-// include('ScrollMagic/_utils.js')
+// @include('ScrollMagic/_utils.js')
 
 	return ScrollMagic;
 }));
