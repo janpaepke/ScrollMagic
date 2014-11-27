@@ -24,6 +24,7 @@ var
 	gulpFilter =	require('gulp-filter'),
 	gutil = 			require('gulp-util'),
 	jeditor = 		require('gulp-json-editor'),
+	beautify =		require('gulp-beautify'),
 	// jsdoc = 			require('gulp-jsdoc'),
 	addsrc = 			require('gulp-add-src'),
 // custom
@@ -152,6 +153,10 @@ gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompres
 		}))
 		.pipe(concat.header(options.banner.uncompressed))
 		.pipe(replace(options.replaceVars))
+		.pipe(beautify({
+			indentSize: 1,
+			indentChar: '\t'
+		}))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
 });
 

@@ -11,20 +11,20 @@
  * @file Debug Extension for ScrollMagic.
  */
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['ScrollMagic', 'jquery'], factory);
-    } else {
-    		// no browser global export needed, just execute
-        factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.jQuery);
-    }
-}(this, function(ScrollMagic, $) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['ScrollMagic', 'jquery'], factory);
+	} else {
+		// no browser global export needed, just execute
+		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.jQuery);
+	}
+}(this, function (ScrollMagic, $) {
 	/**
 	 * Add Indicators for a ScrollScene.  
 	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
 	 * The indicators can only be added _AFTER_ the scene has been added to a controller.
 	 * @public
-
+	 
 	 * @example
 	 * // add basic indicators
 	 * scene.addIndicators()
@@ -34,83 +34,69 @@
 	 *
 	 * @param {object} [options] - An object containing one or more options for the indicators.
 	 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
-	 														 If undefined, the scene's container will be used.
+	 If undefined, the scene's container will be used.
 	 * @param {number} [options.zindex=-1] - CSS zindex for the indicator container.
 	 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same time).
 	 * @param {number} [options.suffix=""] - This string will be attached to the start and end indicator (useful for identification when working with multiple scenes).
 	 * @param {string} [options.colorTrigger=blue] - CSS color definition for the trigger indicator.
 	 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
 	 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
-	*/
-	ScrollMagic.Scene.prototype.addIndicators = function(opt) {
+	 */
+	ScrollMagic.Scene.prototype.addIndicators = function (opt) {
 		var
-			DEFAULT_OPTIONS = {
-				parent: undefined,
-				zindex: -1,
-				indent: 0,
-				suffix: "",
-				colorTrigger: "blue",
-				colorStart: "green",
-				colorEnd: "red"
-			};
+		DEFAULT_OPTIONS = {
+			parent: undefined,
+			zindex: -1,
+			indent: 0,
+			suffix: "",
+			colorTrigger: "blue",
+			colorStart: "green",
+			colorEnd: "red"
+		};
 
 
 		var
-			scene = this,
+		scene = this,
 			options = $.extend({}, DEFAULT_OPTIONS, opt),
 			controller = this.parent();
 		if (controller) {
 			var
-				cParams = controller.info(),
+			cParams = controller.info(),
 				suffix = (options.labelSuffix === "") ? "" : " " + options.suffix,
-				$container = $(options.parent).length > 0 ?
-						  $(options.parent)
-						: cParams.isDocument ? $("body") : $(cParams.container), // check if window element (then use body)
-				$wrap = $("<div></div>")
-						.addClass("ScrollSceneIndicators")
-						.data("options", options)
-						.css({
-							position: "absolute",
-							top: 0,
-							left: 0,
-							width: "100%",
-							height: "100%",
-							"text-align": "center",
-							"z-index": options.zindex,
-							"pointer-events": "none",
-							"font-size": 10
-						}),
-				$triggerHook = $("<div>trigger</div>")
-								.css({
-									position: "fixed",
-									overflow: "visible",
-									color: options.colorTrigger
-								})
-								.addClass("hook");
-				$start = $("<div>start" + suffix + "</div>")
-								.css({
-									position: "absolute",
-									overflow: "visible",
-									color: options.colorStart
-								})
-								.addClass("start");
-				$end = $("<div>end" + suffix + "</div>")
-								.css({
-									position: "absolute",
-									overflow: "visible",
-									color: options.colorEnd
-								})
-								.addClass("end");
+				$container = $(options.parent).length > 0 ? $(options.parent) : cParams.isDocument ? $("body") : $(cParams.container),
+				// check if window element (then use body)
+				$wrap = $("<div></div>").addClass("ScrollSceneIndicators").data("options", options).css({
+					position: "absolute",
+					top: 0,
+					left: 0,
+					width: "100%",
+					height: "100%",
+					"text-align": "center",
+					"z-index": options.zindex,
+					"pointer-events": "none",
+					"font-size": 10
+				}),
+				$triggerHook = $("<div>trigger</div>").css({
+					position: "fixed",
+					overflow: "visible",
+					color: options.colorTrigger
+				}).addClass("hook");
+			$start = $("<div>start" + suffix + "</div>").css({
+				position: "absolute",
+				overflow: "visible",
+				color: options.colorStart
+			}).addClass("start");
+			$end = $("<div>end" + suffix + "</div>").css({
+				position: "absolute",
+				overflow: "visible",
+				color: options.colorEnd
+			}).addClass("end");
 
 			if ($container.css("position") == "static") {
 				$container.css("position", "relative"); // positioning needed for correct display of indicators
 			}
 
-			scene.indicators = $wrap
-				    			.append($triggerHook)
-				    			.append($start)
-				    			.append($end)
-				    			.appendTo($container);
+			scene.indicators = $wrap.append($triggerHook).append($start).append($end).appendTo($container);
 
 			scene.updateIndicators();
 			var callUpdate = function (e) {
@@ -131,19 +117,22 @@
 		}
 		return scene;
 	};
-	ScrollMagic.Scene.prototype.updateIndicators = function(triggerOnly) {
+	ScrollMagic.Scene.prototype.updateIndicators = function (triggerOnly) {
 		var
-			scene = this,
+		scene = this,
 			controller = scene.parent(),
 			indicators = scene.indicators,
 			options = indicators.data("options");
 		if (indicators && controller) {
 			var
-				cParams = controller.info(),
+			cParams = controller.info(),
 				$triggerHook = indicators.children(".hook"),
 				$start = indicators.children(".start"),
 				$end = indicators.children(".end"),
-				parentOffset = $(cParams.container).offset() || {top: 0, left: 0},
+				parentOffset = $(cParams.container).offset() || {
+					top: 0,
+					left: 0
+				},
 				parentPos = cParams.vertical ? parentOffset.top : parentOffset.left,
 				hookPos = (cParams.size * scene.triggerHook()) + parentPos,
 				direction = cParams.vertical ? "v" : "h";
@@ -155,20 +144,17 @@
 					left: -bodyOffset.left
 				});
 			} else {
-				hookPos -=  cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
+				hookPos -= cParams.vertical ? $(document).scrollTop() : $(document).scrollLeft();
 			}
 
-			$triggerHook
-				.attr("data-hook", hookPos)
-				.attr("data-direction", direction)
-				.data("parent", cParams.container);
+			$triggerHook.attr("data-hook", hookPos).attr("data-direction", direction).data("parent", cParams.container);
 
-			$otherhook = $(".ScrollSceneIndicators .hook[data-hook=\""+ hookPos +"\"][data-direction="+direction+"]:visible").not($triggerHook);
+			$otherhook = $(".ScrollSceneIndicators .hook[data-hook=\"" + hookPos + "\"][data-direction=" + direction + "]:visible").not($triggerHook);
 			if ($otherhook.length > 0 && $otherhook.data("parent") == cParams.container) {
 				$triggerHook.hide();
 			} else {
 				$triggerHook.show();
-				var flip = hookPos > cParams.size*0.8; // put name above line?
+				var flip = hookPos > cParams.size * 0.8; // put name above line?
 				if (cParams.vertical) {
 					// triggerHook
 					$triggerHook.css({
@@ -185,7 +171,7 @@
 				} else {
 					$triggerHook.css({
 						top: (cParams.isDocument ? cParams.container.innerHeight : parentOffset.top + cParams.container.clientHeight - $(document).scrollTop()) - 40 - options.indent,
-						left: flip ? hookPos - $triggerHook.width() - 9: hookPos,
+						left: flip ? hookPos - $triggerHook.width() - 9 : hookPos,
 						width: "auto",
 						height: 20,
 						padding: "5px 5px 0 5px",
@@ -196,10 +182,10 @@
 					});
 				}
 			}
-			
+
 			if (!triggerOnly) {
 				var
-					startPos = scene.triggerPosition(),
+				startPos = scene.triggerPosition(),
 					endPos = startPos + scene.duration(),
 					resetCSS = {
 						"border": "none",
@@ -208,7 +194,7 @@
 						left: "auto",
 						right: "auto"
 					};
-				
+
 				$start.css(resetCSS);
 				$end.css(resetCSS);
 
@@ -221,14 +207,14 @@
 					// start
 					$start.css({
 						top: startPos,
-						right: 71-__getScrollLeft(cParams.container) + options.indent,
+						right: 71 - __getScrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						top: endPos,
-						right: 71-__getScrollLeft(cParams.container) + options.indent,
+						right: 71 - __getScrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
@@ -236,14 +222,14 @@
 					// start
 					$start.css({
 						left: startPos,
-						bottom: 40-__getScrollTop(cParams.container) + options.indent,
+						bottom: 40 - __getScrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						left: endPos,
-						bottom: 40-__getScrollTop(cParams.container) + options.indent,
+						bottom: 40 - __getScrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
@@ -251,18 +237,18 @@
 			}
 		}
 	};
-	
+
 	// UTILS
 
 	// get scroll top value
 	var __getScrollTop = function (elem) {
 		elem = elem || document;
-		return (window.pageYOffset || elem.scrollTop  || 0) - (elem.clientTop  || 0);
+		return (window.pageYOffset || elem.scrollTop || 0) - (elem.clientTop || 0);
 	};
 	// get scroll left value
 	var __getScrollLeft = function (elem) {
 		elem = elem || document;
-		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
+		return (window.pageXOffset || elem.scrollLeft || 0) - (elem.clientLeft || 0);
 	};
 
 }));

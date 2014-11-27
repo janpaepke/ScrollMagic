@@ -5,13 +5,13 @@
  * Greensock License info at http://www.greensock.com/licensing/
  */
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        // AMD. Register as an anonymous module.
-        define(['ScrollMagic'], factory);
-    } else {
-        // Browser globals
-        factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
-    }
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['ScrollMagic'], factory);
+	} else {
+		// Browser globals
+		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
+	}
 }(this, function(ScrollMagic) {
 
 }));
