@@ -85,7 +85,7 @@
 								}
 							};
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// create tween
 							var tween = new TimelineMax()
@@ -94,7 +94,7 @@
 								.add(TweenMax.to($("#plane"), 1, {css:{bezier:flightpath.leave}, ease:Power1.easeInOut}));
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 500, offset: 100})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 500, offset: 100})
 											.setPin("#target")
 											.setTween(tween)
 											.addTo(controller);

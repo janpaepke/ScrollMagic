@@ -41,7 +41,7 @@
 						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
+							controller = new ScrollMagic.Controller();
 						});
 					</script>
 				</section>
@@ -59,7 +59,7 @@
 							var tween = TweenMax.to("#animate1", 0.5, {backgroundColor: "green", scale: 2.5});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1"})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1"})
 											.setTween(tween)
 											.addTo(controller);
 
@@ -86,7 +86,7 @@
 								);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2", duration: 300})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 300})
 											.setTween(tween)
 											.addTo(controller);
 

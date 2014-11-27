@@ -75,7 +75,7 @@
 							pathPrepare($dot);
 
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build tween
 							var tween = new TimelineMax()
@@ -84,7 +84,7 @@
 								.add(TweenMax.to("path", 1, {stroke: "#33629c", ease:Linear.easeNone}), 0);			// change color during the whole thing
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1", duration: 200, tweenChanges: true})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 200, tweenChanges: true})
 											.setTween(tween)
 											.addTo(controller);
 

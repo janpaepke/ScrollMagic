@@ -103,13 +103,13 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build tween
 							var tween = TweenMax.to("#target", 1, {rotation: 360, ease: Linear.easeNone});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300})
 											.setTween(tween)
 											.setPin("#target", {pushFollowers: false})
 											.addTo(controller);

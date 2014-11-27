@@ -49,7 +49,7 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// show pin state
 							function updateBox (e) {
@@ -61,21 +61,21 @@
 							}
 
 							// build scenes
-							new ScrollScene({triggerElement: "#trigger", duration: 150})
+							new ScrollMagic.Scene({triggerElement: "#trigger", duration: 150})
 								.setPin("#pin")
 								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)
 								.addTo(controller)
 								.addIndicators(); // show indicators (requires debug extension)
 
-							new ScrollScene({triggerElement: "#trigger", duration: 150, offset: 300})
+							new ScrollMagic.Scene({triggerElement: "#trigger", duration: 150, offset: 300})
 								.setPin("#pin")
 								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)
 								.addTo(controller)
 								.addIndicators(); // show indicators (requires debug extension)
 
-							new ScrollScene({triggerElement: "#trigger", duration: 150, offset: 600})
+							new ScrollMagic.Scene({triggerElement: "#trigger", duration: 150, offset: 600})
 								.setPin("#pin")
 								.setClassToggle("#pin", "green")
 								.on("enter leave", updateBox)

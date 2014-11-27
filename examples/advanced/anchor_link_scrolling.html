@@ -60,13 +60,13 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build tween
 							var tween = TweenMax.from("#animate", 0.5, {autoAlpha: 0, scale: 0.7});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "a#top", duration: 200, triggerHook: "onLeave"})
+							var scene = new ScrollMagic.Scene({triggerElement: "a#top", duration: 200, triggerHook: "onLeave"})
 											.setTween(tween)
 											.addTo(controller);
 

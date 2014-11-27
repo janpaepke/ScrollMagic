@@ -58,10 +58,10 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 200})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 200})
 											.addTo(controller)
 											.on("update", function (e) {
 												$("#scrollDirection").text(e.target.parent().info("scrollDirection"));

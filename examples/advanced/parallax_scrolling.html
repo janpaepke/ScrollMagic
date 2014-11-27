@@ -43,7 +43,7 @@
 						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic({vertical: false});
+							controller = new ScrollMagic.Controller({vertical: false});
 						});
 					</script>
 				</section>
@@ -70,7 +70,7 @@
 								]);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#parallaxContainer", duration: 2000, offset: 450})
+							var scene = new ScrollMagic.Scene({triggerElement: "#parallaxContainer", duration: 2000, offset: 450})
 											.setTween(tween)
 											.setPin("#parallaxContainer")
 											.addTo(controller);
@@ -102,7 +102,7 @@
 								]);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2", duration: $(window).width()})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: $(window).width()})
 											.setTween(tween)
 											.addTo(controller);
 

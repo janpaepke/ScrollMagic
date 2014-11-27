@@ -46,7 +46,7 @@
 						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
+							controller = new ScrollMagic.Controller();
 						});
 					</script>
 				</section>
@@ -67,7 +67,7 @@
 													);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1", duration: 200, offset: -50})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 200, offset: -50})
 											.setTween(tween)
 											.addTo(controller);
 
@@ -144,7 +144,7 @@
 								);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger2"})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2"})
 											.setTween(tween)
 											.addTo(controller);
 
@@ -172,7 +172,7 @@
 							var tween = TweenMax.to("#animate3", 1, {className: "+=fish"});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger3", duration: 200, offset: -50})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger3", duration: 200, offset: -50})
 											.setTween(tween)
 											.addTo(controller);
 
@@ -205,7 +205,7 @@
 							var tween = TweenMax.staggerFromTo(".animate4", 2, {left: 700}, {left: 0, ease: Back.easeOut}, 0.15);
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger4", duration: 300})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger4", duration: 300})
 											.setTween(tween)
 											.addTo(controller);
 

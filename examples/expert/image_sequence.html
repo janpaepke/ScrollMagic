@@ -97,10 +97,10 @@
 							);
 
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 300})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300})
 											.setTween(tween)
 											.addTo(controller);
 

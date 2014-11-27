@@ -52,10 +52,10 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: ".dynamicContent #loader", triggerHook: "onEnter"})
+							var scene = new ScrollMagic.Scene({triggerElement: ".dynamicContent #loader", triggerHook: "onEnter"})
 											.addTo(controller)
 											.on("start", function (e) {
 												if (!$("#loader").hasClass("active")) {

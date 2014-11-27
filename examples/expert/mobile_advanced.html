@@ -54,13 +54,13 @@
 						$(document).ready(function($) {
 							
 							// init controller
-							var controller = new ScrollMagic({container: "#example-wrapper"});
+							var controller = new ScrollMagic.Controller({container: "#example-wrapper"});
 
 							// init tween
 							var tween = TweenMax.to("#mobileadvanced", 1, {backgroundColor: "black", scale: 0.4, borderRadius: 75});
 
 							// init scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 500, offset: 75})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 500, offset: 75})
 											.setTween(tween)
 											.setPin("#mobileadvanced")
 											.addTo(controller);

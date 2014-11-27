@@ -64,20 +64,20 @@ Each scene has a definite start and end position and defines what happens when t
 */
 
 // init controller
-var controller = new ScrollMagic();
+var controller = new ScrollMagic.Controller();
 
 // assign handler "scene" and add it to controller
-var scene = new ScrollScene({duration: 100})
+var scene = new ScrollMagic.Scene({duration: 100})
 				.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px
 				.addTo(controller); // add scene to controller
 
 // adding multiple scenes at once
-var scene2 = new ScrollScene();
+var scene2 = new ScrollMagic.Scene();
 var scene3;
 controller.addScene([
 	scene2,
-	scene3 = new ScrollScene({duration: 200}), // add scene and assign handler "scene2"
-	new ScrollScene({offset: 20}) // add anonymous scene
+	scene3 = new ScrollMagic.Scene({duration: 200}), // add scene and assign handler "scene2"
+	new ScrollMagic.Scene({offset: 20}) // add anonymous scene
 ]);
 ```
 ##Help

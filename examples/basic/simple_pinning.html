@@ -45,7 +45,7 @@
 						var controller;
 						$(document).ready(function($) {
 							// init controller
-							controller = new ScrollMagic();
+							controller = new ScrollMagic.Controller();
 						});
 					</script>
 				</section>
@@ -60,7 +60,7 @@
 					<script>
 						$(document).ready(function($) {
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger1", duration: 300})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
 											.setPin("#pin1")
 											.addTo(controller);
 
@@ -80,7 +80,7 @@
 					<script>
 						$(document).ready(function($) {
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#pin2"})
+							var scene = new ScrollMagic.Scene({triggerElement: "#pin2"})
 											.setPin("#pin2")
 											.addTo(controller);
 

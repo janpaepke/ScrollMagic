@@ -68,13 +68,13 @@
 					<script>
 						$(document).ready(function($) {
 							// init controller
-							var controller = new ScrollMagic({loglevel: 3});
+							var controller = new ScrollMagic.Controller({loglevel: 3});
 
 							// build tween
 							var tween = TweenMax.to("#target", 0.5, {css: {scaleX: 1, scaleY: 1}, ease: Linear.easeNone});
 
 							// build scene
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: 300, loglevel: 3})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300, loglevel: 3})
 											.setTween(tween)
 											.setPin("#destroybox")
 											.addTo(controller);

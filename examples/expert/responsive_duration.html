@@ -59,13 +59,13 @@
 							});							
 
 							// init controller
-							var controller = new ScrollMagic();
+							var controller = new ScrollMagic.Controller();
 
 							// build tween
 							var tween = TweenMax.to("#animate", 0.5, {scale: 1.3, repeat: 5, yoyo: true});
 
 							// build scene and supply getWindowHeight function as duration
-							var scene = new ScrollScene({triggerElement: "#trigger", duration: getWindowHeight})
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: getWindowHeight})
 											.setTween(tween)
 											.addTo(controller);
 

@@ -78,7 +78,7 @@
 		  			$(document).trigger("orientationchange"); // trigger to init
 	  			});
 	  			// init the controller
-	  			controller = new ScrollMagic({
+	  			controller = new ScrollMagic.Controller({
 		  			container: "#content-wrapper",
 		  			globalSceneOptions: {
 		  				triggerHook: "onLeave"
@@ -86,7 +86,7 @@
 		  		});
 	  		} else {
 	  			// init the controller
-		  		controller = new ScrollMagic({
+		  		controller = new ScrollMagic.Controller({
 		  			globalSceneOptions: {
 		  				triggerHook: "onLeave"
 		  			}
@@ -128,28 +128,28 @@
 					.add(TweenMax.staggerTo("#start h1 span", 0.5, {top: 0}, 0.2), 0.5);
 
 				// container pin
-				var startpin = new ScrollScene({
+				var startpin = new ScrollMagic.Scene({
 						duration: 700
 					})
 					.setPin("section#start")
 					.addTo(controller);
 
 				// msg scroll ani
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						duration: 140,
 						offset: -100
 					})
 					.setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
 					.addTo(controller);
 				// msg hide
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						offset: 40
 					})
 					.setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
 					.addTo(controller);
 
 				// hat movement
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						duration: 300,
 						offset: -100
 					})
@@ -157,7 +157,7 @@
 					.addTo(controller);
 
 				// magic wand
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						offset: 20,
 						duration: 180
 					})
@@ -174,7 +174,7 @@
 					.addTo(controller);
 
 				// big reveal
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						duration: 300,
 						offset: 260
 					})
@@ -182,7 +182,7 @@
 					.addTo(controller);
 
 				// jumping text
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						duration: 200,
 						offset: 450
 					})
@@ -202,21 +202,21 @@
 				var elements = $("#tweens h3");
 
 				// fade
-				new ScrollScene(sceneOptions)
+				new ScrollMagic.Scene(sceneOptions)
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[0])
 					.setTween(TweenMax.from(elements[0], 1, {autoAlpha: 0}));
 
 				// move
-				new ScrollScene(sceneOptions)
+				new ScrollMagic.Scene(sceneOptions)
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[1])
 					.setTween(TweenMax.from(elements[1], 1, {left: "-50%", marginLeft: -200, ease: Back.easeOut}));
 
 				// spin
-				new ScrollScene(sceneOptions)
+				new ScrollMagic.Scene(sceneOptions)
 					.offset(200)
 					.addTo(controller)
 					.triggerHook("onCenter")
@@ -224,7 +224,7 @@
 					.setTween(TweenMax.to(elements[2], 1, {rotation: 360}));
 
 				// scale
-				new ScrollScene(sceneOptions)
+				new ScrollMagic.Scene(sceneOptions)
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[3])
@@ -232,7 +232,7 @@
 
 				// text properties
 				$(elements[4]).wrapEach(/(.)/g, "<span>$1</span>");// wrap letters
-				new ScrollScene(sceneOptions)
+				new ScrollMagic.Scene(sceneOptions)
 					.addTo(controller)
 					.triggerHook("onCenter")
 					.triggerElement(elements[4])
@@ -310,7 +310,7 @@
 					// unpin
 					.add(TweenMax.from("#unpin", .5, {top: "100%"}));
 				// pin
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						triggerElement: "section#pin",
 						duration: 1700
 					})
@@ -332,7 +332,7 @@
 			<h3 id="big">parallax</h3>
 			<script type="text/javascript">
 				// parallax
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						triggerElement: "section#parallax",
 						duration: $(window).height() + 300,
 						offset: -150
@@ -453,7 +453,7 @@
 			</div>
 			<script type="text/javascript">
 				// subline
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						triggerElement: "section#info",
 						duration: 250,
 						offset: -50
@@ -472,7 +472,7 @@
 
 				// bunny
 				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-				new ScrollScene({
+				new ScrollMagic.Scene({
 					 	triggerElement: "#info #hatcontainer",
 						offset: -20
 					})
@@ -484,7 +484,7 @@
 							.add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
 					);
 				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						triggerElement: "section#info"
 					})
 					.addTo(controller)
@@ -494,7 +494,7 @@
 					);
 
 				// donate btn
-				new ScrollScene({
+				new ScrollMagic.Scene({
 						triggerElement: "#info #donate",
 						offset: 50
 					})
