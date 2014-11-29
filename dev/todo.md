@@ -11,6 +11,7 @@
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)
+ - go through inline TO-DOs.
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
