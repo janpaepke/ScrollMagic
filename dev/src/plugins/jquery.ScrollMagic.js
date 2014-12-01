@@ -11,5 +11,14 @@
 	}
 }(this, function (ScrollMagic, $) {
 	"use strict";
+	ScrollMagic._util.get.elements = function (selector) {
+		return $(selector).toArray();
+	};
+	ScrollMagic._util.addClass = function (elem, classname) {
+		$(elem).addClass(classname);
+	};
+	ScrollMagic._util.removeClass = function (elem, classname) {
+		$(elem).removeClass(classname);
+	};
 	$.ScrollMagic = ScrollMagic;
 }));

@@ -1,7 +1,6 @@
 # Source
  - outsource scrollscene code
 
- - Plugin jQuery: make use of jQuery functions for _utils.
  - Plugin Indicators: remove jQuery dependency
  - Plugin Indicators: end-indicator to above line and auto-suffix
  - Plugin Indicators: optimize performance (huge drawbacks, when using many scenes)
