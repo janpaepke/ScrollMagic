@@ -1,5 +1,4 @@
 # Source
- - outsource scrollscene code
 
  - Plugin Indicators: remove jQuery dependency
  - Plugin Indicators: end-indicator to above line and auto-suffix
