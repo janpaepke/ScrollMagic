@@ -212,14 +212,14 @@
 					// start
 					$start.css({
 						top: startPos,
-						right: 71-__getScrollLeft(cParams.container) + options.indent,
+						right: 71-ScrollMagic._util.get.scrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						top: endPos,
-						right: 71-__getScrollLeft(cParams.container) + options.indent,
+						right: 71-ScrollMagic._util.get.scrollLeft(cParams.container) + options.indent,
 						"border-top": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
@@ -227,33 +227,20 @@
 					// start
 					$start.css({
 						left: startPos,
-						bottom: 40-__getScrollTop(cParams.container) + options.indent,
+						bottom: 40-ScrollMagic._util.get.scrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid green",
 						padding: "0 8px 0 8px"
 					});
 					// end
 					$end.css({
 						left: endPos,
-						bottom: 40-__getScrollTop(cParams.container) + options.indent,
+						bottom: 40-ScrollMagic._util.get.scrollTop(cParams.container) + options.indent,
 						"border-left": "1px solid red",
 						padding: "0 8px 0 8px"
 					});
 				}
 			}
 		}
-	};
-	
-	// UTILS
-
-	// get scroll top value
-	var __getScrollTop = function (elem) {
-		elem = elem || document;
-		return (window.pageYOffset || elem.scrollTop  || 0) - (elem.clientTop  || 0);
-	};
-	// get scroll left value
-	var __getScrollLeft = function (elem) {
-		elem = elem || document;
-		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
 	};
 
 }));

@@ -1,6 +1,5 @@
 # Source
  - outsource scrollscene code
- - make utils externally available
 
  - Plugin jQuery: make use of jQuery functions for _utils.
  - Plugin Indicators: remove jQuery dependency
@@ -12,6 +11,7 @@
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)
  - go through inline TO-DOs.
+ – check if event namespaces are working properly
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
@@ -24,6 +24,7 @@
  - make travis-ci and dev gulp (dev gulp including source map)
  - make sourcemap for development phase ?
  - update gulp-file-include once rel paths are implemented
+ – optimize minification
 
 # Test
  - add tests for _utils

@@ -24,7 +24,7 @@
 
 // @include('ScrollMagic/Event.js')
 
-// @include('ScrollMagic/_utils.js')
+// @include('ScrollMagic/_util.js')
 
 	return ScrollMagic;
 }));

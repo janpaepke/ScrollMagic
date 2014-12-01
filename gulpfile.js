@@ -15,6 +15,7 @@ var
 // gulp & plugins
 	gulp =				require('gulp'),
 	open =				require("gulp-open"),
+	plumber =			require('gulp-plumber'),
 	jshint =			require('gulp-jshint'),
 	include =			require('gulp-file-include'),
 	rename =			require('gulp-rename'),
@@ -94,7 +95,7 @@ options.replaceVars = {
 /* ########################################## */
 
 // default build all
-gulp.task('default', ['validate-parameters', 'updatejsonfiles', 'updatereadme', 'build:uncompressed', 'build:minified', 'docs'], function () {
+gulp.task('default', ['validate:parameters', 'sync:json-files', 'sync:readme', 'build:uncompressed', 'build:minified', 'generate:docs'], function () {
 	if (options.version != config.version) {
 		log.info("Updated to version", options.version);
 	}
@@ -105,7 +106,7 @@ gulp.task('open-demo', function() { // just open the index file
   		.pipe(open("<%file.path%>"));
 });
 
-gulp.task('validate-parameters', function() {
+gulp.task('validate:parameters', function() {
 	// version
 	if (!semver.valid(options.version)) {
 		log.exit("Invalid version number supplied");
@@ -128,20 +129,23 @@ gulp.task('clean:uncompressed', function(callback) {
 gulp.task('clean:minified', function(callback) {
 	del(options.folderOut + "/"+ options.subfolder.minified +"/*", callback);
 });
-gulp.task('clean:docs', ['validate-parameters'], function(callback) {
+gulp.task('clean:docs', ['validate:parameters'], function(callback) {
 	if (options.dodocs) {
 		del(options.folderDocsOut + "/*", callback);
+	} else {
+		callback();
 	}
 });
 
-gulp.task('lint', function() {
+gulp.task('lint:source', function() {
   gulp.src(config.dirs.source + "/**/*.js")
     .pipe(jshint())
   	.pipe(jshint.reporter('default'));
 });
 
-gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompressed'], function() {
+gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:uncompressed'], function() {
 	gulp.src(config.files, { base: config.dirs.source })
+		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 			.pipe(replace({
 			patterns: [
@@ -160,9 +164,10 @@ gulp.task('build:uncompressed', ['validate-parameters', 'lint', 'clean:uncompres
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
 });
 
-gulp.task('build:minified', ['validate-parameters', 'lint', 'clean:minified'], function() {
+gulp.task('build:minified', ['validate:parameters', 'lint:source', 'clean:minified'], function() {
 	// minified files
 	gulp.src(config.files, { base: config.dirs.source })
+		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 		.pipe(rename({suffix: ".min"}))
 		.pipe(replace({
@@ -184,7 +189,7 @@ gulp.task('build:minified', ['validate-parameters', 'lint', 'clean:minified'], f
 
 });
 
-gulp.task('docs', ['validate-parameters', 'lint', 'clean:docs'], function(callback) {
+gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'], function(callback) {
 	if (options.dodocs) {
   	log.info("Generating new docs");
 
@@ -239,7 +244,7 @@ gulp.task('docs', ['validate-parameters', 'lint', 'clean:docs'], function(callba
 	*/
 });
 
-gulp.task('updatejsonfiles', ['validate-parameters'], function() {
+gulp.task('sync:json-files', ['validate:parameters'], function() {
 	gulp.src(["./package.json", "./bower.json", "./ScrollMagic.jquery.json"])
 			.pipe(jeditor(config.info, {keep_array_indentation: true}))
 			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
@@ -257,7 +262,7 @@ gulp.task('updatejsonfiles', ['validate-parameters'], function() {
 			.pipe(gulp.dest("./dev/build"));
 });
 
-gulp.task('updatereadme', ['validate-parameters'], function() {
+gulp.task('sync:readme', ['validate:parameters'], function() {
 	gulp.src("./README.md")
 			.pipe(replace({
 				patterns: [

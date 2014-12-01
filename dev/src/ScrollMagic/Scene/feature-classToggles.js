@@ -20,15 +20,15 @@ var
  */
  // TODO: check if removeClassToggle needs a definite element (what happens if you call setClassToggle two times for same or different elements?)
 this.setClassToggle = function (element, classes) {
-	var elems = __getElements(element);
-	if (elems.length === 0 || !__isString(classes)) {
+	var elems = _util.get.elements(element);
+	if (elems.length === 0 || !_util.type.String(classes)) {
 		log(1, "ERROR calling method 'setClassToggle()': Invalid " + (elems.length === 0 ? "element" : "classes") + " supplied.");
 		return Scene;
 	}
 	_cssClasses = classes;
 	_cssClassElems = elems;
 	Scene.on("enter.internal_class leave.internal_class", function (e) {
-		var toggle = e.type === "enter" ? __addClass : __removeClass;
+		var toggle = e.type === "enter" ? _util.addClass : _util.removeClass;
 		_cssClassElems.forEach(function (elem, key) {
 			toggle(elem, _cssClasses);
 		});
@@ -52,7 +52,7 @@ this.setClassToggle = function (element, classes) {
 this.removeClassToggle = function (reset) {
 	if (reset) {
 		_cssClassElems.forEach(function (elem, key) {
-			__removeClass(elem, _cssClasses);
+			_util.removeClass(elem, _cssClasses);
 		});
 	}
 	Scene.off("start.internal_class end.internal_class");

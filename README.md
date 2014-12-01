@@ -4,24 +4,24 @@
 
 ScrollMagic essentially lets you use the scrollbar like a playback scrub control.  
 It's the plugin for you, if you want to ...
-* ... start an animation at a specific scroll position.
+* ... trigger an animation at a specific scroll position.
 * ... synchronize an animation to the scrollbar movement.
 * ... pin an element at a specific scroll position (sticky elements).
 * ... pin an element for a limited amount of scroll progress (sticky elements).
-* ... easily add a parallax effect to your website.
+* ... effortlessly add a parallax effect to your website.
 * ... create an inifinitely scrolling page (ajax load of additional content).
-* ... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.
+* ... function callbacks at specific scroll positions or periodically call functions passing a progress parameter.
 
 Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) to get started.
 
 ##About the Plugin
 
 ScrollMagic is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
-Like Superscrollorama it relies on the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) to build animations, but was developed with specific regard to former shortcomings.
+For animations we recommend the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/), but it also includes a plugin for [VelocityJS](http://VelocityJS.org).
 
-The major perks of using ScrollMagic include:
+Some of the advantages ScrollMagics offers:
 * optimized performance
-* flexibility
+* total flexibility
 * mobile compatibility
 * event management
 * ready for responsive webdesign

@@ -69,7 +69,7 @@ ScrollMagic.Scene = function (options) {
 
 	var
 		Scene = this,
-		_options = __extend({}, DEFAULT_OPTIONS, options),
+		_options = _util.extend({}, DEFAULT_OPTIONS, options),
 		_state = 'BEFORE',
 		_progress = 0,
 		_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
@@ -92,7 +92,7 @@ ScrollMagic.Scene = function (options) {
 			}
 		},
 		"duration" : function () {
-			if (__isFunction(_options.duration)) {
+			if (_util.type.Function(_options.duration)) {
 				_durationUpdateMethod = _options.duration;
 				try {
 					_options.duration = parseFloat(_durationUpdateMethod());
@@ -103,7 +103,7 @@ ScrollMagic.Scene = function (options) {
 				}
 			} else {
 				_options.duration = parseFloat(_options.duration);
-				if (!__isNumber(_options.duration) || _options.duration < 0) {
+				if (!_util.type.Number(_options.duration) || _options.duration < 0) {
 					log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
 					_options.duration = DEFAULT_OPTIONS.duration;
 				}
@@ -111,14 +111,14 @@ ScrollMagic.Scene = function (options) {
 		},
 		"offset" : function () {
 			_options.offset = parseFloat(_options.offset);
-			if (!__isNumber(_options.offset)) {
+			if (!_util.type.Number(_options.offset)) {
 				log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
 				_options.offset = DEFAULT_OPTIONS.offset;
 			}
 		},
 		"triggerElement" : function () {
 			if (_options.triggerElement) {
-				var elem = __getElements(_options.triggerElement)[0];
+				var elem = _util.get.elements(_options.triggerElement)[0];
 				if (elem) {
 					_options.triggerElement = elem;
 				} else {
@@ -129,7 +129,7 @@ ScrollMagic.Scene = function (options) {
 		},
 		"triggerHook" : function () {
 			if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
-				if (__isNumber(_options.triggerHook)) {
+				if (_util.type.Number(_options.triggerHook)) {
 					_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
 				} else {
 					log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
@@ -146,7 +146,7 @@ ScrollMagic.Scene = function (options) {
 		// (BUILD) - REMOVE IN MINIFY - START
 		"loglevel" : function () {
 			_options.loglevel = parseInt(_options.loglevel);
-			if (!__isNumber(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
+			if (!_util.type.Number(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
 				var wrongval = _options.loglevel;
 				_options.loglevel = DEFAULT_OPTIONS.loglevel;
 				log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
@@ -207,7 +207,7 @@ ScrollMagic.Scene = function (options) {
 				prefix = "(" + NAMESPACE + ") ->",
 				args = Array.prototype.splice.call(arguments, 1);
 			args.unshift(loglevel, prefix);
-			__debug.apply(window, args);
+			_util.log.apply(window, args);
 		}
 	};
 	// (BUILD) - REMOVE IN MINIFY - END
@@ -222,7 +222,7 @@ ScrollMagic.Scene = function (options) {
 			for (var key in _validate){
 				check.push(key);
 			}
-		} else if (!__isArray(check)) {
+		} else if (!_util.type.Array(check)) {
 			check = [check];
 		}
 		check.forEach(function (value, key) {
@@ -307,7 +307,7 @@ ScrollMagic.Scene = function (options) {
 		if (_parent && telem) {
 			var
 				controllerInfo = _parent.info(),
-				containerOffset = __getOffset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+				containerOffset = _util.get.offset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 				param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 				
 			// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
@@ -315,7 +315,7 @@ ScrollMagic.Scene = function (options) {
 				telem = telem.parentNode;
 			}
 
-			var elementOffset = __getOffset(telem);
+			var elementOffset = _util.get.offset(telem);
 
 			if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 				containerOffset[param] -= _parent.scrollPos();
@@ -388,27 +388,27 @@ ScrollMagic.Scene = function (options) {
 
 			if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
 				// pinned state
-				if (__css(_pin, "position") != "fixed") {
+				if (_util.css(_pin, "position") != "fixed") {
 					// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
-					__css(_pin, {"position": "fixed"});
+					_util.css(_pin, {"position": "fixed"});
 					// update pin spacer
 					updatePinSpacerSize();
 				}
 
 				var
-					fixedPos = __getOffset(_pinOptions.spacer, true), // get viewport position of spacer
+					fixedPos = _util.get.offset(_pinOptions.spacer, true), // get viewport position of spacer
 					scrollDistance = _options.reverse || _options.duration === 0 ?
 									 	 containerInfo.scrollPos - _scrollOffset.start // quicker
 									 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
 				
 				// remove spacer margin to get real position (in case marginCollapse mode)
-				fixedPos.top -= parseFloat(__css(_pinOptions.spacer, "margin-top"));
+				fixedPos.top -= parseFloat(_util.css(_pinOptions.spacer, "margin-top"));
 
 				// add scrollDistance
 				fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
 				// set new values
-				__css(_pin, {
+				_util.css(_pin, {
 					top: fixedPos.top,
 					left: fixedPos.left
 				});
@@ -420,19 +420,19 @@ ScrollMagic.Scene = function (options) {
 						top:  0,
 						left: 0
 					},
-					change = __css(_pin, "position") != newCSS.position;
+					change = _util.css(_pin, "position") != newCSS.position;
 				
 				if (!_pinOptions.pushFollowers) {
 					newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 				} else if (_options.duration > 0) { // only concerns scenes with duration
-					if (_state === "AFTER" && parseFloat(__css(_pinOptions.spacer, "padding-top")) === 0) {
+					if (_state === "AFTER" && parseFloat(_util.css(_pinOptions.spacer, "padding-top")) === 0) {
 						change = true; // if in after state but havent updated spacer yet (jumped past pin)
-					} else if (_state === "BEFORE" && parseFloat(__css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
+					} else if (_state === "BEFORE" && parseFloat(_util.css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
 						change = true; // jumped past fixed state upward direction
 					}
 				}
 				// set new values
-				__css(_pin, newCSS);
+				_util.css(_pin, newCSS);
 				if (change) {
 					// update pin spacer if state changed
 					updatePinSpacerSize();
@@ -452,15 +452,15 @@ ScrollMagic.Scene = function (options) {
 				after = (_state === "AFTER"),
 				before = (_state === "BEFORE"),
 				during = (_state === "DURING"),
-				pinned = (__css(_pin, "position") == "fixed"), // TODO: find out if necessary to check this way
+				pinned = (_util.css(_pin, "position") == "fixed"), // TODO: find out if necessary to check this way
 				vertical = _parent.info("vertical"),
 				spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
-				marginCollapse = __isMarginCollapseType(__css(_pinOptions.spacer, "display")),
+				marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 				css = {};
 
 			if (marginCollapse) {
-				css["margin-top"] = before || (during && pinned) ? __css(_pin, "margin-top") : "auto";
-				css["margin-bottom"] = after || (during && pinned) ? __css(_pin, "margin-bottom") : "auto";
+				css["margin-top"] = before || (during && pinned) ? _util.css(_pin, "margin-top") : "auto";
+				css["margin-bottom"] = after || (during && pinned) ? _util.css(_pin, "margin-bottom") : "auto";
 			} else {
 				css["margin-top"] = css["margin-bottom"] = "auto";
 			}
@@ -469,36 +469,36 @@ ScrollMagic.Scene = function (options) {
 			// if relsize: spacer -> pin | else: pin -> spacer
 			if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 				if (pinned) {
-					if (__getWidth(window) == __getWidth(_pinOptions.spacer.parentNode)) {
+					if (_util.get.width(window) == _util.get.width(_pinOptions.spacer.parentNode)) {
 						// relative to body
-						__css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
+						_util.css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
 					} else {
 						// not relative to body -> need to calculate
-						__css(_pin, {"width": __getWidth(_pinOptions.spacer)});
+						_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
 					}
 				} else {
-					__css(_pin, {"width": "100%"});
+					_util.css(_pin, {"width": "100%"});
 				}
 			} else {
 				// minwidth is needed for cascaded pins.
 				// margin is only included if it's a cascaded pin to resolve an IE9 bug
-				css["min-width"] = __getWidth(spacerChild, true , spacerChild !== _pin);
+				css["min-width"] = _util.get.width(spacerChild, true , spacerChild !== _pin);
 				css.width = pinned ? css["min-width"] : "auto";
 			}
 			if (_pinOptions.relSize.height) {
 				if (pinned) {
-					if (__getHeight(window) == __getHeight(_pinOptions.spacer.parentNode)) {
+					if (_util.get.height(window) == _util.get.height(_pinOptions.spacer.parentNode)) {
 						// relative to body
-						__css(_pin, {"height": "inherit"});
+						_util.css(_pin, {"height": "inherit"});
 					} else {
 						// not relative to body -> need to calculate
-						__css(_pin, {"height": __getHeight(_pinOptions.spacer)});
+						_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer)});
 					}
 				} else {
-					__css(_pin, {"height": "100%"});
+					_util.css(_pin, {"height": "100%"});
 				}
 			} else {
-				css["min-height"] = __getHeight(spacerChild, true , !marginCollapse); // needed for cascading pins
+				css["min-height"] = _util.get.height(spacerChild, true , !marginCollapse); // needed for cascading pins
 				css.height = pinned ? css["min-height"] : "auto";
 			}
 
@@ -507,7 +507,7 @@ ScrollMagic.Scene = function (options) {
 				css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 				css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 			}
-			__css(_pinOptions.spacer, css);
+			_util.css(_pinOptions.spacer, css);
 		}
 	};
 
@@ -533,8 +533,8 @@ ScrollMagic.Scene = function (options) {
 		if ( _parent && _pin && // well, duh
 				_state === "DURING" && // element in pinned state?
 				( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-					((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && __getWidth(window) != __getWidth(_pinOptions.spacer.parentNode)) ||
-					(_pinOptions.relSize.height && __getHeight(window) != __getHeight(_pinOptions.spacer.parentNode))
+					((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
+					(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
 				)
 		) {
 			updatePinSpacerSize();
@@ -626,7 +626,7 @@ ScrollMagic.Scene = function (options) {
 		if (!arguments.length) { // get
 			return _options[varname];
 		} else {
-			if (!__isFunction(newDuration)) {
+			if (!_util.type.Function(newDuration)) {
 				_durationUpdateMethod = undefined;
 			}
 			if (changeOption(varname, newDuration)) { // set
@@ -713,7 +713,7 @@ ScrollMagic.Scene = function (options) {
 	this.triggerHook = function (newTriggerHook) {
 		var varname = "triggerHook";
 		if (!arguments.length) { // get
-			return __isNumber(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
+			return _util.type.Number(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
 		} else if (changeOption(varname, newTriggerHook)) { // set
 			Scene.trigger("change", {what: varname, newval: _options[varname]});
 			Scene.trigger("shift", {reason: varname});
@@ -1180,14 +1180,14 @@ ScrollMagic.Scene = function (options) {
 				pushFollowers: true,
 				spacerClass: "scrollmagic-pin-spacer"
 			};
-		settings = __extend({}, defaultSettings, settings);
+		settings = _util.extend({}, defaultSettings, settings);
 
 		// validate Element
-		element = __getElements(element)[0];
+		element = _util.get.elements(element)[0];
 		if (!element) {
 			log(1, "ERROR calling method 'setPin()': Invalid pin element supplied.");
 			return Scene; // cancel
-		} else if (__css(element, "position") === "fixed") {
+		} else if (_util.css(element, "position") === "fixed") {
 			log(1, "ERROR calling method 'setPin()': Pin does not work with elements that are positioned 'fixed'.");
 			return Scene; // cancel
 		}
@@ -1206,9 +1206,9 @@ ScrollMagic.Scene = function (options) {
 		
 		_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 		var
-			inFlow = __css(_pin, "position") != "absolute",
-			pinCSS = __css(_pin, ["display", "top", "left", "bottom", "right"]),
-			sizeCSS = __css(_pin, ["width", "height"]);
+			inFlow = _util.css(_pin, "position") != "absolute",
+			pinCSS = _util.css(_pin, ["display", "top", "left", "bottom", "right"]),
+			sizeCSS = _util.css(_pin, ["width", "height"]);
 		_pin.parentNode.style.display = ''; // hack end.
 
 		if (!inFlow && settings.pushFollowers) {
@@ -1223,14 +1223,14 @@ ScrollMagic.Scene = function (options) {
 
 		// create spacer and insert
 		var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
-		__css(spacer, __extend(pinCSS, {
+		_util.css(spacer, _util.extend(pinCSS, {
 					position: inFlow ? "relative" : "absolute",
 					"margin-left": "auto",
 					"margin-right": "auto",
 					"box-sizing": "content-box"
 				}));
 		spacer.dataset.isScrollMagicPinSpacer = true; // TODO: check if dataset works in IE9
-		__addClass(spacer, settings.spacerClass);
+		_util.addClass(spacer, settings.spacerClass);
 
 		// set the pin Options
 		var pinInlineCSS = _pin.style;
@@ -1239,7 +1239,7 @@ ScrollMagic.Scene = function (options) {
 			relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
 				width: sizeCSS.width.slice(-1) === "%",
 				height: sizeCSS.height.slice(-1) === "%",
-				autoFullWidth: sizeCSS.width === "auto" && inFlow && __isMarginCollapseType(pinCSS.display)
+				autoFullWidth: sizeCSS.width === "auto" && inFlow && _util.isMarginCollapseType(pinCSS.display)
 			},
 			pushFollowers: settings.pushFollowers,
 			inFlow: inFlow, // stores if the element takes up space in the document flow
@@ -1254,20 +1254,20 @@ ScrollMagic.Scene = function (options) {
 				"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
 				"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
 			}, // save old styles (for reset)
-		};// TODO: make __css method use camel case?
+		};
 
 		// if relative size, transfer it to spacer and make pin calculate it...
 		if (_pinOptions.relSize.width) {
-			__css(spacer, {width: sizeCSS.width});
+			_util.css(spacer, {width: sizeCSS.width});
 		}
 		if (_pinOptions.relSize.height) {
-			__css(spacer, {height: sizeCSS.height});
+			_util.css(spacer, {height: sizeCSS.height});
 		}
 
 		// now place the pin element inside the spacer	
 		spacer.appendChild(_pin);
 		// and set new css
-		__css(_pin, {
+		_util.css(_pin, {
 			position: inFlow ? "relative" : "absolute",
 			top: "auto",
 			left: "auto",
@@ -1276,7 +1276,7 @@ ScrollMagic.Scene = function (options) {
 		});
 		
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
-			__css(_pin, {"box-sizing" : "border-box"});
+			_util.css(_pin, {"box-sizing" : "border-box"});
 		}
 
 		// add listener to document to update pin position in case controller is not the document.
@@ -1312,7 +1312,7 @@ ScrollMagic.Scene = function (options) {
 			if (reset || !_parent) { // if there's no parent no progress was made anyway...
 				_pinOptions.spacer.parentNode.insertBefore(_pin, _pinOptions.spacer);
 				_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
-				__css(_pin, _pinOptions.origStyle);
+				_util.css(_pin, _pinOptions.origStyle);
 			} else {
 				if (_state === "DURING") {
 					updatePinState(true); // force unpin at position

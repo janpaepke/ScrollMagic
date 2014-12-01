@@ -164,6 +164,31 @@ var _listeners = {};
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {string} event.reason - Indicates why the scene has shifted
  */
+/**
+ * Scene destroy event.  
+ * Fires whenvever the scene is destroyed.
+ * This can be used to tidy up custom behaviour used in events.
+ *
+ * @event Scene.destroy
+ * @since 1.1.0
+ *
+ * @example
+ * scene.on("enter", function (event) {
+ *        // add custom action
+ *        $("#my-elem").left("200");
+ *      })
+ *      .on("destroy", function (event) {
+ *        // reset my element to start position
+ *        if (event.reset) {
+ *          $("#my-elem").left("0");
+ *        }
+ *      });
+ *
+ * @property {object} event - The event Object passed to each callback
+ * @property {string} event.type - The name of the event
+ * @property {Scene} event.target - The Scene object that triggered this event
+ * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
+*/
 
 /**
  * Add one ore more event listener.  
@@ -182,7 +207,7 @@ var _listeners = {};
  * @returns {Scene} Parent object for chaining.
 */
 this.on = function (name, callback) {
-	if (__isFunction(callback)) {
+	if (_util.type.Function(callback)) {
 		var names = name.trim().split(' ');
 		names.forEach(function (fullname, key) {
 			var

@@ -50,7 +50,7 @@ ScrollMagic.Controller = function(options) {
 
 	var
 		Controller = this,
-		_options = __extend({}, DEFAULT_OPTIONS, options),
+		_options = _util.extend({}, DEFAULT_OPTIONS, options),
 		_sceneObjects = [],
 		_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 		_scrollPos = 0,
@@ -78,7 +78,7 @@ ScrollMagic.Controller = function(options) {
 				delete _options[key];
 			}
 		}
-		_options.container = __getElements(_options.container)[0];
+		_options.container = _util.get.elements(_options.container)[0];
 		// check ScrollContainer
 		if (!_options.container) {
 			log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
@@ -90,7 +90,7 @@ ScrollMagic.Controller = function(options) {
 			_options.container = window;
 		}
 		// update container size immediately
-		_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
+		_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		// set event handlers
 		_options.container.addEventListener("resize", onChange);
 		_options.container.addEventListener("scroll", onChange);
@@ -101,7 +101,7 @@ ScrollMagic.Controller = function(options) {
 		}
 
 		// start checking for changes
-		_updateCycle = __animationFrameCallback(updateScenes);
+		_updateCycle = _util.rAF(updateScenes);
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 	};
 
@@ -110,7 +110,7 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var getScrollPos = function () {
-		return _options.vertical ? __getScrollTop(_options.container) : __getScrollLeft(_options.container);
+		return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
 	};
 	/**
 	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
@@ -119,13 +119,13 @@ ScrollMagic.Controller = function(options) {
 	var setScrollPos = function (pos) {
 		if (_options.vertical) {
 			if (_isDocument) {
-				window.scrollTo(__getScrollLeft(), pos);
+				window.scrollTo(_util.get.scrollLeft(), pos);
 			} else {
 				_options.container.scrollTop = pos;
 			}
 		} else {
 			if (_isDocument) {
-				window.scrollTo(pos, __getScrollTop);
+				window.scrollTo(pos, _util.get.scrollTop());
 			} else {
 				_options.container.scrollLeft = pos;
 			}
@@ -137,10 +137,10 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var updateScenes = function () {
-		_updateCycle = __animationFrameCallback(updateScenes);
+		_updateCycle = _util.rAF(updateScenes);
 		if (_enabled && _updateScenesOnNextCycle) {
 			var
-				scenesToUpdate = __isArray(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
+				scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
 				oldScrollPos = _scrollPos;
 			// update scroll pos & direction
 			_scrollPos = Controller.scrollPos();
@@ -167,7 +167,7 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var onChange = function (e) {
 		if (e.type == "resize") {
-			_viewPortSize = _options.vertical ? __getHeight(_options.container) : __getWidth(_options.container);
+			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		}
 		_updateScenesOnNextCycle = true;
 	};
@@ -175,7 +175,7 @@ ScrollMagic.Controller = function(options) {
 	var refresh = function () {
 		if (!_isDocument) {
 			// simulate resize event. Only works for viewport relevant param (performance)
-			if (_viewPortSize != (_options.vertical ? __getHeight(_options.container) : __getWidth(_options.container))) {
+			if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
 				_options.container.dispatchEvent(new Event('resize', {bubbles: false, cancelable: false})); // TODO check if polyfill needed for IE9
 			}
 		}
@@ -198,7 +198,7 @@ ScrollMagic.Controller = function(options) {
 				prefix = "(" + NAMESPACE + ") ->",
 				args = Array.prototype.splice.call(arguments, 1);
 			args.unshift(loglevel, prefix);
-			__debug.apply(window, args);
+			_util.log.apply(window, args);
 		}
 	};
 	// (BUILD) - REMOVE IN MINIFY - END
@@ -246,14 +246,14 @@ ScrollMagic.Controller = function(options) {
 	 * @return {Controller} Parent object for chaining.
 	 */
 	this.addScene = function (newScene) {
-		if (__isArray(newScene)) {
+		if (_util.type.Array(newScene)) {
 			newScene.forEach(function (scene, index) {
 				Controller.addScene(scene);
 			});
 		} else if (newScene instanceof ScrollMagic.Scene) {
 			if (newScene.parent() != Controller) {
 				newScene.addTo(Controller);
-			} else if (__inArray(newScene, _sceneObjects) < 0){
+			} else if (_sceneObjects.indexOf(newScene) < 0){
 				// new scene
 				_sceneObjects.push(newScene); // add to array
 				_sceneObjects = sortScenes(_sceneObjects); // sort
@@ -289,12 +289,12 @@ ScrollMagic.Controller = function(options) {
 	 * @returns {Controller} Parent object for chaining.
 	 */
 	this.removeScene = function (Scene) {
-		if (__isArray(Scene)) {
+		if (_util.type.Array(Scene)) {
 			Scene.forEach(function (scene, index) {
 				Controller.removeScene(scene);
 			});
 		} else {
-			var index = __inArray(Scene, _sceneObjects);
+			var index = _sceneObjects.indexOf(Scene);
 			if (index > -1) {
 				Scene.off("shift." + NAMESPACE + "_sort");
 				_sceneObjects.splice(index, 1);
@@ -328,7 +328,7 @@ ScrollMagic.Controller = function(options) {
 	 * @return {Controller} Parent object for chaining.
 	 */
 	this.updateScene = function (Scene, immediately) {
-		if (__isArray(Scene)) {
+		if (_util.type.Array(Scene)) {
 			Scene.forEach(function (scene, index) {
 				Controller.updateScene(scene, immediately);
 			});
@@ -337,10 +337,10 @@ ScrollMagic.Controller = function(options) {
 				Scene.update(true);
 			} else {
 				// prep array for next update cycle
-				if (!__isArray(_updateScenesOnNextCycle)) {
+				if (!_util.type.Array(_updateScenesOnNextCycle)) {
 					_updateScenesOnNextCycle = [];
 				}
-				if (__inArray(Scene, _updateScenesOnNextCycle) == -1) {
+				if (_updateScenesOnNextCycle.indexOf(Scene) == -1) {
 					_updateScenesOnNextCycle.push(Scene);	
 				}
 				_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
@@ -408,7 +408,7 @@ ScrollMagic.Controller = function(options) {
 	 * @returns {Controller} Parent object for chaining.
 	 */
 	this.scrollTo = function (scrollTarget) {
-		if (__isNumber(scrollTarget)) { // excecute
+		if (_util.type.Number(scrollTarget)) { // excecute
 			setScrollPos.call(_options.container, scrollTarget);
 		} else if (scrollTarget instanceof ScrollMagic.Scene) { // scroll to scene
 			if (scrollTarget.parent() === Controller) { // check if this controller is the parent
@@ -416,15 +416,15 @@ ScrollMagic.Controller = function(options) {
 			} else {
 				log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 			}
-		} else if (__isFunction(scrollTarget)) { // assign new scroll function
+		} else if (_util.type.Function(scrollTarget)) { // assign new scroll function
 			setScrollPos = scrollTarget;
 		} else { // scroll to element
-			var elem = __getElements(scrollTarget)[0];
+			var elem = _util.get.elements(scrollTarget)[0];
 			if (elem) {
 				var
 					param = _options.vertical ? "top" : "left", // which param is of interest ?
-					containerOffset = __getOffset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-					elementOffset = __getOffset(elem);
+					containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					elementOffset = _util.get.offset(elem);
 
 				if (!_isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
 					containerOffset[param] -= Controller.scrollPos();
@@ -471,7 +471,7 @@ ScrollMagic.Controller = function(options) {
 		if (!arguments.length) { // get
 			return getScrollPos.call(Controller);
 		} else { // set
-			if (__isFunction(scrollPosMethod)) {
+			if (_util.type.Function(scrollPosMethod)) {
 				getScrollPos = scrollPosMethod;
 			} else {
 				log(2, "Provided value for method 'scrollPos' is not a function. To change the current scroll position use 'scrollTo()'.");
@@ -589,7 +589,7 @@ ScrollMagic.Controller = function(options) {
 		}
 		_options.container.removeEventListener("resize", onChange);
 		_options.container.removeEventListener("scroll", onChange);
-		__animationFrameCancelCallback(_updateCycle);
+		_util.cAF(_updateCycle);
 		log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 		return null;
 	};
