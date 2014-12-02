@@ -51,7 +51,7 @@ _**NOTE:** The logging feature is removed in the minified version for obvious fi
 
 To have access to the debugging extension during development, include this file __additionally__:
 ```html
-<script src="js/scrollmagic/uncompressed/plugins/SceneIndicators.js"></script>
+<script src="js/scrollmagic/uncompressed/plugins/scene.addIndicators.js"></script>
 ```
 You can remove the debugging extension for actual deployment.
 

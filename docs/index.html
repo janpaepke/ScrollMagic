@@ -159,7 +159,7 @@
 <pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/ScrollMagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/minified/ScrollMagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
 <p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/plugins/SceneIndicators.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/plugins/scene.addIndicators.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
 <h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has several scenes attached.<br>Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.</p>
 <pre class="prettyprint source lang-javascript"><code>/*
     Basic workflow example

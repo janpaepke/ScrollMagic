@@ -22,7 +22,7 @@ Many times the reason you don't see your tweens is because they are happening ou
 An easy way to make sure is to add visual help by including the ScrollMagic debugging extension.  
 Simply add the file reference into your html like this:
 ```html
-<script type="text/javascript" src="scrollmagic/uncompressed/plugins/SceneIndicators.js"></script>
+<script type="text/javascript" src="scrollmagic/uncompressed/plugins/scene.addIndicators.js"></script>
 ```
 Then use `scene.addIndicators()` to get visual indicators for where your scene should start and stop.
 

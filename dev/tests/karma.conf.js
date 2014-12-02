@@ -10,7 +10,7 @@ module.exports = function(config) {
       '../../js/lib/jquery.min.js',
       '../../js/lib/greensock/TweenMax.min.js',
       '../../scrollmagic/uncompressed/ScrollMagic.js',
-      '../../scrollmagic/uncompressed/plugins/SceneIndicators.js',
+      '../../scrollmagic/uncompressed/plugins/scene.addIndicators.js',
       'additional/vendor/**/*.js',
       'additional/settings.js',
       'spec/*.js'

@@ -37,7 +37,7 @@
 		var
 			DEFAULT_OPTIONS = {
 				parent: undefined,
-				zindex: -1,
+				zindex: "auto",
 				indent: 0,
 				suffix: "",
 				colorTrigger: "blue",
