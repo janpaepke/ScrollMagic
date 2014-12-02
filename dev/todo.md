@@ -15,7 +15,7 @@
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 
 # Build (gulpfile.js)
- - make jsdoc generation properly && repair docs
+ - make jsdoc generation properly & repair docs
  - make tests task
  - make sourcemaps task
  – optimize minification

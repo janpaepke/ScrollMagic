@@ -91,13 +91,41 @@ options.replaceVars = {
 };
 
 /* ########################################## */
+/* ########### validate parameters ########## */
+/* ########################################## */
+
+// version
+if (!semver.valid(options.version)) {
+	log.exit("Invalid version number supplied");
+} else if (semver.lt(options.version, config.version)) {
+	log.exit("Supplied version (" + options.version + ") is older than current (" + config.version + "), defined in dev/build/config.json");
+}
+// output
+if (!fs.existsSync(options.folderOut)) {
+	log.exit("Supplied output path not found.");
+}
+// docs output
+if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
+	log.exit("Supplied output path for docs not found.");
+}
+
+
+/* ########################################## */
 /* ############### MAIN TASKS ############### */
 /* ########################################## */
 
 // default build all
-gulp.task('default', ['validate:parameters', 'sync:json-files', 'sync:readme', 'build:uncompressed', 'build:minified', 'generate:docs'], function () {
+var defaultDeps = ['sync:json-files', 'sync:readme', 'build:uncompressed', 'build:minified'];
+if (options.dodocs) {
+	defaultDeps.push('generate:docs');
+}
+gulp.task('default', defaultDeps, function () {
+	log.info("Generated new build to", options.folderOut);
 	if (options.version != config.version) {
 		log.info("Updated to version", options.version);
+	}
+	if (options.dodocs) {
+		log.info("Generated new docs to", options.folderDocsOut);
 	}
 });
 
@@ -106,30 +134,13 @@ gulp.task('open-demo', function() { // just open the index file
   		.pipe(open("<%file.path%>"));
 });
 
-gulp.task('validate:parameters', function() {
-	// version
-	if (!semver.valid(options.version)) {
-		log.exit("Invalid version number supplied");
-	} else if (semver.lt(options.version, config.version)) {
-		log.exit("Supplied version (" + options.version + ") is older than current (" + config.version + "), defined in dev/build/config.json");
-	}
-	// output
-	if (!fs.existsSync(options.folderOut)) {
-		log.exit("Supplied output path not found.");
-	}
-	// docs output
-	if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
-		log.exit("Supplied output path for docs not found.");
-	}
-});
-
-gulp.task('clean:uncompressed', ['validate:parameters', 'lint:source'], function(callback) {
+gulp.task('clean:uncompressed', ['lint:source'], function(callback) {
 	del(options.folderOut + "/"+ options.subfolder.uncompressed +"/*", callback);
 });
-gulp.task('clean:minified', ['validate:parameters', 'lint:source'], function(callback) {
+gulp.task('clean:minified', ['lint:source'], function(callback) {
 	del(options.folderOut + "/"+ options.subfolder.minified +"/*", callback);
 });
-gulp.task('clean:docs', ['validate:parameters', 'lint:source'], function(callback) {
+gulp.task('clean:docs', ['lint:source'], function(callback) {
 	if (options.dodocs) {
 		del(options.folderDocsOut + "/*", callback);
 	} else {
@@ -144,7 +155,7 @@ gulp.task('lint:source', function() {
   	.pipe(jshint.reporter('fail'));
 });
 
-gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:uncompressed'], function() {
+gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function() {
 	return gulp.src(config.files, { base: config.dirs.source })
 		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
@@ -165,7 +176,7 @@ gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:un
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
 });
 
-gulp.task('build:minified', ['validate:parameters', 'lint:source', 'clean:minified'], function() {
+gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 	// minified files
 	return gulp.src(config.files, { base: config.dirs.source })
 		.pipe(plumber())
@@ -187,13 +198,9 @@ gulp.task('build:minified', ['validate:parameters', 'lint:source', 'clean:minifi
 		.pipe(concat.header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
-
 });
 
-gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'], function(callback) {
-	if (options.dodocs) {
-  	log.info("New docs are generated to " + options.folderDocsOut);
-
+gulp.task('generate:docs', ['lint:source', 'clean:docs'], function(callback) {
 		var
 			bin = '"' + 'node_modules/.bin/jsdoc' + '"',
 			docIn = '"' + 'README.md' + '"',
@@ -223,10 +230,6 @@ gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'],
 			)
 			.on("close", callback);
 		}, 500);
-	} else {
-  	log.info("Docs are not being generated. (lacking parameter)");
-		callback();
-	}
 
 	/*
   	// gulp-jsdoc only works with jsdoc-alpha5 which sucks.
@@ -246,7 +249,7 @@ gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'],
 	*/
 });
 
-gulp.task('sync:json-files', ['validate:parameters'], function() {
+gulp.task('sync:json-files', function() {
 	gulp.src(["./package.json", "./bower.json", "./ScrollMagic.jquery.json"])
 			.pipe(jeditor(config.info, {keep_array_indentation: true}))
 			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
@@ -264,7 +267,7 @@ gulp.task('sync:json-files', ['validate:parameters'], function() {
 			.pipe(gulp.dest("./dev/build"));
 });
 
-gulp.task('sync:readme', ['validate:parameters'], function() {
+gulp.task('sync:readme', function() {
 	gulp.src("./README.md")
 			.pipe(replace({
 				patterns: [
@@ -277,14 +280,21 @@ gulp.task('sync:readme', ['validate:parameters'], function() {
 			.pipe(gulp.dest("./"));
 });
 
-gulp.task('run:tests', ['lint:source', 'build:uncompressed', 'build:minified'], function () {
+gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 	// TODO: run tests
+	log.warn("tests not yet implemented with gulp");
 });
 
-gulp.task('generate:sourcemaps', ['lint:source', 'build:uncompressed', 'build:minified'], function () {
+gulp.task('generate:sourcemaps-uncompressed', ['build:uncompressed'], function () {
 	// TODO: generate sourcemaps
+	log.warn("sourcemaps not yet implemented with gulp");
 });
+gulp.task('generate:sourcemaps-minified', ['build:minified'], function () {
+	// TODO: generate sourcemaps
+	log.warn("sourcemaps not yet implemented with gulp");
+});
+gulp.task('generate:sourcemaps', ['generate:sourcemaps-uncompressed', 'generate:sourcemaps-minified']);
 
-gulp.task('travis-ci', ['lint:source', 'build:uncompressed', 'build:minified', 'run:tests']);
+gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
 
-gulp.task('development', ['lint:source', 'build:uncompressed', 'generate:sourcemaps']);
+gulp.task('development', ['build:uncompressed', 'generate:sourcemaps-uncompressed']);
