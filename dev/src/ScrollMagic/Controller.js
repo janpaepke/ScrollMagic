@@ -251,7 +251,7 @@ ScrollMagic.Controller = function(options) {
 				Controller.addScene(scene);
 			});
 		} else if (newScene instanceof ScrollMagic.Scene) {
-			if (newScene.parent() != Controller) {
+			if (newScene.controller() != Controller) {
 				newScene.addTo(Controller);
 			} else if (_sceneObjects.indexOf(newScene) < 0){
 				// new scene
@@ -411,7 +411,7 @@ ScrollMagic.Controller = function(options) {
 		if (_util.type.Number(scrollTarget)) { // excecute
 			setScrollPos.call(_options.container, scrollTarget);
 		} else if (scrollTarget instanceof ScrollMagic.Scene) { // scroll to scene
-			if (scrollTarget.parent() === Controller) { // check if this controller is the parent
+			if (scrollTarget.controller() === Controller) { // check if the controller is associated with this scene
 				Controller.scrollTo(scrollTarget.scrollOffset());
 			} else {
 				log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);

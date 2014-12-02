@@ -25,7 +25,7 @@
 	 *
 	 * @param {object} [options] - An object containing one or more options for the indicators.
 	 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
-	 														 If undefined, the scene's container will be used.
+	 														 If undefined, the controller's container will be used.
 	 * @param {number} [options.zindex=-1] - CSS zindex for the indicator container.
 	 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same time).
 	 * @param {number} [options.suffix=""] - This string will be attached to the start and end indicator (useful for identification when working with multiple scenes).
@@ -48,8 +48,8 @@
 
 		var
 			scene = this,
-			options = $.extend({}, DEFAULT_OPTIONS, opt),
-			controller = this.parent();
+			options = ScrollMagic._util.extend({}, DEFAULT_OPTIONS, opt),
+			controller = this.controller();
 		if (controller) {
 			var
 				cParams = controller.info(),
@@ -118,14 +118,15 @@
 				$(window).on("scroll resize", callUpdate);
 			}
 		} else {
-			console.log("ERROR: Please add Scene to controller before adding indicators.");
+			// TODO: wait until added to controller
+			// ScrollMagic._util.log(1, "ERROR: Please add Scene to controller before adding indicators.");
 		}
 		return scene;
 	};
-	ScrollMagic.Scene.prototype.updateIndicators = function(triggerOnly) {
+	var updateIndicators = function(triggerOnly) {
 		var
 			scene = this,
-			controller = scene.parent(),
+			controller = scene.controller(),
 			indicators = scene.indicators,
 			options = indicators.data("options");
 		if (indicators && controller) {

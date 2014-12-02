@@ -108,16 +108,16 @@ var changeOption = function(varname, newval) {
 	return changed;
 };
 /**
- * **Get** the parent controller.
+ * **Get** the associated controller.
  * @public
  * @example
- * // get the parent controller of a scene
- * var controller = scene.parent();
+ * // get the controller of a scene
+ * var controller = scene.controller();
  *
  * @returns {ScrollMagic.Controller} Parent controller or `undefined`
  */
-this.parent = function () {
-	return _parent;
+this.controller = function () {
+	return _controller;
 };
 
 
@@ -356,14 +356,14 @@ this.state = function () {
  */
 this.triggerPosition = function () {
 	var pos = _options.offset; // the offset is the basis
-	if (_parent) {
+	if (_controller) {
 		// get the trigger position
 		if (_options.triggerElement) {
 			// Element as trigger
 			pos += _triggerPos;
 		} else {
 			// return the height of the triggerHook to start at the beginning
-			pos += _parent.info("size") * Scene.triggerHook();
+			pos += _controller.info("size") * Scene.triggerHook();
 		}
 	}
 	return pos;

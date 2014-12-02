@@ -72,11 +72,11 @@ ScrollMagic.Scene = function (options) {
 		_options = _util.extend({}, DEFAULT_OPTIONS, options),
 		_state = 'BEFORE',
 		_progress = 0,
-		_scrollOffset = {start: 0, end: 0}, // reflects the parent's scroll position for the start and end of the scene respectively
+		_scrollOffset = {start: 0, end: 0}, // reflects the controllers's scroll position for the start and end of the scene respectively
 		_triggerPos = 0,
 		_enabled = true,
 		_durationUpdateMethod,
-		_parent;
+		_controller;
 
 	/**
 	 * Internal constructor function of the ScrollMagic Scene

@@ -1,18 +1,18 @@
 /**
  * Update the start and end scrollOffset of the container.
- * The positions reflect what the parent's scroll position will be at the start and end respectively.
+ * The positions reflect what the controller's scroll position will be at the start and end respectively.
  * Is called, when:
  *   - Scene event "change" is called with: offset, triggerHook, duration 
  *   - scroll container event "resize" is called
  *   - the position of the triggerElement changes
- *   - the parent changes -> addTo()
+ *   - the controller changes -> addTo()
  * @private
  */
 var updateScrollOffset = function () {
 	_scrollOffset = {start: _triggerPos + _options.offset};
-	if (_parent && _options.triggerElement) {
+	if (_controller && _options.triggerElement) {
 		// take away triggerHook portion to get relative to top
-		_scrollOffset.start -= _parent.info("size") * Scene.triggerHook();
+		_scrollOffset.start -= _controller.info("size") * Scene.triggerHook();
 	}
 	_scrollOffset.end = _scrollOffset.start + _options.duration;
 };
@@ -54,9 +54,9 @@ var updateTriggerElementPosition = function (suppressEvents) {
 	var
 		elementPos = 0,
 		telem = _options.triggerElement;
-	if (_parent && telem) {
+	if (_controller && telem) {
 		var
-			controllerInfo = _parent.info(),
+			controllerInfo = _controller.info(),
 			containerOffset = _util.get.offset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 			param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 			
@@ -68,7 +68,7 @@ var updateTriggerElementPosition = function (suppressEvents) {
 		var elementOffset = _util.get.offset(telem);
 
 		if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-			containerOffset[param] -= _parent.scrollPos();
+			containerOffset[param] -= _controller.scrollPos();
 		}
 
 		elementPos = elementOffset[param] - containerOffset[param];

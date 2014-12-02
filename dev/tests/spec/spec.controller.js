@@ -52,14 +52,14 @@ describe('ScrollMagic', function() {
 			for (var m in ctrl) {
 				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0) {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
-						expect(m).toBeGetter(ctrl);
+						expect(m).toWorkAsGetter(ctrl);
 					} else {
-						expect(m).not.toBeGetter(ctrl);
+						expect(m).not.toWorkAsGetter(ctrl);
 					}
 					if (getterOnly.indexOf(m) == -1) { // can be used as setter
-						expect(m).toBeChainableSetter(ctrl);
+						expect(m).toWorkAsChainableSetter(ctrl);
 					} else {
-						expect(m).not.toBeChainableSetter(ctrl);
+						expect(m).not.toWorkAsChainableSetter(ctrl);
 					}
 				}
 			}

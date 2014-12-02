@@ -31,18 +31,18 @@ var log = function (loglevel, output) {
 this.addTo = function (controller) {
 	if (!(controller instanceof ScrollMagic.Controller)) {
 		log(1, "ERROR: supplied argument of 'addTo()' is not a valid ScrollMagic Controller");
-	} else if (_parent != controller) {
-		// new parent
-		if (_parent) { // I had a parent before, so remove it...
-			_parent.removeScene(Scene);
+	} else if (_controller != controller) {
+		// new controller
+		if (_controller) { // was associated to a different controller before, so remove it...
+			_controller.removeScene(Scene);
 		}
-		_parent = controller;
+		_controller = controller;
 		validateOption();
 		updateDuration(true);
 		updateTriggerElementPosition(true);
 		updateScrollOffset();
 		updatePinSpacerSize();
-		_parent.info("container").addEventListener('resize', onContainerResize);
+		_controller.info("container").addEventListener('resize', onContainerResize);
 		log(3, "added " + NAMESPACE + " to controller");
 		controller.addScene(Scene);
 		Scene.update();
@@ -76,22 +76,22 @@ this.enabled = function (newState) {
 };
 
 /**
- * Remove the scene from its parent controller.  
+ * Remove the scene from the controller.  
  * This is the equivalent to `Controller.removeScene(scene)`.
  * The scene will not be updated anymore until you readd it to a controller.
  * To remove the pin or the tween you need to call removeTween() or removePin() respectively.
  * @public
  * @example
- * // remove the scene from its parent controller
+ * // remove the scene from its controller
  * scene.remove();
  *
  * @returns {Scene} Parent object for chaining.
  */
 this.remove = function () {
-	if (_parent) {
-		_parent.info("container").removeEventListener('resize', onContainerResize);
-		var tmpParent = _parent;
-		_parent = undefined;
+	if (_controller) {
+		_controller.info("container").removeEventListener('resize', onContainerResize);
+		var tmpParent = _controller;
+		_controller = undefined;
 		log(3, "removed " + NAMESPACE + " from controller");
 		tmpParent.removeScene(Scene);
 	}
@@ -124,7 +124,7 @@ this.destroy = function (reset) {
 
 
 /**
- * Updates the Scene in the parent Controller to reflect the current state.  
+ * Updates the Scene to reflect the current state.  
  * This is the equivalent to `Controller.updateScene(scene, immediately)`.  
  * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
  * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
@@ -144,11 +144,11 @@ this.destroy = function (reset) {
  * @returns {Scene} Parent object for chaining.
  */
 this.update = function (immediately) {
-	if (_parent) {
+	if (_controller) {
 		if (immediately) {
-			if (_parent.enabled() && _enabled) {
+			if (_controller.enabled() && _enabled) {
 				var
-					scrollPos = _parent.info("scrollPos"),
+					scrollPos = _controller.info("scrollPos"),
 					newProgress;
 
 				if (_options.duration > 0) {
@@ -164,7 +164,7 @@ this.update = function (immediately) {
 				updatePinState(true); // unpin in position
 			}
 		} else {
-			_parent.updateScene(Scene, false);
+			_controller.updateScene(Scene, false);
 		}
 	}
 	return Scene;
@@ -252,7 +252,7 @@ this.progress = function (progress) {
 		var
 			doUpdate = false,
 			oldState = _state,
-			scrollDirection = _parent ? _parent.info("scrollDirection") : 'PAUSED',
+			scrollDirection = _controller ? _controller.info("scrollDirection") : 'PAUSED',
 			reverseOrForward = _options.reverse || progress >= _progress;
 		if (_options.duration === 0) {
 			// zero duration scenes

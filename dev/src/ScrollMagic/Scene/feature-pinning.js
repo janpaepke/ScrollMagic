@@ -17,9 +17,9 @@ Scene
  * @private
  */
 var updatePinState = function (forceUnpin) {
-	if (_pin && _parent) {
+	if (_pin && _controller) {
 		var 
-			containerInfo = _parent.info();
+			containerInfo = _controller.info();
 
 		if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
 			// pinned state
@@ -82,12 +82,12 @@ var updatePinState = function (forceUnpin) {
  * @private
  */
 var updatePinSpacerSize = function () {
-	if (_pin && _parent && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
+	if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 		var
 			after = (_state === "AFTER"),
 			before = (_state === "BEFORE"),
 			during = (_state === "DURING"),
-			vertical = _parent.info("vertical"),
+			vertical = _controller.info("vertical"),
 			spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
 			marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 			css = {};
@@ -152,7 +152,7 @@ var updatePinSpacerSize = function () {
  * @private
  */
 var updatePinInContainer = function () {
-	if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) {
+	if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) {
 		updatePinState();
 	}
 };
@@ -164,7 +164,7 @@ var updatePinInContainer = function () {
  * @private
  */
 var updateRelativePinSpacer = function () {
-	if ( _parent && _pin && // well, duh
+	if ( _controller && _pin && // well, duh
 			_state === "DURING" && // element in pinned state?
 			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 				((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
@@ -181,9 +181,9 @@ var updateRelativePinSpacer = function () {
  * @private
  */
 var onMousewheelOverPin = function (e) {
-	if (_parent && _pin && _state === "DURING" && !_parent.info("isDocument")) { // in pin state
+	if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) { // in pin state
 		e.preventDefault();
-		_parent.scrollTo(_parent.info("scrollPos") - (e.wheelDelta/3 || -e.detail*30));
+		_controller.scrollTo(_controller.info("scrollPos") - (e.wheelDelta/3 || -e.detail*30));
 	}
 };
 
@@ -343,7 +343,7 @@ this.setPin = function (element, settings) {
  */
 this.removePin = function (reset) {
 	if (_pin) {
-		if (reset || !_parent) { // if there's no parent no progress was made anyway...
+		if (reset || !_controller) { // if there's no controller no progress was made anyway...
 			_pinOptions.spacer.parentNode.insertBefore(_pin, _pinOptions.spacer);
 			_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
 			_util.css(_pin, _pinOptions.origStyle);

@@ -7,9 +7,7 @@ describe('ScrollScene', function() {
 
 	beforeEach(function() {
 		// disable internal logging
-		spyOn(console, "log");
-		spyOn(console, "warn");
-		spyOn(console, "error");
+		spyOn(ScrollMagic._util, "log");
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
@@ -35,30 +33,25 @@ describe('ScrollScene', function() {
 
 	describe("every method", function () {
 		var getterSetter = ["duration", "offset", "triggerElement", "triggerHook", "reverse", "tweenChanges", "loglevel", "enabled", "progress"];
-		var getterOnly = ["parent", "state", "scrollOffset", "triggerOffset"];
-		if (new ScrollMagic.Scene().triggerPosition) {
-			getterOnly.push("triggerPosition"); // deprecated since 1.1.0
-		} else {
-			log("remove test for triggerPosition!");
-		}
+		var getterOnly = ["controller", "state", "scrollOffset", "triggerPosition"];
 		var exception = ["destroy"];
-		if (new ScrollMagic.Scene().updateIndicators) {
-			exception.push("updateIndicators");
-		} else {
-			log("remove test for updateIndicators!");
-		}
+		// if (new ScrollMagic.Scene().triggerOffset) {
+		// 	getterOnly.push("triggerOffset"); // deprecated since 1.1.0
+		// } else {
+		// 	log("remove test for triggerOffset!");
+		// }
 		it("is chainable if not a getter", function () {
 			for (var m in scene) {
 				if (typeof scene[m] === 'function' && exception.indexOf(m) < 0) {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
-						expect(m).toBeGetter(scene);
+						expect(m).toWorkAsGetter(scene);
 					} else {
-						expect(m).not.toBeGetter(scene);
+						expect(m).not.toWorkAsGetter(scene);
 					}
 					if (getterOnly.indexOf(m) == -1) { // can be used as setter
-						expect(m).toBeChainableSetter(scene);
+						expect(m).toWorkAsChainableSetter(scene);
 					} else {
-						expect(m).not.toBeChainableSetter(scene);
+						expect(m).not.toWorkAsChainableSetter(scene);
 					}
 				}
 			}
@@ -178,28 +171,45 @@ describe('ScrollScene', function() {
 			expect(new ScrollMagic.Scene({loglevel: 3}).loglevel()).toBe(3);
 		});
 		it("changes the value", function () {
+			var log = ScrollMagic._util.log;
 			scene.triggerHook("onEnter");
 			scene.loglevel(3).update(true);
-			expect(console.log.calls.count()).toBe(2); // once for the change, once for the update
+			expect(log.calls.count()).toBe(2); // once for the change, once for the update
 			scene.update(true);
-			expect(console.log.calls.count()).toBe(3); // once more for the update
+			expect(log.calls.count()).toBe(3); // once more for the update
+			log.calls.allArgs().forEach(function (arg) {
+				expect(arg[0]).toBe(3); // loglevel 3
+			});
 			
+			log.calls.reset();
 			scene.loglevel(2).update(true);
-			expect(console.log.calls.count()).toBe(3); // no change for loglevel 2
+			expect(log.calls.count()).toBe(0); // no calls for loglevel 2
 			
-			expect(console.warn.calls.count()).toBe(0); // warn of unknown option
+			// warnings
+			log.calls.reset();
+			expect(log.calls.count()).toBe(0);
 			var x = new ScrollMagic.Scene({loglevel: 2, unkown: 4}); // produce warning
-			expect(console.warn.calls.count()).toBe(1); // warn of unknown option in scene x
-			x = new ScrollMagic.Scene({loglevel: 1, unkown: 4}); // suppress warning
-			expect(console.warn.calls.count()).toBe(1); // no change
+			expect(log.calls.count()).toBe(1); // warn of unknown option in scene x
+			log.calls.allArgs().forEach(function (arg) {
+				expect(arg[0]).toBe(2); // loglevel 2
+			});
 
-			expect(console.error.calls.count()).toBe(0);
+			log.calls.reset();
+			x = new ScrollMagic.Scene({loglevel: 1, unkown: 4}); // suppress warning
+			expect(log.calls.count()).toBe(0); // no calls for loglevel 1
+
+			// error msgs
+			log.calls.reset();
+			expect(log.calls.count()).toBe(0);
 			scene.duration("invalid");
 			x.duration("invalid");
-			expect(console.error.calls.count()).toBe(2);
+			expect(log.calls.count()).toBe(2);
 			x.loglevel(0);
 			x.duration("invalid");
-			expect(console.error.calls.count()).toBe(2); // no change
+			expect(log.calls.count()).toBe(2); // no change
+			log.calls.allArgs().forEach(function (arg) {
+				expect(arg[0]).toBe(1); // loglevel 1
+			});
 			
 		});
 		it("converts to the right type", function () {
@@ -338,11 +348,11 @@ describe('ScrollScene', function() {
 
 	// GETTER ONLY
 
-	describe(".parent()", function () {
-		it("returns the parent controller", function () {
-			expect(scene.parent()).toBe(ctrl);
+	describe(".controller()", function () {
+		it("returns the associated controller", function () {
+			expect(scene.controller()).toBe(ctrl);
 			scene.remove();
-			expect(scene.parent()).toBeUndefined();
+			expect(scene.controller()).toBeUndefined();
 		});
 	});
 

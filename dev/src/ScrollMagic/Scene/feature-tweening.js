@@ -72,35 +72,38 @@ var updateTweenProgress = function (to) {
  * @returns {Scene} Parent object for chaining.
  */
 this.setTween = function (TweenObject) {
+	var newTween;
 	if (!TimelineMax) {
 		log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
+		return Scene;
+	}
+	try {
+		// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
+		newTween = new TimelineMax({smoothChildTiming: true})
+			.add(TweenObject)
+			.pause();
+	} catch (e) {
+		log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
 		return Scene;
 	}
 	if (_tween) { // kill old tween?
 		Scene.removeTween();
 	}
-	try {
-		// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
-		_tween = new TimelineMax({smoothChildTiming: true})
-			.add(TweenObject)
-			.pause();
-	} catch (e) {
-		log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
-	} finally {
-		// some properties need to be transferred it to the wrapper, otherwise they would get lost.
-		if (TweenObject.repeat && TweenObject.repeat() === -1) {// TweenMax or TimelineMax Object?
-			_tween.repeat(-1);
-			_tween.yoyo(TweenObject.yoyo());
-		}
+	_tween = newTween;
+
+	// some properties need to be transferred it to the wrapper, otherwise they would get lost.
+	if (TweenObject.repeat && TweenObject.repeat() === -1) {// TweenMax or TimelineMax Object?
+		_tween.repeat(-1);
+		_tween.yoyo(TweenObject.yoyo());
 	}
 	// (BUILD) - REMOVE IN MINIFY - START
 	// Some tween validations and debugging helpers
 
 	// check if there are position tweens defined for the trigger and warn about it :)
-	if (_tween && _parent  && _options.triggerElement && _options.loglevel >= 2) {// parent is needed to know scroll direction.
+	if (_tween && _controller  && _options.triggerElement && _options.loglevel >= 2) {// controller is needed to know scroll direction.
 		var
 			triggerTweens = _tween.getTweensOf(_options.triggerElement),
-			vertical = _parent.info("vertical");
+			vertical = _controller.info("vertical");
 		triggerTweens.forEach(function (value, index) {
 			var
 				tweenvars = value.vars.css || value.vars,

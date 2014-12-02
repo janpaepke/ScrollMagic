@@ -189,6 +189,31 @@ var _listeners = {};
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
 */
+/**
+ * Scene add event.  
+ * Fires when the scene is added to a controller.
+ * This is mostly used by plugins to know that change might be due.
+ *
+ * @event Scene.add
+ * @since 2.0.0
+ *
+ * @example
+ * scene.on("add", function (event) {
+ *        // add custom action
+ *        $("#my-elem").left("200");
+ *      })
+ *      .on("destroy", function (event) {
+ *        // reset my element to start position
+ *        if (event.reset) {
+ *          $("#my-elem").left("0");
+ *        }
+ *      });
+ *
+ * @property {object} event - The event Object passed to each callback
+ * @property {string} event.type - The name of the event
+ * @property {Scene} event.controller - The Scene object that triggered this event
+ * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
+*/
 
 /**
  * Add one ore more event listener.  
@@ -246,6 +271,10 @@ this.on = function (name, callback) {
  * @returns {Scene} Parent object for chaining.
 */
 this.off = function (name, callback) {
+	if (!name) {
+		log(1, "ERROR: Invalid event name supplied.");
+		return Scene;
+	}
 	var names = name.trim().split(' ');
 	names.forEach(function (fullname, key) {
 		var
@@ -279,6 +308,10 @@ this.off = function (name, callback) {
  * @returns {Scene} Parent object for chaining.
 */
 this.trigger = function (name, vars) {
+	if (!name) {
+		log(1, "ERROR: Invalid event name supplied.");
+		return Scene;
+	}
 	var
 		event = new ScrollMagic.Event(name, vars),
 		listeners = _listeners[event.type];

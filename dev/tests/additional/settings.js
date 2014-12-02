@@ -1,24 +1,6 @@
 jasmine.getFixtures().fixturesPath = 'base/fixtures';
 var globalMatchers = {
 	methodTests: {
-		toBeChainableSetter: function(util, customEqualityTesters) {
-			return {
-				compare: function(method, obj) {
-					var result = {};
-						result.pass = obj[method]("1") === obj;
-					try {
-					} catch (e) {
-						//result.pass = false;
-					}
-					if (result.pass) {
-						result.message = "Expected method '" + method + "' not to be chainable when used as setter";
-					} else {
-						result.message = "Expected method '" + method + "' to be chainable when used as setter";
-					}
-				 return result;
-				}  
-			};
-		},
 		toBeOfType: function(util, customEqualityTesters) {
 			return {
 				compare: function(obj, objType) {
@@ -36,19 +18,39 @@ var globalMatchers = {
 				}
 			};
 		},
-		toBeGetter: function(util, customEqualityTesters) {
+		toWorkAsChainableSetter: function(util, customEqualityTesters) {
+			return {
+				compare: function(method, obj) {
+					var result = {};
+					try {
+						result.pass = obj[method]("1") === obj;
+					} catch (e) {
+						e.message += ", while testing method '" + method + "' to be chainable when passing a parameter";
+						throw e;
+					}
+					if (result.pass) {
+						result.message = "Expected method '" + method + "' not to be chainable when used as setter";
+					} else {
+						result.message = "Expected method '" + method + "' to be chainable when used as setter";
+					}
+				 return result;
+				}  
+			};
+		},
+		toWorkAsGetter: function(util, customEqualityTesters) {
 			return {
 				compare: function(method, obj) {
 					var result = {};
 					try {
 						result.pass = obj[method]() !== obj;
 					} catch (e) {
-						//result.pass = false;
+						e.message += ", while testing method '" + method + "' without passing a parameter";
+						throw e;
 					}
 					if (result.pass) {
-						result.message = "Expected method '" + method + "' not to be a getter";
+						result.message = "Expected method '" + method + "' not to be a getter and return parent";
 					} else {
-						result.message = "Expected method '" + method + "' to be a getter";
+						result.message = "Expected method '" + method + "' to be a getter and return something other than parent";
 					}
 				 return result;
 				}  
