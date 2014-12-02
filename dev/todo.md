@@ -16,17 +16,15 @@
 
 # Build (gulpfile.js)
  - make jsdoc generation properly && repair docs
- - add tests to gulp routine
- - make travis-ci and dev gulp (dev gulp including source map)
- - make sourcemap for development phase ?
- - update gulp-file-include once rel paths are implemented
+ - make tests task
+ - make sourcemaps task
  – optimize minification
 
 # Test
- - add tests for _utils
  - rewrite for should?
  - rewrite to use require
- - test all variants (jquery, regular, minified)
+ - add tests for _utils
+ - test all variants (regular, minified) and plugins
 
 # Project
  - texte durchgehen

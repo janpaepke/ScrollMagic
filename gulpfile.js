@@ -145,7 +145,7 @@ gulp.task('lint:source', function() {
 });
 
 gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:uncompressed'], function() {
-	gulp.src(config.files, { base: config.dirs.source })
+	return gulp.src(config.files, { base: config.dirs.source })
 		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 			.pipe(replace({
@@ -167,7 +167,7 @@ gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:un
 
 gulp.task('build:minified', ['validate:parameters', 'lint:source', 'clean:minified'], function() {
 	// minified files
-	gulp.src(config.files, { base: config.dirs.source })
+	return gulp.src(config.files, { base: config.dirs.source })
 		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 		.pipe(rename({suffix: ".min"}))
@@ -276,3 +276,15 @@ gulp.task('sync:readme', ['validate:parameters'], function() {
 			}))
 			.pipe(gulp.dest("./"));
 });
+
+gulp.task('run:tests', ['lint:source', 'build:uncompressed', 'build:minified'], function () {
+	// TODO: run tests
+});
+
+gulp.task('generate:sourcemaps', ['lint:source', 'build:uncompressed', 'build:minified'], function () {
+	// TODO: generate sourcemaps
+});
+
+gulp.task('travis-ci', ['lint:source', 'build:uncompressed', 'build:minified', 'run:tests']);
+
+gulp.task('development', ['lint:source', 'build:uncompressed', 'generate:sourcemaps']);
