@@ -87,15 +87,14 @@ var updatePinSpacerSize = function () {
 			after = (_state === "AFTER"),
 			before = (_state === "BEFORE"),
 			during = (_state === "DURING"),
-			pinned = (_util.css(_pin, "position") == "fixed"), // TODO: find out if necessary to check this way
 			vertical = _parent.info("vertical"),
 			spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
 			marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 			css = {};
 
 		if (marginCollapse) {
-			css["margin-top"] = before || (during && pinned) ? _util.css(_pin, "margin-top") : "auto";
-			css["margin-bottom"] = after || (during && pinned) ? _util.css(_pin, "margin-bottom") : "auto";
+			css["margin-top"] = before || during ? _util.css(_pin, "margin-top") : "auto";
+			css["margin-bottom"] = after || during ? _util.css(_pin, "margin-bottom") : "auto";
 		} else {
 			css["margin-top"] = css["margin-bottom"] = "auto";
 		}
@@ -103,7 +102,7 @@ var updatePinSpacerSize = function () {
 		// set new size
 		// if relsize: spacer -> pin | else: pin -> spacer
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
-			if (pinned) {
+			if (during) {
 				if (_util.get.width(window) == _util.get.width(_pinOptions.spacer.parentNode)) {
 					// relative to body
 					_util.css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
@@ -118,10 +117,10 @@ var updatePinSpacerSize = function () {
 			// minwidth is needed for cascaded pins.
 			// margin is only included if it's a cascaded pin to resolve an IE9 bug
 			css["min-width"] = _util.get.width(spacerChild, true , spacerChild !== _pin);
-			css.width = pinned ? css["min-width"] : "auto";
+			css.width = during ? css["min-width"] : "auto";
 		}
 		if (_pinOptions.relSize.height) {
-			if (pinned) {
+			if (during) {
 				if (_util.get.height(window) == _util.get.height(_pinOptions.spacer.parentNode)) {
 					// relative to body
 					_util.css(_pin, {"height": "inherit"});
@@ -134,7 +133,7 @@ var updatePinSpacerSize = function () {
 			}
 		} else {
 			css["min-height"] = _util.get.height(spacerChild, true , !marginCollapse); // needed for cascading pins
-			css.height = pinned ? css["min-height"] : "auto";
+			css.height = during ? css["min-height"] : "auto";
 		}
 
 		// add space for duration if pushFollowers is true
