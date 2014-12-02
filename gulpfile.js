@@ -123,13 +123,13 @@ gulp.task('validate:parameters', function() {
 	}
 });
 
-gulp.task('clean:uncompressed', function(callback) {
+gulp.task('clean:uncompressed', ['validate:parameters', 'lint:source'], function(callback) {
 	del(options.folderOut + "/"+ options.subfolder.uncompressed +"/*", callback);
 });
-gulp.task('clean:minified', function(callback) {
+gulp.task('clean:minified', ['validate:parameters', 'lint:source'], function(callback) {
 	del(options.folderOut + "/"+ options.subfolder.minified +"/*", callback);
 });
-gulp.task('clean:docs', ['validate:parameters'], function(callback) {
+gulp.task('clean:docs', ['validate:parameters', 'lint:source'], function(callback) {
 	if (options.dodocs) {
 		del(options.folderDocsOut + "/*", callback);
 	} else {
@@ -138,9 +138,10 @@ gulp.task('clean:docs', ['validate:parameters'], function(callback) {
 });
 
 gulp.task('lint:source', function() {
-  gulp.src(config.dirs.source + "/**/*.js")
-    .pipe(jshint())
-  	.pipe(jshint.reporter('default'));
+  return gulp.src(config.dirs.source + "/**/*.js")
+    .pipe(jshint({lookup: false}))
+  	.pipe(jshint.reporter('jshint-stylish'))
+  	.pipe(jshint.reporter('fail'));
 });
 
 gulp.task('build:uncompressed', ['validate:parameters', 'lint:source', 'clean:uncompressed'], function() {
@@ -191,7 +192,7 @@ gulp.task('build:minified', ['validate:parameters', 'lint:source', 'clean:minifi
 
 gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'], function(callback) {
 	if (options.dodocs) {
-  	log.info("Generating new docs");
+  	log.info("New docs are generated to " + options.folderDocsOut);
 
 		var
 			bin = '"' + 'node_modules/.bin/jsdoc' + '"',
@@ -223,6 +224,7 @@ gulp.task('generate:docs', ['validate:parameters', 'lint:source', 'clean:docs'],
 			.on("close", callback);
 		}, 500);
 	} else {
+  	log.info("Docs are not being generated. (lacking parameter)");
 		callback();
 	}
 

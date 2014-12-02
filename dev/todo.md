@@ -15,8 +15,6 @@
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 
 # Build (gulpfile.js)
- - add error when lint fails.
- - custom reporter for jslint
  - make jsdoc generation properly && repair docs
  - add tests to gulp routine
  - make travis-ci and dev gulp (dev gulp including source map)
@@ -26,6 +24,7 @@
 
 # Test
  - add tests for _utils
+ - rewrite for should?
  - rewrite to use require
  - test all variants (jquery, regular, minified)
 
