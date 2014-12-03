@@ -10,6 +10,7 @@
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)
  - go through inline TO-DOs.
  – check if event namespaces are working properly
+ - add wilcards to events?
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
@@ -18,6 +19,7 @@
  - make jsdoc generation properly & repair docs
  - make tests task
  - make sourcemaps task
+ - allow debugger statements in lint, when running gulp development
  – optimize minification
 
 # Test

@@ -188,11 +188,12 @@ ScrollMagic.Controller = function(options) {
 	/**
 	 * Send a debug message to the console.
 	 * @private
+	 * but provided publicly with _log for plugins
 	 *
 	 * @param {number} loglevel - The loglevel required to initiate output for the message.
 	 * @param {...mixed} output - One or more variables that should be passed to the console.
 	 */
-	var log = function (loglevel, output) {
+	var log = this._log = function (loglevel, output) {
 		if (_options.loglevel >= loglevel) {
 			var
 				prefix = "(" + NAMESPACE + ") ->",
@@ -266,7 +267,7 @@ ScrollMagic.Controller = function(options) {
 						newScene[key].call(newScene, _options.globalSceneOptions[key]);
 					}
 				}
-				log(3, "added Scene (" + _sceneObjects.length + " total)");
+				log(3, "adding Scene (" + _sceneObjects.length + " total)");
 			}
 		} else {
 			log(1, "ERROR: invalid argument supplied for '.addScene()'");
@@ -296,10 +297,10 @@ ScrollMagic.Controller = function(options) {
 		} else {
 			var index = _sceneObjects.indexOf(Scene);
 			if (index > -1) {
+				log(3, "removing Scene (" + _sceneObjects.length + " total)");
 				Scene.off("shift." + NAMESPACE + "_sort");
 				_sceneObjects.splice(index, 1);
 				Scene.remove();
-				log(3, "removed Scene (" + _sceneObjects.length + " total)");
 			}
 		}
 		return Controller;

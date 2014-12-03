@@ -82,7 +82,7 @@ options.replaceVars = {
 	},
 	patterns: [
 		{
-			// remove unecessary comment open/closes
+			// remove unecessary comment close/open
 			match: /\s?\*\/\s*\/\*!?\s?\n( \*)?/gm,
 			replacement: '$1\n$1'
 		}
@@ -185,7 +185,7 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 		.pipe(replace({
 			patterns: [
 				{ // remove log messages
-					match: /\s*log\([0-3],.+;.*$/gm,
+					match: /\s*(ScrollMagic\.)?(_util\.)?log\([0-3],.+\)\s*;\s*$/gm,
 					replacement: ''
 				},
 				{ // remove unnecessary stuff in minify

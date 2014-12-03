@@ -2,11 +2,12 @@
 /**
  * Send a debug message to the console.
  * @private
+ * but provided publicly with _log for plugins
  *
  * @param {number} loglevel - The loglevel required to initiate output for the message.
  * @param {...mixed} output - One or more variables that should be passed to the console.
  */
-var log = function (loglevel, output) {
+var log = this._log = function (loglevel, output) {
 	if (_options.loglevel >= loglevel) {
 		var
 			prefix = "(" + NAMESPACE + ") ->",
@@ -43,8 +44,9 @@ this.addTo = function (controller) {
 		updateScrollOffset();
 		updatePinSpacerSize();
 		_controller.info("container").addEventListener('resize', onContainerResize);
-		log(3, "added " + NAMESPACE + " to controller");
 		controller.addScene(Scene);
+		Scene.trigger("add", {controller: _controller});
+		log(3, "added " + NAMESPACE + " to controller");
 		Scene.update();
 	}
 	return Scene;
@@ -92,8 +94,9 @@ this.remove = function () {
 		_controller.info("container").removeEventListener('resize', onContainerResize);
 		var tmpParent = _controller;
 		_controller = undefined;
-		log(3, "removed " + NAMESPACE + " from controller");
 		tmpParent.removeScene(Scene);
+		Scene.trigger("remove");
+		log(3, "removed " + NAMESPACE + " from controller");
 	}
 	return Scene;
 };

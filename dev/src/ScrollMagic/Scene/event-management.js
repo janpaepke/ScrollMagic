@@ -16,14 +16,14 @@ var _listeners = {};
  *
  * @example
  * scene.on("start", function (event) {
- * 		alert("Hit start point of scene.");
+ * 	console.log("Hit start point of scene.");
  * });
  *
  * @property {object} event - The event Object passed to each callback
  * @property {string} event.type - The name of the event
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {number} event.progress - Reflects the current progress of the scene
- * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+ * @property {string} event.state - The current state of the scene `"BEFORE"` or `"DURING"`
  * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
  */
 /**
@@ -37,14 +37,14 @@ var _listeners = {};
  *
  * @example
  * scene.on("end", function (event) {
- * 		alert("Hit end point of scene.");
+ * 	console.log("Hit end point of scene.");
  * });
  *
  * @property {object} event - The event Object passed to each callback
  * @property {string} event.type - The name of the event
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {number} event.progress - Reflects the current progress of the scene
- * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+ * @property {string} event.state - The current state of the scene `"DURING"` or `"AFTER"`
  * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
  */
 /**
@@ -58,14 +58,14 @@ var _listeners = {};
  *
  * @example
  * scene.on("enter", function (event) {
- * 		alert("Entered a scene.");
+ * 	console.log("Scene entered.");
  * });
  *
  * @property {object} event - The event Object passed to each callback
  * @property {string} event.type - The name of the event
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {number} event.progress - Reflects the current progress of the scene
- * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+ * @property {string} event.state - The current state of the scene - always `"DURING"`
  * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
  */
 /**
@@ -79,14 +79,14 @@ var _listeners = {};
  *
  * @example
  * scene.on("leave", function (event) {
- * 		alert("Left a scene.");
+ * 	console.log("Scene left.");
  * });
  *
  * @property {object} event - The event Object passed to each callback
  * @property {string} event.type - The name of the event
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {number} event.progress - Reflects the current progress of the scene
- * @property {string} event.state - The current state of the scene `"BEFORE"`, `"DURING"` or `"AFTER"`
+ * @property {string} event.state - The current state of the scene `"BEFORE"` or `"AFTER"`
  * @property {string} event.scrollDirection - Indicates which way we are scrolling `"PAUSED"`, `"FORWARD"` or `"REVERSE"`
  */
 /**
@@ -97,7 +97,7 @@ var _listeners = {};
  *
  * @example
  * scene.on("update", function (event) {
- * 		console.log("Scene updated.");
+ * 	console.log("Scene updated.");
  * });
  *
  * @property {object} event - The event Object passed to each callback
@@ -117,7 +117,7 @@ var _listeners = {};
  *
  * @example
  * scene.on("progress", function (event) {
- * 		console.log("Scene progress changed.");
+ * 	console.log("Scene progress changed to " + event.progress);
  * });
  *
  * @property {object} event - The event Object passed to each callback
@@ -135,7 +135,7 @@ var _listeners = {};
  *
  * @example
  * scene.on("change", function (event) {
- * 		console.log("Scene Property \"" + event.what + "\" changed to " + event.newval);
+ * 	console.log("Scene Property \"" + event.what + "\" changed to " + event.newval);
  * });
  *
  * @property {object} event - The event Object passed to each callback
@@ -156,7 +156,7 @@ var _listeners = {};
  *
  * @example
  * scene.on("shift", function (event) {
- * 		console.log("Scene moved, because the " + event.reason + " has changed.)");
+ * 	console.log("Scene moved, because the " + event.reason + " has changed.)");
  * });
  *
  * @property {object} event - The event Object passed to each callback
@@ -188,7 +188,7 @@ var _listeners = {};
  * @property {string} event.type - The name of the event
  * @property {Scene} event.target - The Scene object that triggered this event
  * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
-*/
+ */
 /**
  * Scene add event.  
  * Fires when the scene is added to a controller.
@@ -199,21 +199,31 @@ var _listeners = {};
  *
  * @example
  * scene.on("add", function (event) {
- *        // add custom action
- *        $("#my-elem").left("200");
- *      })
- *      .on("destroy", function (event) {
- *        // reset my element to start position
- *        if (event.reset) {
- *          $("#my-elem").left("0");
- *        }
- *      });
+ * 	console.log('Scene was added to a new controller.');
+ * });
  *
  * @property {object} event - The event Object passed to each callback
  * @property {string} event.type - The name of the event
- * @property {Scene} event.controller - The Scene object that triggered this event
- * @property {boolean} event.reset - Indicates if the destroy method was called with reset `true` or `false`.
-*/
+ * @property {Scene} event.target - The Scene object that triggered this event
+ * @property {boolean} event.controller - The controller object the scene was added to.
+ */
+/**
+ * Scene remove event.  
+ * Fires when the scene is removed from a controller.
+ * This is mostly used by plugins to know that change might be due.
+ *
+ * @event Scene.remove
+ * @since 2.0.0
+ *
+ * @example
+ * scene.on("remove", function (event) {
+ * 	console.log('Scene was removed from its controller.');
+ * });
+ *
+ * @property {object} event - The event Object passed to each callback
+ * @property {string} event.type - The name of the event
+ * @property {Scene} event.target - The Scene object that triggered this event
+ */
 
 /**
  * Add one ore more event listener.  
@@ -230,7 +240,7 @@ var _listeners = {};
  * @param {string} name - The name or names of the event the callback should be attached to.
  * @param {function} callback - A function that should be executed, when the event is dispatched. An event object will be passed to the callback.
  * @returns {Scene} Parent object for chaining.
-*/
+ */
 this.on = function (name, callback) {
 	if (_util.type.Function(callback)) {
 		var names = name.trim().split(' ');
@@ -248,7 +258,7 @@ this.on = function (name, callback) {
 			_listeners[eventname].push(listener);
 		});
 	} else {
-		log(1, "ERROR calling method 'on()': Supplied callback is not a valid function!");
+		log(1, "ERROR when calling '.on()': Supplied callback is not a valid function!");
 	}
 	return Scene;
 };
@@ -315,7 +325,7 @@ this.trigger = function (name, vars) {
 	var
 		event = new ScrollMagic.Event(name, vars),
 		listeners = _listeners[event.type];
-	log(3, 'event fired:', event.type, "->", vars);
+	log(3, 'event fired:', event.type, vars ? "->" : '', vars ? vars : '');
 	if (listeners) {
 		event.target = event.currentTarget = Scene;
 		listeners.forEach(function (listener, key) {
