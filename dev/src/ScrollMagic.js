@@ -13,7 +13,7 @@
 	"use strict";
 
 	var ScrollMagic = function () {
-
+		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
 	ScrollMagic.version = "%VERSION%";
