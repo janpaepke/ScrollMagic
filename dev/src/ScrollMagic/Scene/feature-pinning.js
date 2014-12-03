@@ -250,7 +250,7 @@ this.setPin = function (element, settings) {
 	}
 	// (BUILD) - REMOVE IN MINIFY - START
 	if (_pin && _options.duration === 0 && settings.pushFollowers) {
-		log(2, "WARNING: pushFollowers has no effect, when scene duration is 0.");
+		log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
 	}
 	// (BUILD) - REMOVE IN MINIFY - END
 

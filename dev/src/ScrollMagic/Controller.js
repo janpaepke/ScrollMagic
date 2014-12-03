@@ -267,7 +267,7 @@ ScrollMagic.Controller = function(options) {
 						newScene[key].call(newScene, _options.globalSceneOptions[key]);
 					}
 				}
-				log(3, "adding Scene (" + _sceneObjects.length + " total)");
+				log(3, "adding Scene (now " + _sceneObjects.length + " total)");
 			}
 		} else {
 			log(1, "ERROR: invalid argument supplied for '.addScene()'");
@@ -297,9 +297,9 @@ ScrollMagic.Controller = function(options) {
 		} else {
 			var index = _sceneObjects.indexOf(Scene);
 			if (index > -1) {
-				log(3, "removing Scene (" + _sceneObjects.length + " total)");
 				Scene.off("shift." + NAMESPACE + "_sort");
 				_sceneObjects.splice(index, 1);
+				log(3, "removing Scene (now " + _sceneObjects.length + " left)");
 				Scene.remove();
 			}
 		}
