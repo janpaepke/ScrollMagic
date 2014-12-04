@@ -64,7 +64,7 @@
 							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 200})
 											.addTo(controller)
 											.on("update", function (e) {
-												$("#scrollDirection").text(e.target.parent().info("scrollDirection"));
+												$("#scrollDirection").text(e.target.controller().info("scrollDirection"));
 											})
 											.on("enter leave", function (e) {
 												$("#state").text(e.type == "enter" ? "inside" : "outside");

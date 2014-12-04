@@ -771,9 +771,12 @@ a.viewsource:before {
 }
 #multiDirect {
 	text-align: left;
+	position: relative;
 }
 #multiDirect .box1 {
-	margin: 200px auto auto 200px;
+	left: 50vw;
+	top: 200px;
+	margin-left: -60px;
 }
 #multiDirect .box1 p:first-child {
 	margin-top: 20px;

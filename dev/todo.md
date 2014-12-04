@@ -9,7 +9,9 @@
  – check if event namespaces are working properly
  - add wilcards to events?
 
+ - bug: not all properly destroyed in Indicators (check log in destroy example)
  - bug: duration change doesnt update pin spacer (see test.html)
+ - bug: cascading pins don't work (check example)
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
