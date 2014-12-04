@@ -166,13 +166,11 @@ var _util = ScrollMagic._util = (function (window) {
 	};
 	// get scroll top value
 	_get.scrollTop = function (elem) {
-		elem = elem || document;
-		return (window.pageYOffset || elem.scrollTop  || 0) - (elem.clientTop  || 0);
+		return (elem && typeof elem.scrollTop === 'number') ? elem.scrollTop : window.pageYOffset || 0;
 	};
 	// get scroll left value
 	_get.scrollLeft = function (elem) {
-		elem = elem || document;
-		return (window.pageXOffset || elem.scrollLeft  || 0) - (elem.clientLeft  || 0);
+		return (elem && typeof elem.scrollLeft === 'number') ? elem.scrollLeft : window.pageXOffset || 0;
 	};
 	// get element height
 	_get.width = function (elem, outer, includeMargin) {

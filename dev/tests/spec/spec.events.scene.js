@@ -86,11 +86,11 @@ describe('ScrollScene - Events', function() {
         var moveMid = function(){$c.scrollTop(155);};
 
         moveMid();
-        ctrl.update(true)
+        ctrl.update(true);
         moveTop();
-        ctrl.update(true)
+        ctrl.update(true);
         moveMid();
-        ctrl.update(true)
+        ctrl.update(true);
         expect(triggerSpy).toHaveBeenCalled();
         expect(triggerSpy.calls.count()).toBe(2);
     });
