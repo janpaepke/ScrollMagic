@@ -1,8 +1,5 @@
 # Source
 
- - Plugin Indicators: remove jQuery dependency
- - Plugin Indicators: end-indicator to above line and auto-suffix
- - Plugin Indicators: optimize performance (huge drawbacks, when using many scenes)
  - Plugin Animation GSAP: create from Scene source
  - Plugin Animation GSAP: make it work with LITE versions as well
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
@@ -11,6 +8,8 @@
  - go through inline TO-DOs.
  – check if event namespaces are working properly
  - add wilcards to events?
+
+ - bug: duration change doesnt update pin spacer (see test.html)
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
@@ -23,6 +22,7 @@
  – optimize minification
 
 # Test
+ - cross browser test scrollPosition getter functions
  - rewrite for should?
  - rewrite to use require
  - add tests for _utils
