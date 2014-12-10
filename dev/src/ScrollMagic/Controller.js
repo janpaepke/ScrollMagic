@@ -599,3 +599,14 @@ ScrollMagic.Controller = function(options) {
 	construct();
 	return Controller;
 };
+
+// instance extension function for plugins
+ScrollMagic.Controller.extend = function (extension) {
+	var oldClass = this;
+	ScrollMagic.Controller = function () {
+		oldClass.apply(this, arguments);
+		return extension.apply(this, arguments);
+	};
+	ScrollMagic.Controller.prototype = oldClass.prototype;
+	ScrollMagic.Controller.prototype.constructor = ScrollMagic.Controller;
+};

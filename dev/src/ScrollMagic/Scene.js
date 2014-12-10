@@ -109,8 +109,6 @@ ScrollMagic.Scene = function (options) {
 	
 	// @include('Scene/event-management.js')
 	
-	// @include('Scene/feature-tweening.js')
-
 	// @include('Scene/feature-pinning.js')
 
 	// @include('Scene/feature-classToggles.js')
@@ -118,4 +116,15 @@ ScrollMagic.Scene = function (options) {
 	// INIT
 	construct();
 	return Scene;
+};
+
+// instance extension function for plugins
+ScrollMagic.Scene.extend = function (extension) {
+	var oldClass = this;
+	ScrollMagic.Scene = function () {
+		oldClass.apply(this, arguments);
+		return extension.apply(this, arguments);
+	};
+	ScrollMagic.Scene.prototype = oldClass.prototype;
+	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene;
 };

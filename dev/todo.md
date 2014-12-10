@@ -1,6 +1,5 @@
 # Source
 
- - Plugin Animation GSAP: create from Scene source
  - Plugin Animation GSAP: make it work with LITE versions as well
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
@@ -8,7 +7,8 @@
  - go through inline TO-DOs.
  – check if event namespaces are working properly
  - add wildcards to events?
-
+ 
+ - auto generate warning messages for missing plugins?
  - bug: duration change doesnt update pin spacer (see test.html)
  - bug: cascading pins don't work (check example)
 

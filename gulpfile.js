@@ -185,7 +185,7 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 		.pipe(replace({
 			patterns: [
 				{ // remove log messages
-					match: /\s*(ScrollMagic\.)?(_util\.)?log\([0-3],.+\)\s*;\s*$/gm,
+					match: /((\s*.+\._?)|(\s+))log\([0-3],.+\)\s*;\s*$/gm,
 					replacement: ''
 				},
 				{ // remove unnecessary stuff in minify
