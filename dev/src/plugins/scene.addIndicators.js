@@ -16,16 +16,15 @@
 	var
 		_fontSize = "0.85em",
 		_zIndex = "99999",
-		_edgeOffset = 10, // minimum edge distance, added to indentation
+		_edgeOffset = 15, // minimum edge distance, added to indentation
 		_util = ScrollMagic._util,
 		_autoindex = 0;
 
 	/**
 	 * Add Indicators for a ScrollScene.  
-	 * __REQUIRES__ ScrollMagic Debug Extension: `jquery.scrollmagic.debug.js`  
-	 * The indicators can only be added _AFTER_ the scene has been added to a controller.
+	 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
 	 * @public ScrollMagic.Scene.addIndicators
-
+	 *
 	 * @example
 	 * // add basic indicators
 	 * scene.addIndicators()
@@ -35,14 +34,13 @@
 	 *
 	 * @param {object} [options] - An object containing one or more options for the indicators.
 	 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
-	 														 If undefined, the controller's container will be used.
+	 														 														 If undefined, the controller's container will be used.
 	 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
 	 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
 	 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
 	 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
 	 * @param {string} [options.colorTrigger=blue] - CSS color definition for the trigger indicator.
-	*/
-
+	 */
 	ScrollMagic.Scene.prototype.addIndicators = function(opt) {
 		var
 			DEFAULT_OPTIONS = {
@@ -58,23 +56,48 @@
 
 		var
 			Scene = this,
-			options = _util.extend({}, DEFAULT_OPTIONS, opt),
-			indicator = new Indicator(Scene, options);
+			options = _util.extend({}, DEFAULT_OPTIONS, opt);
 
-		Scene.on("add.debug", indicator.add);
-		Scene.on("remove.debug", indicator.remove);
+		Scene._indicator = new Indicator(Scene, options);
+
+		Scene.on("add.debug", Scene._indicator.add);
+		Scene.on("remove.debug", Scene._indicator.remove);
+		Scene.on("destroy.debug", Scene.removeIndicators);
 
 		// it the scene already has a controller we can start right away.
 		if (Scene.controller()) {
-			indicator.add();
+			Scene._indicator.add();
 		}
 		return Scene;
 	};
-	var updateTriggerGroupLabel = function (group) {
-		var text = "trigger" + (group.members.length > 1 ? "" : " " + group.members[0].name);
-		group.element.firstChild.firstChild.textContent = text;
+
+	/**
+	 * Removes indicators from a ScrollScene.  
+	 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
+	 * @public ScrollMagic.Scene.removeIndicators
+	 *
+	 * @example
+	 * // remove previously added indicators
+	 * scene.removeIndicators()
+	 *
+	 */
+	ScrollMagic.Scene.prototype.removeIndicators = function() {
+		if (this._indicator) {
+			this._indicator.remove();
+			this.off("add.debug", this._indicator.add);
+			this.off("remove.debug", this._indicator.remove);
+			this.off("destroy.debug", this.removeIndicators);
+			this._indicator = undefined;
+		}
 	};
 
+
+	
+	/**
+	 * ----------------------------------------------------------------
+	 * Templates for the indicators
+	 * ----------------------------------------------------------------
+	 */
 	var TPL = {
 		start: function (color) {
 			// inner element (for bottom offset -1, while keeping top position 0)
@@ -157,152 +180,91 @@
 		},
 	};
 
-
-	//  internal indicator class
-	var Indicator = function (Scene, options) {
+	/**
+	 * -------------------------------------------------------------------
+	 * Internal class for the management of all Indicators in a controller
+	 * -------------------------------------------------------------------
+	 */
+	var IndicatorManagement = function (ctrl) {
 		var
-			Indicator = this,
-			_controller,
-			_vertical,
-			_flowContainer,
-			_triggerGroup,		// the trigger group appropriate for this scene
-			_elemBounds = TPL.bounds(),
-			_elemStart = TPL.start(options.colorStart),
-			_elemEnd = TPL.end(options.colorEnd);
+			IndicatorManagement = this,
+			_info = ctrl.info(),
+			_container = _info.container,
+			_isDocument = _info.isDocument,
+			_vertical = _info.vertical;
 
-		options.name = options.name || _autoindex;
-		
-		// make publicly available for trigger update
-		Indicator.indent = options.indent; 
-		Indicator.name = options.name; 
+		var init = function () {
+			// public var
+			IndicatorManagement.groups = [];
 
-		_elemStart.firstChild.textContent += " " + options.name;
-		_elemEnd.textContent += " " + options.name;
-
-		_elemBounds.appendChild(_elemStart);
-		_elemBounds.appendChild(_elemEnd);
-
-		this.add = function () {
-			_controller = Scene.controller();
-			_vertical = _controller.info("vertical");
-
-			var
-				container = _controller.info('container'),
-				isDocument = _controller.info('isDocument');
-
-			_flowContainer = options.parent && _util.get.elements(options.parent);
-			if (!_flowContainer) {
-				// no parent supplied or doesnt exist
-				_flowContainer = isDocument ? document.body : container; // check if window/document (then use body)
-				// TODO: find closest single movable child (iScroll)
-			}
-			
-			if (!isDocument && _util.css(_flowContainer, "position") === 'static') {// positioning needed for correct display of indicators
-				// TODO: test if needed
-				_util.css(_flowContainer, {position: "relative"});
-			}
-
-			// INIT UPDATES AND DEFINE CALLBACKS
-			/*
+			/**
 				needed updates:
 				+++++++++++++++
-				start/end position on scene shift
+				start/end position on scene shift (handled in Indicator class)
+				trigger parameters on triggerHook value change (handled in Indicator class)
 				bounds position on container scroll or resize (to keep alignment to bottom/right)
-				trigger parameters on triggerHook value change
-				trigger position, after adding new, on container resize, window resize (if not equal to container), window scroll (if not equal to container)
+				trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
 			*/
 
-			if (!_controller._triggerGroups) {
-				_controller._triggerGroups = [];
-				// add listener to update all related trigger groups
-				container.addEventListener("resize", handleTriggerPositionChange);
-				if (!_controller.info("isDocument")) {
-					// also on window scroll and resize
-					window.addEventListener("resize", handleTriggerPositionChange);
-					window.addEventListener("scroll", handleTriggerPositionChange);
-				}
+			// add listeners to update all related trigger groups
+			_container.addEventListener("resize", handleTriggerPositionChange);
+			if (!_isDocument) {
+				window.addEventListener("resize", handleTriggerPositionChange);
+				window.addEventListener("scroll", handleTriggerPositionChange);
 			}
-			if (!_controller._boundContainers) {
-				_controller._boundContainers = [];
-				container.addEventListener("scroll", handleBoundsPositionChange);
-				container.addEventListener("resize", handleBoundsPositionChange);
-			}
+			// update all related bounds containers
+			_container.addEventListener("resize", handleBoundsPositionChange);
+			_container.addEventListener("scroll", handleBoundsPositionChange);
 
-			Scene.on("change.debug", function (e) { // when value actually changes
-				if (e.what === "triggerHook") {
-					updateTriggerGroup();
-				}
-			});
-			updateTriggerGroup(); // trigger elements are automatically added here, if needed.
-
-			addBounds(); // Add Bounds elements (start/end)
-			Scene.on("shift.debug", updateBounds); // when values actually change
-			updateBounds();
-			setTimeout(function () {
-				updateBoundsPositions(_elemBounds);
-			}, 0); // do after all execution is finished otherwise sometimes size calculations are off
-
-
-			Scene._log(3, "added indicators");
 		};
 
-		this.remove = function () { // TODO: unset, remove and reverse all the stuff
-			_controller = undefined;
-			Scene._log(3, "removed indicators");
-		};
-
-		var addBounds = function () {
-			// add bounds elements
-			_flowContainer.appendChild(_elemBounds);
-			
-			_util.css(_elemStart.firstChild, {
-				"border-bottom-width" : _vertical ? 1 : 0,
-				"border-right-width" :	_vertical ? 0 : 1,
-				"bottom":								_vertical ? -1 : options.indent,
-				"right":								_vertical ? options.indent : -1,
-				"padding":							_vertical ? "0 8px" : "2px 4px",
-			});
-			_util.css(_elemEnd, {
-				"border-top-width" :		_vertical ? 1 : 0,
-				"border-left-width" : 	_vertical ? 0 : 1,
-				"top":									_vertical ? "100%" : "",
-				"right":								_vertical ? options.indent : "",
-				"bottom":								_vertical ? "" : options.indent,
-				"left":									_vertical ? "" : "100%",
-				"padding":							_vertical ? "0 8px" : "2px 4px"
-			});
-			if (_vertical) {
-				var alignCSS = {
-					"text-align" : "center",
-					"min-width" : 30,
-				};
-				_util.css(_elemStart.firstChild, alignCSS);
-				_util.css(_elemEnd, alignCSS);
-			}
-			_controller._boundContainers.push(_elemBounds);
-		};
-
-		// event handler for when associated trigger groups need to be updated
-		var handleTriggerPositionChange = function () {
-			updateTriggerGroupPositions();
-		};
-
-		// event handler for when associated bounds markers need to be updated
+		// event handler for when associated bounds markers need to be repositioned
 		var handleBoundsPositionChange = function () {
-			updateBoundsPositions();
+			IndicatorManagement.updateBoundsPositions();
 		};
 
-		// updates the positions of all trigger groups attached to this controller or a specific one, if provided
-		var updateTriggerGroupPositions = function (specificGroup) {
-			var // constant vars
-				groups = specificGroup ? [specificGroup] : _controller._triggerGroups,
-				i = groups.length,
-				info = _controller.info(),
-				flowContainer = info.isDocument ? document.body : info.container,
-				containerOffset = _util.get.offset(flowContainer, !info.isDocument),
+		// event handler for when associated trigger groups need to be repositioned
+		var handleTriggerPositionChange = function () {
+			IndicatorManagement.updateTriggerGroupPositions();
+		};
+
+		// updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
+		IndicatorManagement.updateBoundsPositions = function (specificIndicator) {
+			var // constant for all bounds
+				groups = specificIndicator ?
+								[_util.extend({}, specificIndicator.triggerGroup, {members: [specificIndicator]})]: // create a group with only one element
+								IndicatorManagement.groups, // use all
+				g = groups.length,
+				css = {},
+				paramPos = _vertical ? "left"  : "top",
+				paramDimension = _vertical ? "width" : "height",
 				edge = _vertical ?
-							 Math.min(_util.get.width(flowContainer), _util.get.width(info.container)) - _edgeOffset :
-							 Math.min(_util.get.height(flowContainer), _util.get.height(info.container)) - _edgeOffset;
+							_util.get.scrollLeft(_container) + _util.get.width(_container) - _edgeOffset:
+							_util.get.scrollTop(_container) + _util.get.height(_container) - _edgeOffset,
+				b, triggerSize, group;
+			while (g--) { // group loop
+				group = groups[g];
+				b = group.members.length;
+				triggerSize = _util.get[paramDimension](group.element.firstChild);
+				while (b--) { // indicators loop
+					css[paramPos] = edge - triggerSize;
+					_util.css(group.members[b].bounds, css);
+				}
+			}
+		};
+
+		// updates the positions of all trigger groups attached to a controller or a specific one, if provided
+		IndicatorManagement.updateTriggerGroupPositions = function (specificGroup) {
+			var // constant vars
+				groups = specificGroup ? [specificGroup] : IndicatorManagement.groups,
+				i = groups.length,
+				container = _isDocument ? document.body : _container,
+				containerOffset = _util.get.offset(container, !_isDocument),
+				edge = _vertical ?
+							_util.get.width(_container) - _edgeOffset :
+							_util.get.height(_container) - _edgeOffset,
+				paramDimension = _vertical ? "width"  : "height",
+				paramTransform = _vertical ? "Y" : "X";
 			var // changing vars
 					group,
 					elem,
@@ -312,13 +274,13 @@
 			while (i--) {
 				group = groups[i];
 				elem = group.element;
-				pos = group.triggerHook * info.size;
-				elemSize = _vertical ? _util.get.height(elem.firstChild.firstChild) : _util.get.width(elem.firstChild.firstChild);
-				transform = pos > elemSize ? "translate" + (_vertical ? "Y" : "X") + "(-100%)" : "";
+				pos = group.triggerHook * ctrl.info("size");
+				elemSize = _util.get[paramDimension](elem.firstChild.firstChild);
+				transform = pos > elemSize ? "translate" + paramTransform + "(-100%)" : "";
 
 				_util.css(elem, {
-					top: containerOffset.top + (_vertical ? pos : edge - group.members[0].indent),
-					left: containerOffset.left + (_vertical ? edge - group.members[0].indent : pos)
+					top: containerOffset.top + (_vertical ? pos : edge - group.members[0].options.indent),
+					left: containerOffset.left + (_vertical ? edge - group.members[0].options.indent : pos)
 				});
 				_util.css(elem.firstChild.firstChild, {
 					"-ms-transform" : transform,
@@ -328,8 +290,187 @@
 			}
 		};
 
+		// updates the label for the group to contain the name, if it only has one member
+		IndicatorManagement.updateTriggerGroupLabel = function (group) {
+			var
+				text = "trigger" + (group.members.length > 1 ? "" : " " + group.members[0].options.name),
+				elem = group.element.firstChild.firstChild,
+				doUpdate = elem.textContent !== text;
+			if (doUpdate) {
+				elem.textContent = text;
+				if (_vertical) { // bounds position is dependent on text length, so update
+					IndicatorManagement.updateBoundsPositions();
+				}
+			}
+		};
+
+		// removes all previously set listeners
+		IndicatorManagement.removeListeners = function () {
+			_container.removeEventListener("resize", handleTriggerPositionChange);
+			if (!_isDocument) {
+				window.removeEventListener("resize", handleTriggerPositionChange);
+				window.removeEventListener("scroll", handleTriggerPositionChange);
+			}
+			_container.removeEventListener("resize", handleBoundsPositionChange);
+			_container.removeEventListener("scroll", handleBoundsPositionChange);
+		};
+
+		init();
+		return IndicatorManagement;
+	};
+
+
+	/**
+	 * ----------------------------------------------------------------
+	 * Internal class for the construction of Indicators
+	 * ----------------------------------------------------------------
+	 */
+	var Indicator = function (Scene, options) {
+		var
+			Indicator = this,
+			_elemBounds = TPL.bounds(),
+			_elemStart = TPL.start(options.colorStart),
+			_elemEnd = TPL.end(options.colorEnd),
+			_boundsContainer = options.parent && _util.get.elements(options.parent)[0],
+			_vertical,
+			_ctrl;
+
+		options.name = options.name || _autoindex;
+
+		// prepare bounds elements
+		_elemStart.firstChild.textContent += " " + options.name;
+		_elemEnd.textContent += " " + options.name;
+		_elemBounds.appendChild(_elemStart);
+		_elemBounds.appendChild(_elemEnd);
+
+		// set public variables
+		Indicator.options = options;
+		Indicator.bounds = _elemBounds;
+		// will be set later
+		Indicator.triggerGroup = undefined;
+
+		// add indicators to DOM
+		this.add = function () {
+			_ctrl = Scene.controller();
+			_vertical = _ctrl.info("vertical");
+
+			var isDocument = _ctrl.info("isDocument");
+
+			if (!_boundsContainer) {
+				// no parent supplied or doesnt exist
+				_boundsContainer = isDocument ? document.body : _ctrl.info("container"); // check if window/document (then use body)
+			}
+			if (!isDocument && _util.css(_boundsContainer, "position") === 'static') {
+				// position mode needed for correct positioning of indicators
+				_util.css(_boundsContainer, {position: "relative"});
+			}
+
+			if (!_ctrl._indicators) {
+				_ctrl._indicators = new IndicatorManagement(_ctrl);
+			} else if (!(_ctrl._indicators instanceof IndicatorManagement)) {
+				_ctrl._log(1, "ERROR in plugin addIndicators: Controller._indicators already in use.");
+			}
+
+			// add listeners for updates
+			Scene.on("change.debug", handleTriggerParamsChange);
+			Scene.on("shift.debug", handleBoundsParamsChange);
+
+			// updates trigger & bounds (will add elements if needed)
+			updateTriggerGroup();
+			updateBounds();
+
+			setTimeout(function () { // do after all execution is finished otherwise sometimes size calculations are off
+				_ctrl._indicators.updateBoundsPositions(Indicator);
+			}, 0);
+
+			Scene._log(3, "added indicators");
+		};
+
+		// remove indicators from DOM
+		this.remove = function () {
+			if (Indicator.triggerGroup) { // if not set there's nothing to remove
+				Scene.off("change.debug", handleTriggerParamsChange);
+				Scene.off("shift.debug", handleBoundsParamsChange);
+
+				if (Indicator.triggerGroup.members.length > 1) {
+					// just remove from memberlist of old group
+					var group = Indicator.triggerGroup;
+					group.members.splice(group.members.indexOf(Indicator), 1);
+					_ctrl._indicators.updateTriggerGroupLabel(group);
+					_ctrl._indicators.updateTriggerGroupPositions(group);
+					Indicator.triggerGroup = undefined;
+	 			} else {
+	 				// remove complete group
+	 				removeTriggerGroup();
+	 			}
+				removeBounds();
+				if (_ctrl._indicators.groups.length === 0) {
+					_ctrl._indicators.removeListeners();
+					_ctrl._indicators = undefined;
+				}
+				
+				Scene._log(3, "removed indicators");
+			}
+		};
+
+		/**
+		 * ----------------------------------------------------------------
+		 * internal Event Handlers
+		 * ----------------------------------------------------------------
+		 */
+
+		// event handler for when bounds params change
+		var handleBoundsParamsChange = function () {
+			updateBounds();
+		};
+
+		// event handler for when trigger params change
+		var handleTriggerParamsChange = function (e) {
+			if (e.what === "triggerHook") {
+				updateTriggerGroup();
+			}
+		};
+
+		/**
+		 * ----------------------------------------------------------------
+		 * Bounds (start / stop) management
+		 * ----------------------------------------------------------------
+		 */
+
+		// adds an new bounds elements to the array and to the DOM
+		var addBounds = function () {
+			var v = _ctrl.info("vertical");
+			// apply stuff we didn't know before...
+			_util.css(_elemStart.firstChild, {
+				"border-bottom-width" : v ? 1 : 0,
+				"border-right-width" :	v ? 0 : 1,
+				"bottom":								v ? -1 : options.indent,
+				"right":								v ? options.indent : -1,
+				"padding":							v ? "0 8px" : "2px 4px",
+			});
+			_util.css(_elemEnd, {
+				"border-top-width" :		v ? 1 : 0,
+				"border-left-width" : 	v ? 0 : 1,
+				"top":									v ? "100%" : "",
+				"right":								v ? options.indent : "",
+				"bottom":								v ? "" : options.indent,
+				"left":									v ? "" : "100%",
+				"padding":							v ? "0 8px" : "2px 4px"
+			});
+			// append
+			_boundsContainer.appendChild(_elemBounds);
+		};
+
+		// remove bounds from list and DOM
+		var removeBounds = function () {
+			_elemBounds.parentNode.removeChild(_elemBounds);
+		};
+
 		// update the start and end positions of the scene
 		var updateBounds = function () {
+			if (_elemBounds.parentNode !== _boundsContainer) {
+				addBounds(); // Add Bounds elements (start/end)
+			}
 			var css = {};
 			css[_vertical ? "top" : "left"] = Scene.triggerPosition();
 			css[_vertical ? "height" : "width"] = Scene.duration();
@@ -339,22 +480,13 @@
 			});
 		};
 
-		// updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
-		var updateBoundsPositions = function (specificBounds) {
-			var // constant for all bounds
-				bounds = specificBounds ? [specificBounds] : _controller._boundContainers,
-				i = bounds.length,
-				css = {},
-				container = _controller.info("container"),
-				edge = _vertical ?
-							_util.get.scrollLeft(container) + Math.min(_util.get.width(_flowContainer), _util.get.width(container)) - _util.get.width(_triggerGroup.element.firstChild) - _edgeOffset:
-							_util.get.scrollTop(container) + Math.min(_util.get.height(_flowContainer), _util.get.height(container)) - _util.get.height(_triggerGroup.element.firstChild) - _edgeOffset;
-			css[_vertical ? "left" : "top"] = edge;
-			while (i--) {
-				_util.css(bounds[i], css);
-			}
-		};
+		/**
+		 * ----------------------------------------------------------------
+		 * trigger and trigger group management
+		 * ----------------------------------------------------------------
+		 */
 
+		// adds an new trigger group to the array and to the DOM
 		var addTriggerGroup = function () {
 			var triggerElem = TPL.trigger(options.colorTrigger); // new trigger element
 			var css = {};
@@ -365,52 +497,55 @@
 				padding: _vertical ? "0 8px 3px 8px" : "3px 4px"
 			});
 			document.body.appendChild(triggerElem); // directly add to body
-			_triggerGroup = {
+			var newGroup = {
 				triggerHook: Scene.triggerHook(),
 				element: triggerElem,
 				members: [Indicator]
 			};
-			_controller._triggerGroups.push(_triggerGroup);
+			_ctrl._indicators.groups.push(newGroup);
+			Indicator.triggerGroup = newGroup;
 			// update right away
-			updateTriggerGroupPositions(_triggerGroup);
-			updateTriggerGroupLabel(_triggerGroup);
+			_ctrl._indicators.updateTriggerGroupLabel(newGroup);
+			_ctrl._indicators.updateTriggerGroupPositions(newGroup);
 		};
 
 		var removeTriggerGroup = function () {
-			_controller._triggerGroups.splice(_controller._triggerGroups.indexOf(_triggerGroup), 1);
-			_triggerGroup.element.parentNode.removeChild(_triggerGroup.element);
-			_triggerGroup = undefined;
+			_ctrl._indicators.groups.splice(_ctrl._indicators.groups.indexOf(Indicator.triggerGroup), 1);
+			Indicator.triggerGroup.element.parentNode.removeChild(Indicator.triggerGroup.element);
+			Indicator.triggerGroup = undefined;
 		};
 
-		// add indicator to a trigger group.
-		// Logic:
-		// 1 checks if current trigger group is in sync with Scene settings if so, nothing else needs to happen
-		// 2 try to find an existing one that matches parameters
-		// 	 2.1 If a match is found check if already assigned to an existing group
-		//       A: was the last member of existing group -> kill whole group
-		//       B: existing group has other members -> just remove from member list
-		//	 2.2 Assign to matching group
-		// 3 if no new match could be found check if assigned to existing groupp
-		//   A: yes, and it's the only member -> just update parameters and positions and keep using this group
-		//   B: yes but there are other members -> remove from member list and create a new one
-		//   C: no, so create a new one
+		// updates the trigger group -> either join existing or add new one
+		/**	
+		 * Logic:
+		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
+		 * 2 try to find an existing one that matches Scene parameters
+		 * 	 2.1 If a match is found check if already assigned to an existing group
+		 *			 If so:
+		 *       A: it was the last member of existing group -> kill whole group
+		 *       B: the existing group has other members -> just remove from member list
+		 *	 2.2 Assign to matching group
+		 * 3 if no new match could be found, check if assigned to existing group
+		 *   A: yes, and it's the only member -> just update parameters and positions and keep using this group
+		 *   B: yes but there are other members -> remove from member list and create a new one
+		 *   C: no, so create a new one
+		 */
 		var updateTriggerGroup = function () {
 			var
 				triggerHook = Scene.triggerHook(),
 				closeEnough = 0.0001;
 
 			// Have a group, check if it still matches
-			if (_triggerGroup) {
-				if (Math.abs(_triggerGroup.triggerHook - triggerHook) < closeEnough) {
+			if (Indicator.triggerGroup) {
+				if (Math.abs(Indicator.triggerGroup.triggerHook - triggerHook) < closeEnough) {
 					// _util.log(0, "trigger", options.name, "->", "no need to change, still in sync");
-					// all good
-					return;
+					return; // all good
 				}
-				// _util.log(0, "trigger", options.name, "->", "out of sync!");
 			}
 			// Don't have a group, check if a matching one exists
+			// _util.log(0, "trigger", options.name, "->", "out of sync!");
 			var
-				groups = _controller._triggerGroups,
+				groups = _ctrl._indicators.groups,
 				group,
 				i = groups.length;
 			while (i--) {
@@ -418,40 +553,40 @@
 				if (Math.abs(group.triggerHook - triggerHook) < closeEnough) {
 					// found a match!
 					// _util.log(0, "trigger", options.name, "->", "found match");
-					if (_triggerGroup) { // do I have an old group that is out of sync?
-						if (_triggerGroup.members.length === 1) { // is it the only remaining group?
+					if (Indicator.triggerGroup) { // do I have an old group that is out of sync?
+						if (Indicator.triggerGroup.members.length === 1) { // is it the only remaining group?
 							// _util.log(0, "trigger", options.name, "->", "kill");
 							// was the last member, remove the whole group
 							removeTriggerGroup();
 						} else {
-							_triggerGroup.members.splice(_triggerGroup.members.indexOf(Indicator), 1); // just remove from memberlist of old group
-							updateTriggerGroupPositions(_triggerGroup);
-							updateTriggerGroupLabel(_triggerGroup);
+							Indicator.triggerGroup.members.splice(Indicator.triggerGroup.members.indexOf(Indicator), 1); // just remove from memberlist of old group
+							_ctrl._indicators.updateTriggerGroupLabel(Indicator.triggerGroup);
+							_ctrl._indicators.updateTriggerGroupPositions(Indicator.triggerGroup);
 							// _util.log(0, "trigger", options.name, "->", "removing from previous member list");
 						}
 					}
 					// join new group
 					group.members.push(Indicator);
-					_triggerGroup = group;
-					updateTriggerGroupLabel(group);
+					Indicator.triggerGroup = group;
+					_ctrl._indicators.updateTriggerGroupLabel(group);
 					return;
 				}
 			}
 
 			// at this point I am obviously out of sync and don't match any other group
-			if (_triggerGroup) {
-				if (_triggerGroup.members.length === 1) {
+			if (Indicator.triggerGroup) {
+				if (Indicator.triggerGroup.members.length === 1) {
 					// _util.log(0, "trigger", options.name, "->", "updating existing");
 					// out of sync but i'm the only member => just change and update
-					_triggerGroup.triggerHook = triggerHook;
-					updateTriggerGroupPositions(_triggerGroup);
+					Indicator.triggerGroup.triggerHook = triggerHook;
+					_ctrl._indicators.updateTriggerGroupPositions(Indicator.triggerGroup);
 					return;
 				} else {
 					// _util.log(0, "trigger", options.name, "->", "removing from previous member list");
-					_triggerGroup.members.splice(_triggerGroup.members.indexOf(Indicator), 1); // just remove from memberlist of old group
-					updateTriggerGroupPositions(_triggerGroup);
-					updateTriggerGroupLabel(_triggerGroup);
-					_triggerGroup = undefined; // need a brand new group...
+					Indicator.triggerGroup.members.splice(Indicator.triggerGroup.members.indexOf(Indicator), 1); // just remove from memberlist of old group
+					_ctrl._indicators.updateTriggerGroupLabel(Indicator.triggerGroup);
+					_ctrl._indicators.updateTriggerGroupPositions(Indicator.triggerGroup);
+					Indicator.triggerGroup = undefined; // need a brand new group...
 				}
 			}
 			// _util.log(0, "trigger", options.name, "->", "add a new one");

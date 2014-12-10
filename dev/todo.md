@@ -7,9 +7,8 @@
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)
  - go through inline TO-DOs.
  – check if event namespaces are working properly
- - add wilcards to events?
+ - add wildcards to events?
 
- - bug: not all properly destroyed in Indicators (check log in destroy example)
  - bug: duration change doesnt update pin spacer (see test.html)
  - bug: cascading pins don't work (check example)
 
