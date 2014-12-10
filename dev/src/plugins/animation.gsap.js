@@ -190,6 +190,5 @@
 			}
 			return Scene;
 		};
-		this.xyz = "TEST";
 	});
 }));
