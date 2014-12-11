@@ -68,7 +68,7 @@ var _validate = {
 			_options.loglevel = DEFAULT_OPTIONS.loglevel;
 			log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
 		}
-	},
+	}
 	// (BUILD) - REMOVE IN MINIFY - END
 };
 

@@ -286,7 +286,7 @@ this.setPin = function (element, settings) {
 			"box-sizing": pinInlineCSS["box-sizing"] || "",
 			"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
 			"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
-		}, // save old styles (for reset)
+		} // save old styles (for reset)
 	};
 
 	// if relative size, transfer it to spacer and make pin calculate it...

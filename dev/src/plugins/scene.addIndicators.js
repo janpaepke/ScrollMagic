@@ -11,236 +11,188 @@
     }
 }(this, function(ScrollMagic) {
 	"use strict";
+	var NAMESPACE = "scene.addIndicators";
 
-	// plugin vars
+	// plugin settings
 	var
-		_fontSize = "0.85em",
-		_zIndex = "99999",
-		_edgeOffset = 15, // minimum edge distance, added to indentation
+		FONT_SIZE = "0.85em",
+		ZINDEX = "99999",
+		EDGE_OFFSET = 15; // minimum edge distance, added to indentation
+
+	// overall vars
+	var
 		_util = ScrollMagic._util,
 		_autoindex = 0;
 
-	/**
-	 * Add Indicators for a ScrollScene.  
-	 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
-	 * @public ScrollMagic.Scene.addIndicators
-	 *
-	 * @example
-	 * // add basic indicators
-	 * scene.addIndicators()
-	 *
-	 * // passing options
-	 * scene.addIndicators({name: "pin scene", colorEnd: "#FFFFFF"});
-	 *
-	 * @param {object} [options] - An object containing one or more options for the indicators.
-	 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
-	 														 														 If undefined, the controller's container will be used.
-	 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
-	 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
-	 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
-	 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
-	 * @param {string} [options.colorTrigger=blue] - CSS color definition for the trigger indicator.
-	 */
-	ScrollMagic.Scene.prototype.addIndicators = function(opt) {
-		var
-			DEFAULT_OPTIONS = {
-				name: "",
-				indent: 0,
-				parent: undefined,
-				colorStart: "green",
-				colorEnd: "red",
-				colorTrigger: "blue",
-			};
-		
-		_autoindex++;
 
+	/**
+	 * ----------------------------------------------------------------
+	 * ScrollScene extension for addIndicators and removeIndicators
+	 * ----------------------------------------------------------------
+	 */
+
+	ScrollMagic.Scene.extend(function () {
 		var
 			Scene = this,
-			options = _util.extend({}, DEFAULT_OPTIONS, opt);
+			_indicator;
 
-		Scene._indicator = new Indicator(Scene, options);
-
-		Scene.on("add.debug", Scene._indicator.add);
-		Scene.on("remove.debug", Scene._indicator.remove);
-		Scene.on("destroy.debug", Scene.removeIndicators);
-
-		// it the scene already has a controller we can start right away.
-		if (Scene.controller()) {
-			Scene._indicator.add();
-		}
-		return Scene;
-	};
-
-	/**
-	 * Removes indicators from a ScrollScene.  
-	 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
-	 * @public ScrollMagic.Scene.removeIndicators
-	 *
-	 * @example
-	 * // remove previously added indicators
-	 * scene.removeIndicators()
-	 *
-	 */
-	ScrollMagic.Scene.prototype.removeIndicators = function() {
-		if (this._indicator) {
-			this._indicator.remove();
-			this.off("add.debug", this._indicator.add);
-			this.off("remove.debug", this._indicator.remove);
-			this.off("destroy.debug", this.removeIndicators);
-			this._indicator = undefined;
-		}
-	};
-
-
-	
-	/**
-	 * ----------------------------------------------------------------
-	 * Templates for the indicators
-	 * ----------------------------------------------------------------
-	 */
-	var TPL = {
-		start: function (color) {
-			// inner element (for bottom offset -1, while keeping top position 0)
-			var inner = document.createElement("div");
-			inner.textContent = "start";
-			_util.css(inner, {
-				position: "absolute",
-				overflow: "visible",
-				"border-width" : 0,
-				"border-style" : "solid",
-				color: color,
-				"border-color" : color
-			});
-			var e = document.createElement('div');
-			// wrapper
-			_util.css(e, {
-				position: "absolute",
-				overflow: "visible",
-				width: 0,
-				height: 0
-			});
-			e.appendChild(inner);
-			return e;
-		},
-		end: function (color) {
-			var e = document.createElement('div');
-			e.textContent = "end";
-			_util.css(e, {
-				position: "absolute",
-				overflow: "visible",
-				"border-width" : 0,
-				"border-style" : "solid",
-				color: color,
-				"border-color" : color
-			});
-			return e;
-		},
-		bounds: function () {
-			var e = document.createElement('div');
-			_util.css(e, {
-				position: "absolute",
-				overflow: "visible",
-				"white-space": "nowrap",
-				"pointer-events" : "none",
-				"font-size": _fontSize
-			});
-			e.style.zIndex = _zIndex;
-			return e;
-		},
-		trigger: function (color) {
-			// inner to be above or below line but keep position
-			var inner = document.createElement('div');
-			inner.textContent = "trigger";
-			_util.css(inner, {
-				position: "relative",
-			});
-			// inner wrapper for right: 0 and main element has no size
-			var w = document.createElement('div'); 
-			_util.css(w, {
-				position: "absolute",
-				overflow: "visible",
-				"border-width" : 0,
-				"border-style" : "solid",
-				color: color,
-				"border-color" : color
-			});
-			w.appendChild(inner);
-			// wrapper
-			var e = document.createElement('div');
-			_util.css(e, {
-				position: "fixed",
-				overflow: "visible",
-				"white-space": "nowrap",
-				"pointer-events" : "none",
-				"font-size": _fontSize
-			});
-			e.style.zIndex = _zIndex;
-			e.appendChild(w);
-			return e;
-		},
-	};
-
-	/**
-	 * -------------------------------------------------------------------
-	 * Internal class for the management of all Indicators in a controller
-	 * -------------------------------------------------------------------
-	 */
-	var IndicatorManagement = function (ctrl) {
-		var
-			IndicatorManagement = this,
-			_info = ctrl.info(),
-			_container = _info.container,
-			_isDocument = _info.isDocument,
-			_vertical = _info.vertical;
-
-		var init = function () {
-			// public var
-			IndicatorManagement.groups = [];
-
-			/**
-				needed updates:
-				+++++++++++++++
-				start/end position on scene shift (handled in Indicator class)
-				trigger parameters on triggerHook value change (handled in Indicator class)
-				bounds position on container scroll or resize (to keep alignment to bottom/right)
-				trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
-			*/
-
-			// add listeners to update all related trigger groups
-			_container.addEventListener("resize", handleTriggerPositionChange);
-			if (!_isDocument) {
-				window.addEventListener("resize", handleTriggerPositionChange);
-				window.addEventListener("scroll", handleTriggerPositionChange);
+		// (BUILD) - REMOVE IN MINIFY - START
+		var log = function () {
+			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+			Scene._log.apply(this, arguments);
+		};
+		var newMethods = ["addIndicators", "removeIndicators"];
+		newMethods.forEach(function (value) {
+			if (Scene[value]) {
+				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
 			}
-			// update all related bounds containers
-			_container.addEventListener("resize", handleBoundsPositionChange);
-			_container.addEventListener("scroll", handleBoundsPositionChange);
+		});
+		// (BUILD) - REMOVE IN MINIFY - END
 
+		/**
+		 * Add Indicators for a ScrollScene.  
+		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
+		 * @public ScrollMagic.Scene.addIndicators
+		 *
+		 * @example
+		 * // add basic indicators
+		 * scene.addIndicators()
+		 *
+		 * // passing options
+		 * scene.addIndicators({name: "pin scene", colorEnd: "#FFFFFF"});
+		 *
+		 * @param {object} [options] - An object containing one or more options for the indicators.
+		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
+		 														 														 If undefined, the controller's container will be used.
+		 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
+		 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
+		 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
+		 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
+		 * @param {string} [options.colorTrigger=blue] - CSS color definition for the trigger indicator.
+		 */
+		this.addIndicators = function(options) {
+			if (!_indicator) {
+				var
+					DEFAULT_OPTIONS = {
+						name: "",
+						indent: 0,
+						parent: undefined,
+						colorStart: "green",
+						colorEnd: "red",
+						colorTrigger: "blue",
+					};
+				
+				options = _util.extend({}, DEFAULT_OPTIONS, options);
+
+				_autoindex++;
+				_indicator = new Indicator(Scene, options);
+
+				Scene.on("add.debug", _indicator.add);
+				Scene.on("remove.debug", _indicator.remove);
+				Scene.on("destroy.debug", Scene.removeIndicators);
+
+				// it the scene already has a controller we can start right away.
+				if (Scene.controller()) {
+					_indicator.add();
+				}
+			}
+			return Scene;
 		};
 
+		/**
+		 * Removes indicators from a ScrollScene.  
+		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
+		 * @public ScrollMagic.Scene.removeIndicators
+		 *
+		 * @example
+		 * // remove previously added indicators
+		 * scene.removeIndicators()
+		 *
+		 */
+		this.removeIndicators = function() {
+			if (_indicator) {
+				_indicator.remove();
+				this.off("add.debug", _indicator.add);
+				this.off("remove.debug", _indicator.remove);
+				this.off("destroy.debug", this.removeIndicators);
+				_indicator = undefined;
+			}
+			return Scene;
+		};
+
+	});
+
+
+	/**
+	 * ----------------------------------------------------------------
+	 * Extension for controller to store and update related indicators
+	 * ----------------------------------------------------------------
+	 */
+	ScrollMagic.Controller.extend(function () {
+		var
+			Controller = this,
+			_info = Controller.info(),
+			_container = _info.container,
+			_isDocument = _info.isDocument,
+			_vertical = _info.vertical,
+			_indicators = { // container for all indicators and methods
+				groups: []
+			};
+
+		// (BUILD) - REMOVE IN MINIFY - START
+		var log = function () {
+			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+			Controller._log.apply(this, arguments);
+		};
+		if (Controller._indicators) {
+			log(2, "WARNING: Scene already has a property '_indicators', which will be overwritten by plugin.");
+		}
+		// (BUILD) - REMOVE IN MINIFY - END
+	
+		// add indicators container
+		this._indicators = _indicators;
+		/**
+			needed updates:
+			+++++++++++++++
+			start/end position on scene shift (handled in Indicator class)
+			trigger parameters on triggerHook value change (handled in Indicator class)
+			bounds position on container scroll or resize (to keep alignment to bottom/right)
+			trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
+		*/
+		
 		// event handler for when associated bounds markers need to be repositioned
 		var handleBoundsPositionChange = function () {
-			IndicatorManagement.updateBoundsPositions();
+			_indicators.updateBoundsPositions();
 		};
 
 		// event handler for when associated trigger groups need to be repositioned
 		var handleTriggerPositionChange = function () {
-			IndicatorManagement.updateTriggerGroupPositions();
+			_indicators.updateTriggerGroupPositions();
 		};
 
+		_container.addEventListener("resize", handleTriggerPositionChange);
+		if (!_isDocument) {
+			window.addEventListener("resize", handleTriggerPositionChange);
+			window.addEventListener("scroll", handleTriggerPositionChange);
+		}
+		// update all related bounds containers
+		_container.addEventListener("resize", handleBoundsPositionChange);
+		_container.addEventListener("scroll", handleBoundsPositionChange);
+
+
 		// updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
-		IndicatorManagement.updateBoundsPositions = function (specificIndicator) {
+		this._indicators.updateBoundsPositions = function (specificIndicator) {
 			var // constant for all bounds
 				groups = specificIndicator ?
 								[_util.extend({}, specificIndicator.triggerGroup, {members: [specificIndicator]})]: // create a group with only one element
-								IndicatorManagement.groups, // use all
+								_indicators.groups, // use all
 				g = groups.length,
 				css = {},
 				paramPos = _vertical ? "left"  : "top",
 				paramDimension = _vertical ? "width" : "height",
 				edge = _vertical ?
-							_util.get.scrollLeft(_container) + _util.get.width(_container) - _edgeOffset:
-							_util.get.scrollTop(_container) + _util.get.height(_container) - _edgeOffset,
+							_util.get.scrollLeft(_container) + _util.get.width(_container) - EDGE_OFFSET:
+							_util.get.scrollTop(_container) + _util.get.height(_container) - EDGE_OFFSET,
 				b, triggerSize, group;
 			while (g--) { // group loop
 				group = groups[g];
@@ -254,15 +206,15 @@
 		};
 
 		// updates the positions of all trigger groups attached to a controller or a specific one, if provided
-		IndicatorManagement.updateTriggerGroupPositions = function (specificGroup) {
+		this._indicators.updateTriggerGroupPositions = function (specificGroup) {
 			var // constant vars
-				groups = specificGroup ? [specificGroup] : IndicatorManagement.groups,
+				groups = specificGroup ? [specificGroup] : _indicators.groups,
 				i = groups.length,
 				container = _isDocument ? document.body : _container,
 				containerOffset = _util.get.offset(container, !_isDocument),
 				edge = _vertical ?
-							_util.get.width(_container) - _edgeOffset :
-							_util.get.height(_container) - _edgeOffset,
+							_util.get.width(_container) - EDGE_OFFSET :
+							_util.get.height(_container) - EDGE_OFFSET,
 				paramDimension = _vertical ? "width"  : "height",
 				paramTransform = _vertical ? "Y" : "X";
 			var // changing vars
@@ -274,7 +226,7 @@
 			while (i--) {
 				group = groups[i];
 				elem = group.element;
-				pos = group.triggerHook * ctrl.info("size");
+				pos = group.triggerHook * Controller.info("size");
 				elemSize = _util.get[paramDimension](elem.firstChild.firstChild);
 				transform = pos > elemSize ? "translate" + paramTransform + "(-100%)" : "";
 
@@ -291,7 +243,7 @@
 		};
 
 		// updates the label for the group to contain the name, if it only has one member
-		IndicatorManagement.updateTriggerGroupLabel = function (group) {
+		this._indicators.updateTriggerGroupLabel = function (group) {
 			var
 				text = "trigger" + (group.members.length > 1 ? "" : " " + group.members[0].options.name),
 				elem = group.element.firstChild.firstChild,
@@ -299,13 +251,13 @@
 			if (doUpdate) {
 				elem.textContent = text;
 				if (_vertical) { // bounds position is dependent on text length, so update
-					IndicatorManagement.updateBoundsPositions();
+					_indicators.updateBoundsPositions();
 				}
 			}
 		};
 
-		// removes all previously set listeners
-		IndicatorManagement.removeListeners = function () {
+		// remove all previously set listeners on destroy
+		this.destroy = function () {
 			_container.removeEventListener("resize", handleTriggerPositionChange);
 			if (!_isDocument) {
 				window.removeEventListener("resize", handleTriggerPositionChange);
@@ -313,12 +265,12 @@
 			}
 			_container.removeEventListener("resize", handleBoundsPositionChange);
 			_container.removeEventListener("scroll", handleBoundsPositionChange);
+			// call original destroy method
+			this.$super.destroy.apply(this, arguments);
 		};
+		return Controller;
 
-		init();
-		return IndicatorManagement;
-	};
-
+	});
 
 	/**
 	 * ----------------------------------------------------------------
@@ -334,6 +286,13 @@
 			_boundsContainer = options.parent && _util.get.elements(options.parent)[0],
 			_vertical,
 			_ctrl;
+
+		// (BUILD) - REMOVE IN MINIFY - START
+		var log = function () {
+			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+			Scene._log.apply(this, arguments);
+		};
+		// (BUILD) - REMOVE IN MINIFY - END
 
 		options.name = options.name || _autoindex;
 
@@ -365,12 +324,6 @@
 				_util.css(_boundsContainer, {position: "relative"});
 			}
 
-			if (!_ctrl._indicators) {
-				_ctrl._indicators = new IndicatorManagement(_ctrl);
-			} else if (!(_ctrl._indicators instanceof IndicatorManagement)) {
-				_ctrl._log(1, "ERROR in plugin addIndicators: Controller._indicators already in use.");
-			}
-
 			// add listeners for updates
 			Scene.on("change.debug", handleTriggerParamsChange);
 			Scene.on("shift.debug", handleBoundsParamsChange);
@@ -383,7 +336,7 @@
 				_ctrl._indicators.updateBoundsPositions(Indicator);
 			}, 0);
 
-			Scene._log(3, "added indicators");
+			log(3, "added indicators");
 		};
 
 		// remove indicators from DOM
@@ -404,12 +357,8 @@
 	 				removeTriggerGroup();
 	 			}
 				removeBounds();
-				if (_ctrl._indicators.groups.length === 0) {
-					_ctrl._indicators.removeListeners();
-					_ctrl._indicators = undefined;
-				}
 				
-				Scene._log(3, "removed indicators");
+				log(3, "removed indicators");
 			}
 		};
 
@@ -593,7 +542,93 @@
 			// did not find any match, make new trigger group
 			addTriggerGroup();
 		};
+	};
 
+	/**
+	 * ----------------------------------------------------------------
+	 * Templates for the indicators
+	 * ----------------------------------------------------------------
+	 */
+	var TPL = {
+		start: function (color) {
+			// inner element (for bottom offset -1, while keeping top position 0)
+			var inner = document.createElement("div");
+			inner.textContent = "start";
+			_util.css(inner, {
+				position: "absolute",
+				overflow: "visible",
+				"border-width" : 0,
+				"border-style" : "solid",
+				color: color,
+				"border-color" : color
+			});
+			var e = document.createElement('div');
+			// wrapper
+			_util.css(e, {
+				position: "absolute",
+				overflow: "visible",
+				width: 0,
+				height: 0
+			});
+			e.appendChild(inner);
+			return e;
+		},
+		end: function (color) {
+			var e = document.createElement('div');
+			e.textContent = "end";
+			_util.css(e, {
+				position: "absolute",
+				overflow: "visible",
+				"border-width" : 0,
+				"border-style" : "solid",
+				color: color,
+				"border-color" : color
+			});
+			return e;
+		},
+		bounds: function () {
+			var e = document.createElement('div');
+			_util.css(e, {
+				position: "absolute",
+				overflow: "visible",
+				"white-space": "nowrap",
+				"pointer-events" : "none",
+				"font-size": FONT_SIZE
+			});
+			e.style.zIndex = ZINDEX;
+			return e;
+		},
+		trigger: function (color) {
+			// inner to be above or below line but keep position
+			var inner = document.createElement('div');
+			inner.textContent = "trigger";
+			_util.css(inner, {
+				position: "relative",
+			});
+			// inner wrapper for right: 0 and main element has no size
+			var w = document.createElement('div'); 
+			_util.css(w, {
+				position: "absolute",
+				overflow: "visible",
+				"border-width" : 0,
+				"border-style" : "solid",
+				color: color,
+				"border-color" : color
+			});
+			w.appendChild(inner);
+			// wrapper
+			var e = document.createElement('div');
+			_util.css(e, {
+				position: "fixed",
+				overflow: "visible",
+				"white-space": "nowrap",
+				"pointer-events" : "none",
+				"font-size": FONT_SIZE
+			});
+			e.style.zIndex = ZINDEX;
+			e.appendChild(w);
+			return e;
+		},
 	};
 
 }));
