@@ -19,7 +19,6 @@
  - make jsdoc generation properly & repair docs
  - make tests task
  - make sourcemaps task
- - allow debugger statements in lint, when running gulp development
  – optimize minification
 
 # Test

@@ -1,6 +1,6 @@
 describe('ScrollMagic.Scene', function() {
 
-	var log = console.log; // loging from jasmine
+	var log = console.log; // logging from jasmine
 	var $c;			// container
 	var ctrl;		// controller
 	var scene;	// scene

@@ -149,10 +149,11 @@ gulp.task('clean:docs', ['lint:source'], function(callback) {
 });
 
 gulp.task('lint:source', function() {
-  return gulp.src(config.dirs.source + "/**/*.js")
-    .pipe(jshint({lookup: false}))
-  	.pipe(jshint.reporter('jshint-stylish'))
-  	.pipe(jshint.reporter('fail'));
+	var dev = args._[0] === 'development';
+	return gulp.src(config.dirs.source + "/**/*.js")
+		.pipe(jshint({lookup: false, debug: dev}))
+		.pipe(jshint.reporter('jshint-stylish'))
+		.pipe(jshint.reporter('fail'));
 });
 
 gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function() {
