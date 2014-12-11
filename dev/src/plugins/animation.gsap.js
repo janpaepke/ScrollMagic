@@ -13,13 +13,37 @@
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
 	}
 }(this, function(ScrollMagic) {
+	"use strict";
 	var NAMESPACE = "animation.gsap";
-	// ScrollMagic._util.addPlugin(NAMESPACE);
-	var origClass = ScrollMagic.Scene;
+
 	ScrollMagic.Scene.extend(function () {
 
 		var Scene = this,
 		_tween;
+
+		// (BUILD) - REMOVE IN MINIFY - START
+		var log = function () {
+			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+			Scene._log.apply(this, arguments);
+		};
+		var newMethods = ["setTween", "removeTween"];
+		newMethods.forEach(function (value) {
+			if (Scene[value]) {
+				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
+			}
+		});
+		// (BUILD) - REMOVE IN MINIFY - END
+
+		// set listeners
+		Scene.on("progress.gsap", function (e) {
+			updateTweenProgress();
+		});
+		Scene.on("destroy.gsap", function (e) {
+			Scene.off("progress.gsap");
+			Scene.off("destroy.gsap");
+			Scene.removeTween(e.reset);
+		});
+
 		/**
 		 * Update the tween progress.
 		 * @private
@@ -27,10 +51,10 @@
 		 * @param {number} [to] - If not set the scene Progress will be used. (most cases)
 		 * @return {boolean} true if the Tween was updated. 
 		 */
-		var updateTweenProgress = function (to) {
+		var updateTweenProgress = function () {
 			if (_tween) {
 				var
-					progress = (to >= 0 && to <= 1) ? to : Scene.progress(),
+					progress = Scene.progress(),
 					state = Scene.state();
 				if (_tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
@@ -45,9 +69,10 @@
 					// no infinite loop - so should we just play or go to a specific point in time?
 					if (Scene.duration() === 0) {
 						// play the animation
-						if (state === "DURING") { // play from 0 to 1
+						if (progress > 0) { // play from 0 to 1
 							_tween.play();
 						} else { // play from 1 to 0
+							window.tmp = _tween;
 							_tween.reverse();
 						}
 					} else {
@@ -94,7 +119,7 @@
 			var
 				newTween;
 			if (!TimelineMax) {
-				Scene._log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
+				log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
 				return Scene;
 			}
 			try {
@@ -103,7 +128,7 @@
 					.add(TweenObject)
 					.pause();
 			} catch (e) {
-				Scene._log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
+				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
 				return Scene;
 			}
 			if (_tween) { // kill old tween?
@@ -129,7 +154,7 @@
 						tweenvars = value.vars.css || value.vars,
 						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
 					if (condition) {
-						Scene._log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
+						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
 						return false;
 					}
 				});
@@ -140,7 +165,7 @@
 				var
 					list = _tween.getChildren(true, true, false), // get all nested tween objects
 					newCallback = function () {
-						Scene._log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
+						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
 					};
 				for (var i=0, thisTween, oldCallback; i<list.length; i++) {
 					/*jshint loopfunc: true */
@@ -157,12 +182,9 @@
 				}
 			}
 			// (BUILD) - REMOVE IN MINIFY - END
-			Scene._log(3, "added tween");
+			log(3, "added tween");
 
-			Scene.on("progress.internal", function (e) { // TODO remove on scene remove
-				updateTweenProgress(Scene);
-			});
-			updateTweenProgress(Scene);
+			updateTweenProgress();
 			return Scene;
 		};
 
@@ -182,13 +204,14 @@
 		this.removeTween = function (reset) {
 			if (_tween) {
 				if (reset) {
-					updateTweenProgress(Scene, 0);
+					_tween.progress(0).pause();
 				}
 				_tween.kill();
 				_tween = undefined;
-				Scene._log(3, "removed tween (reset: " + (reset ? "true" : "false") + ")");
+				log(3, "removed tween (reset: " + (reset ? "true" : "false") + ")");
 			}
 			return Scene;
 		};
+
 	});
 }));
