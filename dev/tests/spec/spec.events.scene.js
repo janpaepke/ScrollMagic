@@ -1,4 +1,4 @@
-describe('ScrollScene - Events', function() {
+describe('ScrollMagic.Scene', function() {
 
     var log = console.log; // loging from jasmine
     beforeEach(function() {

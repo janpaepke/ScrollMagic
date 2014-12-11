@@ -1,4 +1,4 @@
-describe('ScrollScene', function() {
+describe('ScrollMagic.Scene', function() {
 
 	var log = console.log; // loging from jasmine
 	var $c;			// container
@@ -42,7 +42,7 @@ describe('ScrollScene', function() {
 		// }
 		it("is chainable if not a getter", function () {
 			for (var m in scene) {
-				if (typeof scene[m] === 'function' && exception.indexOf(m) < 0) {
+				if (typeof scene[m] === 'function' && exception.indexOf(m) < 0 && m[0] != "_") {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
 						expect(m).toWorkAsGetter(scene);
 					} else {
@@ -331,7 +331,8 @@ describe('ScrollScene', function() {
 			expect(scene.tweenChanges()).toBe(false);
 			expect(new ScrollMagic.Scene({tweenChanges: true}).tweenChanges()).toBe(true);
 		});
-		it("changes the value", function () {
+		// belongs into gsap plugin testing
+		xit("changes the value", function () {
 			scene.setTween(TweenMax.to("#target", 1, {left: 100}));
 			scene.triggerHook("onEnter").tweenChanges(true);
 			expect(scene.tweenChanges()).toBe(true);

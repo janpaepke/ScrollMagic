@@ -112,7 +112,6 @@ this.remove = function () {
  * @returns {null} Null to unset handler variables.
  */
 this.destroy = function (reset) {
-	Scene.removeTween(reset);
 	Scene.removePin(reset);
 	Scene.removeClassToggle(reset);
 	Scene.trigger("destroy", {reset: reset});

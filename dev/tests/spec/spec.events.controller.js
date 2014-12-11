@@ -1,4 +1,4 @@
-describe('ScrollMagic', function() {
+describe('ScrollMagic.Controller', function() {
 
 	var log = console.log; // loging from jasmine
 	var $c;			// container

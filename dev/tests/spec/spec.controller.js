@@ -1,4 +1,4 @@
-describe('ScrollMagic constructor', function() {
+describe('ScrollMagic.Controller', function() {
 
 	it("fails with invalid container", function() {
 		spyOn(console, "error");
@@ -22,7 +22,7 @@ describe('ScrollMagic constructor', function() {
 
 });
 
-describe('ScrollMagic', function() {
+describe('ScrollMagic.Controller', function() {
 
 	var log = console.log; // loging from jasmine
 	var $c;			// container
@@ -50,7 +50,7 @@ describe('ScrollMagic', function() {
 		var exception = ["destroy"];
 		it("is chainable if not a getter", function () {
 			for (var m in ctrl) {
-				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0) {
+				if (typeof ctrl[m] === 'function' && exception.indexOf(m) < 0 && m[0] != "_") {
 					if (getterSetter.indexOf(m) > -1 || getterOnly.indexOf(m) > -1) { // is getter
 						expect(m).toWorkAsGetter(ctrl);
 					} else {
