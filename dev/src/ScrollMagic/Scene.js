@@ -123,8 +123,10 @@ ScrollMagic.Scene.extend = function (extension) {
 	var oldClass = this;
 	ScrollMagic.Scene = function () {
 		oldClass.apply(this, arguments);
-		return extension.apply(this, arguments);
+		this.$super = _util.extend({}, this); // copy parent state
+		return extension.apply(this, arguments) || this;
 	};
-	ScrollMagic.Scene.prototype = oldClass.prototype;
-	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene;
+	_util.extend(ScrollMagic.Scene, oldClass); // copy properties
+	ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
+	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
 };

@@ -195,11 +195,8 @@ ScrollMagic.Controller = function(options) {
 	 */
 	var log = this._log = function (loglevel, output) {
 		if (_options.loglevel >= loglevel) {
-			var
-				prefix = "(" + NAMESPACE + ") ->",
-				args = Array.prototype.splice.call(arguments, 1);
-			args.unshift(loglevel, prefix);
-			_util.log.apply(window, args);
+			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ") ->");
+			_util.log.apply(window, arguments);
 		}
 	};
 	// (BUILD) - REMOVE IN MINIFY - END
@@ -605,8 +602,10 @@ ScrollMagic.Controller.extend = function (extension) {
 	var oldClass = this;
 	ScrollMagic.Controller = function () {
 		oldClass.apply(this, arguments);
-		return extension.apply(this, arguments);
+		this.$super = _util.extend({}, this); // copy parent state
+		return extension.apply(this, arguments) || this;
 	};
-	ScrollMagic.Controller.prototype = oldClass.prototype;
-	ScrollMagic.Controller.prototype.constructor = ScrollMagic.Controller;
+	_util.extend(ScrollMagic.Controller, oldClass); // copy properties
+	ScrollMagic.Controller.prototype = oldClass.prototype; // copy prototype
+	ScrollMagic.Controller.prototype.constructor = ScrollMagic.Controller; // restore constructor
 };

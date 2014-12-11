@@ -9,11 +9,8 @@
  */
 var log = this._log = function (loglevel, output) {
 	if (_options.loglevel >= loglevel) {
-		var
-			prefix = "(" + NAMESPACE + ") ->",
-			args = Array.prototype.splice.call(arguments, 1);
-		args.unshift(loglevel, prefix);
-		_util.log.apply(window, args);
+		Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ") ->");
+		_util.log.apply(window, arguments);
 	}
 };
 // (BUILD) - REMOVE IN MINIFY - END
