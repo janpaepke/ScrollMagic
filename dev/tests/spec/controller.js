@@ -98,7 +98,7 @@ describe('ScrollMagic.Controller', function() {
 			spyOn(scene, 'remove');
 			ctrl.removeScene(scene);
 			expect(scene.remove).not.toHaveBeenCalled();
-			scene.addTo(ctrl)
+			scene.addTo(ctrl);
 			ctrl.removeScene(scene);
 			expect(scene.remove).toHaveBeenCalled();
 		});

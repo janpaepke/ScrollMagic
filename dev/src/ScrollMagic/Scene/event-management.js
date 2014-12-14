@@ -260,7 +260,7 @@ this.on = function (names, callback) {
 			}
 		});
 	} else {
-		log(1, "ERROR when calling '.on()': Supplied callback is not a valid function!");
+		log(1, "ERROR when calling '.on()': Supplied callback for '" + names + "' is not a valid function!");
 	}
 	return Scene;
 };

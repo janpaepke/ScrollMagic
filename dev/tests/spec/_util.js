@@ -5,3 +5,12 @@
 // 	console.log("document ->", $(document).scrollTop() === scrollTop(document));
 // 	console.log("body ->", $("body").scrollTop() === scrollTop(document.body));
 // }
+describe('ScrollMagic._util', function() {
+	var U = ScrollMagic._util;
+	it('should not fire .log() when instanciating scene or controller with loglevel 2', function () {
+		spyOn(U, "log");
+		new ScrollMagic.Controller({loglevel: 2});
+		new ScrollMagic.Scene({loglevel: 2});
+		expect(U.log).not.toHaveBeenCalled();
+	});
+});

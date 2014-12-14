@@ -11,13 +11,14 @@ module.exports = function(config) {
       '../../js/lib/greensock/TweenMax.min.js',
       '../../scrollmagic/uncompressed/ScrollMagic.js',
       '../../scrollmagic/uncompressed/plugins/scene.addIndicators.js',
-      'additional/vendor/**/*.js',
-      'additional/settings.js',
+      'karma/vendor/**/*.js',
+      'karma/settings.js',
       'spec/*.js'
     ],
 
     // list of files to exclude
     exclude: [
+        '**/karma.conf.js'
     ],
 
     // test results reporter to use

@@ -15,13 +15,11 @@
 
 # Build (gulpfile.js)
  - make jsdoc generation properly & repair docs
- - make tests task
  - make sourcemaps task
  – optimize minification
 
 # Test
  - cross browser test scrollPosition getter functions
- - rewrite for should?
  - rewrite to use require
  - add tests for _utils
  - test all variants (regular, minified) and plugins

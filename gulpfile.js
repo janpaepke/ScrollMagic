@@ -293,16 +293,14 @@ gulp.task('sync:readme', function() {
 });
 
 gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
-	// TODO: run tests
-	log.warn("tests not yet implemented");
-	// return gulp.src("./dev/tests/spec/**/*.js", {base: "./dev/tests"})
-	// 	.pipe(karma({
-	// 		configFile: './dev/tests/karma.conf.js',
-	// 		action: 'run'
-	// 	}))
-	// 	.on('error', function(err) {
-	// 		throw err;
-	// 	});
+	return gulp.src([]) // file list supplied in karma conf file
+		.pipe(karma({
+			configFile: "./" + config.karma.config,
+			action: 'run'
+		}))
+		.on('error', function(err) {
+			throw err;
+		});
 });
 
 gulp.task('generate:sourcemaps-uncompressed', ['build:uncompressed'], function () {
