@@ -18,7 +18,6 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-      'spec/_*.js'
     ],
 
     // test results reporter to use
