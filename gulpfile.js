@@ -26,10 +26,12 @@ var
 	gutil = 			require('gulp-util'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-beautify'),
-	// jsdoc = 			require('gulp-jsdoc'),
 	addsrc = 			require('gulp-add-src'),
+	karma =				require('gulp-karma'),
+	// jsdoc = 			require('gulp-jsdoc'),
 // custom
 	log = 				require('./dev/build/logger'),
+	size = 				require('./dev/build/filesize'),
 // json
 	config = require('./dev/build/config.json'); // config
 
@@ -121,6 +123,15 @@ if (options.dodocs) {
 }
 gulp.task('default', defaultDeps, function () {
 	log.info("Generated new build to", options.folderOut);
+	// gulp.src(options.folderOut + "/*.js")
+	gulp.src(options.folderOut + "/uncompressed/*.js")
+			.pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}));
+	gulp.src(options.folderOut + "/uncompressed/plugins/*.js")
+			.pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}));
+	gulp.src(options.folderOut + "/minified/*.js")
+			.pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}));
+	gulp.src(options.folderOut + "/minified/plugins/*.js")
+			.pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
 	if (options.version != config.version) {
 		log.info("Updated to version", options.version);
 	}
@@ -283,16 +294,24 @@ gulp.task('sync:readme', function() {
 
 gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 	// TODO: run tests
-	log.warn("tests not yet implemented with gulp");
+	log.warn("tests not yet implemented");
+	// return gulp.src("./dev/tests/spec/**/*.js", {base: "./dev/tests"})
+	// 	.pipe(karma({
+	// 		configFile: './dev/tests/karma.conf.js',
+	// 		action: 'run'
+	// 	}))
+	// 	.on('error', function(err) {
+	// 		throw err;
+	// 	});
 });
 
 gulp.task('generate:sourcemaps-uncompressed', ['build:uncompressed'], function () {
 	// TODO: generate sourcemaps
-	log.warn("sourcemaps not yet implemented with gulp");
+	log.warn("sourcemaps not yet implemented");
 });
 gulp.task('generate:sourcemaps-minified', ['build:minified'], function () {
 	// TODO: generate sourcemaps
-	log.warn("sourcemaps not yet implemented with gulp");
+	log.warn("sourcemaps not yet implemented");
 });
 gulp.task('generate:sourcemaps', ['generate:sourcemaps-uncompressed', 'generate:sourcemaps-minified']);
 
