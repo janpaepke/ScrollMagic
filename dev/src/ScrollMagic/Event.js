@@ -2,14 +2,14 @@
  * TODO: DOCS
  */
  
-ScrollMagic.Event = function (name, vars) {
-	var nameparts = name.split('.');
+ScrollMagic.Event = function (type, namespace, target, vars) {
 	vars = vars || {};
 	for (var key in vars) {
 		this[key] = vars[key];
 	}
-	this.type = nameparts[0];
-	this.namespace = nameparts[1] || '';
-	this.timeStamp = Date.now();
+	this.type = type;
+	this.target = this.currentTarget = target;
+	this.namespace = namespace || '';
+	this.timeStamp = this.timestamp = Date.now();
 	return this;
 };

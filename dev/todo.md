@@ -5,8 +5,6 @@
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)
  - go through inline TO-DOs.
- – check if event namespaces are working properly
- - add wildcards to events?
  
  - auto generate warning messages for missing plugins?
  - bug: duration change doesnt update pin spacer (see test.html)

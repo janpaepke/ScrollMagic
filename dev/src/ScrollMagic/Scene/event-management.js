@@ -237,25 +237,27 @@ var _listeners = {};
  * // add listeners
  * scene.on("change update progress start end enter leave", callback);
  *
- * @param {string} name - The name or names of the event the callback should be attached to.
+ * @param {string} names - The name or names of the event the callback should be attached to.
  * @param {function} callback - A function that should be executed, when the event is dispatched. An event object will be passed to the callback.
  * @returns {Scene} Parent object for chaining.
  */
-this.on = function (name, callback) {
+this.on = function (names, callback) {
 	if (_util.type.Function(callback)) {
-		var names = name.trim().split(' ');
-		names.forEach(function (fullname, key) {
+		names = names.trim().split(' ');
+		names.forEach(function (fullname) {
 			var
 				nameparts = fullname.split('.'),
 				eventname = nameparts[0],
-				listener = {
-					namespace: nameparts[1] || '',
+				namespace = nameparts[1];
+			if (eventname != "*") { // disallow wildcards
+				if (!_listeners[eventname]) {
+					_listeners[eventname] = [];
+				}
+				_listeners[eventname].push({
+					namespace: namespace || '',
 					callback: callback
-				};
-			if (!_listeners[eventname]) {
-				_listeners[eventname] = [];
+				});
 			}
-			_listeners[eventname].push(listener);
 		});
 	} else {
 		log(1, "ERROR when calling '.on()': Supplied callback is not a valid function!");
@@ -276,32 +278,36 @@ this.on = function (name, callback) {
  * // remove listeners
  * scene.off("change update", callback);
  *
- * @param {string} name - The name or names of the event that should be removed.
+ * @param {string} names - The name or names of the event that should be removed.
  * @param {function} [callback] - A specific callback function that should be removed. If none is passed all callbacks to the event listener will be removed.
  * @returns {Scene} Parent object for chaining.
 */
-this.off = function (name, callback) {
-	if (!name) {
+this.off = function (names, callback) {
+	if (!names) {
 		log(1, "ERROR: Invalid event name supplied.");
 		return Scene;
 	}
-	var names = name.trim().split(' ');
+	names = names.trim().split(' ');
 	names.forEach(function (fullname, key) {
 		var
 			nameparts = fullname.split('.'),
 			eventname = nameparts[0],
 			namespace = nameparts[1] || '',
-			listeners = _listeners[eventname] || [],
-			i = listeners.length;
-		while (i--) {
-			var listener = listeners[i];
-			if (listener && (namespace === listener.namespace) && (!callback || callback == listener.callback)) {
-				listeners.splice(i, 1);
+			removeList = eventname === '*' ? Object.keys(_listeners) : [eventname];
+		removeList.forEach(function (remove){
+			var
+				list = _listeners[remove] || [],
+				i = list.length;
+			while(i--) {
+				var listener = list[i];
+				if (listener && (namespace === listener.namespace || namespace === '*') && (!callback || callback == listener.callback)) {
+					list.splice(i, 1);
+				}
 			}
-		}
-		if (!listeners.length) {
-			delete _listeners[eventname];
-		}
+			if (!list.length) {
+				delete _listeners[remove];
+			}
+		});
 	});
 	return Scene;
 };
@@ -318,21 +324,22 @@ this.off = function (name, callback) {
  * @returns {Scene} Parent object for chaining.
 */
 this.trigger = function (name, vars) {
-	if (!name) {
+	if (name) {
+		var
+			nameparts = name.trim().split('.'),
+			eventname = nameparts[0],
+			namespace = nameparts[1],
+			listeners = _listeners[eventname];
+		log(3, 'event fired:', eventname, vars ? "->" : '', vars || '');
+		if (listeners) {
+			listeners.forEach(function (listener, key) {
+				if (!namespace || namespace === listener.namespace) {
+					listener.callback.call(Scene, new ScrollMagic.Event(eventname, listener.namespace, Scene, vars));
+				}
+			});
+		}
+	} else {
 		log(1, "ERROR: Invalid event name supplied.");
-		return Scene;
-	}
-	var
-		event = new ScrollMagic.Event(name, vars),
-		listeners = _listeners[event.type];
-	log(3, 'event fired:', event.type, vars ? "->" : '', vars ? vars : '');
-	if (listeners) {
-		event.target = event.currentTarget = Scene;
-		listeners.forEach(function (listener, key) {
-			if (!event.namespace || event.namespace === listener.namespace) {
-				listener.callback.call(Scene, event);
-			}
-		});
 	}
 	return Scene;
 };

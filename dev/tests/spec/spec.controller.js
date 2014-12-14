@@ -24,15 +24,12 @@ describe('ScrollMagic.Controller', function() {
 
 describe('ScrollMagic.Controller', function() {
 
-	var log = console.log; // loging from jasmine
 	var $c;			// container
 	var ctrl;		// controller
 
 	beforeEach(function() {
 		// disable internal logging
-		spyOn(console, "log");
-		spyOn(console, "warn");
-		spyOn(console, "error");
+		spyOn(ScrollMagic._util, "log");
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');

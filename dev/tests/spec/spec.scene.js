@@ -1,6 +1,5 @@
 describe('ScrollMagic.Scene', function() {
 
-	var log = console.log; // logging from jasmine
 	var $c;			// container
 	var ctrl;		// controller
 	var scene;	// scene
@@ -38,7 +37,7 @@ describe('ScrollMagic.Scene', function() {
 		// if (new ScrollMagic.Scene().triggerOffset) {
 		// 	getterOnly.push("triggerOffset"); // deprecated since 1.1.0
 		// } else {
-		// 	log("remove test for triggerOffset!");
+		// 	console.log("remove test for triggerOffset!");
 		// }
 		it("is chainable if not a getter", function () {
 			for (var m in scene) {

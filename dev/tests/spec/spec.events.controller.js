@@ -1,14 +1,11 @@
 describe('ScrollMagic.Controller', function() {
 
-	var log = console.log; // loging from jasmine
 	var $c;			// container
 	var ctrl;		// controller
 
 	beforeEach(function() {
 		// disable internal logging
-		spyOn(console, "log");
-		spyOn(console, "warn");
-		spyOn(console, "error");
+		spyOn(ScrollMagic._util, "log");
 		// default setup
 		loadFixtures('container-scroll.html');
 		$c = $('#scroll-container');
@@ -19,7 +16,18 @@ describe('ScrollMagic.Controller', function() {
 		ctrl.destroy();
 	});
 
-	it("triggers onChange on container resize", function(done) {
+
+	it("triggers container resize event", function(done) {
+		var resizeSpy = jasmine.createSpy('resizeSpy');
+		$c.height(300);
+		$c.on("resize", resizeSpy);
+		setTimeout(function(){
+			expect(resizeSpy).toHaveBeenCalled();
+			done();
+		}, 101); // 100 is default val for refresh interval
+	});
+
+	it("calls onChange on container resize", function(done) {
 		// onchange updates the viewport size - so check if it does.
 		var height = ctrl.info("size");
 		$c.height(height + 100);
@@ -29,7 +37,7 @@ describe('ScrollMagic.Controller', function() {
 		}, 101); //100 is default refresh interval
 	});
 
-	it("triggers onChange on container scroll", function(done) {
+	it("calls onChange on container scroll", function(done) {
 		var scene = new ScrollMagic.Scene().addTo(ctrl);
 		spyOn(scene, "update");
 		window.requestAnimationFrame(function () {
