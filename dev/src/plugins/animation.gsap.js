@@ -35,12 +35,9 @@
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		// set listeners
-		Scene.on("progress.gsap", function (e) {
-			updateTweenProgress();
-		});
-		Scene.on("destroy.gsap", function (e) {
-			Scene.off("progress.gsap");
-			Scene.off("destroy.gsap");
+		Scene.on("progress.plugin_gsap", updateTweenProgress);
+		Scene.on("destroy.plugin_gsap", function (e) {
+			Scene.off("*.plugin_gsap");
 			Scene.removeTween(e.reset);
 		});
 

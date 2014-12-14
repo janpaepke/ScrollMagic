@@ -255,7 +255,7 @@ ScrollMagic.Controller = function(options) {
 				// new scene
 				_sceneObjects.push(newScene); // add to array
 				_sceneObjects = sortScenes(_sceneObjects); // sort
-				newScene.on("shift." + NAMESPACE + "_sort", function() { // resort whenever scene moves
+				newScene.on("shift.controller_sort", function() { // resort whenever scene moves
 					_sceneObjects = sortScenes(_sceneObjects);
 				});
 				// insert Global defaults.
@@ -294,7 +294,7 @@ ScrollMagic.Controller = function(options) {
 		} else {
 			var index = _sceneObjects.indexOf(Scene);
 			if (index > -1) {
-				Scene.off("shift." + NAMESPACE + "_sort");
+				Scene.off("shift.controller_sort");
 				_sceneObjects.splice(index, 1);
 				log(3, "removing Scene (now " + _sceneObjects.length + " left)");
 				Scene.remove();

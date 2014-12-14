@@ -87,9 +87,9 @@
 				_autoindex++;
 				_indicator = new Indicator(Scene, options);
 
-				Scene.on("add.debug", _indicator.add);
-				Scene.on("remove.debug", _indicator.remove);
-				Scene.on("destroy.debug", Scene.removeIndicators);
+				Scene.on("add.plugin_addIndicators", _indicator.add);
+				Scene.on("remove.plugin_addIndicators", _indicator.remove);
+				Scene.on("destroy.plugin_addIndicators", Scene.removeIndicators);
 
 				// it the scene already has a controller we can start right away.
 				if (Scene.controller()) {
@@ -112,9 +112,7 @@
 		this.removeIndicators = function() {
 			if (_indicator) {
 				_indicator.remove();
-				this.off("add.debug", _indicator.add);
-				this.off("remove.debug", _indicator.remove);
-				this.off("destroy.debug", this.removeIndicators);
+				this.off("*.plugin_addIndicators");
 				_indicator = undefined;
 			}
 			return Scene;
@@ -325,8 +323,8 @@
 			}
 
 			// add listeners for updates
-			Scene.on("change.debug", handleTriggerParamsChange);
-			Scene.on("shift.debug", handleBoundsParamsChange);
+			Scene.on("change.plugin_addIndicators", handleTriggerParamsChange);
+			Scene.on("shift.plugin_addIndicators", handleBoundsParamsChange);
 
 			// updates trigger & bounds (will add elements if needed)
 			updateTriggerGroup();
@@ -342,8 +340,8 @@
 		// remove indicators from DOM
 		this.remove = function () {
 			if (Indicator.triggerGroup) { // if not set there's nothing to remove
-				Scene.off("change.debug", handleTriggerParamsChange);
-				Scene.off("shift.debug", handleBoundsParamsChange);
+				Scene.off("change.plugin_addIndicators", handleTriggerParamsChange);
+				Scene.off("shift.plugin_addIndicators", handleBoundsParamsChange);
 
 				if (Indicator.triggerGroup.members.length > 1) {
 					// just remove from memberlist of old group

@@ -116,7 +116,7 @@ this.destroy = function (reset) {
 	Scene.removeClassToggle(reset);
 	Scene.trigger("destroy", {reset: reset});
 	Scene.remove();
-	Scene.off("start end enter leave progress change update shift destroy shift.internal change.internal progress.internal");
+	Scene.off("*.*");
 	log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 	return null;
 };
