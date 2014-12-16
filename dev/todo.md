@@ -20,7 +20,6 @@
 
 # Test
  - cross browser test scrollPosition getter functions
- - rewrite to use require
  - add tests for _utils
  - test all variants (regular, minified) and plugins
 
