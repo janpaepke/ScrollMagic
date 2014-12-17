@@ -7,7 +7,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 
 		beforeEach(function() {
 			// disable internal logging
-			spyOn(ScrollMagic._util, "log");
+			spyOn(ScrollMagic._util, "log");//.and.callThrough();
 			// default setup
 			loadFixtures('container-scroll.html');
 			$c = $('#scroll-container');

@@ -7,12 +7,12 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic'], factory);
+		define(['ScrollMagic', 'TweenMax', 'TimelineMax'], factory);
 	} else {
 		// Browser globals
-		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
+		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);
 	}
-}(this, function(ScrollMagic) {
+}(this, function(ScrollMagic, Tween, Timeline) {
 	"use strict";
 	var NAMESPACE = "animation.gsap";
 
@@ -32,6 +32,12 @@
 				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
 			}
 		});
+		if (!Tween) {
+			// log(1, "ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
+		} else {
+			// TODO: fix when properly requireing plugin
+			// console.log(!!Tween.staggerTo);
+		}
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		// set listeners
@@ -44,25 +50,20 @@
 		});
 
 		/**
-		 * Update the tween progress.
+		 * Update the tween progress to current position.
 		 * @private
-		 *
-		 * @param {number} [to] - If not set the scene Progress will be used. (most cases)
-		 * @return {boolean} true if the Tween was updated. 
 		 */
 		var updateTweenProgress = function () {
 			if (_tween) {
 				var
 					progress = Scene.progress(),
 					state = Scene.state();
-				if (_tween.repeat() === -1) {
+				if (_tween.repeat && _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
 					if (state === "DURING" && _tween.paused()) {
 						_tween.play();
 					} else if (state !== "DURING" && !_tween.paused()) {
 						_tween.pause();
-					} else {
-						return false;
 					}
 				} else if (progress != _tween.progress()) { // do we even need to update the progress?
 					// no infinite loop - so should we just play or go to a specific point in time?
@@ -76,7 +77,7 @@
 						}
 					} else {
 						// go to a specific point in time
-						if (Scene.tweenChanges()) {
+						if (Scene.tweenChanges() && _tween.tweenTo) {
 							// go smooth
 							_tween.tweenTo(progress * _tween.duration());
 						} else {
@@ -84,18 +85,13 @@
 							_tween.progress(progress).pause();
 						}
 					}
-				} else {
-					return false;
 				}
-				return true;
-			} else {
-				return false;
 			}
 		};
 
 		/**
 		 * Add a tween to the scene.  
-		 * If you want to add multiple tweens, wrap them into one TimelineMax object and add it.  
+		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
 		 * The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of `0`.
 		 * @public
 		 * @example
@@ -115,17 +111,16 @@
 		 * @returns {Scene} Parent object for chaining.
 		 */
 		this.setTween = function (TweenObject) {
-			var
-				newTween;
-			if (!TimelineMax) {
-				log(1, "ERROR: TimelineMax wasn't found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
-				return Scene;
-			}
+			var newTween;
 			try {
-				// wrap Tween into a TimelineMax Object to include delay and repeats in the duration and standardize methods.
-				newTween = new TimelineMax({smoothChildTiming: true})
-					.add(TweenObject)
-					.pause();
+				// wrap Tween into a Timeline Object if available to include delay and repeats in the duration and standardize methods.
+				if (Timeline) {
+					newTween = new Timeline({smoothChildTiming: true})
+						.add(TweenObject);
+				} else {
+					newTween = TweenObject;
+				}
+				newTween.pause();
 			} catch (e) {
 				log(1, "ERROR calling method 'setTween()': Supplied argument is not a valid TweenObject");
 				return Scene;
@@ -143,10 +138,14 @@
 			// (BUILD) - REMOVE IN MINIFY - START
 			// Some tween validations and debugging helpers
 
+			if (Scene.tweenChanges() && !_tween.tweenTo) {
+				log(2, "WARNING: tweenChanges will only work if the TimelineMax object is available for ScrollMagic.");
+			}
+
 			// check if there are position tweens defined for the trigger and warn about it :)
 			if (_tween && Scene.controller()  && Scene.triggerElement() && Scene.loglevel() >= 2) {// controller is needed to know scroll direction.
 				var
-					triggerTweens = _tween.getTweensOf(Scene.triggerElement()),
+					triggerTweens = Tween.getTweensOf(Scene.triggerElement()),
 					vertical = Scene.controller().info("vertical");
 				triggerTweens.forEach(function (value, index) {
 					var
@@ -162,7 +161,7 @@
 			// warn about tween overwrites, when an element is tweened multiple times
 			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
 				var
-					list = _tween.getChildren(true, true, false), // get all nested tween objects
+					list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
 					newCallback = function () {
 						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
 					};
