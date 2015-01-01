@@ -130,6 +130,9 @@ Greensock License info at http://www.greensock.com/licensing/
 			};
 			scene.on("change.debug", callUpdate);
 			cParams.container.on("resize scroll", callUpdate);
+			scene.on("destroy", function() {
+				scene.indicators.remove();
+			});
 			if (!cParams.isDocument) {
 				$(window).on("scroll resize", callUpdate);
 			}
