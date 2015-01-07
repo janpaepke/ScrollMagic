@@ -21,8 +21,8 @@
 			"classes"
 		]
 	},
-	"karma" : {
-		"config" : "/dev/tests/karma.conf.js"
+	"karma": {
+		"config": "/dev/tests/karma.conf.js"
 	},
 	"dirs": {
 		"source": "dev/src",
