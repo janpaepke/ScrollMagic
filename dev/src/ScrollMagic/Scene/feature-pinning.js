@@ -262,7 +262,9 @@ this.setPin = function (element, settings) {
 				"margin-right": "auto",
 				"box-sizing": "content-box"
 			}));
-	spacer.dataset.isScrollMagicPinSpacer = true; // TODO: check if dataset works in IE9
+
+	// TODO: check if dataset works in IE9
+	spacer.dataset.isScrollMagicPinSpacer = true; // careful: it's actually stored as a string. But it will only be checked for existance
 	_util.addClass(spacer, settings.spacerClass);
 
 	// set the pin Options

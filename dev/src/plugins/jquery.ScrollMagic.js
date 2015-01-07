@@ -1,5 +1,7 @@
 /*!
  * @file ScrollMagic jQuery plugin.
+ *
+ * requires: jQuery ~1.11
  */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {

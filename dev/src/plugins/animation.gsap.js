@@ -1,6 +1,7 @@
 /*!
  * @file ScrollMagic GSAP Animation Plugin.
  *
+ * requires: GSAP ~1.14
  * Powered by the Greensock Animation Platform (GSAP): http://www.greensock.com/js
  * Greensock License info at http://www.greensock.com/licensing/
  */
@@ -72,7 +73,6 @@
 						if (progress > 0) { // play from 0 to 1
 							_tween.play();
 						} else { // play from 1 to 0
-							window.tmp = _tween;
 							_tween.reverse();
 						}
 					} else {

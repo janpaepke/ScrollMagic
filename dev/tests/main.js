@@ -12,8 +12,8 @@ var tests = [
 	'spec/controller.events',
 	'spec/scene',
 	'spec/scene.events',
-	'spec/TEST_PURE',
-	'spec/TEST_EXTENDED',
+	// 'spec/TEST_PURE',
+	// 'spec/TEST_EXTENDED',
 ];
 
 require.config({
