@@ -1,4 +1,5 @@
 # Source
+ - Plugin Animation GSAP: test if lite and regular versions really both work
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
  - Plugin ALL: add error message, when plugin dependency isn't loaded (only for non-minified version)

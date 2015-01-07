@@ -12,9 +12,12 @@ var tests = [
 	'spec/controller.events',
 	'spec/scene',
 	'spec/scene.events',
+	'spec/TEST_PURE',
+	'spec/TEST_EXTENDED',
 ];
 
 require.config({
+	// urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: '/base',
 	paths: {
 		// libs
@@ -28,10 +31,20 @@ require.config({
 	packages: [
 		{
 			name: "ScrollMagic",
-			main: "ScrollMagic",
-			location: "scrollmagic/uncompressed"
+			main: "../ScrollMagic",
+			location: "scrollmagic/uncompressed/plugins"
+		},
+		{
+			name: "gsap",
+			location: "js/lib/greensock"
 		}
 	],
+	map : {
+		'*' : {
+			"TweenMax": "gsap/TweenLite.min",
+			"TimelineMax": "gsap/TimelineMax.min"
+		}
+	},
 
 	deps: tests,
 
