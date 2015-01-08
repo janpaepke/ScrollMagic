@@ -51,6 +51,7 @@ ScrollMagic.Scene = function (options) {
 	var
 		TRIGGER_HOOK_VALUES = {"onCenter" : 0.5, "onEnter" : 1, "onLeave" : 0},
 		NAMESPACE = "ScrollMagic.Scene",
+		PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
 		DEFAULT_OPTIONS = {
 			duration: 0,
 			offset: 0,

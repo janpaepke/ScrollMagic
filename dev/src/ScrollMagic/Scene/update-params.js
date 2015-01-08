@@ -61,7 +61,7 @@ var updateTriggerElementPosition = function (suppressEvents) {
 			param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 			
 		// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-		while (telem.parentNode.dataset.isScrollMagicPinSpacer) {
+		while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
 			telem = telem.parentNode;
 		}
 
