@@ -3,8 +3,6 @@
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - add missing docs (global search TODO)
  
- - bug: indicators jumping, when using pinned element as trigger (see test.html)
- - bug: cascading pins don't work (check example)
  - bug: remove pin, when removing scene from controller (no controller = no direction)
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.

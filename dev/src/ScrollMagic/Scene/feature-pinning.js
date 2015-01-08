@@ -43,9 +43,6 @@ var updatePinState = function (forceUnpin) {
 								 	 containerInfo.scrollPos - _scrollOffset.start // quicker
 								 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
 			
-			// remove spacer margin to get real position (in case marginCollapse mode)
-			fixedPos.top -= parseFloat(_util.css(_pinOptions.spacer, "margin-top"));
-
 			// add scrollDistance
 			fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
@@ -99,13 +96,6 @@ var updatePinDimensions = function () {
 			marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 			css = {};
 
-		if (marginCollapse) {
-			css["margin-top"] = before || during ? _util.css(_pin, "margin-top") : "auto";
-			css["margin-bottom"] = after || during ? _util.css(_pin, "margin-bottom") : "auto";
-		} else {
-			css["margin-top"] = css["margin-bottom"] = "auto";
-		}
-
 		// set new size
 		// if relsize: spacer -> pin | else: pin -> spacer
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
@@ -122,8 +112,7 @@ var updatePinDimensions = function () {
 			}
 		} else {
 			// minwidth is needed for cascaded pins.
-			// margin is only included if it's a cascaded pin to resolve an IE9 bug
-			css["min-width"] = _util.get.width(spacerChild, true , spacerChild !== _pin);
+			css["min-width"] = _util.get.width(vertical ? _pin : spacerChild, true, true);
 			css.width = during ? css["min-width"] : "auto";
 		}
 		if (_pinOptions.relSize.height) {
@@ -139,7 +128,8 @@ var updatePinDimensions = function () {
 				_util.css(_pin, {"height": "100%"});
 			}
 		} else {
-			css["min-height"] = _util.get.height(spacerChild, true , !marginCollapse); // needed for cascading pins
+			// margin is only included if it's a cascaded pin to resolve an IE9 bug
+			css["min-height"] = _util.get.height(vertical ? spacerChild : _pin, true , !marginCollapse); // needed for cascading pins
 			css.height = during ? css["min-height"] : "auto";
 		}
 
@@ -246,8 +236,9 @@ this.setPin = function (element, settings) {
 	
 	_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 	var
+		boundariesParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
 		inFlow = _util.css(_pin, "position") != "absolute",
-		pinCSS = _util.css(_pin, ["display", "top", "left", "bottom", "right"]),
+		pinCSS = _util.css(_pin, boundariesParams.concat(["display"])),
 		sizeCSS = _util.css(_pin, ["width", "height"]);
 	_pin.parentNode.style.display = ''; // hack end.
 
@@ -265,16 +256,15 @@ this.setPin = function (element, settings) {
 	var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
 	_util.css(spacer, _util.extend(pinCSS, {
 				position: inFlow ? "relative" : "absolute",
-				"margin-left": "auto",
-				"margin-right": "auto",
-				"box-sizing": "content-box"
+				boxSizing: "content-box",
+				mozBoxSizing: "content-box",
+				webkitBoxSizing: "content-box"
 			}));
 
 	spacer.setAttribute(PIN_SPACER_ATTRIBUTE, "");
 	_util.addClass(spacer, settings.spacerClass);
 
 	// set the pin Options
-	var pinInlineCSS = _pin.style;
 	_pinOptions = {
 		spacer: spacer,
 		relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
@@ -284,18 +274,15 @@ this.setPin = function (element, settings) {
 		},
 		pushFollowers: settings.pushFollowers,
 		inFlow: inFlow, // stores if the element takes up space in the document flow
-		origStyle: {
-			width: pinInlineCSS.width || "",
-			position: pinInlineCSS.position || "",
-			top: pinInlineCSS.top || "",
-			left: pinInlineCSS.left || "",
-			bottom: pinInlineCSS.bottom || "",
-			right: pinInlineCSS.right || "",
-			"box-sizing": pinInlineCSS["box-sizing"] || "",
-			"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
-			"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
-		} // save old styles (for reset)
+		origStyle: {} // old inline styles are saved here (for reset)
 	};
+	
+	var
+		pinInlineCSS = _pin.style,
+		copyStyles = boundariesParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
+	copyStyles.forEach(function (val) {
+		_pinOptions.origStyle[val] = pinInlineCSS[val] || "";
+	});
 
 	// if relative size, transfer it to spacer and make pin calculate it...
 	if (_pinOptions.relSize.width) {
@@ -310,6 +297,7 @@ this.setPin = function (element, settings) {
 	// and set new css
 	_util.css(_pin, {
 		position: inFlow ? "relative" : "absolute",
+		margin: "auto",
 		top: "auto",
 		left: "auto",
 		bottom: "auto",
@@ -317,7 +305,11 @@ this.setPin = function (element, settings) {
 	});
 	
 	if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
-		_util.css(_pin, {"box-sizing" : "border-box"});
+		_util.css(_pin, {
+			boxSizing : "border-box",
+			mozBoxSizing : "border-box",
+			webkitBoxSizing : "border-box"
+		});
 	}
 
 	// add listener to document to update pin position in case controller is not the document.

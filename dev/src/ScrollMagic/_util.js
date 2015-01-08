@@ -11,20 +11,34 @@ var _util = ScrollMagic._util = (function (window) {
 	 * ------------------------------
 	 */
 
+	 // parse float and fall back to 0.
+	var floatval = function (number) {
+	 	return parseFloat(number) || 0;
+	};
+	 // get current style IE safe (otherwise IE would return calculated values for 'auto')
+	var _getComputedStyle = function (elem) {
+		return elem.currentStyle ? elem.currentStyle : window.getComputedStyle(elem);
+	};
+
 	// get element dimension (width or height)
 	var _dimension = function (which, elem, outer, includeMargin) {
 		elem = (elem === document) ? window : elem;
+		if (elem === window) {
+			includeMargin = false;
+		} else if (!_type.DomElement(elem)) {
+			return 0;
+		}
 		which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
-		var dimension = outer ? elem['offset' + which] : elem['client' + which] || elem['inner' + which] || 0;
+		var dimension = (outer ? elem['offset' + which] || elem['outer' + which] : elem['client' + which] || elem['inner' + which]) || 0;
 		if (outer && includeMargin) {
-			var style = getComputedStyle(elem);
-			dimension += which === 'Height' ?  parseFloat(style.marginTop) + parseFloat(style.marginBottom) : parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+			var style = _getComputedStyle(elem);
+			dimension += which === 'Height' ?  floatval(style.marginTop) + floatval(style.marginBottom) : floatval(style.marginLeft) + floatval(style.marginRight);
 		}
 		return dimension;
 	};
 	// converts 'margin-top' into 'marginTop'
 	var _camelCase = function (str) {
-		return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+		return str.replace(/^[^a-z]+([a-z])/g, '$1').replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
 	};
 
 	/**
@@ -224,11 +238,11 @@ var _util = ScrollMagic._util = (function (window) {
 	// if options is object -> set new css values
 	U.css = function (elem, options) {
 		if (_type.String(options)) {
-			return getComputedStyle(elem)[_camelCase(options)];
+			return _getComputedStyle(elem)[_camelCase(options)];
 		} else if (_type.Array(options)) {
 			var
 				obj = {},
-				style = getComputedStyle(elem);
+				style = _getComputedStyle(elem);
 			options.forEach(function(option, key) {
 				obj[option] = style[_camelCase(option)];
 			});
