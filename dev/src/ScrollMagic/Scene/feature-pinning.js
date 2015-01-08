@@ -4,13 +4,20 @@ var
 
 Scene
 	.on("shift.internal", function (e) {
-		if ((_state === "AFTER" && e.reason === "duration") || (_state === 'DURING' && _options.duration === 0)) {
+		var durationChanged = e.reason === "duration";
+		if ((_state === "AFTER" && durationChanged) || (_state === 'DURING' && _options.duration === 0)) {
 			// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
 			updatePinState();
+		}
+		if (durationChanged) {
+			updatePinDimensions();
 		}
 	})
 	.on("progress.internal", function (e) {
 		updatePinState();
+	})
+	.on("add", function (e) {
+		updatePinDimensions();
 	});
 /**
  * Update the pin state.
@@ -27,7 +34,7 @@ var updatePinState = function (forceUnpin) {
 				// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
 				_util.css(_pin, {"position": "fixed"});
 				// update pin spacer
-				updatePinSpacerSize();
+				updatePinDimensions();
 			}
 
 			var
@@ -70,18 +77,18 @@ var updatePinState = function (forceUnpin) {
 			_util.css(_pin, newCSS);
 			if (change) {
 				// update pin spacer if state changed
-				updatePinSpacerSize();
+				updatePinDimensions();
 			}
 		}
 	}
 };
 
 /**
- * Update the pin spacer size.
+ * Update the pin spacer and/or element size.
  * The size of the spacer needs to be updated whenever the duration of the scene changes, if it is to push down following elements.
  * @private
  */
-var updatePinSpacerSize = function () {
+var updatePinDimensions = function () {
 	if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 		var
 			after = (_state === "AFTER"),
@@ -171,7 +178,7 @@ var updateRelativePinSpacer = function () {
 				(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
 			)
 	) {
-		updatePinSpacerSize();
+		updatePinDimensions();
 	}
 };
 

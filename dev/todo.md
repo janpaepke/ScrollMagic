@@ -4,9 +4,9 @@
  - Plugin Animation Velocity: create, make tweens to be definable only in parameters
  - go through inline TO-DOs.
  
- - auto generate warning messages for missing plugins?
- - bug: duration change doesnt update pin spacer (see test.html)
+ - bug: indicators jumping, when using pinned element as trigger (see test.html)
  - bug: cascading pins don't work (check example)
+ - bug: remove pin, when removing scene from controller (no controller = no direction)
 
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)

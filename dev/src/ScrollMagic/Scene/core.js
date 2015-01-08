@@ -39,7 +39,6 @@ this.addTo = function (controller) {
 		updateDuration(true);
 		updateTriggerElementPosition(true);
 		updateScrollOffset();
-		updatePinSpacerSize();
 		_controller.info("container").addEventListener('resize', onContainerResize);
 		controller.addScene(Scene);
 		Scene.trigger("add", {controller: _controller});
