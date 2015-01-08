@@ -144,7 +144,7 @@ var _util = ScrollMagic._util = (function (window) {
 	 * DOM Element info
 	 * ------------------------------
 	 */
-	// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements
+	// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements or even an array of selectors
 	var _get = U.get = {};
 	_get.elements = function (selector) {
 		var arr = [];
@@ -156,8 +156,9 @@ var _util = ScrollMagic._util = (function (window) {
 			}
 		}
 		if (_type(selector) === 'nodelist' || _type.Array(selector)) {
-			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) {
-				arr[i] = selector[i]; // array of elements
+			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
+				var elem = selector[i];
+				arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
 			}
 		} else if (_type.DomElement(selector) || selector === document || selector === window){
 			arr = [selector]; // only the element
