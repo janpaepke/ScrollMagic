@@ -17,6 +17,17 @@
 	"use strict";
 	var NAMESPACE = "animation.gsap";
 
+	// (BUILD) - REMOVE IN MINIFY - START
+	var err = Function.prototype.bind.call((console && console.error || console.log) || function() {}, console);
+	if (!ScrollMagic) {
+		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
+	}
+	if (!Tween || !Timeline) {
+		err("(" + NAMESPACE + ") -> ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use an asynchronous loader like requirejs.");
+	}
+	// (BUILD) - REMOVE IN MINIFY - END
+	
+
 	ScrollMagic.Scene.extend(function () {
 
 		var Scene = this,
@@ -33,12 +44,6 @@
 				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
 			}
 		});
-		if (!Tween) {
-			// log(1, "ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use asynchronous loading.");
-		} else {
-			// TODO: fix when properly requireing plugin
-			// console.log(!!Tween.staggerTo);
-		}
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		// set listeners

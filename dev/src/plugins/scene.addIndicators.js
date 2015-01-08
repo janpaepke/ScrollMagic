@@ -13,6 +13,13 @@
 	"use strict";
 	var NAMESPACE = "scene.addIndicators";
 
+	// (BUILD) - REMOVE IN MINIFY - START
+	var err = Function.prototype.bind.call((console && console.error || console.log) || function() {}, console);
+	if (!ScrollMagic) {
+		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
+	}
+	// (BUILD) - REMOVE IN MINIFY - END
+
 	// plugin settings
 	var
 		FONT_SIZE = "0.85em",

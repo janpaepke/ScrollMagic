@@ -16,6 +16,17 @@
 }(this, function(ScrollMagic, velocity) {
 	"use strict";
 	var NAMESPACE = "animation.velocity";
+
+	// (BUILD) - REMOVE IN MINIFY - START
+	var err = Function.prototype.bind.call((console && console.error || console.log) || function() {}, console);
+	if (!ScrollMagic) {
+		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
+	}
+	if (!velocity) {
+		err("(" + NAMESPACE + ") -> ERROR: Velocity could not be found. Please make sure it's loaded before ScrollMagic or use an asynchronous loader like requirejs.");
+	}
+	// (BUILD) - REMOVE IN MINIFY - END
+	
 	var autoindex = 0;
 
 	ScrollMagic.Scene.extend(function () {
