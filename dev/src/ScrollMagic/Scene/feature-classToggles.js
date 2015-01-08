@@ -18,12 +18,15 @@ var
  *
  * @returns {Scene} Parent object for chaining.
  */
- // TODO: check if removeClassToggle needs a definite element (what happens if you call setClassToggle two times for same or different elements?)
 this.setClassToggle = function (element, classes) {
 	var elems = _util.get.elements(element);
 	if (elems.length === 0 || !_util.type.String(classes)) {
 		log(1, "ERROR calling method 'setClassToggle()': Invalid " + (elems.length === 0 ? "element" : "classes") + " supplied.");
 		return Scene;
+	}
+	if (_cssClassElems.length > 0) {
+		// remove old ones
+		Scene.removeClassToggle();
 	}
 	_cssClasses = classes;
 	_cssClassElems = elems;

@@ -1,8 +1,7 @@
 # Source
  - Plugin Animation GSAP: test if lite and regular versions really both work
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
- - Plugin Animation Velocity: create, make tweens to be definable only in parameters
- - go through inline TO-DOs.
+ - add missing docs (global search TODO)
  
  - bug: indicators jumping, when using pinned element as trigger (see test.html)
  - bug: cascading pins don't work (check example)
