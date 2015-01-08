@@ -84,7 +84,7 @@ ScrollMagic.Controller = function(options) {
 			log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 			throw NAMESPACE + " init failed."; // cancel
 		}
-		_isDocument = _options.container === window || _options.container === document.body || !document.contains(_options.container);
+		_isDocument = _options.container === window || _options.container === document.body || !document.body.contains(_options.container);
 		// normalize to window
 		if (_isDocument) {
 			_options.container = window;
@@ -176,7 +176,14 @@ ScrollMagic.Controller = function(options) {
 		if (!_isDocument) {
 			// simulate resize event. Only works for viewport relevant param (performance)
 			if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
-				_options.container.dispatchEvent(new Event('resize', {bubbles: false, cancelable: false})); // TODO check if polyfill needed for IE9
+				var resizeEvent;
+				try {
+					resizeEvent = new Event('resize', {bubbles: false, cancelable: false});
+				} catch (e) { // stupid IE
+					resizeEvent = document.createEvent("Event");
+					resizeEvent.initEvent("resize", false, false);
+				}
+				_options.container.dispatchEvent(resizeEvent);
 			}
 		}
 		_sceneObjects.forEach(function (scene, index) {// refresh all scenes
