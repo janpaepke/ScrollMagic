@@ -239,9 +239,9 @@ this.setPin = function (element, settings) {
 	
 	_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 	var
-		boundariesParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
+	 boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
 		inFlow = _util.css(_pin, "position") != "absolute",
-		pinCSS = _util.css(_pin, boundariesParams.concat(["display"])),
+		pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 		sizeCSS = _util.css(_pin, ["width", "height"]);
 	_pin.parentNode.style.display = ''; // hack end.
 
@@ -277,15 +277,17 @@ this.setPin = function (element, settings) {
 		},
 		pushFollowers: settings.pushFollowers,
 		inFlow: inFlow, // stores if the element takes up space in the document flow
-		origStyle: {} // old inline styles are saved here (for reset)
 	};
 	
-	var
-		pinInlineCSS = _pin.style,
-		copyStyles = boundariesParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
-	copyStyles.forEach(function (val) {
-		_pinOptions.origStyle[val] = pinInlineCSS[val] || "";
-	});
+	if (!_pin.___origStyle) {
+		_pin.___origStyle = {};
+		var
+			pinInlineCSS = _pin.style,
+			copyStyles = boundsParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
+		copyStyles.forEach(function (val) {
+			_pin.___origStyle[val] = pinInlineCSS[val] || "";
+		});
+	}
 
 	// if relative size, transfer it to spacer and make pin calculate it...
 	if (_pinOptions.relSize.width) {
@@ -346,13 +348,27 @@ this.setPin = function (element, settings) {
  */
 this.removePin = function (reset) {
 	if (_pin) {
+		if (_state === "DURING") {
+			updatePinState(true); // force unpin at position
+		}
 		if (reset || !_controller) { // if there's no controller no progress was made anyway...
-			_pinOptions.spacer.parentNode.insertBefore(_pin, _pinOptions.spacer);
+			var spacerChild = _pinOptions.spacer.children[0]; // usually the pin element, but may be another spacer...
+			if (spacerChild.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
+				var
+					style = _pinOptions.spacer.style,
+					values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
+					margins = {};
+				values.forEach(function (val) {
+					margins[val] = style[val] || "";
+				});
+				_util.css(spacerChild, margins);
+			}
+			_pinOptions.spacer.parentNode.insertBefore(spacerChild, _pinOptions.spacer);
 			_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
-			_util.css(_pin, _pinOptions.origStyle);
-		} else {
-			if (_state === "DURING") {
-				updatePinState(true); // force unpin at position
+			if (!_pin.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // if it's the last pin for this element -> restore inline styles
+				// TODO: only correctly set for first pin - how to fix?
+				_util.css(_pin, _pin.___origStyle);
+				delete _pin.___origStyle;
 			}
 		}
 		window.removeEventListener('scroll', updatePinInContainer);
