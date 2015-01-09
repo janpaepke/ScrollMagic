@@ -51,7 +51,6 @@
 			updateTweenProgress();
 		});
 		Scene.on("destroy.plugin_gsap", function (e) {
-			Scene.off("*.plugin_gsap");
 			Scene.removeTween(e.reset);
 		});
 

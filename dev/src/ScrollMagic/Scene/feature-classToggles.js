@@ -1,6 +1,11 @@
 var 
 	_cssClasses,
 	_cssClassElems = [];
+
+Scene
+	.on("destroy.internal", function (e) {
+		Scene.removeClassToggle(e.reset);
+	});
 /**
  * Define a css class modification while the scene is active.  
  * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.

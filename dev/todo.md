@@ -3,8 +3,6 @@
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - add missing docs (global search TODO)
  
- - bug: remove pin, when removing scene from controller (no controller = no direction)
-
  - bug: when cascading pins (pinning one element multiple times) and later removing them without reset, positioning errors occur.
  - bug: having multiple scroll directions with cascaded pins doesn't work (one scroll vertical, one horizontal)
 

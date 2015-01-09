@@ -16,8 +16,11 @@ Scene
 	.on("progress.internal", function (e) {
 		updatePinState();
 	})
-	.on("add", function (e) {
+	.on("add.internal", function (e) {
 		updatePinDimensions();
+	})
+	.on("destroy.internal", function (e) {
+		Scene.removePin(e.reset);
 	});
 /**
  * Update the pin state.
