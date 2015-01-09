@@ -22,6 +22,12 @@
 	"use strict";
 	var NAMESPACE = "scene.addIndicators";
 
+	var err = Function.prototype.bind.call((console && console.error || console.log) ||
+	function () {}, console);
+	if (!ScrollMagic) {
+		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
+	}
+
 	// plugin settings
 	var
 	FONT_SIZE = "0.85em",
@@ -214,7 +220,10 @@
 			groups = specificGroup ? [specificGroup] : _indicators.groups,
 				i = groups.length,
 				container = _isDocument ? document.body : _container,
-				containerOffset = _util.get.offset(container, !_isDocument),
+				containerOffset = _isDocument ? {
+					top: 0,
+					left: 0
+				} : _util.get.offset(container, true),
 				edge = _vertical ? _util.get.width(_container) - EDGE_OFFSET : _util.get.height(_container) - EDGE_OFFSET,
 				paramDimension = _vertical ? "width" : "height",
 				paramTransform = _vertical ? "Y" : "X";

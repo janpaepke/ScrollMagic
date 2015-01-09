@@ -113,7 +113,7 @@
 				log(1, "ERROR creating object " + NAMESPACE + ": No valid scroll container supplied");
 				throw NAMESPACE + " init failed."; // cancel
 			}
-			_isDocument = _options.container === window || _options.container === document.body || !document.contains(_options.container);
+			_isDocument = _options.container === window || _options.container === document.body || !document.body.contains(_options.container);
 			// normalize to window
 			if (_isDocument) {
 				_options.container = window;
@@ -205,10 +205,17 @@
 			if (!_isDocument) {
 				// simulate resize event. Only works for viewport relevant param (performance)
 				if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
-					_options.container.dispatchEvent(new Event('resize', {
-						bubbles: false,
-						cancelable: false
-					})); // TODO check if polyfill needed for IE9
+					var resizeEvent;
+					try {
+						resizeEvent = new Event('resize', {
+							bubbles: false,
+							cancelable: false
+						});
+					} catch (e) { // stupid IE
+						resizeEvent = document.createEvent("Event");
+						resizeEvent.initEvent("resize", false, false);
+					}
+					_options.container.dispatchEvent(resizeEvent);
 				}
 			}
 			_sceneObjects.forEach(function (scene, index) { // refresh all scenes
@@ -702,6 +709,7 @@
 			"onLeave": 0
 		},
 			NAMESPACE = "ScrollMagic.Scene",
+			PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
 			DEFAULT_OPTIONS = {
 				duration: 0,
 				offset: 0,
@@ -792,7 +800,6 @@
 				updateDuration(true);
 				updateTriggerElementPosition(true);
 				updateScrollOffset();
-				updatePinSpacerSize();
 				_controller.info("container").addEventListener('resize', onContainerResize);
 				controller.addScene(Scene);
 				Scene.trigger("add", {
@@ -867,8 +874,6 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (reset) {
-			Scene.removePin(reset);
-			Scene.removeClassToggle(reset);
 			Scene.trigger("destroy", {
 				reset: reset
 			});
@@ -1141,7 +1146,7 @@
 					// container position is needed because element offset is returned in relation to document, not in relation to container.
 					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
 				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (telem.parentNode.dataset.isScrollMagicPinSpacer) {
+				while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
 					telem = telem.parentNode;
 				}
 
@@ -1185,6 +1190,13 @@
 				}
 			},
 			"duration": function () {
+				if (_util.type.String(_options.duration) && _options.duration.match(/^(\.|\d)*\d+%$/)) {
+					// percentage value
+					var perc = parseFloat(_options.duration) / 100;
+					_options.duration = function () {
+						return _controller ? _controller.info("size") * perc : 0;
+					};
+				}
 				if (_util.type.Function(_options.duration)) {
 					_durationUpdateMethod = _options.duration;
 					try {
@@ -1336,9 +1348,8 @@
 			if (!arguments.length) { // get
 				return _options[varname];
 			} else {
-				if (!_util.type.Function(newDuration)) {
-					_durationUpdateMethod = undefined;
-				}
+				// a new value is set, so definitely kill the old function
+				_durationUpdateMethod = undefined;
 				if (changeOption(varname, newDuration)) { // set
 					Scene.trigger("change", {
 						what: varname,
@@ -1937,12 +1948,20 @@
 		_pin, _pinOptions;
 
 		Scene.on("shift.internal", function (e) {
-			if ((_state === "AFTER" && e.reason === "duration") || (_state === 'DURING' && _options.duration === 0)) {
+			var durationChanged = e.reason === "duration";
+			if ((_state === "AFTER" && durationChanged) || (_state === 'DURING' && _options.duration === 0)) {
 				// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
 				updatePinState();
 			}
+			if (durationChanged) {
+				updatePinDimensions();
+			}
 		}).on("progress.internal", function (e) {
 			updatePinState();
+		}).on("add.internal", function (e) {
+			updatePinDimensions();
+		}).on("destroy.internal", function (e) {
+			Scene.removePin(e.reset);
 		});
 		/**
 		 * Update the pin state.
@@ -1961,7 +1980,7 @@
 							"position": "fixed"
 						});
 						// update pin spacer
-						updatePinSpacerSize();
+						updatePinDimensions();
 					}
 
 					var
@@ -1969,9 +1988,6 @@
 						// get viewport position of spacer
 						scrollDistance = _options.reverse || _options.duration === 0 ? containerInfo.scrollPos - _scrollOffset.start // quicker
 						: Math.round(_progress * _options.duration * 10) / 10; // if no reverse and during pin the position needs to be recalculated using the progress
-					// remove spacer margin to get real position (in case marginCollapse mode)
-					fixedPos.top -= parseFloat(_util.css(_pinOptions.spacer, "margin-top"));
-
 					// add scrollDistance
 					fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
@@ -2003,18 +2019,18 @@
 					_util.css(_pin, newCSS);
 					if (change) {
 						// update pin spacer if state changed
-						updatePinSpacerSize();
+						updatePinDimensions();
 					}
 				}
 			}
 		};
 
 		/**
-		 * Update the pin spacer size.
+		 * Update the pin spacer and/or element size.
 		 * The size of the spacer needs to be updated whenever the duration of the scene changes, if it is to push down following elements.
 		 * @private
 		 */
-		var updatePinSpacerSize = function () {
+		var updatePinDimensions = function () {
 			if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 				var
 				after = (_state === "AFTER"),
@@ -2025,13 +2041,6 @@
 					// usually the pined element but can also be another spacer (cascaded pins)
 					marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 					css = {};
-
-				if (marginCollapse) {
-					css["margin-top"] = before || during ? _util.css(_pin, "margin-top") : "auto";
-					css["margin-bottom"] = after || during ? _util.css(_pin, "margin-bottom") : "auto";
-				} else {
-					css["margin-top"] = css["margin-bottom"] = "auto";
-				}
 
 				// set new size
 				// if relsize: spacer -> pin | else: pin -> spacer
@@ -2055,8 +2064,7 @@
 					}
 				} else {
 					// minwidth is needed for cascaded pins.
-					// margin is only included if it's a cascaded pin to resolve an IE9 bug
-					css["min-width"] = _util.get.width(spacerChild, true, spacerChild !== _pin);
+					css["min-width"] = _util.get.width(vertical ? _pin : spacerChild, true, true);
 					css.width = during ? css["min-width"] : "auto";
 				}
 				if (_pinOptions.relSize.height) {
@@ -2078,7 +2086,8 @@
 						});
 					}
 				} else {
-					css["min-height"] = _util.get.height(spacerChild, true, !marginCollapse); // needed for cascading pins
+					// margin is only included if it's a cascaded pin to resolve an IE9 bug
+					css["min-height"] = _util.get.height(vertical ? spacerChild : _pin, true, !marginCollapse); // needed for cascading pins
 					css.height = during ? css["min-height"] : "auto";
 				}
 
@@ -2114,7 +2123,7 @@
 			_state === "DURING" && // element in pinned state?
 			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 			((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) || (_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode)))) {
-				updatePinSpacerSize();
+				updatePinDimensions();
 			}
 		};
 
@@ -2182,8 +2191,9 @@
 
 			_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 			var
-			inFlow = _util.css(_pin, "position") != "absolute",
-				pinCSS = _util.css(_pin, ["display", "top", "left", "bottom", "right"]),
+			boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
+				inFlow = _util.css(_pin, "position") != "absolute",
+				pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 				sizeCSS = _util.css(_pin, ["width", "height"]);
 			_pin.parentNode.style.display = ''; // hack end.
 			if (!inFlow && settings.pushFollowers) {
@@ -2198,17 +2208,15 @@
 			var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
 			_util.css(spacer, _util.extend(pinCSS, {
 				position: inFlow ? "relative" : "absolute",
-				"margin-left": "auto",
-				"margin-right": "auto",
-				"box-sizing": "content-box"
+				boxSizing: "content-box",
+				mozBoxSizing: "content-box",
+				webkitBoxSizing: "content-box"
 			}));
 
-			// TODO: check if dataset works in IE9
-			spacer.dataset.isScrollMagicPinSpacer = true; // careful: it's actually stored as a string. But it will only be checked for existance
+			spacer.setAttribute(PIN_SPACER_ATTRIBUTE, "");
 			_util.addClass(spacer, settings.spacerClass);
 
 			// set the pin Options
-			var pinInlineCSS = _pin.style;
 			_pinOptions = {
 				spacer: spacer,
 				relSize: { // save if size is defined using % values. if so, handle spacer resize differently...
@@ -2219,18 +2227,17 @@
 				pushFollowers: settings.pushFollowers,
 				inFlow: inFlow,
 				// stores if the element takes up space in the document flow
-				origStyle: {
-					width: pinInlineCSS.width || "",
-					position: pinInlineCSS.position || "",
-					top: pinInlineCSS.top || "",
-					left: pinInlineCSS.left || "",
-					bottom: pinInlineCSS.bottom || "",
-					right: pinInlineCSS.right || "",
-					"box-sizing": pinInlineCSS["box-sizing"] || "",
-					"-moz-box-sizing": pinInlineCSS["-moz-box-sizing"] || "",
-					"-webkit-box-sizing": pinInlineCSS["-webkit-box-sizing"] || ""
-				} // save old styles (for reset)
 			};
+
+			if (!_pin.___origStyle) {
+				_pin.___origStyle = {};
+				var
+				pinInlineCSS = _pin.style,
+					copyStyles = boundsParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
+				copyStyles.forEach(function (val) {
+					_pin.___origStyle[val] = pinInlineCSS[val] || "";
+				});
+			}
 
 			// if relative size, transfer it to spacer and make pin calculate it...
 			if (_pinOptions.relSize.width) {
@@ -2249,6 +2256,7 @@
 			// and set new css
 			_util.css(_pin, {
 				position: inFlow ? "relative" : "absolute",
+				margin: "auto",
 				top: "auto",
 				left: "auto",
 				bottom: "auto",
@@ -2257,7 +2265,9 @@
 
 			if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 				_util.css(_pin, {
-					"box-sizing": "border-box"
+					boxSizing: "border-box",
+					mozBoxSizing: "border-box",
+					webkitBoxSizing: "border-box"
 				});
 			}
 
@@ -2292,13 +2302,27 @@
 		 */
 		this.removePin = function (reset) {
 			if (_pin) {
+				if (_state === "DURING") {
+					updatePinState(true); // force unpin at position
+				}
 				if (reset || !_controller) { // if there's no controller no progress was made anyway...
-					_pinOptions.spacer.parentNode.insertBefore(_pin, _pinOptions.spacer);
+					var spacerChild = _pinOptions.spacer.children[0]; // usually the pin element, but may be another spacer...
+					if (spacerChild.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
+						var
+						style = _pinOptions.spacer.style,
+							values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
+						margins = {};
+						values.forEach(function (val) {
+							margins[val] = style[val] || "";
+						});
+						_util.css(spacerChild, margins);
+					}
+					_pinOptions.spacer.parentNode.insertBefore(spacerChild, _pinOptions.spacer);
 					_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
-					_util.css(_pin, _pinOptions.origStyle);
-				} else {
-					if (_state === "DURING") {
-						updatePinState(true); // force unpin at position
+					if (!_pin.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // if it's the last pin for this element -> restore inline styles
+						// TODO: only correctly set for first pin - how to fix?
+						_util.css(_pin, _pin.___origStyle);
+						delete _pin.___origStyle;
 					}
 				}
 				window.removeEventListener('scroll', updatePinInContainer);
@@ -2314,6 +2338,10 @@
 
 		var
 		_cssClasses, _cssClassElems = [];
+
+		Scene.on("destroy.internal", function (e) {
+			Scene.removeClassToggle(e.reset);
+		});
 		/**
 		 * Define a css class modification while the scene is active.  
 		 * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
@@ -2331,12 +2359,15 @@
 		 *
 		 * @returns {Scene} Parent object for chaining.
 		 */
-		// TODO: check if removeClassToggle needs a definite element (what happens if you call setClassToggle two times for same or different elements?)
 		this.setClassToggle = function (element, classes) {
 			var elems = _util.get.elements(element);
 			if (elems.length === 0 || !_util.type.String(classes)) {
 				log(1, "ERROR calling method 'setClassToggle()': Invalid " + (elems.length === 0 ? "element" : "classes") + " supplied.");
 				return Scene;
+			}
+			if (_cssClassElems.length > 0) {
+				// remove old ones
+				Scene.removeClassToggle();
 			}
 			_cssClasses = classes;
 			_cssClassElems = elems;
@@ -2422,20 +2453,34 @@
 		 * ------------------------------
 		 */
 
+		// parse float and fall back to 0.
+		var floatval = function (number) {
+			return parseFloat(number) || 0;
+		};
+		// get current style IE safe (otherwise IE would return calculated values for 'auto')
+		var _getComputedStyle = function (elem) {
+			return elem.currentStyle ? elem.currentStyle : window.getComputedStyle(elem);
+		};
+
 		// get element dimension (width or height)
 		var _dimension = function (which, elem, outer, includeMargin) {
 			elem = (elem === document) ? window : elem;
+			if (elem === window) {
+				includeMargin = false;
+			} else if (!_type.DomElement(elem)) {
+				return 0;
+			}
 			which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
-			var dimension = outer ? elem['offset' + which] : elem['client' + which] || elem['inner' + which] || 0;
+			var dimension = (outer ? elem['offset' + which] || elem['outer' + which] : elem['client' + which] || elem['inner' + which]) || 0;
 			if (outer && includeMargin) {
-				var style = getComputedStyle(elem);
-				dimension += which === 'Height' ? parseFloat(style.marginTop) + parseFloat(style.marginBottom) : parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+				var style = _getComputedStyle(elem);
+				dimension += which === 'Height' ? floatval(style.marginTop) + floatval(style.marginBottom) : floatval(style.marginLeft) + floatval(style.marginRight);
 			}
 			return dimension;
 		};
 		// converts 'margin-top' into 'marginTop'
 		var _camelCase = function (str) {
-			return str.replace(/-([a-z])/g, function (g) {
+			return str.replace(/^[^a-z]+([a-z])/g, '$1').replace(/-([a-z])/g, function (g) {
 				return g[1].toUpperCase();
 			});
 		};
@@ -2557,7 +2602,7 @@
 		 * DOM Element info
 		 * ------------------------------
 		 */
-		// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements
+		// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements or even an array of selectors
 		var _get = U.get = {};
 		_get.elements = function (selector) {
 			var arr = [];
@@ -2569,8 +2614,9 @@
 				}
 			}
 			if (_type(selector) === 'nodelist' || _type.Array(selector)) {
-				for (var i = 0, ref = arr.length = selector.length; i < ref; i++) {
-					arr[i] = selector[i]; // array of elements
+				for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
+					var elem = selector[i];
+					arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
 				}
 			} else if (_type.DomElement(selector) || selector === document || selector === window) {
 				arr = [selector]; // only the element
@@ -2635,11 +2681,11 @@
 		// if options is object -> set new css values
 		U.css = function (elem, options) {
 			if (_type.String(options)) {
-				return getComputedStyle(elem)[_camelCase(options)];
+				return _getComputedStyle(elem)[_camelCase(options)];
 			} else if (_type.Array(options)) {
 				var
 				obj = {},
-					style = getComputedStyle(elem);
+					style = _getComputedStyle(elem);
 				options.forEach(function (option, key) {
 					obj[option] = style[_camelCase(option)];
 				});
