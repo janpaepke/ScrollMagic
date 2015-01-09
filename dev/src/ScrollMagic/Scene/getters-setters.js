@@ -9,6 +9,13 @@ var _validate = {
 		}
 	},
 	"duration" : function () {
+		if (_util.type.String(_options.duration) && _options.duration.match(/^(\.|\d)*\d+%$/)) {
+			// percentage value
+			var perc = parseFloat(_options.duration) / 100;
+			_options.duration = function () {
+				return _controller ? _controller.info("size") * perc : 0;
+			};
+		}
 		if (_util.type.Function(_options.duration)) {
 			_durationUpdateMethod = _options.duration;
 			try {
@@ -161,10 +168,9 @@ this.duration = function (newDuration) {
 	var varname = "duration";
 	if (!arguments.length) { // get
 		return _options[varname];
-	} else {
-		if (!_util.type.Function(newDuration)) {
-			_durationUpdateMethod = undefined;
-		}
+	} else {		
+		// a new value is set, so definitely kill the old function
+		_durationUpdateMethod = undefined;
 		if (changeOption(varname, newDuration)) { // set
 			Scene.trigger("change", {what: varname, newval: _options[varname]});
 			Scene.trigger("shift", {reason: varname});
