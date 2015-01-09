@@ -216,7 +216,7 @@
 				groups = specificGroup ? [specificGroup] : _indicators.groups,
 				i = groups.length,
 				container = _isDocument ? document.body : _container,
-				containerOffset = _util.get.offset(container, !_isDocument),
+				containerOffset = _isDocument ?  {top: 0, left: 0} : _util.get.offset(container, true),
 				edge = _vertical ?
 							_util.get.width(_container) - EDGE_OFFSET :
 							_util.get.height(_container) - EDGE_OFFSET,
