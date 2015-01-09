@@ -1,6 +1,61 @@
 CHANGELOG
 =========
 
+## 2.0.0 (unreleased)
+
+#### changes (non-breaking)
+ - **removal of all dependencies (jQuery & GSAP). _ScrollMagic is now stand alone._**
+ - new file structure:
+   - main module: 'ScrollMagic.js'
+   - all available plugins in folder '/plugins'
+ - new scene event: [add](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:add) fires when scene is added to a controller
+ - new scene event: [remove](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:remove) fires when scene is removed from a controller
+ - option changes in `Scene.addIndicators()`:
+   - indicators are now always on top (option `zindex` removed)
+   - option `suffix` is renamed to `name`
+ - several performance tweaks
+ - lots more info and warning messages (in the uncompressed development version)
+
+#### changes (potentially breaking):
+ - ScrollMagic Controllers are now instantiated using `var controller = new ScrollMagic.Controller();`
+ - ScrollMagic Scenes are now instantiated using `var scene = new ScrollMagic.Scene();`
+ - renamed method `Scene.parent()` to `Scene.controller()`
+ - **removed scene method `triggerOffset()`**  
+   Method was marked deprecated since v1.1.0 and has now been replaced by `triggerPosition()`.
+ - **removed `Scene.setPin()` option `pinClass`**  
+   Was used to add a class to the pinned element. The same can now be achieved using `setClassToggle()`.
+
+#### features:
+ - **new plugin 'scene.addIndicators' (formerly 'jquery.scrollmagic.debug')**
+   - indicators can now be added to the scene before it was added to a controller
+   - indicators also work when scenes are removed and readded
+   - indicator labels are autoindexed, when no explicit label is supplied
+   - start indicator is now above the line for less overlays (i.e. one scene starts, where another ends)
+   - huge performance optimization, especially when using indicators for multiple scenes
+   - new method `removeIndicators()`
+ - **new plugin 'animation.gsap'**  
+   Contains all GSAP tween functionality formerly integrated into ScrollMagic (`setTween()` and `removeTween()`)
+ - **new plugin 'animation.velocity'**  
+   The velocity animation framework can now be used to trigger animations using `Scene.setVelocity(elem, properties, options)`
+   Note that for the time being velocity only works with 0 duration scenes, because timeline scrubbing isnt supported by velocity (yet).
+ - **new plugin 'jquery.ScrollMagic'**  
+   - adds support for jQuery selectors and makes all methods accept jQuery objects as element parameters.
+   - moves ScrollMagic global to `$.ScrollMagic`. To instantiate a controller respectively call `new $.ScrollMagic.Controller()`.
+ - **new option for responsive duration**
+   The Scene duration can now be a percentage string like `"100%"`.  
+   It will be calculated in relation to the size of the scroll container. It use the container's height for vertically scrolling applications and its width for horizontally scrolling containers.
+
+#### bugfixes:
+ - vertical Pins in DIV scroll containers did not work, when using a mousewheel while the cursor was over the pinned element
+ - using `removeTween(true)` to remove and reset a Tween didn't work when the scene's duration was 0
+ - when removing pins from cascaded pins using `removePin(true)` messed up the DOM structure (long term bug)
+
+### project management:
+ - changed build system to [gulp](http://gulpjs.com/)
+ - moved all Module dist files to '/scrollmagic'
+ - TODO: document file structure and gulp options
+
+
 ## 1.3.0 (2014-11-13)
 
 #### changes (potentially breaking):
@@ -10,6 +65,7 @@ CHANGELOG
  - added Error message for missing dependencies
  - fixed bubbling of pseudo-resize event of div containers
  - reference bug with AMD loading
+
 
 ## 1.2.0 (2014-10-14)
 
