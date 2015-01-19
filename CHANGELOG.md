@@ -50,7 +50,7 @@ CHANGELOG
  - using `removeTween(true)` to remove and reset a Tween didn't work when the scene's duration was 0
  - when removing pins from cascaded pins using `removePin(true)` messed up the DOM structure (long term bug)
 
-### project management:
+#### project management:
  - changed build system to [gulp](http://gulpjs.com/)
  - moved all Module dist files to '/scrollmagic'
  - TODO: document file structure and gulp options

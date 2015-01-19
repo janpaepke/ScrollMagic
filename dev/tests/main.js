@@ -1,58 +1,89 @@
+// all spec files to run
 var tests = [
-	// matchers
-	'jasmine-matchers',
-	
-	// libs
-	'jquery',
-	'jasmine-jquery',
-
-	// specs
 	'spec/_util',
 	'spec/controller',
 	'spec/controller.events',
 	'spec/scene',
 	'spec/scene.events',
-	// 'spec/TEST_PURE',
-	// 'spec/TEST_EXTENDED',
+	'spec/TEST_PURE',
+	'spec/TEST_EXTENDED',
 ];
 
+// prepare test env
 require.config({
-	// urlArgs: "bust=" + (new Date()).getTime(),
 	baseUrl: '/base',
 	paths: {
 		// libs
 		"jquery": "js/lib/jquery.min",
 		"jasmine-jquery": "dev/tests/karma/vendor/jasmine-jquery",
 		// settings
-		"jasmine-matchers": "dev/tests/karma/jasmine.matchers",
-		// specs
-		"spec": "dev/tests/spec",
+		"jasmine-matchers": "dev/tests/karma/jasmine.matchers"
 	},
-	packages: [
-		{
-			name: "ScrollMagic",
-			main: "../ScrollMagic",
-			location: "scrollmagic/uncompressed/plugins"
-		},
-		{
-			name: "gsap",
-			location: "js/lib/greensock"
-		}
+	shim: {
+		'jasmine-jquery': ['jquery']
+	},
+
+	deps: [
+		// matchers
+		'jasmine-matchers',
+
+		// libs
+		'jquery',
+		'jasmine-jquery'
 	],
-	map : {
-		'*' : {
-			"TweenMax": "gsap/TweenLite.min",
-			"TimelineMax": "gsap/TimelineMax.min"
-		}
-	},
 
-	deps: tests,
-
-	callback: function(globalMatchers) {
+	callback: function (globalMatchers) {
+		// prepare fixtures
 		jasmine.getFixtures().fixturesPath = '/base/dev/tests/fixtures';
+		// set global matchers
 		beforeEach(function() {
 			jasmine.addMatchers(globalMatchers.methodTests);
 		});
-		window.__karma__.start();
+		// init test loading
+		loadTests();
 	}
 });
+
+// start loading tests
+// load each to individual context to avoid module pollution through plugins
+function loadTests() {
+
+	var loaded = 0;
+	for (var i = 0; i<tests.length; i++) {
+		require.config({
+			context: tests[i],
+			baseUrl: '/base',
+			paths: {
+				// specs
+				"spec": "dev/tests/spec",
+				"gsap": "js/lib/greensock",
+				"TweenLite": "js/lib/greensock/TweenLite.min",
+				"TweenMax": "js/lib/greensock/TweenMax.min",
+				"TimelineLite": "js/lib/greensock/TimelineLite.min",
+				"TimelineMax": "js/lib/greensock/TimelineMax.min"
+			},
+			packages: [
+				{
+					name: "ScrollMagic",
+					main: "../ScrollMagic",
+					location: "scrollmagic/uncompressed/plugins"
+				}
+			],
+			map : {
+				'*' : {
+					// use lite instead of max?
+					// "TweenMax": "TweenLite",
+					// "TimelineMax": "TimelineLite"
+				}
+			},
+
+			deps: [tests[i]],
+
+			callback: function () {
+				if (++loaded === tests.length) {
+					window.__karma__.start();
+				}
+			}
+		});
+	}
+}

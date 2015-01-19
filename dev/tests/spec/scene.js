@@ -384,13 +384,14 @@ define(["ScrollMagic"], function (ScrollMagic) {
 			it("returns the correct value when container is resized", function (done) {
 				scene.triggerHook(1);
 				$c.height(100);
+	      var timeout = setTimeout(function(){
+	         expect("resize event").toBe("triggered by now");
+	      }, 101); // 100 is default val for refresh interval
 				$c.on("resize", function () {
+					window.clearTimeout(timeout);
 					expect(scene.scrollOffset()).toBe(250 - $c.height());
 					done();
 				});
-	      setTimeout(function(){
-	         expect("resize event").toBe("triggered by now");
-	      }, 101); // 100 is default val for refresh interval
 			});
 			it("returns the correct value when the position of the triggerElement changes", function () {
 				$("#trigger").css({
