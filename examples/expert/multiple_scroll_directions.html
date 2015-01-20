@@ -54,10 +54,10 @@
 							var controller = new ScrollMagic.Controller();
 
 							// build tween
-							var tween = TweenMax.to("#animate", 0.5, {scale: 3, ease: Linear.easeNone});
+							var tween = TweenMax.to("#animate", 0.5, {scale: 3, y: 400, ease: Linear.easeNone});
 
 							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#multiDirect", duration: 400, offset: 100})
+							var scene = new ScrollMagic.Scene({triggerElement: "#multiDirect", duration: 400, offset: 250})
 											.setTween(tween)
 											.addTo(controller)
 											.addIndicators({name: "resize"});// show indicators (requires debug extension)

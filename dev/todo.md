@@ -2,8 +2,6 @@
  - Plugin Animation GSAP: test if lite and regular versions really both work
  - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - add missing docs (global search TODO)
- 
- - known bug: pins in multiple directions don't work, because in `updatePinState` they override each other's positions.
 
 # Build (gulpfile.js)
  - make jsdoc generation properly & repair docs
