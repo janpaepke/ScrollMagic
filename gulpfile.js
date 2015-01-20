@@ -32,6 +32,7 @@ var
 // custom
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
+	pluginInfo =	require('./dev/src/plugins'),
 // json
 	config = require('./dev/build/config.json'); // config
 
@@ -168,11 +169,23 @@ gulp.task('lint:source', function() {
 });
 
 gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function() {
+	// prepare plugin warnings
+	var pluginWarnings = [];
+	for (var classname in pluginInfo.plugins) {
+		var warn = pluginInfo.warningTPL.replace(/%CLASSNAME%/g, classname);
+		for (var methodname in pluginInfo.plugins[classname]) {
+			pluginWarnings.push(warn.replace(/%METHOD%/g, methodname).replace(/%PLUGIN%/g, pluginInfo.plugins[classname][methodname]));
+		}
+	}
 	return gulp.src(config.files, { base: config.dirs.source })
 		.pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 			.pipe(replace({
 			patterns: [
+				{ // add plugin warnings
+					match: /\/\/ \@generate PlugInWarnings/gm,
+					replacement: pluginWarnings.join("\n")
+				},
 				{ // remove build notes
 					match: /[\t ]*\/\/ \(BUILD\).*$\r?\n?/gm,
 					replacement: ''

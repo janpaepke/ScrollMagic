@@ -26,5 +26,7 @@
 
 // @include('ScrollMagic/_util.js')
 
+// @generate PlugInWarnings
+
 	return ScrollMagic;
 }));

@@ -38,12 +38,6 @@
 			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
 			Scene._log.apply(this, arguments);
 		};
-		var newMethods = ["setTween", "removeTween"];
-		newMethods.forEach(function (value) {
-			if (Scene[value]) {
-				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
-			}
-		});
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		// set listeners
