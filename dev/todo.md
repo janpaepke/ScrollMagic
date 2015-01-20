@@ -1,6 +1,4 @@
 # Source
- - Plugin Animation GSAP: test if lite and regular versions really both work
- - Plugin Animation GSAP: make tweens to be definable only in parameters (velocity-esque)
  - add missing docs (global search TODO)
 
 # Build (gulpfile.js)

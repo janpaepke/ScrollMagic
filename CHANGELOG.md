@@ -34,7 +34,8 @@ CHANGELOG
    - huge performance optimization, especially when using indicators for multiple scenes
    - new method `removeIndicators()`
  - **new plugin 'animation.gsap'**  
-   Contains all GSAP tween functionality formerly integrated into ScrollMagic (`setTween()` and `removeTween()`)
+    - Contains all GSAP tween functionality formerly integrated into ScrollMagic (`setTween()` and `removeTween()`)
+    - new feature for shorthand animation defintion using `setTween("obj", 1, {left: 100})`
  - **new plugin 'animation.velocity'**  
    The velocity animation framework can now be used to trigger animations using `Scene.setVelocity(elem, properties, options)`
    Note that for the time being velocity only works with 0 duration scenes, because timeline scrubbing isnt supported by velocity (yet).
