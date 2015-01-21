@@ -4,7 +4,7 @@ var gutil = require('gulp-util');
 var through = require('through2');
 var prettyBytes = require('pretty-bytes');
 var gzipSize = require('gzip-size');
-var loggger = require('./logger');
+var logger = require('./logger');
 
 function log(title, what, size, gzip) {
 	title = title ? (gutil.colors.cyan(title) + ' ') : '';

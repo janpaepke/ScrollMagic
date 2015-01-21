@@ -56,15 +56,14 @@ var navigationMaster = {
 		link    : helper.getUniqueFilename( 'classes.list' ),
 		members : []
 	},
-
-	mixin    : {
-		title   : "Mixins",
-		link    : helper.getUniqueFilename( "mixins.list" ),
-		members : []
-	},
 	event    : {
 		title   : "Events",
 		link    : helper.getUniqueFilename( "events.list" ),
+		members : []
+	},
+	mixin    : {
+		title   : "Plugins",
+		link    : helper.getUniqueFilename( "mixins.list" ),
 		members : []
 	},
 	tutorial : {
@@ -355,7 +354,7 @@ function buildNav( members ) {
 
 	var topLevelNav = [];
 	_.each( nav, function ( entry, name ) {
-		if ( entry.members.length > 0 && name !== "index" ) {
+		if ( entry.members.length > 0 && name !== "index" && name !== 'namespace') {
 			topLevelNav.push( {
 				title   : entry.title,
 				link    : entry.link,
@@ -610,7 +609,7 @@ exports.publish = function ( taffyData, opts, tutorials ) {
 
 			var myMixins = helper.find( mixins, {longname : longname} );
 			if ( myMixins.length ) {
-				generate( 'mixin', 'Mixin: ' + myMixins[0].name, myMixins, helper.longnameToUrl[longname] );
+				generate( 'mixin', 'Plugin: ' + myMixins[0].name, myMixins, helper.longnameToUrl[longname] );
 			}
 
 			var myExternals = helper.find( externals, {longname : longname} );

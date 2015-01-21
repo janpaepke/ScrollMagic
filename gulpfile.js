@@ -27,12 +27,12 @@ var
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-beautify'),
 	karma =				require('gulp-karma'),
-	// jsdoc = 			require('gulp-jsdoc'),
 // custom
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
-	pluginInfo =	require('./dev/src/plugins'),
+	jsdoc = 			require('./dev/build/jsdoc-generator'),
 // json
+	pluginInfo =	require('./dev/src/plugins.json'),
 	config = require('./dev/build/config.json'); // config
 
 // command line options (use gulp -h to for details)
@@ -236,37 +236,15 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
 });
 
-gulp.task('generate:docs', ['lint:source', 'clean:docs'], function(callback) {
-		var
-			bin = '"' + 'node_modules/.bin/jsdoc' + '"',
-			docIn = '"' + 'README.md' + '"',
-			docOut = '-d "' + options.folderDocsOut + '"',
-			conf = '-c "' + './dev/docs/jsdoc.conf.json' + '"',
-			template = '-t "' + './dev/docs/template' + '"';
-
+gulp.task('generate:docs', ['clean:docs'], function(callback) {
 		// use uncompiled source files for now
-		gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
-      .pipe(gutil.buffer(function(err, files){
-      	files.forEach(function (file) {
-      		docIn += ' "' + file.path + '"';
-      	});
-  		}));
-		setTimeout(function(){ // etwas dirty mit timeout, aber wenigstens funktionierts...
-  		// console.log(docIn);
-			var cmd = [bin, docIn, conf, template, docOut].join(" ");
-			// console.log(cmd);
-			exec(cmd,
-			  function (error, stdout, stderr) {
-			    // log.info('stdout: ' + stdout);
-			    // log.info('stderr: ' + stderr);
-			    if (error !== null) {
-			      log.exit('exec error: ' + error);
-			    }
-				}
-			)
-			.on("close", callback);
-		}, 500);
-
+		return gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
+      .pipe(jsdoc({
+      	conf: './dev/docs/jsdoc.conf.json',
+      	destination: options.folderDocsOut,
+      	template: './dev/docs/template',
+      	readme: './README.md',
+      }));
 });
 
 gulp.task('sync:json-files', function() {

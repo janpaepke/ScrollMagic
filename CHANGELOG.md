@@ -35,9 +35,9 @@ CHANGELOG
    - new method `removeIndicators()`
  - **new plugin 'animation.gsap'**  
     - Contains all GSAP tween functionality formerly integrated into ScrollMagic (`setTween()` and `removeTween()`)
-    - new feature for shorthand animation defintion using `setTween("obj", 1, {left: 100})`
+    - new feature for shorthand TweenMax.to() animation using `setTween(target, duration, parameters)` or `setTween(target, parameters)`
  - **new plugin 'animation.velocity'**  
-   The velocity animation framework can now be used to trigger animations using `Scene.setVelocity(elem, properties, options)`
+   The velocity animation framework can now be used to trigger animations using `Scene.setVelocity(target, properties, options)`
    Note that for the time being velocity only works with 0 duration scenes, because timeline scrubbing isnt supported by velocity (yet).
  - **new plugin 'jquery.ScrollMagic'**  
    - adds support for jQuery selectors and makes all methods accept jQuery objects as element parameters.
