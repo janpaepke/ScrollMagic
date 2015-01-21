@@ -3,8 +3,6 @@
 
 # Build (gulpfile.js)
  - make jsdoc generation properly & repair docs
- - make sourcemaps task
- – optimize minification
 
 # Test
  - cross browser test scrollPosition getter functions

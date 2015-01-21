@@ -218,7 +218,19 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 				}
 			]
 		}))
-		.pipe(uglify())
+		.pipe(uglify({
+			output: {
+				screw_ie8 : true
+			},
+			compress: {
+				unsafe: true,
+				screw_ie8 : true,
+				hoist_vars: false // default is false - true would make code technically more correct, but increases gzip size
+			},
+			mangle: {
+				screw_ie8 : true
+			},
+		}))
 		.pipe(concat.header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
@@ -299,16 +311,6 @@ gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 		});
 });
 
-gulp.task('generate:sourcemaps-uncompressed', ['build:uncompressed'], function () {
-	// TODO: generate sourcemaps
-	log.warn("sourcemaps not yet implemented");
-});
-gulp.task('generate:sourcemaps-minified', ['build:minified'], function () {
-	// TODO: generate sourcemaps
-	log.warn("sourcemaps not yet implemented");
-});
-gulp.task('generate:sourcemaps', ['generate:sourcemaps-uncompressed', 'generate:sourcemaps-minified']);
-
 gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
 
-gulp.task('development', ['build:uncompressed', 'generate:sourcemaps-uncompressed']);
+gulp.task('development', ['build:uncompressed']);
