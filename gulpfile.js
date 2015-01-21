@@ -26,7 +26,6 @@ var
 	gutil = 			require('gulp-util'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-beautify'),
-	addsrc = 			require('gulp-add-src'),
 	karma =				require('gulp-karma'),
 	// jsdoc = 			require('gulp-jsdoc'),
 // custom
@@ -256,22 +255,6 @@ gulp.task('generate:docs', ['lint:source', 'clean:docs'], function(callback) {
 			.on("close", callback);
 		}, 500);
 
-	/*
-  	// gulp-jsdoc only works with jsdoc-alpha5 which sucks.
-  	// so do it manually for now
-
- 		var jsdocconf = require('./dev/docs/jsdoc.conf.json');
- 		jsdocconf.templates.path = 'dev/docs/template';
- 		uncompressed
-    	.pipe(addsrc('./README.md'))
-    	.pipe(jsdoc(
-    		options.folderDocsOut,
-    		jsdocconf.templates,
-    			{
-    				plugins: jsdocconf.plugins
-    			}
-    		));
-	*/
 });
 
 gulp.task('sync:json-files', function() {
