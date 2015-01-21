@@ -50,6 +50,7 @@ CHANGELOG
  - vertical Pins in DIV scroll containers did not work, when using a mousewheel while the cursor was over the pinned element
  - using `removeTween(true)` to remove and reset a Tween didn't work when the scene's duration was 0
  - when removing pins from cascaded pins using `removePin(true)` messed up the DOM structure (long term bug)
+ - when pinning absolutely positioned elements using `bottom` or `right`, the positioning was off (See issue [226](https://github.com/janpaepke/ScrollMagic/issues/226))
 
 #### project management:
  - changed build system to [gulp](http://gulpjs.com/)

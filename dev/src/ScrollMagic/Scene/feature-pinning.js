@@ -239,13 +239,16 @@ this.setPin = function (element, settings) {
 	}
 	_pin = element;
 	
+	var
+		parentDisplay = _pin.parentNode.style.display,
+		boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
+
 	_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 	var
-	 boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
 		inFlow = _util.css(_pin, "position") != "absolute",
 		pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 		sizeCSS = _util.css(_pin, ["width", "height"]);
-	_pin.parentNode.style.display = ''; // hack end.
+	_pin.parentNode.style.display = parentDisplay; // hack end.
 
 	if (!inFlow && settings.pushFollowers) {
 		log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers will be disabled.");
@@ -258,14 +261,20 @@ this.setPin = function (element, settings) {
 	// (BUILD) - REMOVE IN MINIFY - END
 
 	// create spacer and insert
-	var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
-	_util.css(spacer, _util.extend(pinCSS, {
+	var
+		spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
+		spacerCSS = _util.extend(pinCSS, {
 				position: inFlow ? "relative" : "absolute",
 				boxSizing: "content-box",
 				mozBoxSizing: "content-box",
 				webkitBoxSizing: "content-box"
-			}));
+			});
 
+	if (!inFlow) { // copy size if positioned absolutely, to work for bottom/right positioned elements.
+		_util.extend(spacerCSS, _util.css(_pin, ["width", "height"]));
+	}
+
+	_util.css(spacer, spacerCSS);
 	spacer.setAttribute(PIN_SPACER_ATTRIBUTE, "");
 	_util.addClass(spacer, settings.spacerClass);
 
