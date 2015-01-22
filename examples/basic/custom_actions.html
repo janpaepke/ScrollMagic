@@ -63,7 +63,7 @@
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 200})
 											.addTo(controller)
-											.addIndicators() // add indicators (requires plugins)
+											.addIndicators() // add indicators (requires plugin)
 											.on("update", function (e) {
 												$("#scrollDirection").text(e.target.controller().info("scrollDirection"));
 											})

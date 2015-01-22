@@ -31,11 +31,10 @@
 				<section id="titlechart">
 					<div id="description">
 						<h1>Responsive Duration</h1>
-						<h2>Scene duration depending on window size.</h2>
+						<h2>Scene duration depending on viewport size.</h2>
 						<p>
 							With some responsive layouts you might want the scene to take exactly as long as the height of the viewport is.<br>
-							This behaviour can easily achieved by updating the scene's duration when the window resize event is triggered.<br>
-							Try resizing this window and watch how the scene behaves.
+							TODO: write
 						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
@@ -48,27 +47,16 @@
 					</div>
 					<script>
 						$(document).ready(function($) {
-							// make a variable to store the window height.
-							var windowHeight = $(window).innerHeight();
-							// function to be used to retrieve variable
-							function getWindowHeight() {
-								return windowHeight;
-							}
-							// update window height on resize
-							$(window).on("resize", function () {
-								windowHeight = $(window).innerHeight();
-							});							
-
 							// init controller
 							var controller = new ScrollMagic.Controller();
 
 							// build tween
 							var tween = TweenMax.to("#animate", 0.5, {scale: 1.3, repeat: 5, yoyo: true});
 
-							// build scene and supply getWindowHeight function as duration
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: getWindowHeight})
+							// build scene and set duration to window height
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: "100%"})
 											.setTween(tween)
-											.addIndicators() // add indicators (requires plugins)
+											.addIndicators() // add indicators (requires plugin)
 											.addTo(controller);
 						});
 					</script>

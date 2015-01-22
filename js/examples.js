@@ -11,6 +11,7 @@ var
 				"custom_actions.html" :		"Custom Actions",
 				"scene_manipulation.html" :	"Scene Manipulation",
 				"class_toggles.html" :		"CSS Class Toggles",
+				"responsive_duration.html" : "Responsive Duration",
 			}
 		},
 		"advanced": {
@@ -30,7 +31,7 @@ var
 			title: "Expert",
 			sub: {
 				"cascading_pins.html" :							"Cascading Pins",
-				"responsive_duration.html" :				"Responsive Duration",
+				"callback_duration.html" :					"Callback Duration",
 				"manipulating_tweens.html" :				"Manipulating Tweens",
 				"bezier_path_animation.html" :			"Bezier Path Animation",
 				"multiple_scroll_directions.html" :	"Multiple Scroll Directions",
