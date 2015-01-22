@@ -26,7 +26,7 @@ CHANGELOG
    Was used to add a class to the pinned element. The same can now be achieved using `setClassToggle()`.
 
 #### features:
- - **new plugin 'scene.addIndicators' (formerly 'jquery.scrollmagic.debug')**
+ - **new plugin 'debug.addIndicators' (formerly 'jquery.scrollmagic.debug')**
    - indicators can now be added to the scene before it was added to a controller
    - indicators also work when scenes are removed and readded
    - indicator labels are autoindexed, when no explicit label is supplied

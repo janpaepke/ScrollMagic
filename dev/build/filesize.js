@@ -8,7 +8,7 @@ var logger = require('./logger');
 
 function log(title, what, size, gzip) {
 	title = title ? (gutil.colors.cyan(title) + ' ') : '';
-	loggger.info(title + what + ' ' + gutil.colors.magenta(prettyBytes(size)) +
+	logger.info(title + what + ' ' + gutil.colors.magenta(prettyBytes(size)) +
 		(gzip ? gutil.colors.gray(' (gzipped ' + prettyBytes(gzip) + ')') : ''));
 }
 

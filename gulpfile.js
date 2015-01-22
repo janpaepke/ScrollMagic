@@ -61,7 +61,7 @@ var args = require('yargs')
 
 var options = {
 	version: args.ver,
-	dodocs: !!args.doc,
+	dodocs: !!args.doc || args._[0] === 'generate:docs',
 	folderOut: args.out,
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
 	date: config.version === args.ver ? new Date(config.lastupdate) : new Date(),
