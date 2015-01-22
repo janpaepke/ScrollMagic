@@ -10,6 +10,10 @@
  *
  * @file Debug Extension for ScrollMagic.
  */
+/**
+ * ScrollScene extension for addIndicators and removeIndicators
+ * @mixin debug.addIndicators
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -20,7 +24,7 @@
 	}
 }(this, function (ScrollMagic) {
 	"use strict";
-	var NAMESPACE = "scene.addIndicators";
+	var NAMESPACE = "debug.addIndicators";
 
 	var err = Function.prototype.bind.call((console && console.error || console.log) ||
 	function () {}, console);
@@ -40,11 +44,6 @@
 		_autoindex = 0;
 
 
-	/**
-	 * ----------------------------------------------------------------
-	 * ScrollScene extension for addIndicators and removeIndicators
-	 * ----------------------------------------------------------------
-	 */
 
 	ScrollMagic.Scene.extend(function () {
 		var
@@ -55,17 +54,11 @@
 			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
 			Scene._log.apply(this, arguments);
 		};
-		var newMethods = ["addIndicators", "removeIndicators"];
-		newMethods.forEach(function (value) {
-			if (Scene[value]) {
-				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
-			}
-		});
 
 		/**
 		 * Add Indicators for a ScrollScene.  
-		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
-		 * @public ScrollMagic.Scene.addIndicators
+		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
+		 * @memberof debug.addIndicators
 		 *
 		 * @example
 		 * // add basic indicators
@@ -83,7 +76,7 @@
 		 * @param {string} [options.colorEnd=red] - CSS color definition for the end indicator.
 		 * @param {string} [options.colorTrigger=blue] - CSS color definition for the trigger indicator.
 		 */
-		this.addIndicators = function (options) {
+		Scene.addIndicators = function (options) {
 			if (!_indicator) {
 				var
 				DEFAULT_OPTIONS = {
@@ -114,15 +107,15 @@
 
 		/**
 		 * Removes indicators from a ScrollScene.  
-		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/scene.addIndicators.js`
-		 * @public ScrollMagic.Scene.removeIndicators
+		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
+		 * @memberof debug.addIndicators
 		 *
 		 * @example
 		 * // remove previously added indicators
 		 * scene.removeIndicators()
 		 *
 		 */
-		this.removeIndicators = function () {
+		Scene.removeIndicators = function () {
 			if (_indicator) {
 				_indicator.remove();
 				this.off("*.plugin_addIndicators");

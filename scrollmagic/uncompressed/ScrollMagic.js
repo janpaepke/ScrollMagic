@@ -10,6 +10,9 @@
  *
  * @file ScrollMagic main library.
  */
+/**
+ * @namespace ScrollMagic
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -31,7 +34,6 @@
 	 * The main class that is needed once per scroll container.
 	 *
 	 * @class
-	 * @global
 	 *
 	 * @example
 	 * // basic initialization
@@ -55,12 +57,11 @@
 	 *
 	 */
 	ScrollMagic.Controller = function (options) {
-
-		/**
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*!
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 		var
 		NAMESPACE = "ScrollMagic.Controller",
 			DEFAULT_OPTIONS = {
@@ -71,11 +72,11 @@
 				refreshInterval: 100
 			};
 
-		/**
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*!
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		Controller = this,
@@ -90,11 +91,11 @@
 			_enabled = true,
 			_updateCycle, _refreshInterval;
 
-		/**
-		 * ----------------------------------------------------------------
-		 * private functions
-		 * ----------------------------------------------------------------
-		 */
+/*!
+	 * ----------------------------------------------------------------
+	 * private functions
+	 * ----------------------------------------------------------------
+	 */
 
 		/**
 		 * Internal constructor function of the ScrollMagic Controller
@@ -225,8 +226,8 @@
 
 		/**
 		 * Send a debug message to the console.
+		 * provided publicly with _log for plugins
 		 * @private
-		 * but provided publicly with _log for plugins
 		 *
 		 * @param {number} loglevel - The loglevel required to initiate output for the message.
 		 * @param {...mixed} output - One or more variables that should be passed to the console.
@@ -656,7 +657,6 @@
 	 * A Scene defines where the controller should react and how.
 	 *
 	 * @class
-	 * @global
 	 *
 	 * @example
 	 * // create a standard scene and add it to a controller
@@ -696,11 +696,11 @@
 	 */
 	ScrollMagic.Scene = function (options) {
 
-		/**
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*!
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		TRIGGER_HOOK_VALUES = {
@@ -720,11 +720,11 @@
 				loglevel: 2
 			};
 
-		/**
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*!
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		Scene = this,
@@ -779,7 +779,8 @@
 		/**
 		 * Add the scene to a controller.  
 		 * This is the equivalent to `Controller.addScene(scene)`.
-		 * @public
+		 * @method ScrollMagic.Scene#addTo
+		 *
 		 * @example
 		 * // add a scene to a ScrollMagic Controller
 		 * scene.addTo(controller);
@@ -1612,7 +1613,7 @@
 		 *
 		 * For details on this event and the order in which it is fired, please review the {@link Scene.progress} method.
 		 *
-		 * @event Scene.start
+		 * @event ScrollMagic.Scene#start
 		 *
 		 * @example
 		 * scene.on("start", function (event) {
@@ -1633,7 +1634,7 @@
 		 *
 		 * For details on this event and the order in which it is fired, please review the {@link Scene.progress} method.
 		 *
-		 * @event Scene.end
+		 * @event ScrollMagic.Scene#end
 		 *
 		 * @example
 		 * scene.on("end", function (event) {
@@ -1654,7 +1655,7 @@
 		 *
 		 * For details on this event and the order in which it is fired, please review the {@link Scene.progress} method.
 		 *
-		 * @event Scene.enter
+		 * @event ScrollMagic.Scene#enter
 		 *
 		 * @example
 		 * scene.on("enter", function (event) {
@@ -1675,7 +1676,7 @@
 		 *
 		 * For details on this event and the order in which it is fired, please review the {@link Scene.progress} method.
 		 *
-		 * @event Scene.leave
+		 * @event ScrollMagic.Scene#leave
 		 *
 		 * @example
 		 * scene.on("leave", function (event) {
@@ -1693,7 +1694,7 @@
 		 * Scene update event.  
 		 * Fires whenever the scene is updated (but not necessarily changes the progress).
 		 *
-		 * @event Scene.update
+		 * @event ScrollMagic.Scene#update
 		 *
 		 * @example
 		 * scene.on("update", function (event) {
@@ -1713,7 +1714,7 @@
 		 *
 		 * For details on this event and the order in which it is fired, please review the {@link Scene.progress} method.
 		 *
-		 * @event Scene.progress
+		 * @event ScrollMagic.Scene#progress
 		 *
 		 * @example
 		 * scene.on("progress", function (event) {
@@ -1731,7 +1732,7 @@
 		 * Scene change event.  
 		 * Fires whenvever a property of the scene is changed.
 		 *
-		 * @event Scene.change
+		 * @event ScrollMagic.Scene#change
 		 *
 		 * @example
 		 * scene.on("change", function (event) {
@@ -1751,7 +1752,7 @@
 		 * It will fire implicitly when the `triggerElement` changes, if the new element has a different position (most cases).
 		 * It will also fire implicitly when the size of the container changes and the triggerHook is anything other than `onLeave`.
 		 *
-		 * @event Scene.shift
+		 * @event ScrollMagic.Scene#shift
 		 * @since 1.1.0
 		 *
 		 * @example
@@ -1769,7 +1770,7 @@
 		 * Fires whenvever the scene is destroyed.
 		 * This can be used to tidy up custom behaviour used in events.
 		 *
-		 * @event Scene.destroy
+		 * @event ScrollMagic.Scene#destroy
 		 * @since 1.1.0
 		 *
 		 * @example
@@ -1794,7 +1795,7 @@
 		 * Fires when the scene is added to a controller.
 		 * This is mostly used by plugins to know that change might be due.
 		 *
-		 * @event Scene.add
+		 * @event ScrollMagic.Scene#add
 		 * @since 2.0.0
 		 *
 		 * @example
@@ -1812,7 +1813,7 @@
 		 * Fires when the scene is removed from a controller.
 		 * This is mostly used by plugins to know that change might be due.
 		 *
-		 * @event Scene.remove
+		 * @event ScrollMagic.Scene#remove
 		 * @since 2.0.0
 		 *
 		 * @example
@@ -2142,6 +2143,8 @@
 		/**
 		 * Pin an element for the duration of the tween.  
 		 * If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.  
+		 * Make sure only one pin is applied to an element at the same time.
+		 * An element can be pinned multiple times, but only successively.
 		 * _**NOTE:** The option `pushFollowers` has no effect, when the scene duration is 0._
 		 * @public
 		 * @example
@@ -2189,13 +2192,16 @@
 			}
 			_pin = element;
 
+			var
+			parentDisplay = _pin.parentNode.style.display,
+				boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
+
 			_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 			var
-			boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
-				inFlow = _util.css(_pin, "position") != "absolute",
+			inFlow = _util.css(_pin, "position") != "absolute",
 				pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 				sizeCSS = _util.css(_pin, ["width", "height"]);
-			_pin.parentNode.style.display = ''; // hack end.
+			_pin.parentNode.style.display = parentDisplay; // hack end.
 			if (!inFlow && settings.pushFollowers) {
 				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers will be disabled.");
 				settings.pushFollowers = false;
@@ -2205,14 +2211,20 @@
 			}
 
 			// create spacer and insert
-			var spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin);
-			_util.css(spacer, _util.extend(pinCSS, {
-				position: inFlow ? "relative" : "absolute",
-				boxSizing: "content-box",
-				mozBoxSizing: "content-box",
-				webkitBoxSizing: "content-box"
-			}));
+			var
+			spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
+				spacerCSS = _util.extend(pinCSS, {
+					position: inFlow ? "relative" : "absolute",
+					boxSizing: "content-box",
+					mozBoxSizing: "content-box",
+					webkitBoxSizing: "content-box"
+				});
 
+			if (!inFlow) { // copy size if positioned absolutely, to work for bottom/right positioned elements.
+				_util.extend(spacerCSS, _util.css(_pin, ["width", "height"]));
+			}
+
+			_util.css(spacer, spacerCSS);
 			spacer.setAttribute(PIN_SPACER_ATTRIBUTE, "");
 			_util.addClass(spacer, settings.spacerClass);
 
@@ -2425,6 +2437,8 @@
 
 	/**
 	 * TODO: DOCS
+	 * @class
+	 * @private
 	 */
 
 	ScrollMagic.Event = function (type, namespace, target, vars) {
@@ -2703,6 +2717,31 @@
 
 		return U;
 	}(window || {}));
+
+	ScrollMagic.Scene.prototype.addIndicators = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling addIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeIndicators = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.setTween = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeTween = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.setVelocity = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeVelocity = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
+		return this;
+	}
 
 	return ScrollMagic;
 }));

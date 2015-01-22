@@ -11,8 +11,12 @@
  * @file ScrollMagic Velocity Animation Plugin.
  *
  * requires: velocity ~1.2
- * Powered by the VelocityJS: http://VelocityJS.org
+ * Powered by VelocityJS: http://VelocityJS.org
  * Velocity is published under MIT license.
+ */
+/**
+ * TODO: docs
+ * @mixin animation.Velocity
  */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
@@ -47,12 +51,6 @@
 			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
 			Scene._log.apply(this, arguments);
 		};
-		var newMethods = ["setVelocity", "removeVelocity"];
-		newMethods.forEach(function (value) {
-			if (Scene[value]) {
-				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
-			}
-		});
 
 		// set listeners
 		Scene.on("progress.plugin_velocity", function () {
@@ -123,7 +121,13 @@
 			}
 		};
 
-		this.setVelocity = function (elems, properties, options) {
+		/**
+		 * TODO: DOC
+		 * @public
+		 * @memberof animation.Velocity
+		 *
+		 */
+		Scene.setVelocity = function (elems, properties, options) {
 			if (_elems) { // kill old ani?
 				Scene.removeVelocity();
 			}
@@ -157,7 +161,13 @@
 			updateAnimationProgress();
 			return Scene;
 		};
-		this.removeVelocity = function (reset) {
+		/**
+		 * TODO: DOC
+		 * @public
+		 * @memberof animation.Velocity
+		 *
+		 */
+		Scene.removeVelocity = function (reset) {
 			if (_elems) {
 				// stop running animations
 				if (_options.queue !== undefined) {

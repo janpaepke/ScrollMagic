@@ -14,6 +14,10 @@
  * Powered by the Greensock Animation Platform (GSAP): http://www.greensock.com/js
  * Greensock License info at http://www.greensock.com/licensing/
  */
+/**
+ * TODO: doc
+ * @mixin animation.GSAP
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -31,7 +35,7 @@
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
-	if (!Tween || !Timeline) {
+	if (!Tween) {
 		err("(" + NAMESPACE + ") -> ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use an asynchronous loader like requirejs.");
 	}
 
@@ -45,12 +49,6 @@
 			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
 			Scene._log.apply(this, arguments);
 		};
-		var newMethods = ["setTween", "removeTween"];
-		newMethods.forEach(function (value) {
-			if (Scene[value]) {
-				log(2, "WARNING: Scene already has a method '" + value + "', which will be overwritten by plugin.");
-			}
-		});
 
 		// set listeners
 		Scene.on("progress.plugin_gsap", function () {
@@ -102,11 +100,17 @@
 		/**
 		 * Add a tween to the scene.  
 		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
-		 * The duration of the tween is streched to the scroll duration of the scene, unless the scene has a duration of `0`.
+		 * The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of `0`.
 		 * @public
+		 * @memberof animation.GSAP
+		 *
 		 * @example
-		 * // add a single tween
+		 * // add a single tween directly
 		 * scene.setTween(TweenMax.to("obj"), 1, {x: 100});
+		 *
+		 * // add a single tween via variable
+		 * var tween = TweenMax.to("obj"), 1, {x: 100};
+		 * scene.setTween(tween);
 		 *
 		 * // add multiple tweens, wrapped in a timeline.
 		 * var timeline = new TimelineMax();
@@ -117,11 +121,27 @@
 		 *		.add(tween2);
 		 * scene.addTween(timeline);
 		 *
-		 * @param {object} TweenObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene.
+		 * // short hand to add a .to() tween
+		 * scene.setTween("obj3", 0.5, {y: 100});
+		 *
+		 * // short hand to add a .to() tween for 1 second
+		 * // this is useful, when the scene has a duration and the tween duration isn't important anyway
+		 * scene.setTween("obj3", {y: 100});
+		 *
+		 * @param {(object|string)} TweenObject - A TweenMax, TweenLite, TimelineMax or TimelineLite object that should be animated in the scene. Can also be a Dom Element or Selector, when using direct tween definition (see examples).
+		 * @param {(number|object)} duration - A duration for the tween, or tween parameters. If an object containing parameters are supplied, a default duration of 1 will be used.
+		 * @param {object} params - The parameters for the tween
 		 * @returns {Scene} Parent object for chaining.
 		 */
-		this.setTween = function (TweenObject) {
+		Scene.setTween = function (TweenObject, duration, params) {
 			var newTween;
+			if (ScrollMagic._util.type.String(TweenObject) && arguments.length > 1) {
+				if (arguments.length < 3) {
+					params = duration;
+					duration = 1;
+				}
+				TweenObject = Tween.to(TweenObject, duration, params);
+			}
 			try {
 				// wrap Tween into a Timeline Object if available to include delay and repeats in the duration and standardize methods.
 				if (Timeline) {
@@ -197,6 +217,8 @@
 		/**
 		 * Remove the tween from the scene.
 		 * @public
+		 * @memberof animation.GSAP
+		 *
 		 * @example
 		 * // remove the tween from the scene without resetting it
 		 * scene.removeTween();
@@ -207,7 +229,7 @@
 		 * @param {boolean} [reset=false] - If `true` the tween will be reset to its initial values.
 		 * @returns {Scene} Parent object for chaining.
 		 */
-		this.removeTween = function (reset) {
+		Scene.removeTween = function (reset) {
 			if (_tween) {
 				if (reset) {
 					_tween.progress(0).pause();
