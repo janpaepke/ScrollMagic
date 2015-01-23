@@ -11,7 +11,7 @@ $.fn.toc = function(options) {
     if (opts.smoothScrolling) {
       e.preventDefault();
       var elScrollTo = $(e.target).attr('href');
-      var $el = $(elScrollTo.replace(":", "\\:"));
+      var $el = $(elScrollTo.replace(":", "\\:").replace(".", "\\."));
       var callbackCalled = false;
 
       $('body,html').animate({ scrollTop: $el.offset().top - opts.scrollOffset }, 400, 'swing', function(e) {

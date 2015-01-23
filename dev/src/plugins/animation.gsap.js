@@ -5,6 +5,10 @@
  * Powered by the Greensock Animation Platform (GSAP): http://www.greensock.com/js
  * Greensock License info at http://www.greensock.com/licensing/
  */
+/**
+ * TODO: doc
+ * @mixin animation.GSAP
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -92,6 +96,8 @@
 		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
 		 * The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of `0`.
 		 * @public
+		 * @memberof animation.GSAP
+		 *
 		 * @example
 		 * // add a single tween directly
 		 * scene.setTween(TweenMax.to("obj"), 1, {x: 100});
@@ -121,7 +127,7 @@
 		 * @param {object} params - The parameters for the tween
 		 * @returns {Scene} Parent object for chaining.
 		 */
-		this.setTween = function (TweenObject, duration, params) {
+		Scene.setTween = function (TweenObject, duration, params) {
 			var newTween;
 			if (ScrollMagic._util.type.String(TweenObject) && arguments.length > 1) {
 				if ( arguments.length < 3) {
@@ -207,6 +213,8 @@
 		/**
 		 * Remove the tween from the scene.
 		 * @public
+		 * @memberof animation.GSAP
+		 *
 		 * @example
 		 * // remove the tween from the scene without resetting it
 		 * scene.removeTween();
@@ -217,7 +225,7 @@
 		 * @param {boolean} [reset=false] - If `true` the tween will be reset to its initial values.
 		 * @returns {Scene} Parent object for chaining.
 		 */
-		this.removeTween = function (reset) {
+		Scene.removeTween = function (reset) {
 			if (_tween) {
 				if (reset) {
 					_tween.progress(0).pause();

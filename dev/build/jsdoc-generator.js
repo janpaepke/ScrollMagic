@@ -79,7 +79,7 @@ module.exports = function (options) {
 		// console.log(cmd);
 		exec(cmd, function (error, stdout, stderr) {
 				if (stdout) {
-		  		logger.info('stdout: ' + stdout);
+		  		logger.warn("There were problems generating the Docs:\n" + stdout);
 				}
 		    // logger.info('stderr: ' + stderr);
 		    if (error) {

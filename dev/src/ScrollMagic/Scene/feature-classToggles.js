@@ -10,7 +10,7 @@ Scene
  * Define a css class modification while the scene is active.  
  * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
  * If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.
- * @public
+ * @method ScrollMagic.Scene#setClassToggle
  * @example
  * // add the class 'myclass' to the element with the id 'my-elem' for the duration of the scene
  * scene.setClassToggle("#my-elem", "myclass");
@@ -46,7 +46,7 @@ this.setClassToggle = function (element, classes) {
 
 /**
  * Remove the class binding from the scene.
- * @public
+ * @method ScrollMagic.Scene#removeClassToggle
  * @example
  * // remove class binding from the scene without reset
  * scene.removeClassToggle();

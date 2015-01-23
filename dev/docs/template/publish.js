@@ -147,6 +147,16 @@ function addSignatureTypes( f ) {
 function addAttribs( f ) {
 	var attribs = helper.getAttribs( f );
 
+	// WORKAROUND to remove 'static' note for mixins
+	if (attribs.length && attribs.indexOf("static") > -1) {
+		var members = helper.getMembers( data );
+		var mixins = taffy( members.mixins );
+		var isMixin = !!helper.find( mixins, {longname : f.memberof}).length;
+		if (isMixin) {
+			attribs = [];
+		}
+	}
+
 	f.attribs = '<span class="type-signature">' + htmlsafe( attribs.length ? '<' + attribs.join( ', ' ) + '> ' : '' ) + '</span>';
 }
 
@@ -477,6 +487,10 @@ exports.publish = function ( taffyData, opts, tutorials ) {
 
 		if ( url.indexOf( '#' ) > -1 ) {
 			doclet.id = helper.longnameToUrl[doclet.longname].split( /#/ ).pop();
+			//  fix for id's starting with .
+			if (doclet.id.charAt(0) === '.') {
+				doclet.id = doclet.id.substr(1);
+			}
 		}
 		else {
 			doclet.id = doclet.name;

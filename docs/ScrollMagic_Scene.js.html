@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>ScrollMagic Source: ScrollMagic.js</title>
+	<title>ScrollMagic Source: ScrollMagic/Scene.js</title>
 	
   <script src="scripts/prettify/prettify.js"> </script>
   <script src="scripts/prettify/lang-css.js"> </script>
@@ -137,45 +137,142 @@
 					
 
 
-		<h1 class="page-title">Source: ScrollMagic.js</h1>
+		<h1 class="page-title">Source: ScrollMagic/Scene.js</h1>
     
     <section>
         <article>
-            <pre class="sunlight-highlight-javascript linenums">/*!
- * @file ScrollMagic main library.
+            <pre class="sunlight-highlight-javascript linenums">/**
+ * A Scene defines where the controller should react and how.
+ *
+ * @class
+ *
+ * @example
+ * // create a standard scene and add it to a controller
+ * new ScrollMagic.Scene()
+ *		.addTo(controller);
+ *
+ * // create a scene with custom options and assign a handler to it.
+ * var scene = new ScrollMagic.Scene({
+ * 		duration: 100,
+ *		offset: 200,
+ *		triggerHook: "onEnter",
+ *		reverse: false
+ * });
+ *
+ * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
+ 							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
+ 							   When a scene is added to the controller the options defined using the Scene constructor will be overwritten by those set in `globalSceneOptions`.
+ * @param {(number|function)} [options.duration=0] - The duration of the scene. 
+ 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.  
+ 										  A function retuning the duration value is also supported. Please see `Scene.duration()` for details.
+ * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
+ * @param {(string|object)} [options.triggerElement=null] - Selector or DOM object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
+ * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  
+ 															  Can also be defined using a string:
+ 															  ** `"onEnter"` => `1`
+ 															  ** `"onCenter"` => `0.5`
+ 															  ** `"onLeave"` => `0`
+ * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
+ * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
+ 												   Does not affect animations where duration is `0`.
+ * @param {number} [options.loglevel=2] - Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
+ 										  ** `0` => silent
+ 										  ** `1` => errors
+ 										  ** `2` => errors, warnings
+ 										  ** `3` => errors, warnings, debuginfo
+ * 
  */
- /**
- * @namespace ScrollMagic
- */
-(function (root, factory) {
-	if (typeof define === 'function' &amp;&amp; define.amd) {
-		// AMD. Register as an anonymous module.
-		define(factory);
-	} else {
-		// Browser global
-		root.ScrollMagic = factory();
-	}
-}(this, function () {
-	"use strict";
+ScrollMagic.Scene = function (options) {
 
-	var ScrollMagic = function () {
-		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
+	/*
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
+
+	var
+		TRIGGER_HOOK_VALUES = {"onCenter" : 0.5, "onEnter" : 1, "onLeave" : 0},
+		NAMESPACE = "ScrollMagic.Scene",
+		PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
+		DEFAULT_OPTIONS = {
+			duration: 0,
+			offset: 0,
+			triggerElement: undefined,
+			triggerHook: "onCenter",
+			reverse: true,
+			tweenChanges: false,
+			loglevel: 2
+		};
+
+	/*
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
+
+	var
+		Scene = this,
+		_options = _util.extend({}, DEFAULT_OPTIONS, options),
+		_state = 'BEFORE',
+		_progress = 0,
+		_scrollOffset = {start: 0, end: 0}, // reflects the controllers's scroll position for the start and end of the scene respectively
+		_triggerPos = 0,
+		_enabled = true,
+		_durationUpdateMethod,
+		_controller;
+
+	/**
+	 * Internal constructor function of the ScrollMagic Scene
+	 * @private
+	 */
+	var construct = function () {
+		validateOption();
+		// set event listeners
+		Scene
+			.on("change.internal", function (e) {
+				if (e.what !== "loglevel" &amp;&amp; e.what !== "tweenChanges") { // no need for a scene update scene with these options...
+					if (e.what === "triggerElement") {
+						updateTriggerElementPosition();
+					} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
+						Scene.update();
+					}
+				}
+			})
+			.on("shift.internal", function (e) {
+				updateScrollOffset();
+				Scene.update(); // update scene to reflect new position
+			});
 	};
 
-	ScrollMagic.version = "%VERSION%";
+	// @include('Scene/core.js')
 
-// @include('ScrollMagic/Controller.js')
+	// @include('Scene/update-params.js')
 
-// @include('ScrollMagic/Scene.js')
+	// @include('Scene/getters-setters.js')
+	
+	// @include('Scene/event-management.js')
+	
+	// @include('Scene/feature-pinning.js')
 
-// @include('ScrollMagic/Event.js')
+	// @include('Scene/feature-classToggles.js')
 
-// @include('ScrollMagic/_util.js')
+	// INIT
+	construct();
+	return Scene;
+};
 
-// @generate PlugInWarnings
-
-	return ScrollMagic;
-}));</pre>
+// instance extension function for plugins
+ScrollMagic.Scene.extend = function (extension) {
+	var oldClass = this;
+	ScrollMagic.Scene = function () {
+		oldClass.apply(this, arguments);
+		this.$super = _util.extend({}, this); // copy parent state
+		return extension.apply(this, arguments) || this;
+	};
+	_util.extend(ScrollMagic.Scene, oldClass); // copy properties
+	ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
+	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
+};</pre>
         </article>
     </section>
 

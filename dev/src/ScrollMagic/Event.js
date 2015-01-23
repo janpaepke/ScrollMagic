@@ -1,5 +1,7 @@
 /**
  * TODO: DOCS
+ * @class
+ * @private
  */
  
 ScrollMagic.Event = function (type, namespace, target, vars) {

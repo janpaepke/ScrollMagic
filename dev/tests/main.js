@@ -56,7 +56,6 @@ function loadTests() {
 			paths: {
 				// specs
 				"spec": "dev/tests/spec",
-				"gsap": "js/lib/greensock",
 				"TweenLite": "js/lib/greensock/TweenLite.min",
 				"TweenMax": "js/lib/greensock/TweenMax.min",
 				"TimelineLite": "js/lib/greensock/TimelineLite.min",

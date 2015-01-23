@@ -2,7 +2,6 @@
  * A Scene defines where the controller should react and how.
  *
  * @class
- * @global
  *
  * @example
  * // create a standard scene and add it to a controller
@@ -42,7 +41,7 @@
  */
 ScrollMagic.Scene = function (options) {
 
-	/**
+	/*
 	 * ----------------------------------------------------------------
 	 * settings
 	 * ----------------------------------------------------------------
@@ -62,7 +61,7 @@ ScrollMagic.Scene = function (options) {
 			loglevel: 2
 		};
 
-	/**
+	/*
 	 * ----------------------------------------------------------------
 	 * private vars
 	 * ----------------------------------------------------------------

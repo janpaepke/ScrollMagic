@@ -2,15 +2,15 @@
 
 ###The javascript plugin for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
-ScrollMagic essentially lets you use the scrollbar like a playback scrub control.  
+With ScrollMagic you can easily bind actions to particular scroll positions.  
 It's the plugin for you, if you want to ...
 * ... trigger an animation at a specific scroll position.
-* ... synchronize an animation to the scrollbar movement.
+* ... synchronize an animation to the scrollbar movement (like a playback scrub control).
 * ... pin an element at a specific scroll position (sticky elements).
 * ... pin an element for a limited amount of scroll progress (sticky elements).
 * ... effortlessly add a parallax effect to your website.
 * ... create an inifinitely scrolling page (ajax load of additional content).
-* ... function callbacks at specific scroll positions or periodically call functions passing a progress parameter.
+* ... add callbacks at specific scroll positions or periodically, passing a progress parameter.
 
 Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) to get started.
 

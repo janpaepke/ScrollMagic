@@ -19,12 +19,12 @@
 		"inverseNav"      : true,
 		"_custom" : {
 			"methodGroupDefinitions" : {
-				"ScrollMagic" : {
+				"ScrollMagic.Controller" : {
 					"Control Methods" : "Methods",
 					"Parameters (getter / setter)" : ["enabled", "loglevel", "scrollPos"],
 					"Properties (getter)" : ["info"]
 				},
-				"ScrollScene" : {
+				"ScrollMagic.Scene" : {
 					"Scene Control Methods" : "Methods",
 					"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook", "tweenChanges"],
 					"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
