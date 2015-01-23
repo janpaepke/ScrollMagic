@@ -147,15 +147,17 @@ function addSignatureTypes( f ) {
 function addAttribs( f ) {
 	var attribs = helper.getAttribs( f );
 
+	// KILLED WORKAROUND. Better solution is using @memberof! classname#
+
 	// WORKAROUND to remove 'static' note for mixins
-	if (attribs.length && attribs.indexOf("static") > -1) {
-		var members = helper.getMembers( data );
-		var mixins = taffy( members.mixins );
-		var isMixin = !!helper.find( mixins, {longname : f.memberof}).length;
-		if (isMixin) {
-			attribs = [];
-		}
-	}
+	//if (attribs.length && attribs.indexOf("static") > -1) {
+		// var members = helper.getMembers( data );
+		// var mixins = taffy( members.mixins );
+		// var isMixin = !!helper.find( mixins, {longname : f.memberof}).length;
+		// if (isMixin) {
+		// 	// attribs = [];
+		// }
+	//}
 
 	f.attribs = '<span class="type-signature">' + htmlsafe( attribs.length ? '<' + attribs.join( ', ' ) + '> ' : '' ) + '</span>';
 }

@@ -95,8 +95,7 @@
 		 * Add a tween to the scene.  
 		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
 		 * The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of `0`.
-		 * @public
-		 * @memberof animation.GSAP
+		 * @memberof! animation.GSAP#
 		 *
 		 * @example
 		 * // add a single tween directly
@@ -212,8 +211,7 @@
 
 		/**
 		 * Remove the tween from the scene.
-		 * @public
-		 * @memberof animation.GSAP
+		 * @memberof! animation.GSAP#
 		 *
 		 * @example
 		 * // remove the tween from the scene without resetting it

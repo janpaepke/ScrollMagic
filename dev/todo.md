@@ -2,7 +2,7 @@
  - add missing docs (global search TODO)
 
 # Build (gulpfile.js)
- - fix remaining docs problems (Namespace Constructor, method naming/association)
+ - 
 
 # Test
  - cross browser test scrollPosition getter functions

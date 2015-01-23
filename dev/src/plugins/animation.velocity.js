@@ -123,7 +123,7 @@
 
 		/**
 		 * TODO: DOC
-		 * @memberof animation.Velocity
+		 * @memberof! animation.Velocity#
 		 *
 		 */
 		Scene.setVelocity = function (elems, properties, options) {
@@ -164,7 +164,7 @@
 		};
 		/**
 		 * TODO: DOC
-		 * @memberof animation.Velocity
+		 * @memberof! animation.Velocity#
 		 *
 		 */
 		Scene.removeVelocity = function (reset) {

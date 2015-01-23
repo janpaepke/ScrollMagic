@@ -52,7 +52,7 @@
 		/**
 		 * Add Indicators for a ScrollScene.  
 		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
-		 * @memberof debug.addIndicators
+		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
 		 * // add basic indicators
@@ -102,7 +102,7 @@
 		/**
 		 * Removes indicators from a ScrollScene.  
 		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
-		 * @memberof debug.addIndicators
+		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
 		 * // remove previously added indicators
