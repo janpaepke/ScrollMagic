@@ -1,12 +1,17 @@
 // all spec files to run
 var tests = [
+	// modules
 	'spec/_util',
 	'spec/controller',
-	'spec/controller.events',
 	'spec/scene',
+	// events
+	'spec/controller.events',
 	'spec/scene.events',
-	'spec/TEST_PURE',
-	'spec/TEST_EXTENDED',
+	// plugins
+	'spec/plugins/animation.gsap',
+	'spec/plugins/animation.velocity',
+	'spec/plugins/debug.addIndicators',
+	'spec/plugins/jquery.ScrollMagic',
 ];
 
 // prepare test env
@@ -56,6 +61,9 @@ function loadTests() {
 			paths: {
 				// specs
 				"spec": "dev/tests/spec",
+				// libs
+				"jquery": "js/lib/jquery.min",
+				"velocity": "js/lib/velocity.min",
 				"TweenLite": "js/lib/greensock/TweenLite.min",
 				"TweenMax": "js/lib/greensock/TweenMax.min",
 				"TimelineLite": "js/lib/greensock/TimelineLite.min",

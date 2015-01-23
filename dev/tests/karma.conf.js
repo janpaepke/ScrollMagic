@@ -15,7 +15,7 @@ module.exports = function(config) {
       // scrollmagic
       {included: false, pattern: 'scrollmagic/uncompressed/**/*.js'},
       // specs
-      {included: false, pattern: 'dev/tests/spec/*.js'},
+      {included: false, pattern: 'dev/tests/spec/**/*.js'},
       // main file to bootstrap tests
       'dev/tests/main.js',
     ],
