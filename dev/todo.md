@@ -1,5 +1,4 @@
 # Source
- - feature: addIndicators as an option for scrollContainer -> adds indicators for all scenes
  - feature: add mobile plugin for container
 
 # Build (gulpfile.js)

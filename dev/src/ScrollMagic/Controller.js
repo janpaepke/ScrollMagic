@@ -37,13 +37,7 @@ ScrollMagic.Controller = function(options) {
 			r : "REVERSE",
 			p : "PAUSED"
 		},
-		DEFAULT_OPTIONS = {
-			container: window,
-			vertical: true,
-			globalSceneOptions: {},
-			loglevel: 2,
-			refreshInterval: 100
-		};
+		DEFAULT_OPTIONS = this.constructor.DEFAULT_OPTIONS; // static, set globally
 
 	/*
 	 * ----------------------------------------------------------------
@@ -225,6 +219,8 @@ ScrollMagic.Controller = function(options) {
 		}
 	};
 	// (BUILD) - REMOVE IN MINIFY - END
+	// make available for plugins
+	this._options = _options;
 
 	/**
 	 * Sort scenes in ascending order of their start offset.
@@ -621,6 +617,14 @@ ScrollMagic.Controller = function(options) {
 	return Controller;
 };
 
+// set default options
+ScrollMagic.Controller.DEFAULT_OPTIONS = {
+	container: window,
+	vertical: true,
+	globalSceneOptions: {},
+	loglevel: 2,
+	refreshInterval: 100
+};
 // instance extension function for plugins
 ScrollMagic.Controller.extend = function (extension) {
 	var oldClass = this;

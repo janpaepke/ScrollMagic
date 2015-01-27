@@ -30,6 +30,7 @@ CHANGELOG
    - indicators can now be added to the scene before it was added to a controller
    - indicators also work when scenes are removed and readded
    - indicator labels are autoindexed, when no explicit label is supplied
+   - new controller option 'addIndicators', when a controller is initialized using `new ScrollMagic.Controller({addIndicators: true})` all added scenes will automatically have indicators added to them
    - start indicator is now above the line for less overlays (i.e. one scene starts, where another ends)
    - huge performance optimization, especially when using indicators for multiple scenes
    - new method `removeIndicators()`
