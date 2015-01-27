@@ -32,6 +32,11 @@ ScrollMagic.Controller = function(options) {
 	 */
 	var
 		NAMESPACE = "ScrollMagic.Controller",
+		SCROLL_DIRECTIONS = {
+			f : "FORWARD",
+			r : "REVERSE",
+			p : "PAUSED"
+		},
 		DEFAULT_OPTIONS = {
 			container: window,
 			vertical: true,
@@ -45,14 +50,13 @@ ScrollMagic.Controller = function(options) {
 	 * private vars
 	 * ----------------------------------------------------------------
 	 */
-
 	var
 		Controller = this,
 		_options = _util.extend({}, DEFAULT_OPTIONS, options),
 		_sceneObjects = [],
 		_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 		_scrollPos = 0,
-		_scrollDirection = "PAUSED",
+		_scrollDirection = SCROLL_DIRECTIONS.p,
 		_isDocument = true,
 		_viewPortSize = 0,
 		_enabled = true,
@@ -108,6 +112,7 @@ ScrollMagic.Controller = function(options) {
 	var getScrollPos = function () {
 		return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
 	};
+
 	/**
 	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
 	* @private
@@ -129,19 +134,25 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
+	* Update the scroll position & direction
+	* @private
+	*/
+	var updateScrollPos = function () {
+		var oldScrollPos = _scrollPos;
+		_scrollPos = Controller.scrollPos();
+		var deltaScroll = _scrollPos - oldScrollPos;
+		_scrollDirection = (deltaScroll === 0) ? SCROLL_DIRECTIONS.p : (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+	};
+
+	/**
 	* Handle updates in cycles instead of on scroll (performance)
 	* @private
 	*/
 	var updateScenes = function () {
 		if (_enabled && _updateScenesOnNextCycle) {
-			var
-				scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
-				oldScrollPos = _scrollPos;
-			// update scroll pos & direction
-			_scrollPos = Controller.scrollPos();
-			var deltaScroll = _scrollPos - oldScrollPos;
-			_scrollDirection = (deltaScroll === 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
-			if (deltaScroll < 0) { // reverse order if scrolling reverse
+			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
+			// reverse order of scenes if scrolling reverse
+			if (_scrollDirection === SCROLL_DIRECTIONS.r) {
 				scenesToUpdate.reverse();
 			}
 			// update scenes
@@ -172,6 +183,7 @@ ScrollMagic.Controller = function(options) {
 		if (e.type == "resize") {
 			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		}
+		updateScrollPos();
 		if (!_updateScenesOnNextCycle) {
 			_updateScenesOnNextCycle = true;
 			debounceUpdate();
@@ -262,7 +274,7 @@ ScrollMagic.Controller = function(options) {
 				Controller.addScene(scene);
 			});
 		} else if (newScene instanceof ScrollMagic.Scene) {
-			if (newScene.controller() != Controller) {
+			if (newScene.controller() !== Controller) {
 				newScene.addTo(Controller);
 			} else if (_sceneObjects.indexOf(newScene) < 0){
 				// new scene
