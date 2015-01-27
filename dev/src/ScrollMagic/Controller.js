@@ -98,8 +98,6 @@ ScrollMagic.Controller = function(options) {
 			_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 		}
 
-		// start checking for changes
-		_updateCycle = _util.rAF(updateScenes);
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 	};
 
@@ -135,7 +133,6 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var updateScenes = function () {
-		_updateCycle = _util.rAF(updateScenes);
 		if (_enabled && _updateScenesOnNextCycle) {
 			var
 				scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
@@ -160,6 +157,14 @@ ScrollMagic.Controller = function(options) {
 	};
 	
 	/**
+	* Initializes rAF callback
+	* @private
+	*/
+	var debounceUpdate = function () {
+		_updateCycle = _util.rAF(updateScenes);
+	};
+	
+	/**
 	* Handles Container changes
 	* @private
 	*/
@@ -167,7 +172,10 @@ ScrollMagic.Controller = function(options) {
 		if (e.type == "resize") {
 			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		}
-		_updateScenesOnNextCycle = true;
+		if (!_updateScenesOnNextCycle) {
+			_updateScenesOnNextCycle = true;
+			debounceUpdate();
+		}
 	};
 
 	var refresh = function () {
@@ -338,15 +346,14 @@ ScrollMagic.Controller = function(options) {
 		} else {
 			if (immediately) {
 				Scene.update(true);
-			} else {
+			} else if (!_updateScenesOnNextCycle && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle, all connected scenes are gonna be updated anyway...
 				// prep array for next update cycle
-				if (!_util.type.Array(_updateScenesOnNextCycle)) {
-					_updateScenesOnNextCycle = [];
-				}
+				_updateScenesOnNextCycle = [];
 				if (_updateScenesOnNextCycle.indexOf(Scene) == -1) {
 					_updateScenesOnNextCycle.push(Scene);	
 				}
 				_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
+				debounceUpdate();
 			}
 		}
 		return Controller;

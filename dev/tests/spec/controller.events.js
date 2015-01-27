@@ -41,13 +41,11 @@ define(["ScrollMagic"], function (ScrollMagic) {
 
 		it("calls onChange on container scroll", function(done) {
 			var scene = new ScrollMagic.Scene().addTo(ctrl);
-			spyOn(scene, "update");
-			window.requestAnimationFrame(function () {
-				// update is also called after adding... so wait a little more
-				$c.scrollTop(50);
+			window.requestAnimationFrame(function () { // update is also called after adding... so await first cycle
+				spyOn(scene, "update");
+				$c[0].dispatchEvent(new Event('scroll'));
 				window.requestAnimationFrame(function () {
 					expect(scene.update).toHaveBeenCalled();
-					expect(scene.update.calls.count()).toBe(2);
 					done();
 				});
 			});
