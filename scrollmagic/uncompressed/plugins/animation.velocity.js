@@ -21,7 +21,7 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'Velocity'], factory);
+		define(['ScrollMagic', 'velocity'], factory);
 	} else {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.Velocity || (root.jQuery && root.jQuery.Velocity));
@@ -48,8 +48,10 @@
 			_currentProgress = 0,
 			_elems, _properties, _options, _dataID; // used to identify element data related to this scene, will be defined everytime a new velocity animation is added
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 
 		// set listeners
@@ -123,8 +125,7 @@
 
 		/**
 		 * TODO: DOC
-		 * @public
-		 * @memberof animation.Velocity
+		 * @memberof! animation.Velocity#
 		 *
 		 */
 		Scene.setVelocity = function (elems, properties, options) {
@@ -163,8 +164,7 @@
 		};
 		/**
 		 * TODO: DOC
-		 * @public
-		 * @memberof animation.Velocity
+		 * @memberof! animation.Velocity#
 		 *
 		 */
 		Scene.removeVelocity = function (reset) {

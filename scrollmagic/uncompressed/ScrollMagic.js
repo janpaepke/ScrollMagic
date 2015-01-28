@@ -57,27 +57,25 @@
 	 *
 	 */
 	ScrollMagic.Controller = function (options) {
-/*!
-	 * ----------------------------------------------------------------
-	 * settings
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * settings
+		 * ----------------------------------------------------------------
+		 */
 		var
 		NAMESPACE = "ScrollMagic.Controller",
-			DEFAULT_OPTIONS = {
-				container: window,
-				vertical: true,
-				globalSceneOptions: {},
-				loglevel: 2,
-				refreshInterval: 100
-			};
+			SCROLL_DIRECTIONS = {
+				f: "FORWARD",
+				r: "REVERSE",
+				p: "PAUSED"
+			},
+			DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
-/*!
-	 * ----------------------------------------------------------------
-	 * private vars
-	 * ----------------------------------------------------------------
-	 */
-
+		/*
+		 * ----------------------------------------------------------------
+		 * private vars
+		 * ----------------------------------------------------------------
+		 */
 		var
 		Controller = this,
 			_options = _util.extend({}, DEFAULT_OPTIONS, options),
@@ -85,17 +83,17 @@
 			_updateScenesOnNextCycle = false,
 			// can be boolean (true => all scenes) or an array of scenes to be updated
 			_scrollPos = 0,
-			_scrollDirection = "PAUSED",
+			_scrollDirection = SCROLL_DIRECTIONS.p,
 			_isDocument = true,
 			_viewPortSize = 0,
 			_enabled = true,
 			_updateCycle, _refreshInterval;
 
-/*!
-	 * ----------------------------------------------------------------
-	 * private functions
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * private functions
+		 * ----------------------------------------------------------------
+		 */
 
 		/**
 		 * Internal constructor function of the ScrollMagic Controller
@@ -130,8 +128,6 @@
 				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
 			}
 
-			// start checking for changes
-			_updateCycle = _util.rAF(updateScenes);
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
@@ -142,6 +138,7 @@
 		var getScrollPos = function () {
 			return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
 		};
+
 		/**
 		 * Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
 		 * @private
@@ -163,20 +160,25 @@
 		};
 
 		/**
+		 * Update the scroll position & direction
+		 * @private
+		 */
+		var updateScrollPos = function () {
+			var oldScrollPos = _scrollPos;
+			_scrollPos = Controller.scrollPos();
+			var deltaScroll = _scrollPos - oldScrollPos;
+			_scrollDirection = (deltaScroll === 0) ? SCROLL_DIRECTIONS.p : (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+		};
+
+		/**
 		 * Handle updates in cycles instead of on scroll (performance)
 		 * @private
 		 */
 		var updateScenes = function () {
-			_updateCycle = _util.rAF(updateScenes);
 			if (_enabled && _updateScenesOnNextCycle) {
-				var
-				scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0),
-					oldScrollPos = _scrollPos;
-				// update scroll pos & direction
-				_scrollPos = Controller.scrollPos();
-				var deltaScroll = _scrollPos - oldScrollPos;
-				_scrollDirection = (deltaScroll === 0) ? "PAUSED" : (deltaScroll > 0) ? "FORWARD" : "REVERSE";
-				if (deltaScroll < 0) { // reverse order if scrolling reverse
+				var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
+				// reverse order of scenes if scrolling reverse
+				if (_scrollDirection === SCROLL_DIRECTIONS.r) {
 					scenesToUpdate.reverse();
 				}
 				// update scenes
@@ -192,6 +194,14 @@
 		};
 
 		/**
+		 * Initializes rAF callback
+		 * @private
+		 */
+		var debounceUpdate = function () {
+			_updateCycle = _util.rAF(updateScenes);
+		};
+
+		/**
 		 * Handles Container changes
 		 * @private
 		 */
@@ -199,7 +209,11 @@
 			if (e.type == "resize") {
 				_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 			}
-			_updateScenesOnNextCycle = true;
+			updateScrollPos();
+			if (!_updateScenesOnNextCycle) {
+				_updateScenesOnNextCycle = true;
+				debounceUpdate();
+			}
 		};
 
 		var refresh = function () {
@@ -238,6 +252,8 @@
 				_util.log.apply(window, arguments);
 			}
 		};
+		// for scenes we have getters for each option, but for the controller we don't, so we need to make it available externally for plugins
+		this._options = _options;
 
 		/**
 		 * Sort scenes in ascending order of their start offset.
@@ -287,7 +303,7 @@
 					Controller.addScene(scene);
 				});
 			} else if (newScene instanceof ScrollMagic.Scene) {
-				if (newScene.controller() != Controller) {
+				if (newScene.controller() !== Controller) {
 					newScene.addTo(Controller);
 				} else if (_sceneObjects.indexOf(newScene) < 0) {
 					// new scene
@@ -371,15 +387,14 @@
 			} else {
 				if (immediately) {
 					Scene.update(true);
-				} else {
+				} else if (!_updateScenesOnNextCycle && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle, all connected scenes are gonna be updated anyway...
 					// prep array for next update cycle
-					if (!_util.type.Array(_updateScenesOnNextCycle)) {
-						_updateScenesOnNextCycle = [];
-					}
+					_updateScenesOnNextCycle = [];
 					if (_updateScenesOnNextCycle.indexOf(Scene) == -1) {
 						_updateScenesOnNextCycle.push(Scene);
 					}
 					_updateScenesOnNextCycle = sortScenes(_updateScenesOnNextCycle); // sort
+					debounceUpdate();
 				}
 			}
 			return Controller;
@@ -640,6 +655,22 @@
 		return Controller;
 	};
 
+	// store pagewide controller options
+	var CONTROLLER_OPTIONS = {
+		defaults: {
+			container: window,
+			vertical: true,
+			globalSceneOptions: {},
+			loglevel: 2,
+			refreshInterval: 100
+		}
+	};
+	/*
+	 * method used to add an option to ScrollMagic Scenes.
+	 */
+	ScrollMagic.Controller.addOption = function (name, defaultValue) {
+		CONTROLLER_OPTIONS.defaults[name] = defaultValue;
+	};
 	// instance extension function for plugins
 	ScrollMagic.Controller.extend = function (extension) {
 		var oldClass = this;
@@ -685,8 +716,6 @@
 	 ** `"onCenter"` => `0.5`
 	 ** `"onLeave"` => `0`
 	 * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
-	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
-	 Does not affect animations where duration is `0`.
 	 * @param {number} [options.loglevel=2] - Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
 	 ** `0` => silent
 	 ** `1` => errors
@@ -696,35 +725,22 @@
 	 */
 	ScrollMagic.Scene = function (options) {
 
-/*!
-	 * ----------------------------------------------------------------
-	 * settings
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * settings
+		 * ----------------------------------------------------------------
+		 */
 
 		var
-		TRIGGER_HOOK_VALUES = {
-			"onCenter": 0.5,
-			"onEnter": 1,
-			"onLeave": 0
-		},
-			NAMESPACE = "ScrollMagic.Scene",
+		NAMESPACE = "ScrollMagic.Scene",
 			PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
-			DEFAULT_OPTIONS = {
-				duration: 0,
-				offset: 0,
-				triggerElement: undefined,
-				triggerHook: "onCenter",
-				reverse: true,
-				tweenChanges: false,
-				loglevel: 2
-			};
+			DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
-/*!
-	 * ----------------------------------------------------------------
-	 * private vars
-	 * ----------------------------------------------------------------
-	 */
+		/*
+		 * ----------------------------------------------------------------
+		 * private vars
+		 * ----------------------------------------------------------------
+		 */
 
 		var
 		Scene = this,
@@ -745,6 +761,17 @@
 		 * @private
 		 */
 		var construct = function () {
+			for (var key in _options) { // check supplied options
+				if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
+					log(2, "WARNING: Unknown option \"" + key + "\"");
+					delete _options[key];
+				}
+			}
+			// add getters/setters for all possible options
+			for (var optionName in DEFAULT_OPTIONS) {
+				addSceneOption(optionName);
+			}
+			// validate all options
 			validateOption();
 			// set event listeners
 			Scene.on("change.internal", function (e) {
@@ -815,7 +842,7 @@
 		/**
 		 * **Get** or **Set** the current enabled state of the scene.  
 		 * This can be used to disable this scene without removing or destroying it.
-		 * @public
+		 * @method ScrollMagic.Scene#enabled
 		 *
 		 * @example
 		 * // get the current value
@@ -842,7 +869,7 @@
 		 * This is the equivalent to `Controller.removeScene(scene)`.
 		 * The scene will not be updated anymore until you readd it to a controller.
 		 * To remove the pin or the tween you need to call removeTween() or removePin() respectively.
-		 * @public
+		 * @method ScrollMagic.Scene#remove
 		 * @example
 		 * // remove the scene from its controller
 		 * scene.remove();
@@ -863,7 +890,7 @@
 
 		/**
 		 * Destroy the scene and everything.
-		 * @public
+		 * @method ScrollMagic.Scene#destroy
 		 * @example
 		 * // destroy the scene without resetting the pin and tween to their initial positions
 		 * scene = scene.destroy();
@@ -892,7 +919,7 @@
 		 * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
 		 * This means an update doesn't necessarily result in a progress change. The `progress` event will be fired if the progress has indeed changed between this update and the last.  
 		 * _**NOTE:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
-		 * @public
+		 * @method ScrollMagic.Scene#update
 		 * @example
 		 * // update the scene on next tick
 		 * scene.update();
@@ -943,7 +970,7 @@
 		 * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
 		 * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
 		 *
-		 * @public
+		 * @method ScrollMagic.Scene#refresh
 		 * @since 1.1.0
 		 * @example
 		 * scene = new ScrollMagic.Scene({triggerElement: "#trigger"});
@@ -993,7 +1020,7 @@
 		 * 
 		 * Please review the event descriptions for details on the events and the event object that is passed to the callback.
 		 * 
-		 * @public
+		 * @method ScrollMagic.Scene#progress
 		 * @example
 		 * // get the current scene progress
 		 * var progress = scene.progress();
@@ -1093,7 +1120,7 @@
 			};
 			if (_controller && _options.triggerElement) {
 				// take away triggerHook portion to get relative to top
-				_scrollOffset.start -= _controller.info("size") * Scene.triggerHook();
+				_scrollOffset.start -= _controller.info("size") * _options.triggerHook;
 			}
 			_scrollOffset.end = _scrollOffset.start + _options.duration;
 		};
@@ -1173,108 +1200,70 @@
 		 * @private
 		 */
 		var onContainerResize = function (e) {
-			if (Scene.triggerHook() > 0) {
+			if (_options.triggerHook > 0) {
 				Scene.trigger("shift", {
 					reason: "containerResize"
 				});
 			}
 		};
 
-		// object containing validator functions for various options
-		var _validate = {
-			"unknownOptionSupplied": function () {
-				for (var key in _options) {
-					if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
-						log(2, "WARNING: Unknown option \"" + key + "\"");
-						delete _options[key];
-					}
-				}
-			},
-			"duration": function () {
-				if (_util.type.String(_options.duration) && _options.duration.match(/^(\.|\d)*\d+%$/)) {
+		var _validate = _util.extend(SCENE_OPTIONS.validate, {
+			// validation for duration handled internally for reference to private var _durationMethod
+			duration: function (val) {
+				if (_util.type.String(val) && val.match(/^(\.|\d)*\d+%$/)) {
 					// percentage value
-					var perc = parseFloat(_options.duration) / 100;
-					_options.duration = function () {
+					var perc = parseFloat(val) / 100;
+					val = function () {
 						return _controller ? _controller.info("size") * perc : 0;
 					};
 				}
-				if (_util.type.Function(_options.duration)) {
-					_durationUpdateMethod = _options.duration;
+				if (_util.type.Function(val)) {
+					// function
+					_durationUpdateMethod = val;
 					try {
-						_options.duration = parseFloat(_durationUpdateMethod());
+						val = parseFloat(_durationUpdateMethod());
 					} catch (e) {
-						log(1, "ERROR: Invalid return value of supplied function for option \"duration\":", _options.duration);
+						val = -1; // will cause error below
+					}
+				}
+				// val has to be float
+				val = parseFloat(val);
+				if (!_util.type.Number(val) || val < 0) {
+					if (_durationUpdateMethod) {
 						_durationUpdateMethod = undefined;
-						_options.duration = DEFAULT_OPTIONS.duration;
-					}
-				} else {
-					_options.duration = parseFloat(_options.duration);
-					if (!_util.type.Number(_options.duration) || _options.duration < 0) {
-						log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
-						_options.duration = DEFAULT_OPTIONS.duration;
-					}
-				}
-			},
-			"offset": function () {
-				_options.offset = parseFloat(_options.offset);
-				if (!_util.type.Number(_options.offset)) {
-					log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
-					_options.offset = DEFAULT_OPTIONS.offset;
-				}
-			},
-			"triggerElement": function () {
-				if (_options.triggerElement) {
-					var elem = _util.get.elements(_options.triggerElement)[0];
-					if (elem) {
-						_options.triggerElement = elem;
+						throw ["Invalid return value of supplied function for option \"duration\":", val];
 					} else {
-						log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
-						_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
+						throw ["Invalid value for option \"duration\":", val];
 					}
 				}
-			},
-			"triggerHook": function () {
-				if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
-					if (_util.type.Number(_options.triggerHook)) {
-						_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
-					} else {
-						log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
-						_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
-					}
-				}
-			},
-			"reverse": function () {
-				_options.reverse = !! _options.reverse; // force boolean
-			},
-			"tweenChanges": function () {
-				_options.tweenChanges = !! _options.tweenChanges; // force boolean
-			},
-			"loglevel": function () {
-				_options.loglevel = parseInt(_options.loglevel);
-				if (!_util.type.Number(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
-					var wrongval = _options.loglevel;
-					_options.loglevel = DEFAULT_OPTIONS.loglevel;
-					log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
-				}
+				return val;
 			}
-		};
+		});
 
 		/**
 		 * Checks the validity of a specific or all options and reset to default if neccessary.
 		 * @private
 		 */
 		var validateOption = function (check) {
-			if (!arguments.length) {
-				check = [];
-				for (var key in _validate) {
-					check.push(key);
-				}
-			} else if (!_util.type.Array(check)) {
-				check = [check];
-			}
-			check.forEach(function (value, key) {
-				if (_validate[value]) {
-					_validate[value]();
+			check = arguments.length ? [check] : Object.keys(_validate);
+			check.forEach(function (optionName, key) {
+				var value;
+				if (_validate[optionName]) { // there is a validation method for this option
+					try { // validate value
+						value = _validate[optionName](_options[optionName]);
+					} catch (e) { // validation failed -> reset to default
+						value = DEFAULT_OPTIONS[optionName];
+						var logMSG = _util.type.String(e) ? [e] : e;
+						if (_util.type.Array(logMSG)) {
+							logMSG[0] = "ERROR: " + logMSG[0];
+							logMSG.unshift(1); // loglevel 1 for error msg
+							log.apply(this, logMSG);
+						} else {
+							log(1, "ERROR: Problem executing validation callback for option '" + optionName + "':", e.message);
+						}
+					} finally {
+						_options[optionName] = value;
+					}
 				}
 			});
 		};
@@ -1294,19 +1283,33 @@
 			}
 			return changed;
 		};
-		/**
-		 * **Get** the associated controller.
-		 * @public
-		 * @example
-		 * // get the controller of a scene
-		 * var controller = scene.controller();
-		 *
-		 * @returns {ScrollMagic.Controller} Parent controller or `undefined`
-		 */
-		this.controller = function () {
-			return _controller;
-		};
 
+		// generate getters/setters for all options
+		var addSceneOption = function (optionName) {
+			if (!Scene[optionName]) {
+				Scene[optionName] = function (newVal) {
+					if (!arguments.length) { // get
+						return _options[optionName];
+					} else {
+						if (optionName === "duration") { // new duration is set, so any previously set function must be unset
+							_durationUpdateMethod = undefined;
+						}
+						if (changeOption(optionName, newVal)) { // set
+							Scene.trigger("change", {
+								what: optionName,
+								newval: _options[optionName]
+							});
+							if (SCENE_OPTIONS.shifts.indexOf(optionName) > -1) {
+								Scene.trigger("shift", {
+									reason: optionName
+								});
+							}
+						}
+					}
+					return Scene;
+				};
+			}
+		};
 
 		/**
 		 * **Get** or **Set** the duration option value.
@@ -1318,7 +1321,7 @@
 		 * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
 		 * This counts double if you use the same function for multiple scenes._
 		 *
-		 * @public
+		 * @method ScrollMagic.Scene#duration
 		 * @example
 		 * // get the current duration value
 		 * var duration = scene.duration();
@@ -1344,29 +1347,10 @@
 		 * @returns {number} `get` -  Current scene duration.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.duration = function (newDuration) {
-			var varname = "duration";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else {
-				// a new value is set, so definitely kill the old function
-				_durationUpdateMethod = undefined;
-				if (changeOption(varname, newDuration)) { // set
-					Scene.trigger("change", {
-						what: varname,
-						newval: _options[varname]
-					});
-					Scene.trigger("shift", {
-						reason: varname
-					});
-				}
-			}
-			return Scene;
-		};
 
 		/**
 		 * **Get** or **Set** the offset option value.
-		 * @public
+		 * @method ScrollMagic.Scene#offset
 		 * @example
 		 * // get the current offset
 		 * var offset = scene.offset();
@@ -1380,26 +1364,11 @@
 		 * @returns {number} `get` -  Current scene offset.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.offset = function (newOffset) {
-			var varname = "offset";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else if (changeOption(varname, newOffset)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-				Scene.trigger("shift", {
-					reason: varname
-				});
-			}
-			return Scene;
-		};
 
 		/**
 		 * **Get** or **Set** the triggerElement option value.
 		 * Does **not** fire `Scene.shift`, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in `Scene.refresh()`, which is automatically triggered.
-		 * @public
+		 * @method ScrollMagic.Scene#triggerElement
 		 * @example
 		 * // get the current triggerElement
 		 * var triggerElement = scene.triggerElement();
@@ -1414,22 +1383,10 @@
 		 * @returns {(string|object)} `get` -  Current triggerElement.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.triggerElement = function (newTriggerElement) {
-			var varname = "triggerElement";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else if (changeOption(varname, newTriggerElement)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-			}
-			return Scene;
-		};
 
 		/**
 		 * **Get** or **Set** the triggerHook option value.
-		 * @public
+		 * @method ScrollMagic.Scene#triggerHook
 		 * @example
 		 * // get the current triggerHook value
 		 * var triggerHook = scene.triggerHook();
@@ -1445,25 +1402,10 @@
 		 * @returns {number} `get` -  Current triggerHook (ALWAYS numerical).
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.triggerHook = function (newTriggerHook) {
-			var varname = "triggerHook";
-			if (!arguments.length) { // get
-				return _util.type.Number(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
-			} else if (changeOption(varname, newTriggerHook)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-				Scene.trigger("shift", {
-					reason: varname
-				});
-			}
-			return Scene;
-		};
 
 		/**
 		 * **Get** or **Set** the reverse option value.
-		 * @public
+		 * @method ScrollMagic.Scene#reverse
 		 * @example
 		 * // get the current reverse option
 		 * var reverse = scene.reverse();
@@ -1476,50 +1418,10 @@
 		 * @returns {boolean} `get` -  Current reverse option value.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.reverse = function (newReverse) {
-			var varname = "reverse";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else if (changeOption(varname, newReverse)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-			}
-			return Scene;
-		};
-
-		/**
-		 * **Get** or **Set** the tweenChanges option value.
-		 * @public
-		 * @example
-		 * // get the current tweenChanges option
-		 * var tweenChanges = scene.tweenChanges();
-		 *
-		 * // set new tweenChanges option
-		 * scene.tweenChanges(true);
-		 *
-		 * @fires {@link Scene.change}, when used as setter
-		 * @param {boolean} [newTweenChanges] - The new tweenChanges setting of the scene.
-		 * @returns {boolean} `get` -  Current tweenChanges option value.
-		 * @returns {Scene} `set` -  Parent object for chaining.
-		 */
-		this.tweenChanges = function (newTweenChanges) {
-			var varname = "tweenChanges";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else if (changeOption(varname, newTweenChanges)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-			}
-			return Scene;
-		};
 
 		/**
 		 * **Get** or **Set** the loglevel option value.
-		 * @public
+		 * @method ScrollMagic.Scene#loglevel
 		 * @example
 		 * // get the current loglevel
 		 * var loglevel = scene.loglevel();
@@ -1532,22 +1434,23 @@
 		 * @returns {number} `get` -  Current loglevel.
 		 * @returns {Scene} `set` -  Parent object for chaining.
 		 */
-		this.loglevel = function (newLoglevel) {
-			var varname = "loglevel";
-			if (!arguments.length) { // get
-				return _options[varname];
-			} else if (changeOption(varname, newLoglevel)) { // set
-				Scene.trigger("change", {
-					what: varname,
-					newval: _options[varname]
-				});
-			}
-			return Scene;
+
+		/**
+		 * **Get** the associated controller.
+		 * @method ScrollMagic.Scene#controller
+		 * @example
+		 * // get the controller of a scene
+		 * var controller = scene.controller();
+		 *
+		 * @returns {ScrollMagic.Controller} Parent controller or `undefined`
+		 */
+		this.controller = function () {
+			return _controller;
 		};
 
 		/**
 		 * **Get** the current state.
-		 * @public
+		 * @method ScrollMagic.Scene#state
 		 * @example
 		 * // get the current state
 		 * var state = scene.state();
@@ -1559,8 +1462,25 @@
 		};
 
 		/**
+		 * **Get** the current scroll offset for the start of the scene.  
+		 * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
+		 * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
+		 * @method ScrollMagic.Scene#scrollOffset
+		 * @example
+		 * // get the current scroll offset for the start and end of the scene.
+		 * var start = scene.scrollOffset();
+		 * var end = scene.scrollOffset() + scene.duration();
+		 * console.log("the scene starts at", start, "and ends at", end);
+		 *
+		 * @returns {number} The scroll offset (of the container) at which the scene will trigger. Y value for vertical and X value for horizontal scrolls.
+		 */
+		this.scrollOffset = function () {
+			return _scrollOffset.start;
+		};
+
+		/**
 		 * **Get** the trigger position of the scene (including the value of the `offset` option).  
-		 * @public
+		 * @method ScrollMagic.Scene#triggerPosition
 		 * @example
 		 * // get the scene's trigger position
 		 * var triggerPosition = scene.triggerPosition();
@@ -1582,24 +1502,7 @@
 			return pos;
 		};
 
-		/**
-		 * **Get** the current scroll offset for the start of the scene.  
-		 * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
-		 * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
-		 * @public
-		 * @example
-		 * // get the current scroll offset for the start and end of the scene.
-		 * var start = scene.scrollOffset();
-		 * var end = scene.scrollOffset() + scene.duration();
-		 * console.log("the scene starts at", start, "and ends at", end);
-		 *
-		 * @returns {number} The scroll offset (of the container) at which the scene will trigger. Y value for vertical and X value for horizontal scrolls.
-		 */
-		this.scrollOffset = function () {
-			return _scrollOffset.start;
-		};
-
-		/**
+		/*
 		 * ----------------------------------------------------------------
 		 * Event Management
 		 * ----------------------------------------------------------------
@@ -1829,7 +1732,7 @@
 		/**
 		 * Add one ore more event listener.  
 		 * The callback function will be fired at the respective event, and an object containing relevant data will be passed to the callback.
-		 * @public
+		 * @method ScrollMagic.Scene#on
 		 *
 		 * @example
 		 * function callback (event) {
@@ -1868,7 +1771,7 @@
 
 		/**
 		 * Remove one or more event listener.
-		 * @public
+		 * @method ScrollMagic.Scene#off
 		 *
 		 * @example
 		 * function callback (event) {
@@ -1915,7 +1818,7 @@
 
 		/**
 		 * Trigger an event.
-		 * @public
+		 * @method ScrollMagic.Scene#trigger
 		 *
 		 * @example
 		 * this.trigger("change");
@@ -2146,7 +2049,7 @@
 		 * Make sure only one pin is applied to an element at the same time.
 		 * An element can be pinned multiple times, but only successively.
 		 * _**NOTE:** The option `pushFollowers` has no effect, when the scene duration is 0._
-		 * @public
+		 * @method ScrollMagic.Scene#setPin
 		 * @example
 		 * // pin element and push all following elements down by the amount of the pin duration.
 		 * scene.setPin("#pin");
@@ -2301,7 +2204,7 @@
 
 		/**
 		 * Remove the pin from the scene.
-		 * @public
+		 * @method ScrollMagic.Scene#removePin
 		 * @example
 		 * // remove the pin from the scene without resetting it (the spacer is not removed)
 		 * scene.removePin();
@@ -2358,7 +2261,7 @@
 		 * Define a css class modification while the scene is active.  
 		 * When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
 		 * If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.
-		 * @public
+		 * @method ScrollMagic.Scene#setClassToggle
 		 * @example
 		 * // add the class 'myclass' to the element with the id 'my-elem' for the duration of the scene
 		 * scene.setClassToggle("#my-elem", "myclass");
@@ -2394,7 +2297,7 @@
 
 		/**
 		 * Remove the class binding from the scene.
-		 * @public
+		 * @method ScrollMagic.Scene#removeClassToggle
 		 * @example
 		 * // remove class binding from the scene without reset
 		 * scene.removeClassToggle();
@@ -2422,7 +2325,84 @@
 		return Scene;
 	};
 
+	// store pagewide scene options
+	var SCENE_OPTIONS = {
+		defaults: {
+			duration: 0,
+			offset: 0,
+			triggerElement: undefined,
+			triggerHook: 0.5,
+			reverse: true,
+			loglevel: 2
+		},
+		validate: {
+			offset: function (val) {
+				val = parseFloat(val);
+				if (!_util.type.Number(val)) {
+					throw ["Invalid value for option \"offset\":", val];
+				}
+				return val;
+			},
+			triggerElement: function (val) {
+				val = val || undefined;
+				if (val) {
+					var elem = _util.get.elements(val)[0];
+					if (elem) {
+						val = elem;
+					} else {
+						throw ["Element defined in option \"triggerElement\" was not found:", val];
+					}
+				}
+				return val;
+			},
+			triggerHook: function (val) {
+				var translate = {
+					"onCenter": 0.5,
+					"onEnter": 1,
+					"onLeave": 0
+				};
+				if (_util.type.Number(val)) {
+					val = Math.max(0, Math.min(parseFloat(val), 1)); //  make sure its betweeen 0 and 1
+				} else if (val in translate) {
+					val = translate[val];
+				} else {
+					throw ["Invalid value for option \"triggerHook\": ", val];
+				}
+				return val;
+			},
+			reverse: function (val) {
+				return !!val; // force boolean
+			},
+			loglevel: function (val) {
+				val = parseInt(val);
+				if (!_util.type.Number(val) || val < 0 || val > 3) {
+					throw ["Invalid value for option \"loglevel\":", val];
+				}
+				return val;
+			}
+		},
+		// holder for  validation methods. duration validation is handled in 'getters-setters.js'
+		shifts: ["duration", "offset", "triggerHook"],
+		// list of options that trigger a `shift` event
+	};
+	/*
+	 * method used to add an option to ScrollMagic Scenes.
+	 * TODO: doc
+	 */
+	ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
+		if (!(name in SCENE_OPTIONS.defaults)) {
+			SCENE_OPTIONS.defaults[name] = defaultValue;
+			SCENE_OPTIONS.validate[name] = validationCallback;
+			if (shifts) {
+				SCENE_OPTIONS.shifts.push(name);
+			}
+		} else {
+			// TODO: check if removed in minified
+			ScrollMagic._util.log(1, "[static] ScrollMagic.Scene -> Cannot add Scene option '" + name + "', because it already exists.");
+		}
+	};
 	// instance extension function for plugins
+	// TODO: doc
 	ScrollMagic.Scene.extend = function (extension) {
 		var oldClass = this;
 		ScrollMagic.Scene = function () {
@@ -2453,7 +2433,7 @@
 		return this;
 	};
 
-	/**
+	/*
 	 * TODO: DOCS
 	 */
 

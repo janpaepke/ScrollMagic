@@ -14,7 +14,7 @@
  */
 /**
  * TODO: doc
- * @mixin jquery.jQuery
+ * @mixin framework.jQuery
  */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {

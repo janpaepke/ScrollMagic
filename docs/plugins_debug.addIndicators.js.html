@@ -170,7 +170,7 @@
 	// plugin settings
 	var
 		FONT_SIZE = "0.85em",
-		ZINDEX = "99999",
+		ZINDEX = "9999",
 		EDGE_OFFSET = 15; // minimum edge distance, added to indentation
 
 	// overall vars
@@ -187,8 +187,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
 
@@ -264,11 +266,25 @@
 	});
 
 
-	/**
+	/*
 	 * ----------------------------------------------------------------
 	 * Extension for controller to store and update related indicators
 	 * ----------------------------------------------------------------
 	 */
+	// add option to globally auto-add indicators to scenes
+	/**
+	 * Every new controller now supports an additional option.  
+	 * See {@link ScrollMagic.Controller} for a complete list of the standard options.
+	 * @memberof! debug.addIndicators#
+	 * @method new ScrollMagic.Controller(options)
+	 * @example
+	 * var controller = new ScrollMagic.Controller({addIndicators: true});
+	 *
+	 * @param {object} [options] - Options for the Controller.
+	 * @param {boolean} [options.addIndicators=false] - TODO: doc
+	 */
+	ScrollMagic.Controller.addOption("addIndicators", false);
+	// extend Controller
 	ScrollMagic.Controller.extend(function () {
 		var
 			Controller = this,
@@ -282,8 +298,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Controller._log.apply(this, arguments);
+			if (Controller._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Controller._log.apply(this, arguments);
+			}
 		};
 		if (Controller._indicators) {
 			log(2, "WARNING: Scene already has a property '_indicators', which will be overwritten by plugin.");
@@ -292,7 +310,7 @@
 	
 		// add indicators container
 		this._indicators = _indicators;
-		/**
+		/*
 			needed updates:
 			+++++++++++++++
 			start/end position on scene shift (handled in Indicator class)
@@ -397,6 +415,16 @@
 			}
 		};
 
+		// add indicators if global option is set
+		this.addScene = function (newScene) {
+
+			if (this._options.addIndicators &amp;&amp; newScene instanceof ScrollMagic.Scene &amp;&amp; newScene.controller() === Controller) {
+				newScene.addIndicators();
+			}
+			// call original destroy method
+			this.$super.addScene.apply(this, arguments);
+		};
+
 		// remove all previously set listeners on destroy
 		this.destroy = function () {
 			_container.removeEventListener("resize", handleTriggerPositionChange);
@@ -413,7 +441,7 @@
 
 	});
 
-	/**
+	/*
 	 * ----------------------------------------------------------------
 	 * Internal class for the construction of Indicators
 	 * ----------------------------------------------------------------
@@ -430,8 +458,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
 
@@ -503,7 +533,7 @@
 			}
 		};
 
-		/**
+		/*
 		 * ----------------------------------------------------------------
 		 * internal Event Handlers
 		 * ----------------------------------------------------------------
@@ -521,7 +551,7 @@
 			}
 		};
 
-		/**
+		/*
 		 * ----------------------------------------------------------------
 		 * Bounds (start / stop) management
 		 * ----------------------------------------------------------------
@@ -570,7 +600,7 @@
 			});
 		};
 
-		/**
+		/*
 		 * ----------------------------------------------------------------
 		 * trigger and trigger group management
 		 * ----------------------------------------------------------------
@@ -606,7 +636,7 @@
 		};
 
 		// updates the trigger group -> either join existing or add new one
-		/**	
+		/*	
 		 * Logic:
 		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
 		 * 2 try to find an existing one that matches Scene parameters
@@ -685,7 +715,7 @@
 		};
 	};
 
-	/**
+	/*
 	 * ----------------------------------------------------------------
 	 * Templates for the indicators
 	 * ----------------------------------------------------------------

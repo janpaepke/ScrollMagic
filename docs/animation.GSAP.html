@@ -137,15 +137,10 @@
 					
 
 
-	<h1 class="page-title">Plugin: GSAP</h1>
-<section>
-
-<header>
-    <h2>
-    GSAP
-    </h2>
+	<h1 class="page-title">
+        Plugin: GSAP</h1>
     
-</header>
+<section>
 
 <article>
     <div class="container-overview">
@@ -208,7 +203,216 @@
     
 
     
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Scene Constructor Extension</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="newScrollMagic.Sceneoptions"><span class="type-signature"></span>new ScrollMagic.Scene<span class="signature">(<span class="optional">options</span>)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Every new scene now supports an additional option.<br>See <a href="ScrollMagic.Scene.html"><code>ScrollMagic.Scene</code></a> for a complete list of the standard options.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Options for the Scene. The options can be updated at any time.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>tweenChanges</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>Tweens Animation to the progress target instead of setting it.<br>                                                        Does not affect animations where duration is <code>0</code>.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">var scene = new ScrollMagic.Scene({tweenChanges: true});</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Scene Control Methods</h3>
 
         <dl>
             
@@ -323,7 +527,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-226">line 226</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-269">line 269</a>
     </li></ul></dd>
     
 
@@ -518,7 +722,7 @@ scene.removeTween(true);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-129">line 129</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-172">line 172</a>
     </li></ul></dd>
     
 
@@ -580,6 +784,183 @@ scene.setTween("obj3", 0.5, {y: 100});
 // short hand to add a .to() tween for 1 second
 // this is useful, when the scene has a duration and the tween duration isn't important anyway
 scene.setTween("obj3", {y: 100});</pre>
+
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Scene Parameters (getter / setter)</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="Scene.tweenChanges"><span class="type-signature"></span>Scene.tweenChanges<span class="signature">(<span class="optional">newTweenChanges</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p><strong>Get</strong> or <strong>Set</strong> the tweenChanges option value.</p>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>newTweenChanges</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The new tweenChanges setting of the scene.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li><code>Scene.change</code>,event: when used as setter</li>
+    </ul>
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    <ul>
+            <li>
+<div class="param-desc tag-returns">
+    <p><code>get</code> -  Current tweenChanges option value.</p>
+
+	{
+<span class="param-type">boolean</span>
+
+}
+
+</div>
+
+</li>
+        
+            <li>
+<div class="param-desc tag-returns">
+    <p><code>set</code> -  Parent object for chaining.</p>
+
+	{
+<span class="param-type">Scene</span>
+
+}
+
+</div>
+
+</li>
+        </ul>
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// get the current tweenChanges option
+var tweenChanges = scene.tweenChanges();
+
+// set new tweenChanges option
+scene.tweenChanges(true);</pre>
 
 
     

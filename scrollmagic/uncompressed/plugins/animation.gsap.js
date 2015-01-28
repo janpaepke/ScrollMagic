@@ -39,15 +39,58 @@
 		err("(" + NAMESPACE + ") -> ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use an asynchronous loader like requirejs.");
 	}
 
+	/*
+	 * ----------------------------------------------------------------
+	 * Extensions for Scene
+	 * ----------------------------------------------------------------
+	 */
+	/**
+	 * Every new scene now supports an additional option.  
+	 * See {@link ScrollMagic.Scene} for a complete list of the standard options.
+	 * @memberof! animation.GSAP#
+	 * @method new ScrollMagic.Scene(options)
+	 * @example
+	 * var scene = new ScrollMagic.Scene({tweenChanges: true});
+	 *
+	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.
+	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
+	 Does not affect animations where duration is `0`.
+	 */
+	/**
+	 * **Get** or **Set** the tweenChanges option value.
+	 * @memberof! animation.GSAP#
+	 * @method Scene.tweenChanges
+	 * 
+	 * @example
+	 * // get the current tweenChanges option
+	 * var tweenChanges = scene.tweenChanges();
+	 *
+	 * // set new tweenChanges option
+	 * scene.tweenChanges(true);
+	 *
+	 * @fires {@link Scene.change}, when used as setter
+	 * @param {boolean} [newTweenChanges] - The new tweenChanges setting of the scene.
+	 * @returns {boolean} `get` -  Current tweenChanges option value.
+	 * @returns {Scene} `set` -  Parent object for chaining.
+	 */
+	// add option (TODO: DOC)
+	ScrollMagic.Scene.addOption("tweenChanges", // name
+	false, // default
 
+
+	function (val) { // validation callback
+		return !!val;
+	});
+	// extend scene
 	ScrollMagic.Scene.extend(function () {
-
 		var Scene = this,
 			_tween;
 
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 
 		// set listeners
@@ -101,8 +144,7 @@
 		 * Add a tween to the scene.  
 		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
 		 * The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of `0`.
-		 * @public
-		 * @memberof animation.GSAP
+		 * @memberof! animation.GSAP#
 		 *
 		 * @example
 		 * // add a single tween directly
@@ -216,8 +258,7 @@
 
 		/**
 		 * Remove the tween from the scene.
-		 * @public
-		 * @memberof animation.GSAP
+		 * @memberof! animation.GSAP#
 		 *
 		 * @example
 		 * // remove the tween from the scene without resetting it
