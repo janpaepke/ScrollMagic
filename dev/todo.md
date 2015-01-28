@@ -12,6 +12,7 @@
 # Project
  - add missing docs (global search TODO)
  - add dependency icons to examples
- - remove includes from examples, where unnecessary
+ - add examples for new features
+ - update svg example to new gsap?
  - review texts
  - document gulpfile options and new dev structure (CONTRIBUTING.md)
