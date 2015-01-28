@@ -26,10 +26,22 @@
 				},
 				"ScrollMagic.Scene" : {
 					"Scene Control Methods" : "Methods",
-					"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook", "tweenChanges"],
+					"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook"],
 					"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
 					"Event Handling" : ["off", "on", "trigger"],
 					"Debuging" : ["addIndicators"]
+				},
+				"animation.GSAP" : {
+					"Scene Constructor Extension" : ["new ScrollMagic.Scene"],
+					"Scene Control Methods" : "Methods",
+					"Scene Parameters (getter / setter)" : ["Scene.tweenChanges"]
+				},
+				"animation.Velocity" : {
+					"Scene Control Methods" : "Methods"
+				},
+				"debug.addIndicators" : {
+					"Controller Constructor Extension" : ["new ScrollMagic.Controller"],
+					"Scene Control Methods" : "Methods"
 				}
 			}
 		}

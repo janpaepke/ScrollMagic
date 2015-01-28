@@ -129,7 +129,17 @@
 	 * ----------------------------------------------------------------
 	 */
 	// add option to globally auto-add indicators to scenes
-	// TODO: document global option.
+	/**
+	 * Every new controller now supports an additional option.  
+	 * See {@link ScrollMagic.Controller} for a complete list of the standard options.
+	 * @memberof! debug.addIndicators#
+	 * @method new ScrollMagic.Controller(options)
+	 * @example
+	 * var controller = new ScrollMagic.Controller({addIndicators: true});
+	 *
+	 * @param {object} [options] - Options for the Controller.
+	 * @param {boolean} [options.addIndicators=false] - TODO: doc
+	 */
 	ScrollMagic.Controller.addOption("addIndicators", false);
 	// extend Controller
 	ScrollMagic.Controller.extend(function () {

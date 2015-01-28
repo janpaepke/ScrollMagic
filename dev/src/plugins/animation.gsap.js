@@ -36,13 +36,22 @@
 	 * Extensions for Scene
 	 * ----------------------------------------------------------------
 	 */
-	/*
+	/**
+	 * Every new scene now supports an additional option.  
+	 * See {@link ScrollMagic.Scene} for a complete list of the standard options.
+	 * @memberof! animation.GSAP#
+	 * @method new ScrollMagic.Scene(options)
+	 * @example
+	 * var scene = new ScrollMagic.Scene({tweenChanges: true});
+	 *
+	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
 	 												   Does not affect animations where duration is `0`.
 	 */
 	/**
 	 * **Get** or **Set** the tweenChanges option value.
 	 * @memberof! animation.GSAP#
+	 * @method Scene.tweenChanges
 	 * 
 	 * @example
 	 * // get the current tweenChanges option

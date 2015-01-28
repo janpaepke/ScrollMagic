@@ -486,12 +486,16 @@ exports.publish = function ( taffyData, opts, tutorials ) {
 
 	data().each( function ( doclet ) {
 		var url = helper.longnameToUrl[doclet.longname];
-
 		if ( url.indexOf( '#' ) > -1 ) {
 			doclet.id = helper.longnameToUrl[doclet.longname].split( /#/ ).pop();
+			// WORKAROUND
 			//  fix for id's starting with .
 			if (doclet.id.charAt(0) === '.') {
 				doclet.id = doclet.id.substr(1);
+			}
+			//  fix for names starting with . or #
+			if (doclet.name && (doclet.name.charAt(0) === '.' || doclet.name.charAt(0) === '#')) {
+				doclet.name = doclet.name.substr(1);
 			}
 		}
 		else {
