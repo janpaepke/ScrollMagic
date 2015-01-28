@@ -12,7 +12,7 @@ var updateScrollOffset = function () {
 	_scrollOffset = {start: _triggerPos + _options.offset};
 	if (_controller && _options.triggerElement) {
 		// take away triggerHook portion to get relative to top
-		_scrollOffset.start -= _controller.info("size") * Scene.triggerHook();
+		_scrollOffset.start -= _controller.info("size") * _options.triggerHook;
 	}
 	_scrollOffset.end = _scrollOffset.start + _options.duration;
 };
@@ -85,7 +85,7 @@ var updateTriggerElementPosition = function (suppressEvents) {
  * @private
  */
 var onContainerResize = function (e) {
-	if (Scene.triggerHook() > 0) {
+	if (_options.triggerHook > 0) {
 		Scene.trigger("shift", {reason: "containerResize"});
 	}
 };

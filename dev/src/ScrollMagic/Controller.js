@@ -37,7 +37,7 @@ ScrollMagic.Controller = function(options) {
 			r : "REVERSE",
 			p : "PAUSED"
 		},
-		DEFAULT_OPTIONS = this.constructor.DEFAULT_OPTIONS; // static, set globally
+		DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
 	/*
 	 * ----------------------------------------------------------------
@@ -219,7 +219,7 @@ ScrollMagic.Controller = function(options) {
 		}
 	};
 	// (BUILD) - REMOVE IN MINIFY - END
-	// make available for plugins
+	// for scenes we have getters for each option, but for the controller we don't, so we need to make it available externally for plugins
 	this._options = _options;
 
 	/**
@@ -617,23 +617,4 @@ ScrollMagic.Controller = function(options) {
 	return Controller;
 };
 
-// set default options
-ScrollMagic.Controller.DEFAULT_OPTIONS = {
-	container: window,
-	vertical: true,
-	globalSceneOptions: {},
-	loglevel: 2,
-	refreshInterval: 100
-};
-// instance extension function for plugins
-ScrollMagic.Controller.extend = function (extension) {
-	var oldClass = this;
-	ScrollMagic.Controller = function () {
-		oldClass.apply(this, arguments);
-		this.$super = _util.extend({}, this); // copy parent state
-		return extension.apply(this, arguments) || this;
-	};
-	_util.extend(ScrollMagic.Controller, oldClass); // copy properties
-	ScrollMagic.Controller.prototype = oldClass.prototype; // copy prototype
-	ScrollMagic.Controller.prototype.constructor = ScrollMagic.Controller; // restore constructor
-};
+// @include('Controller/_static.js')

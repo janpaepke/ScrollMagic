@@ -44,8 +44,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
 
@@ -128,7 +130,7 @@
 	 */
 	// add option to globally auto-add indicators to scenes
 	// TODO: document global option.
-	ScrollMagic.Controller.DEFAULT_OPTIONS.addIndicators = false;
+	ScrollMagic.Controller.addOption("addIndicators", false);
 	// extend Controller
 	ScrollMagic.Controller.extend(function () {
 		var
@@ -143,8 +145,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Controller._log.apply(this, arguments);
+			if (Controller._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Controller._log.apply(this, arguments);
+			}
 		};
 		if (Controller._indicators) {
 			log(2, "WARNING: Scene already has a property '_indicators', which will be overwritten by plugin.");
@@ -301,8 +305,10 @@
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
 

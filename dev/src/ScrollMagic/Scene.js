@@ -30,8 +30,6 @@
  															  ** `"onCenter"` => `0.5`
  															  ** `"onLeave"` => `0`
  * @param {boolean} [options.reverse=true] - Should the scene reverse, when scrolling up?
- * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
- 												   Does not affect animations where duration is `0`.
  * @param {number} [options.loglevel=2] - Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
  										  ** `0` => silent
  										  ** `1` => errors
@@ -48,18 +46,9 @@ ScrollMagic.Scene = function (options) {
 	 */
 
 	var
-		TRIGGER_HOOK_VALUES = {"onCenter" : 0.5, "onEnter" : 1, "onLeave" : 0},
 		NAMESPACE = "ScrollMagic.Scene",
 		PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
-		DEFAULT_OPTIONS = {
-			duration: 0,
-			offset: 0,
-			triggerElement: undefined,
-			triggerHook: "onCenter",
-			reverse: true,
-			tweenChanges: false,
-			loglevel: 2
-		};
+		DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
 	/*
 	 * ----------------------------------------------------------------
@@ -83,6 +72,17 @@ ScrollMagic.Scene = function (options) {
 	 * @private
 	 */
 	var construct = function () {
+		for (var key in _options) { // check supplied options
+			if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
+				log(2, "WARNING: Unknown option \"" + key + "\"");
+				delete _options[key];
+			}
+		}
+		// add getters/setters for all possible options
+		for (var optionName in DEFAULT_OPTIONS) {
+			addSceneOption(optionName);
+		}
+		// validate all options
 		validateOption();
 		// set event listeners
 		Scene
@@ -118,15 +118,4 @@ ScrollMagic.Scene = function (options) {
 	return Scene;
 };
 
-// instance extension function for plugins
-ScrollMagic.Scene.extend = function (extension) {
-	var oldClass = this;
-	ScrollMagic.Scene = function () {
-		oldClass.apply(this, arguments);
-		this.$super = _util.extend({}, this); // copy parent state
-		return extension.apply(this, arguments) || this;
-	};
-	_util.extend(ScrollMagic.Scene, oldClass); // copy properties
-	ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
-	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
-};
+// @include('Scene/_static.js')

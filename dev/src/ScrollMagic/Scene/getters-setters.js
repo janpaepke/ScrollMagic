@@ -1,100 +1,62 @@
-// object containing validator functions for various options
-var _validate = {
-	"unknownOptionSupplied" : function () {
-		for (var key in _options) {
-			if (!DEFAULT_OPTIONS.hasOwnProperty(key)) {
-				log(2, "WARNING: Unknown option \"" + key + "\"");
-				delete _options[key];
-			}
-		}
-	},
-	"duration" : function () {
-		if (_util.type.String(_options.duration) && _options.duration.match(/^(\.|\d)*\d+%$/)) {
+var _validate = _util.extend(SCENE_OPTIONS.validate, {
+	// validation for duration handled internally for reference to private var _durationMethod
+	duration : function (val) {
+		if (_util.type.String(val) && val.match(/^(\.|\d)*\d+%$/)) {
 			// percentage value
-			var perc = parseFloat(_options.duration) / 100;
-			_options.duration = function () {
+			var perc = parseFloat(val) / 100;
+			val = function () {
 				return _controller ? _controller.info("size") * perc : 0;
 			};
 		}
-		if (_util.type.Function(_options.duration)) {
-			_durationUpdateMethod = _options.duration;
+		if (_util.type.Function(val)) {
+			// function
+			_durationUpdateMethod = val;
 			try {
-				_options.duration = parseFloat(_durationUpdateMethod());
+				val = parseFloat(_durationUpdateMethod());
 			} catch (e) {
-				log(1, "ERROR: Invalid return value of supplied function for option \"duration\":", _options.duration);
+				val = -1; // will cause error below
+			}
+		}
+		// val has to be float
+		val = parseFloat(val);
+		if (!_util.type.Number(val) || val < 0) {
+			if (_durationUpdateMethod) {
 				_durationUpdateMethod = undefined;
-				_options.duration = DEFAULT_OPTIONS.duration;
-			}
-		} else {
-			_options.duration = parseFloat(_options.duration);
-			if (!_util.type.Number(_options.duration) || _options.duration < 0) {
-				log(1, "ERROR: Invalid value for option \"duration\":", _options.duration);
-				_options.duration = DEFAULT_OPTIONS.duration;
-			}
-		}
-	},
-	"offset" : function () {
-		_options.offset = parseFloat(_options.offset);
-		if (!_util.type.Number(_options.offset)) {
-			log(1, "ERROR: Invalid value for option \"offset\":", _options.offset);
-			_options.offset = DEFAULT_OPTIONS.offset;
-		}
-	},
-	"triggerElement" : function () {
-		if (_options.triggerElement) {
-			var elem = _util.get.elements(_options.triggerElement)[0];
-			if (elem) {
-				_options.triggerElement = elem;
+				throw ["Invalid return value of supplied function for option \"duration\":", val];
 			} else {
-				log(1, "ERROR: Element defined in option \"triggerElement\" was not found:", _options.triggerElement);
-				_options.triggerElement = DEFAULT_OPTIONS.triggerElement;
+				throw ["Invalid value for option \"duration\":", val];
 			}
 		}
-	},
-	"triggerHook" : function () {
-		if (!(_options.triggerHook in TRIGGER_HOOK_VALUES)) {
-			if (_util.type.Number(_options.triggerHook)) {
-				_options.triggerHook = Math.max(0, Math.min(parseFloat(_options.triggerHook), 1)); //  make sure its betweeen 0 and 1
-			} else {
-				log(1, "ERROR: Invalid value for option \"triggerHook\": ", _options.triggerHook);
-				_options.triggerHook = DEFAULT_OPTIONS.triggerHook;
-			}
-		}
-	},
-	"reverse" : function () {
-		_options.reverse = !!_options.reverse; // force boolean
-	},
-	"tweenChanges" : function () {
-		_options.tweenChanges = !!_options.tweenChanges; // force boolean
-	},
-	// (BUILD) - REMOVE IN MINIFY - START
-	"loglevel" : function () {
-		_options.loglevel = parseInt(_options.loglevel);
-		if (!_util.type.Number(_options.loglevel) || _options.loglevel < 0 || _options.loglevel > 3) {
-			var wrongval = _options.loglevel;
-			_options.loglevel = DEFAULT_OPTIONS.loglevel;
-			log(1, "ERROR: Invalid value for option \"loglevel\":", wrongval);
-		}
+		return val;
 	}
-	// (BUILD) - REMOVE IN MINIFY - END
-};
+});
 
 /**
  * Checks the validity of a specific or all options and reset to default if neccessary.
  * @private
  */
 var validateOption = function (check) {
-	if (!arguments.length) {
-		check = [];
-		for (var key in _validate){
-			check.push(key);
-		}
-	} else if (!_util.type.Array(check)) {
-		check = [check];
-	}
-	check.forEach(function (value, key) {
-		if (_validate[value]) {
-			_validate[value]();
+	check = arguments.length ? [check] : Object.keys(_validate);
+	check.forEach(function (optionName, key) {
+		var value;
+		if (_validate[optionName]) { // there is a validation method for this option
+			try { // validate value
+				value = _validate[optionName](_options[optionName]);
+			} catch (e) { // validation failed -> reset to default
+				value = DEFAULT_OPTIONS[optionName];
+				// (BUILD) - REMOVE IN MINIFY - START
+				var logMSG = _util.type.String(e) ? [e] : e;
+				if (_util.type.Array(logMSG)) {
+					logMSG[0] = "ERROR: " + logMSG[0];
+					logMSG.unshift(1); // loglevel 1 for error msg
+					log.apply(this, logMSG);
+				} else {
+					log(1, "ERROR: Problem executing validation callback for option '" + optionName + "':", e.message);
+				}
+				// (BUILD) - REMOVE IN MINIFY - END
+			} finally {
+				_options[optionName] = value;
+			}
 		}
 	});
 };
@@ -114,19 +76,28 @@ var changeOption = function(varname, newval) {
 	}
 	return changed;
 };
-/**
- * **Get** the associated controller.
- * @method ScrollMagic.Scene#controller
- * @example
- * // get the controller of a scene
- * var controller = scene.controller();
- *
- * @returns {ScrollMagic.Controller} Parent controller or `undefined`
- */
-this.controller = function () {
-	return _controller;
-};
 
+// generate getters/setters for all options
+var addSceneOption = function (optionName) {
+	if (!Scene[optionName]) {
+		Scene[optionName] = function (newVal) {
+			if (!arguments.length) { // get
+				return _options[optionName];
+			} else {
+				if (optionName === "duration") { // new duration is set, so any previously set function must be unset
+					_durationUpdateMethod = undefined;
+				}
+				if (changeOption(optionName, newVal)) { // set
+					Scene.trigger("change", {what: optionName, newval: _options[optionName]});
+					if (SCENE_OPTIONS.shifts.indexOf(optionName) > -1) {
+						Scene.trigger("shift", {reason: optionName});
+					}
+				}
+			}
+			return Scene;
+		};
+	}
+};
 
 /**
  * **Get** or **Set** the duration option value.
@@ -164,20 +135,6 @@ this.controller = function () {
  * @returns {number} `get` -  Current scene duration.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.duration = function (newDuration) {
-	var varname = "duration";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else {		
-		// a new value is set, so definitely kill the old function
-		_durationUpdateMethod = undefined;
-		if (changeOption(varname, newDuration)) { // set
-			Scene.trigger("change", {what: varname, newval: _options[varname]});
-			Scene.trigger("shift", {reason: varname});
-		}
-	}
-	return Scene;
-};
 
 /**
  * **Get** or **Set** the offset option value.
@@ -195,16 +152,6 @@ this.duration = function (newDuration) {
  * @returns {number} `get` -  Current scene offset.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.offset = function (newOffset) {
-	var varname = "offset";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else if (changeOption(varname, newOffset)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-		Scene.trigger("shift", {reason: varname});
-	}
-	return Scene;
-};
 
 /**
  * **Get** or **Set** the triggerElement option value.
@@ -224,15 +171,6 @@ this.offset = function (newOffset) {
  * @returns {(string|object)} `get` -  Current triggerElement.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.triggerElement = function (newTriggerElement) {
-	var varname = "triggerElement";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else if (changeOption(varname, newTriggerElement)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-	}
-	return Scene;
-};
 
 /**
  * **Get** or **Set** the triggerHook option value.
@@ -252,16 +190,6 @@ this.triggerElement = function (newTriggerElement) {
  * @returns {number} `get` -  Current triggerHook (ALWAYS numerical).
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.triggerHook = function (newTriggerHook) {
-	var varname = "triggerHook";
-	if (!arguments.length) { // get
-		return _util.type.Number(_options[varname]) ? _options[varname] : TRIGGER_HOOK_VALUES[_options[varname]];
-	} else if (changeOption(varname, newTriggerHook)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-		Scene.trigger("shift", {reason: varname});
-	}
-	return Scene;
-};
 
 /**
  * **Get** or **Set** the reverse option value.
@@ -278,40 +206,6 @@ this.triggerHook = function (newTriggerHook) {
  * @returns {boolean} `get` -  Current reverse option value.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.reverse = function (newReverse) {
-	var varname = "reverse";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else if (changeOption(varname, newReverse)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-	}
-	return Scene;
-};
-
-/**
- * **Get** or **Set** the tweenChanges option value.
- * @method ScrollMagic.Scene#tweenChanges
- * @example
- * // get the current tweenChanges option
- * var tweenChanges = scene.tweenChanges();
- *
-	 * // set new tweenChanges option
- * scene.tweenChanges(true);
- *
- * @fires {@link Scene.change}, when used as setter
- * @param {boolean} [newTweenChanges] - The new tweenChanges setting of the scene.
- * @returns {boolean} `get` -  Current tweenChanges option value.
- * @returns {Scene} `set` -  Parent object for chaining.
- */
-this.tweenChanges = function (newTweenChanges) {
-	var varname = "tweenChanges";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else if (changeOption(varname, newTweenChanges)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-	}
-	return Scene;
-};
 
 /**
  * **Get** or **Set** the loglevel option value.
@@ -328,14 +222,18 @@ this.tweenChanges = function (newTweenChanges) {
  * @returns {number} `get` -  Current loglevel.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
-this.loglevel = function (newLoglevel) {
-	var varname = "loglevel";
-	if (!arguments.length) { // get
-		return _options[varname];
-	} else if (changeOption(varname, newLoglevel)) { // set
-		Scene.trigger("change", {what: varname, newval: _options[varname]});
-	}
-	return Scene;
+
+/**
+ * **Get** the associated controller.
+ * @method ScrollMagic.Scene#controller
+ * @example
+ * // get the controller of a scene
+ * var controller = scene.controller();
+ *
+ * @returns {ScrollMagic.Controller} Parent controller or `undefined`
+ */
+this.controller = function () {
+	return _controller;
 };
 
 /**
@@ -349,6 +247,23 @@ this.loglevel = function (newLoglevel) {
  */
 this.state = function () {
 	return _state;
+};
+
+/**
+ * **Get** the current scroll offset for the start of the scene.  
+ * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
+ * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
+ * @method ScrollMagic.Scene#scrollOffset
+ * @example
+ * // get the current scroll offset for the start and end of the scene.
+ * var start = scene.scrollOffset();
+ * var end = scene.scrollOffset() + scene.duration();
+ * console.log("the scene starts at", start, "and ends at", end);
+ *
+ * @returns {number} The scroll offset (of the container) at which the scene will trigger. Y value for vertical and X value for horizontal scrolls.
+ */
+this.scrollOffset = function () {
+	return _scrollOffset.start;
 };
 
 /**
@@ -373,21 +288,4 @@ this.triggerPosition = function () {
 		}
 	}
 	return pos;
-};
-
-/**
- * **Get** the current scroll offset for the start of the scene.  
- * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
- * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
- * @method ScrollMagic.Scene#scrollOffset
- * @example
- * // get the current scroll offset for the start and end of the scene.
- * var start = scene.scrollOffset();
- * var end = scene.scrollOffset() + scene.duration();
- * console.log("the scene starts at", start, "and ends at", end);
- *
- * @returns {number} The scroll offset (of the container) at which the scene will trigger. Y value for vertical and X value for horizontal scrolls.
- */
-this.scrollOffset = function () {
-	return _scrollOffset.start;
 };

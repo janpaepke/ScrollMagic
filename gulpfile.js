@@ -208,6 +208,10 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 		.pipe(rename({suffix: ".min"}))
 		.pipe(replace({
 			patterns: [
+				{ // replace throw messages in scene option validations
+					match: /^\s*throw \[.+\];\s*$/gm,
+					replacement: 'throw 0;'
+				},
 				{ // remove log messages
 					match: /((\s*.+\._?)|(\s+))log\([0-3],.+\)\s*;\s*$/gm,
 					replacement: ''

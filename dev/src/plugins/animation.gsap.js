@@ -31,16 +31,50 @@
 	}
 	// (BUILD) - REMOVE IN MINIFY - END
 	
-
+	/*
+	 * ----------------------------------------------------------------
+	 * Extensions for Scene
+	 * ----------------------------------------------------------------
+	 */
+	/*
+	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
+	 												   Does not affect animations where duration is `0`.
+	 */
+	/**
+	 * **Get** or **Set** the tweenChanges option value.
+	 * @memberof! animation.GSAP#
+	 * 
+	 * @example
+	 * // get the current tweenChanges option
+	 * var tweenChanges = scene.tweenChanges();
+	 *
+	 * // set new tweenChanges option
+	 * scene.tweenChanges(true);
+	 *
+	 * @fires {@link Scene.change}, when used as setter
+	 * @param {boolean} [newTweenChanges] - The new tweenChanges setting of the scene.
+	 * @returns {boolean} `get` -  Current tweenChanges option value.
+	 * @returns {Scene} `set` -  Parent object for chaining.
+	 */
+	// add option (TODO: DOC)
+	ScrollMagic.Scene.addOption(
+		"tweenChanges", // name
+		false, // default
+		function (val) { // validation callback
+			return !!val;
+		}
+	);
+	// extend scene
 	ScrollMagic.Scene.extend(function () {
-
 		var Scene = this,
 		_tween;
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
-			Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
-			Scene._log.apply(this, arguments);
+			if (Scene._log) { // not available, when main source minified
+				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
+				Scene._log.apply(this, arguments);
+			}
 		};
 		// (BUILD) - REMOVE IN MINIFY - END
 

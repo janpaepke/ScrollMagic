@@ -326,27 +326,6 @@ define(["ScrollMagic"], function (ScrollMagic) {
 			});
 		});
 
-		describe(".tweenChanges()", function () {
-			it("returns the correct value", function () {
-				expect(scene.tweenChanges()).toBe(false);
-				expect(new ScrollMagic.Scene({tweenChanges: true}).tweenChanges()).toBe(true);
-			});
-			// belongs into gsap plugin testing
-			xit("changes the value", function () {
-				scene.setTween(TweenMax.to("#target", 1, {left: 100}));
-				scene.triggerHook("onEnter").tweenChanges(true);
-				expect(scene.tweenChanges()).toBe(true);
-				ctrl.scrollTo(scene.scrollOffset() + scene.duration()).update(true);
-				expect($("#target").position().left).toBe(0); // position is still 0 because no time has passed and changes are tweened
-			});
-			it("converts to the right type", function () {
-				scene.tweenChanges("something");
-				expect(scene.tweenChanges()).toBe(true);
-				scene.tweenChanges(undefined);
-				expect(scene.tweenChanges()).toBe(false);
-			});
-		});
-
 		// GETTER ONLY
 
 		describe(".controller()", function () {
