@@ -274,8 +274,8 @@ gulp.task('sync:readme', function() {
 			.pipe(replace({
 				patterns: [
 					{
-						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(<\/a>)/gi,
-						replacement: "$1" + options.version + "$2"
+						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi,
+						replacement: "$1" + options.version + "$3"
 					}
 				]
 			}))
