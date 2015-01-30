@@ -1,6 +1,6 @@
 {
 	"name": "scrollmagic",
-	"version": "2.0.0-alpha",
+	"version": "2.0.0-beta",
 	"description": "The javascript library for doing magical scroll interactions.",
 	"homepage": "http://janpaepke.github.io/ScrollMagic/",
 	"repository": {

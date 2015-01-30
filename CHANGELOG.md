@@ -4,7 +4,7 @@ CHANGELOG
 ## 2.0.0 (unreleased)
 
 #### changes (non-breaking)
- - **removal of all dependencies (jQuery & GSAP). _ScrollMagic is now stand alone._**
+ - **removal of all dependencies (jQuery & GSAP). _ScrollMagic is now stand-alone._**
  - new file structure:
    - main module: 'ScrollMagic.js'
    - all available plugins in folder '/plugins'

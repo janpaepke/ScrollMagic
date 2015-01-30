@@ -310,7 +310,7 @@
 						TweenMax.to("#slide h3:last-child", 0.3, {color: "black"})
 					])
 					// unpin
-					.add(TweenMax.from("#unpin", .5, {top: "100%"}));
+					.add(TweenMax.from("#unpin", 0.5, {top: "100%"}));
 				// pin
 				new ScrollMagic.Scene({
 						triggerElement: "section#pin",
@@ -471,7 +471,7 @@
 							y: 10,
 							amount: 5,
 							duration: 0.1
-						})
+						});
 					})
 					.setTween(TweenMax.to("#info #sublinecover", 1, {left: "100%", ease: Linear.easeNone}));
 
