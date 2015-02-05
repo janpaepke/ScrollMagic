@@ -2,7 +2,7 @@
   "name": "scrollmagic",
   "title": "ScrollMagic",
   "version": "2.0.0-beta",
-  "description": "The javascript library for doing magical scroll interactions.",
+  "description": "The javascript library for magical scroll interactions.",
   "author": {
     "name": "Jan Paepke",
     "url": "http://www.janpaepke.de"

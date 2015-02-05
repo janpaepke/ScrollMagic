@@ -274,7 +274,13 @@ gulp.task('sync:readme', function() {
 			.pipe(replace({
 				patterns: [
 					{
+						// link to changelog
 						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi,
+						replacement: "$1" + options.version + "$3"
+					},
+					{
+						// cdnjs url
+						match: /(cdnjs.cloudflare.com\/ajax\/libs\/ScrollMagic\/)\d+\.\d+\.\d+(\-\w+)?(\/)/gi,
 						replacement: "$1" + options.version + "$3"
 					}
 				]
