@@ -15,4 +15,4 @@
  - add examples for new features
  - update svg example to new gsap?
  - review texts
- - document gulpfile options and new dev structure (CONTRIBUTING.md)
+ 

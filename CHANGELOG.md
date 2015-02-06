@@ -4,12 +4,12 @@ CHANGELOG
 ## 2.0.0 (unreleased)
 
 #### changes (non-breaking)
- - **removal of all dependencies (jQuery & GSAP). _ScrollMagic is now stand-alone._**
+ - **removal of all dependencies (jQuery & GSAP) – _ScrollMagic is now stand-alone._**
  - new file structure:
    - main module: 'ScrollMagic.js'
    - all available plugins in folder '/plugins'
- - new scene event: [add](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:add) fires when scene is added to a controller
- - new scene event: [remove](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:remove) fires when scene is removed from a controller
+ - new scene event: [add](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:add) fires when scene is added to a controller
+ - new scene event: [remove](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:remove) fires when scene is removed from a controller
  - option changes in `Scene.addIndicators()`:
    - indicators are now always on top (option `zindex` removed)
    - option `suffix` is renamed to `name`
@@ -96,7 +96,7 @@ CHANGELOG
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
    Furthemore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
-   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#progress).
+   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#progress).
  - **removed method `startPosition()`**  
    Method was marked deprecated since v1.0.7 and has now been replaced by `triggerPosition()`.  
    The terms "_offset_" and "_position_" were used too randomly.  
@@ -118,13 +118,13 @@ CHANGELOG
    All debug logging functionality was removed when using the minified version to save on filesize.
 
 #### features:
- - new controller method: [scrollTo](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.html#scrollTo)
- - new controller method: [scrollPos](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.html#scrollPos)
- - new scene method: [refresh](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#refresh)
- - new scene method: [setClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#setClassToggle), [removeClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#removeClassToggle) respectively
- - new scene event: [shift](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:shift) fires when scene position changes
- - new scene event: [destroy](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:destroy) fires when scene is destroyed
- - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#duration) to support dynamic updates in responsive layouts
+ - new controller method: [scrollTo](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollTo)
+ - new controller method: [scrollPos](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollPos)
+ - new scene method: [refresh](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#refresh)
+ - new scene method: [setClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#setClassToggle), [removeClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#removeClassToggle) respectively
+ - new scene event: [shift](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:shift) fires when scene position changes
+ - new scene event: [destroy](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:destroy) fires when scene is destroyed
+ - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#duration) to support dynamic updates in responsive layouts
  - docs: grouped methods for more clear arrangement
  - docs: various additions and clarifications
 

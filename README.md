@@ -6,7 +6,7 @@ ScrollMagic helps you to easily react to the user's current scroll position.
 It's the perfect library for you, if you want to ...
 
 * animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).
-* pin an element starting at a specific scroll position – either forever or for a limited amount of scroll progress (sticky elements).
+* pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).
 * toggle CSS classes of elements on and off based on scroll position.
 * effortlessly add parallax effects to your website.
 * create an infinitely scrolling page (ajax load of additional content).
@@ -18,13 +18,13 @@ Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the 
 
 ScrollMagic is a scroll interaction library.
 
-It is a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
+It's a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
 A plugin-based architecture offers easy customizability and extendability.
 
 To implement animations, ScrollMagic can work with multiple frameworks.
 The recommended solution is the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) due to its stability and feature richness. For a more lightweight approach the [VelocityJS](http://VelocityJS.org) framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply  using CSS and class toggles.
 
-Some of the advantages ScrollMagic offers:
+ScrollMagic was developed with these principles in mind:
 
 * optimized performance
 * lightweight (6KB gzipped)
@@ -75,7 +75,7 @@ __Option 4: CDN__
 If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/scrollmagic):
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/ScrollMagic.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0-beta/ScrollMagic.min.js
 ```
 All plugins and uncompressed files are also available on cdnjs.
 
@@ -105,7 +105,7 @@ To learn how to configure __RequireJS__, when using AMD, please [read here](http
 The basic ScrollMagic design pattern is one controller, which has one or more scenes attached to it.  
 Each scene is used to define what happens when the container is scrolled to a specific offset.
 
-This is a basic workflow example:
+Here's a basic workflow example:
 
 ```javascript
 // init controller
@@ -119,13 +119,13 @@ var scene = new ScrollMagic.Scene({
 				.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px – the scene's duration
 				.addTo(controller); // assign the scene to the controller
 ```
-To learn more about the basic ScrollMagic structure, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic).
+To learn more about the ScrollMagic code structure, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic).
 
 ##Help
 To get started, check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 
-If you're having trouble using ScrollMagic please read the [support guidelines](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
+If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
 Should you still be unable to figure it out, feel free to post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
 ##Browser Support
@@ -146,4 +146,4 @@ ScrollMagic is dual licensed under the MIT license and GPL.
 For more information click [here](LICENSE.md).
 
 ##Thanks
-This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebbel](https://github.com/grayghostvisuals).
+This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebel](https://github.com/grayghostvisuals).
