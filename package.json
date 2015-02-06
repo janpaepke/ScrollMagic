@@ -54,6 +54,7 @@
     "yargs": "^1.3.2"
   },
   "directories": {
+    "lib": "./scrollmagic",
     "doc": "./doc",
     "example": "./examples"
   },
@@ -77,5 +78,11 @@
     "parallax",
     "events",
     "classes"
+  ],
+  "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
+  "files": [
+    "scrollmagic",
+    "LICENSE.md",
+    "README.md"
   ]
 }
