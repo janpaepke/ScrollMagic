@@ -31,8 +31,8 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Callback Duration</h1>
-						<h2>Scene duration depending on window size.</h2>
+						<h1 class="badge gsap">Callback Duration</h1>
+						<h2>Use a function returning a scene's duration.</h2>
 						<p>
 							TODO: write
 							With some responsive layouts you might want the scene to take exactly as long as the height of the viewport is.<br>
@@ -42,33 +42,36 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 				</section>
-				<section class="demo fullheight responsiveDuration">
-					<div class="spacer s0" id="trigger"></div>
+				<section class="demo" style="perspective: 300px">
+					<div class="spacer s1"></div>
+					<div class="spacer s1" id="trigger"></div>
+					<div class="spacer s0"></div>
 					<div id="animate" class="box1 blue">
-						<p>Just breathe.</p>
+						<p>Da Flippity Flop</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
+					<div class="spacer s2"></div>
 					<script>
 						$(document).ready(function($) {
-							// make a variable to store the window height.
-							var windowHeight = $(window).innerHeight();
+							// make a variable to store the mouse pos.
+							var mouseTopPerc = 0;
 							// function to be used to retrieve variable
-							function getWindowHeight() {
-								return windowHeight;
+							function getMousePos() {
+								return (mouseTopPerc * 800) + 10;
 							}
-							// update window height on resize
-							$(window).on("resize", function () {
-								windowHeight = $(window).innerHeight();
+							// update variable on mouse move
+							$("body").on("mousemove", function (e) {
+								mouseTopPerc = e.clientY/$(this).innerHeight();
 							});							
 
 							// init controller
 							var controller = new ScrollMagic.Controller();
 
 							// build tween
-							var tween = TweenMax.to("#animate", 0.5, {scale: 1.3, repeat: 5, yoyo: true});
+							var tween = TweenMax.to("#animate", 0.5, {rotationY: 180});
 
-							// build scene and supply getWindowHeight function as duration
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: "100%"})
+							// build scene and supply getMousePos function as duration
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: getMousePos})
 											.setTween(tween)
 											.addIndicators() // add indicators (requires plugin)
 											.addTo(controller);

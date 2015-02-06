@@ -42,12 +42,23 @@ var
 		}
 	};
 
+// badges
+var badges = {
+	'gsap' : {
+		url : "http://janpaepke.github.io/ScrollMagic/docs/animation.GSAP.html",
+		name : "the Greensock Animation Platform"
+	},
+	'velocity' : {
+		url : "http://janpaepke.github.io/ScrollMagic/docs/animation.Velocity.html",
+		name : "Velocity.js"
+	}
+};
 
 // vars
 
 var
 	path = window.location.pathname.split("/"),
-	isRoot = (path.length <= 1 || MENU[path[path.length-2]] == undefined);
+	isRoot = (path.length <= 1 || MENU[path[path.length-2]] === undefined);
 
 // functions
 
@@ -61,10 +72,10 @@ function getCode($elem) {
 
 
 	// kill empty lines at start/end
-	while (lines.length > 0 && $.trim(lines[0]) == "") {
+	while (lines.length > 0 && $.trim(lines[0]) === "") {
 		lines.shift();
 	}
-	while (lines.length > 0 && $.trim(lines[lines.length - 1]) == "") {
+	while (lines.length > 0 && $.trim(lines[lines.length - 1]) === "") {
 		lines.pop();
 	}
 
@@ -84,7 +95,7 @@ function getCode($elem) {
 	return {
 		source: lines.join("\n"),
 		linenumbers: linenumbers
-	}
+	};
 }
 
 function showCode ($elem) {
@@ -203,8 +214,8 @@ $(document).ready(function () {
 			$.each(value.sub, function (key, value) {
 				var
 					$li = $("<li>").appendTo($ul_sub),
-					$a = $("<a href='" + path + "/" + key + "'>" + value + "</a>").appendTo($li)
-			})
+					$a = $("<a href='" + path + "/" + key + "'>" + value + "</a>").appendTo($li);
+			});
 		});
 
 		if ($menu.parent().is("body")) {
@@ -240,7 +251,7 @@ $(document).ready(function () {
 	$("a.viewsource").each(function () {
 		var $parent = $(this).parents(".demowrap, section.demo:not(.demowrap .demo), div#example-wrapper, body").first().clone();
 		$(this).data("code", $parent.clone());
-	})
+	});
 
 	// build sliders
 	$("div.slider+input")
@@ -250,14 +261,29 @@ $(document).ready(function () {
 		})
 		.prev()
 			.append("<div class=\"trackbar\"></div>")
-			.append("<div class=\"handle\"></div>")
+			.append("<div class=\"handle\"></div>");
 
+
+	// add tooltips to badges
+	$.each(badges, function (key, badge) {
+		$("h1.badge." + key).attr("title", "This example requires the " + badge.name + ".");
+	});
 
 });
 
 // event listener
 $(document).on("click", "ul#menu > li > a", function (e) {
 	e.preventDefault();
+});
+
+$(document).on("click", "h1.badge", function (e) {
+	$.each(badges, function (key, badge) {
+		if ($(e.target).hasClass(key)) {
+			e.preventDefault();
+			window.open(badge.url, "_blank");
+			return;
+		}
+	});
 });
 
 $(document).on("click", "a.viewsource", function (e) {
@@ -301,7 +327,7 @@ $(document).on("mouseup mousemove", function (e) {
 				left: data.left + e.pageX
 			});
 		}
-	})
+	});
 	$(".slider.dragging").each(function (f) {
 		var data = $(this).data("drag");
 		if (data) {
@@ -331,7 +357,7 @@ $(document).on("mouseup mousemove", function (e) {
 				$input.change();	
 			}
 		}
-	})
+	});
 });
 
 $(document).on("mouseup", function (e) {
@@ -344,7 +370,7 @@ $(document).on("mouseup", function (e) {
 
 $(document).on("orientationchange", function (e) {
 	if ($("#example-wrapper.horizontal").length > 0) {
-		$("meta[name='viewport']").attr("content", (window.orientation == 0 ? "width" : "height")+ "=500");
+		$("meta[name='viewport']").attr("content", (window.orientation === 0 ? "width" : "height")+ "=500");
 	}
 });
 $(document).trigger("orientationchange");

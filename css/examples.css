@@ -122,10 +122,36 @@ section.demo.doublewidth, .spacer.doublewidth {
 .horizontal section.demo.fullwidth {
 	min-width: 100%;
 }
-
 /*
 	Elements
 */
+h1.badge {
+	/*cursor: text;*/
+	pointer-events: none;
+}
+h1.badge:after {
+	vertical-align: text-top;
+	display: inline-block;
+	position: absolute;
+	cursor: pointer;
+	margin-left: 10px;
+	font-family: "Source Sans Pro", Arial, sans-serif;
+	font-weight: bold;
+	font-style: normal;
+	color: #FFFFFF;
+	font-size: 12px;
+	padding: 2px 5px;
+	border-radius: 10px;
+	pointer-events: all;
+}
+h1.badge.gsap:after {
+	content: "GSAP";
+	background-color: #61AC27;
+}
+h1.badge.velocity:after {
+	content: "Velocity.js";
+	background-color: #f53a47;
+}
 .spacer {
 	text-align: center;
 	min-height: 100px;
