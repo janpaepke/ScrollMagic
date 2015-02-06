@@ -113,10 +113,10 @@ var controller = new ScrollMagic.Controller();
 
 // create a scene
 new ScrollMagic.Scene({
-		duration: 100,	// how long does this scene last (see below)
+		duration: 100,	// the scne should last for a scroll distance of 100px
 		offset: 50		// start this scene after scrolling for 50px
 	})
-	.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px – the scene's duration
+	.setPin("#my-sticky-element") // pins the element for the the scene's duration
 	.addTo(controller); // assign the scene to the controller
 ```
 To learn more about the ScrollMagic code structure, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic).
