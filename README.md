@@ -111,13 +111,13 @@ Here's a basic workflow example:
 // init controller
 var controller = new ScrollMagic.Controller();
 
-// assign handler "scene" and add it to controller
-var scene = new ScrollMagic.Scene({
-					duration: 100,	// how long does this scene last (see below)
-					offset: 50		// start this scene after scrolling for 50px
-				})
-				.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px – the scene's duration
-				.addTo(controller); // assign the scene to the controller
+// create a scene
+new ScrollMagic.Scene({
+		duration: 100,	// how long does this scene last (see below)
+		offset: 50		// start this scene after scrolling for 50px
+	})
+	.setPin("#my-sticky-element") // pins the element for a scroll distance of 100px – the scene's duration
+	.addTo(controller); // assign the scene to the controller
 ```
 To learn more about the ScrollMagic code structure, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic).
 
@@ -143,7 +143,7 @@ I started this project to extend my understanding of javascript (which it has).
 ##License
 
 ScrollMagic is dual licensed under the MIT license and GPL.  
-For more information click [here](LICENSE.md).
+For more information click [here](https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md).
 
 ##Thanks
 This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebel](https://github.com/grayghostvisuals).
