@@ -2,7 +2,7 @@
 - [Troubleshooting](#troubleshooting): How to resolve ScrollMagic issues
 - [Support Guidelines](#support-guidelines): What to keep in mind when asking for help
 - [Development Contribution](#development-contribution): Digging into the ScrollMagic source code
-- [Library Support](#development-contribution): How to support the project outside of code contribution
+- [Library Support](#library-support): How to support the project outside of code contribution
 
 ---
 
