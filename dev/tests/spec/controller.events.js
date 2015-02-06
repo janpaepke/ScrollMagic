@@ -25,8 +25,13 @@ define(["ScrollMagic"], function (ScrollMagic) {
 			$c.on("resize", resizeSpy);
 			setTimeout(function(){
 				expect(resizeSpy).toHaveBeenCalled();
+				$c.height(200);
+			}, 110); // 100 is default val for refresh interval + some execution time...
+			setTimeout(function(){
+				expect(resizeSpy).toHaveBeenCalled();
+				expect(resizeSpy.calls.count()).toBe(2);
 				done();
-			}, 101); // 100 is default val for refresh interval
+			}, 220); // 100 is default val for refresh interval + some execution time...
 		});
 
 		it("calls onChange on container resize", function(done) {

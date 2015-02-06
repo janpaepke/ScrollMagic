@@ -55,7 +55,7 @@ ScrollMagic.Controller = function(options) {
 		_viewPortSize = 0,
 		_enabled = true,
 		_updateCycle,
-		_refreshInterval;
+		_refreshTimeout;
 
 	/*
 	 * ----------------------------------------------------------------
@@ -91,12 +91,16 @@ ScrollMagic.Controller = function(options) {
 		_options.container.addEventListener("resize", onChange);
 		_options.container.addEventListener("scroll", onChange);
 
-		_options.refreshInterval = parseInt(_options.refreshInterval);
-		if (_options.refreshInterval > 0) {
-			_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
-		}
+		_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
+		scheduleRefresh();
 
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
+	};
+
+	var scheduleRefresh = function () {
+		if (_options.refreshInterval > 0) {
+			_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
+		}
 	};
 
 	/**
@@ -201,6 +205,7 @@ ScrollMagic.Controller = function(options) {
 		_sceneObjects.forEach(function (scene, index) {// refresh all scenes
 			scene.refresh();
 		});
+		scheduleRefresh();
 	};
 
 	// (BUILD) - REMOVE IN MINIFY - START
@@ -600,7 +605,7 @@ ScrollMagic.Controller = function(options) {
 	 * @returns {null} Null to unset handler variables.
 	 */
 	this.destroy = function (resetScenes) {
-		window.clearTimeout(_refreshInterval);
+		window.clearTimeout(_refreshTimeout);
 		var i = _sceneObjects.length;
 		while (i--) {
 			_sceneObjects[i].destroy(resetScenes);
