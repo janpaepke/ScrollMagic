@@ -178,6 +178,7 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var onChange = function (e) {
+		log(3, "event fired causing an update:", e.type);
 		if (e.type == "resize") {
 			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		}
@@ -359,9 +360,9 @@ ScrollMagic.Controller = function(options) {
 		} else {
 			if (immediately) {
 				Scene.update(true);
-			} else if (!_updateScenesOnNextCycle && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle, all connected scenes are gonna be updated anyway...
+			} else if (_updateScenesOnNextCycle !== true && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle is true, all connected scenes are already scheduled for update
 				// prep array for next update cycle
-				_updateScenesOnNextCycle = [];
+				_updateScenesOnNextCycle = _updateScenesOnNextCycle || [];
 				if (_updateScenesOnNextCycle.indexOf(Scene) == -1) {
 					_updateScenesOnNextCycle.push(Scene);	
 				}
