@@ -134,8 +134,8 @@
 			}
 
 			_elems = _util.get.elements(elems);
-			_properties = properties;
-			_options = options;
+			_properties = properties || {};
+			_options = options || {};
 			_dataID = "ScrollMagic." + NAMESPACE + "[" + (autoindex++) + "]";
 
 			if (_options.queue !== undefined) {
