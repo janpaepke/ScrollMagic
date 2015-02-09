@@ -243,6 +243,7 @@ h1.badge.velocity:after {
 	display: inline-block;
 	position: relative;
 	border-radius: 8px;
+	border: 0px solid white;
 	text-align: center;
 	vertical-align: middle;
 	padding: 0 5px;

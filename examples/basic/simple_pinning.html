@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=500" />
 	<meta name="keywords" content="ScrollMagic, example, scrolling, attaching, scrollbar, pin, pinning, fixed, sticky" />
 	<meta name="author"	content="Jan Paepke (www.janpaepke.de)" />
-	<title>Simple Pinning - Examples - ScrollMagic</title>
+	<title>Sticky Elements (pinning) - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -42,11 +42,7 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
-						var controller;
-						$(document).ready(function($) {
-							// init controller
-							controller = new ScrollMagic.Controller();
-						});
+						var controller = new ScrollMagic.Controller();
 					</script>
 				</section>
 				<section class="demo">
@@ -58,13 +54,11 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
 											.setPin("#pin1")
 											.addIndicators() // add indicators (requires plugin)
 											.addTo(controller);
-						});
 					</script>
 				</section>
 				<section class="demo">
@@ -76,13 +70,11 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#pin2"})
 											.setPin("#pin2")
 											.addIndicators() // add indicators (requires plugin)
 											.addTo(controller);
-						});
 					</script>
 				</section>			
 				<div class="spacer s_viewport"></div>

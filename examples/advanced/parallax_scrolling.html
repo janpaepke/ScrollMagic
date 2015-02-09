@@ -42,11 +42,7 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
-						var controller;
-						$(document).ready(function($) {
-							// init controller
-							controller = new ScrollMagic.Controller({vertical: false});
-						});
+						var controller = new ScrollMagic.Controller({vertical: false});
 					</script>
 				</section>
 				<div class="spacer s0"></div>
@@ -62,22 +58,20 @@
 						<div class="layer3"></div>
 					</div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = new TimelineMax ()
-								.add([
-									TweenMax.to("#parallaxContainer .layer1", 1, {backgroundPosition: "-40% 0", ease: Linear.easeNone}),
-									TweenMax.to("#parallaxContainer .layer2", 1, {backgroundPosition: "-500% 0", ease: Linear.easeNone}),
-									TweenMax.to("#parallaxContainer .layer3", 1, {backgroundPosition: "-225% 0", ease: Linear.easeNone})
-								]);
+						// build tween
+						var tween = new TimelineMax ()
+							.add([
+								TweenMax.to("#parallaxContainer .layer1", 1, {backgroundPosition: "-40% 0", ease: Linear.easeNone}),
+								TweenMax.to("#parallaxContainer .layer2", 1, {backgroundPosition: "-500% 0", ease: Linear.easeNone}),
+								TweenMax.to("#parallaxContainer .layer3", 1, {backgroundPosition: "-225% 0", ease: Linear.easeNone})
+							]);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#parallaxContainer", duration: 2000, offset: 450})
-											.setTween(tween)
-											.setPin("#parallaxContainer")
-											.addIndicators() // add indicators (requires plugin)
-											.addTo(controller);
-						});
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#parallaxContainer", duration: 2000, offset: 450})
+										.setTween(tween)
+										.setPin("#parallaxContainer")
+										.addIndicators() // add indicators (requires plugin)
+										.addTo(controller);
 					</script>
 				</section>
 				<div class="spacer s4"></div>
@@ -93,22 +87,20 @@
 						
 					</div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = new TimelineMax ()
-								.add([
-									TweenMax.fromTo("#parallaxText .layer1", 1, {scale: 3, autoAlpha: 0.05, left: 300}, {left: -350, ease: Linear.easeNone}),
-									TweenMax.fromTo("#parallaxText .layer2", 1, {scale: 2, autoAlpha: 0.3, left: 150}, {left: -175, ease: Linear.easeNone})
-								]);
+						// build tween
+						var tween = new TimelineMax ()
+							.add([
+								TweenMax.fromTo("#parallaxText .layer1", 1, {scale: 3, autoAlpha: 0.05, left: 300}, {left: -350, ease: Linear.easeNone}),
+								TweenMax.fromTo("#parallaxText .layer2", 1, {scale: 2, autoAlpha: 0.3, left: 150}, {left: -175, ease: Linear.easeNone})
+							]);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: $(window).width()})
-											.setTween(tween)
-											.addTo(controller);
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: $(window).width()})
+										.setTween(tween)
+										.addTo(controller);
 
-							// show indicators (requires debug extension)
-							scene.addIndicators();
-						});
+						// show indicators (requires debug extension)
+						scene.addIndicators();
 					</script>
 				</section>
 				<div class="spacer s_viewport"></div>

@@ -45,11 +45,7 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
-						var controller;
-						$(document).ready(function($) {
-							// init controller
-							controller = new ScrollMagic.Controller();
-						});
+						var controller = new ScrollMagic.Controller();
 					</script>
 				</section>
 				<section class="demo">
@@ -61,19 +57,17 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.fromTo("#animate1", 1,
-														{left: -100},
-														{left: 100, repeat: -1, yoyo: true, ease: Circ.easeInOut}
-													);
+						// build tween
+						var tween = TweenMax.fromTo("#animate1", 1,
+													{left: -100},
+													{left: 100, repeat: -1, yoyo: true, ease: Circ.easeInOut}
+												);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 200, offset: -50})
-											.setTween(tween)
-											.addIndicators() // add indicators (requires plugin)
-											.addTo(controller);
-						});
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 200, offset: -50})
+										.setTween(tween)
+										.addIndicators() // add indicators (requires plugin)
+										.addTo(controller);
 					</script>
 				</section>
 				<section class="demo">
@@ -86,71 +80,61 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// set start offset
-							TweenMax.set("#animate2", {left: "-=100"});
+						// set start offset
+						TweenMax.set("#animate2", {left: "-=100"});
 
-							var $box = $("#animate2 p");
+						var $box = $("#animate2 p");
 
-							// build tween
-							var tween = new TimelineMax()
-								.add(
-									TweenMax.to("#animate2", 1, {top: "-=200",
-										onStart: function () {$box.html("This");},
-										onReverseComplete: function () {$box.html("Let's draw!");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {top: "+=200", left: "+=200",
-										onStart: function () {$box.html("is");},
-										onReverseComplete: function () {$box.html("This");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {top: "-=200",
-										onStart: function () {$box.html("the");},
-										onReverseComplete: function () {$box.html("is");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {left: "-=200",
-										onStart: function () {$box.html("house");},
-										onReverseComplete: function () {$box.html("the");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {top: "-=100", left: "+=100",
-										onStart: function () {$box.html("of");},
-										onReverseComplete: function () {$box.html("house");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {top: "+=100", left: "+=100",
-										onStart: function () {$box.html("San...");},
-										onReverseComplete: function () {$box.html("of");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {top: "+=200", left: "-=200",
-										onStart: function () {$box.html("...ta");},
-										onReverseComplete: function () {$box.html("San...");}
-									})
-								)
-								.add(
-									TweenMax.to("#animate2", 1, {left: "+=200",
-										onStart: function () {$box.html("Clause.");},
-										onReverseComplete: function () {$box.html("...ta");}
-									})
-								);
+						// build tween
+						var tween = new TimelineMax()
+							.to("#animate2", 1, {top: "-=200",
+									onStart: function () {$box.html("This");},
+									onReverseComplete: function () {$box.html("Let's draw!");}
+								}
+							)
+							.to("#animate2", 1, {top: "+=200", left: "+=200",
+									onStart: function () {$box.html("is");},
+									onReverseComplete: function () {$box.html("This");}
+								}
+							)
+							.to("#animate2", 1, {top: "-=200",
+									onStart: function () {$box.html("the");},
+									onReverseComplete: function () {$box.html("is");}
+								}
+							)
+							.to("#animate2", 1, {left: "-=200",
+									onStart: function () {$box.html("house");},
+									onReverseComplete: function () {$box.html("the");}
+								}
+							)
+							.to("#animate2", 1, {top: "-=100", left: "+=100",
+									onStart: function () {$box.html("of");},
+									onReverseComplete: function () {$box.html("house");}
+								}
+							)
+							.to("#animate2", 1, {top: "+=100", left: "+=100",
+									onStart: function () {$box.html("San...");},
+									onReverseComplete: function () {$box.html("of");}
+								}
+							)
+							.to("#animate2", 1, {top: "+=200", left: "-=200",
+									onStart: function () {$box.html("...ta");},
+									onReverseComplete: function () {$box.html("San...");}
+								}
+							)
+							.to("#animate2", 1, {left: "+=200",
+									onStart: function () {$box.html("Clause.");},
+									onReverseComplete: function () {$box.html("...ta");}
+								}
+							);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2"})
-											.setTween(tween)
-											.addTo(controller);
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2"})
+										.setTween(tween)
+										.addTo(controller);
 
-							// show indicators (requires debug extension)
-							scene.addIndicators();
-						});
+						// show indicators (requires debug extension)
+						scene.addIndicators();
 					</script>
 				</section>
 				<section class="demo">
@@ -167,18 +151,16 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.to("#animate3", 1, {className: "+=fish"});
+						// build tween
+						var tween = TweenMax.to("#animate3", 1, {className: "+=fish"});
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger3", duration: 200, offset: -50})
-											.setTween(tween)
-											.addTo(controller);
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger3", duration: 200, offset: -50})
+										.setTween(tween)
+										.addTo(controller);
 
-							// show indicators (requires debug extension)
-							scene.addIndicators();
-						});
+						// show indicators (requires debug extension)
+						scene.addIndicators();
 					</script>
 				</section>
 				<section class="demo" style="overflow-x: hidden">
@@ -200,18 +182,16 @@
 					<div class="animate4 box2 black outline"></div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.staggerFromTo(".animate4", 2, {left: 700}, {left: 0, ease: Back.easeOut}, 0.15);
+						// build tween
+						var tween = TweenMax.staggerFromTo(".animate4", 2, {left: 700}, {left: 0, ease: Back.easeOut}, 0.15);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger4", duration: 300})
-											.setTween(tween)
-											.addTo(controller);
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger4", duration: 300})
+										.setTween(tween)
+										.addTo(controller);
 
-							// show indicators (requires debug extension)
+						// show indicators (requires debug extension)
 							scene.addIndicators();
-						});
 					</script>
 				</section>		
 				<div class="spacer s_viewport"></div>

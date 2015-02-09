@@ -19,9 +19,7 @@
 	<script type="text/javascript" src="../../js/lib/modernizr.custom.min.js"></script>
 	<script type="text/javascript" src="../../js/examples.js"></script>
 	
-	<script type="text/javascript" src="../../js/lib/greensock/TweenMax.min.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
-	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/animation.gsap.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
 </head>
 <body>
@@ -31,7 +29,7 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1 class="badge gsap">Removing & Destroying</h1>
+						<h1>Removing & Destroying</h1>
 						<h2>Free up some resources.</h2>
 						<p>
 							When you're done using ScrollMagic you might want to disrecard it to free up some resources. For this purpose both the ScrollMagic Controller and the ScrollScene posess a destroy method.<br>
@@ -68,37 +66,31 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// init controller
-							var controller = new ScrollMagic.Controller({loglevel: 3});
+						// init controller
+						var controller = new ScrollMagic.Controller({loglevel: 3});
 
-							// build tween
-							var tween = TweenMax.to("#target", 0.5, {css: {scaleX: 1, scaleY: 1}, ease: Linear.easeNone});
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300, loglevel: 3})
+										.setPin("#destroybox")
+										.addIndicators() // add indicators (requires plugin)
+										.addTo(controller);
 
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300, loglevel: 3})
-											.setTween(tween)
-											.setPin("#destroybox")
-											.addIndicators() // add indicators (requires plugin)
-											.addTo(controller);
-
-							$("a#destroy").on("click", function (e) {
-								e.preventDefault();
-								if ($(this).hasClass("disabled")) {
-									alert("Already removed. Please relead page to try again.");
+						$("a#destroy").on("click", function (e) {
+							e.preventDefault();
+							if ($(this).hasClass("disabled")) {
+								alert("Already removed. Please relead page to try again.");
+							} else {
+								$(this).addClass("disabled");
+								var reset = $("#reset").prop("checked");
+								if ($("#destroyController").prop("checked")) {
+									controller.destroy(reset);
+									controller = null;
 								} else {
-									$(this).addClass("disabled");
-									var reset = $("#reset").prop("checked");
-									if ($("#destroyController").prop("checked")) {
-										controller.destroy(reset);
-										controller = null;
-									} else {
-										scene.destroy(reset);
-									}
-									scene = null;
-									tween = null;
+									scene.destroy(reset);
 								}
-							});
+								scene = null;
+								tween = null;
+							}
 						});
 					</script>
 				</section>

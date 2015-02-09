@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=500" />
 	<meta name="keywords" content="ScrollMagic, example, scrolling, attaching, scrollbar, tween, tweenmax" />
 	<meta name="author"	content="Jan Paepke (www.janpaepke.de)" />
-	<title>Simple Tweening - Examples - ScrollMagic</title>
+	<title>Animating with GSAP - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
@@ -37,14 +37,15 @@
 							<li>When no duration is defined for the scene, the tween will simply start playing when the scroll reaches the trigger position.</li>
 							<li>If the scene has a duration the progress of the tween will directly correspond to the scroll position.</li>
 						</ol>
+						<p>
+							This example uses the shorthand version of <a href="http://janpaepke.github.io/ScrollMagic/docs/animation.GSAP.html#Scene.setTween" target="_blank">Scene.setTween()</a> to add <a href="http://greensock.com/docs/#/HTML5/GSAP/TweenMax/to/" target="_blank">TweenMax.to()</a> animations.<br>
+							To see how to build more advanced tweens check out the <a href="../advanced/advanced_tweening.html">Advanced Tweening Example<a>.
+						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
-						var controller;
-						$(document).ready(function($) {
-							// init controller
-							controller = new ScrollMagic.Controller();
-						});
+						// init controller
+						var controller = new ScrollMagic.Controller();
 					</script>
 				</section>
 				<section class="demo">
@@ -56,16 +57,13 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.to("#animate1", 0.5, {backgroundColor: "green", scale: 2.5});
-
 							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1"})
-											.setTween(tween)
+							var scene = new ScrollMagic.Scene({
+												triggerElement: "#trigger1"
+											})
+											.setTween("#animate1", 0.5, {backgroundColor: "green", scale: 2.5}) // trigger a TweenMax.to tween
 											.addIndicators() // add indicators (requires plugin)
 											.addTo(controller);
-						});
 					</script>
 				</section>
 				<section class="demo">
@@ -78,19 +76,12 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// build tween
-							var tween = TweenMax.fromTo("#animate2", 0.5, 
-									{"border-top": "0px solid white"},
-									{"border-top": "30px solid white", backgroundColor: "blue", scale: 0.7}
-								);
-
-							// build scene
-							var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 300})
-											.setTween(tween)
-											.addIndicators() // add indicators (requires plugin)
-											.addTo(controller);
-						});
+						// build scene
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 300})
+										// animate color and top border in relation to scroll position
+										.setTween("#animate2", {borderTop: "30px solid white", backgroundColor: "blue", scale: 0.7}) // the tween durtion can be omitted and defaults to 1
+										.addIndicators() // add indicators (requires plugin)
+										.addTo(controller);
 					</script>
 				</section>
 				<div class="spacer s_viewport"></div>

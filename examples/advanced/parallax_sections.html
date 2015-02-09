@@ -40,11 +40,6 @@
 						<p>
 							The DOM is very straight forward and consists of consecutive containers.
 						</p>
-						<p>
-							<b>Please Note:</b> For brevity reasons this example uses fixed durations.<br>
-							This means the parallax movement won't exactly look the same, if the user resizes the window.<br>
-							To learn how to use dynamic durations, please check out the expert example <a href="../expert/responsive_duration.html">Responsive Duration</a>.
-						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 				</section>
@@ -75,27 +70,24 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// init controller
-							var controller = new ScrollMagic.Controller({globalSceneOptions: {triggerHook: "onEnter", duration: $(window).height()*2}});
+						// init controller
+						var controller = new ScrollMagic.Controller({globalSceneOptions: {triggerHook: "onEnter", duration: "200%"}});
 
-							// build scenes
-							new ScrollMagic.Scene({triggerElement: "#parallax1"})
-											.setTween(TweenMax.from("#parallax1 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addIndicators()
-											.addTo(controller);
+						// build scenes
+						new ScrollMagic.Scene({triggerElement: "#parallax1"})
+										.setTween(TweenMax.from("#parallax1 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.addIndicators()
+										.addTo(controller);
 
-							new ScrollMagic.Scene({triggerElement: "#parallax2"})
-											.setTween(TweenMax.from("#parallax2 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addIndicators()
-											.addTo(controller);
+						new ScrollMagic.Scene({triggerElement: "#parallax2"})
+										.setTween(TweenMax.from("#parallax2 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.addIndicators()
+										.addTo(controller);
 
-							new ScrollMagic.Scene({triggerElement: "#parallax3"})
-											.setTween(TweenMax.from("#parallax3 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addIndicators()
-											.addTo(controller);
-
-						});
+						new ScrollMagic.Scene({triggerElement: "#parallax3"})
+										.setTween(TweenMax.from("#parallax3 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.addIndicators()
+										.addTo(controller);
 					</script>
 				</section>
 				<div class="spacer s_viewport"></div>

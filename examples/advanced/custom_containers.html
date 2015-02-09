@@ -48,17 +48,15 @@
 						</div>
 						<div class="spacer s3"></div>
 						<script>
-							$(document).ready(function($) {
-								// init controller
-								var controller1 = new ScrollMagic.Controller({container: "#container1"});
+							// init controller
+							var controller1 = new ScrollMagic.Controller({container: "#container1"});
 
-								// build scene
-								var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
-									.addTo(controller1)
-									.setTween(TweenMax.to("#container1 .animated", 0.5, {backgroundColor: "green"}))
-									.addIndicators() // add indicators (requires plugin)
-									.setPin("#container1 .animated");
-							});
+							// build scene
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
+								.addTo(controller1)
+								.setTween(TweenMax.to("#container1 .animated", 0.5, {backgroundColor: "green"}))
+								.addIndicators() // add indicators (requires plugin)
+								.setPin("#container1 .animated");
 						</script>
 					</section>
 			</div>
@@ -76,17 +74,15 @@
 						</div>
 						<div class="spacer s4"></div>
 						<script>
-							$(document).ready(function($) {
-								// init controller
-								var controller2 = new ScrollMagic.Controller({container: "#container2", vertical: false});
+							// init controller
+							var controller2 = new ScrollMagic.Controller({container: "#container2", vertical: false});
 
-								// build scene
-								var scene2 = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 300})
-									.addTo(controller2)
-									.addIndicators() // add indicators (requires plugin)
-									.setTween(TweenMax.to("#container2 .animated", 0.5, {backgroundColor: "green"}))
-									.setPin("#container2 .animated");
-							});
+							// build scene
+							var scene2 = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 300})
+								.addTo(controller2)
+								.addIndicators() // add indicators (requires plugin)
+								.setTween(TweenMax.to("#container2 .animated", 0.5, {backgroundColor: "green"}))
+								.setPin("#container2 .animated");
 						</script>
 					</section>
 				</div>

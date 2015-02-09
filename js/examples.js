@@ -4,27 +4,29 @@ var
 		"basic": {
 			title: "Basic",
 			sub: {
-				"simple_tweening.html" :	"Simple Tweening",
-				"simple_pinning.html" :		"Simple Pinning",
-				"going_horizontal.html" :	"Going Horizontal",
-				"debugging.html" :				"Debugging",
-				"custom_actions.html" :		"Custom Actions",
-				"scene_manipulation.html" :	"Scene Manipulation",
-				"class_toggles.html" :		"CSS Class Toggles",
-				"responsive_duration.html" : "Responsive Duration",
+				"scene_manipulation.html" :		"Scene Manipulation",
+				"simple_tweening.html" :			"Animating with GSAP",
+				"simple_velocity.html" :			"Animating with Velocity",
+				"simple_pinning.html" :				"Sticky Elements (pinning)",
+				"going_horizontal.html" :			"Going Horizontal",
+				"class_toggles.html" :				"CSS Class Toggles",
+				"responsive_duration.html" :	"Responsive Duration",
+				"custom_actions.html" :				"Custom Actions",
+				"debugging.html" :						"Debugging",
 			}
 		},
 		"advanced": {
 			title: "Advanced",
 			sub: {
+				"animate_css.html" :						"Animating with CSS",
 				"advanced_tweening.html" :			"Advanced Tweening",
+				"svg_drawing.html" :						"SVG Drawing",
 				"custom_containers.html" :			"Custom Containers",
 				"mobile_basic.html" :						"Mobile Support (Basic)",
 				"anchor_link_scrolling.html" :	"Anchor Link Scrolling",
 				"parallax_scrolling.html" :			"Parallax Scrolling",
 				"parallax_sections.html" :			"Parallax Sections",
 				"infinite_scrolling.html" :			"Infinite Scrolling",
-				"svg_drawing.html" :						"SVG Drawing"
 			}
 		},
 		"expert": {
