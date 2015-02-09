@@ -14,32 +14,23 @@ var tests = [
 	'spec/plugins/jquery.ScrollMagic',
 ];
 
-// prepare test env
+var specDeps = [
+	'jquery',
+	'jasmine-jquery'
+];
+
+// prepare test env - global settings
 require.config({
 	baseUrl: '/base',
 	paths: {
-		// libs
-		"jquery": "js/lib/jquery.min",
-		"jasmine-jquery": "dev/tests/karma/vendor/jasmine-jquery",
 		// settings
 		"jasmine-matchers": "dev/tests/karma/jasmine.matchers"
 	},
-	shim: {
-		'jasmine-jquery': ['jquery']
-	},
-
 	deps: [
 		// matchers
 		'jasmine-matchers',
-
-		// libs
-		'jquery',
-		'jasmine-jquery'
 	],
-
 	callback: function (globalMatchers) {
-		// prepare fixtures
-		jasmine.getFixtures().fixturesPath = '/base/dev/tests/fixtures';
 		// set global matchers
 		beforeEach(function() {
 			jasmine.addMatchers(globalMatchers.methodTests);
@@ -62,12 +53,16 @@ function loadTests() {
 				// specs
 				"spec": "dev/tests/spec",
 				// libs
-				"jquery": "js/lib/jquery.min",
 				"velocity": "js/lib/velocity.min",
 				"TweenLite": "js/lib/greensock/TweenLite.min",
 				"TweenMax": "js/lib/greensock/TweenMax.min",
 				"TimelineLite": "js/lib/greensock/TimelineLite.min",
-				"TimelineMax": "js/lib/greensock/TimelineMax.min"
+				"TimelineMax": "js/lib/greensock/TimelineMax.min",
+				"jquery": "js/lib/jquery.min",
+				"jasmine-jquery": "dev/tests/karma/vendor/jasmine-jquery"
+			},
+			shim: {
+				'jasmine-jquery': ['jquery']
 			},
 			packages: [
 				{
@@ -84,10 +79,13 @@ function loadTests() {
 				}
 			},
 
-			deps: [tests[i]],
+			deps: specDeps.concat(tests[i]),
 
 			callback: function () {
 				if (++loaded === tests.length) {
+					// prepare fixtures
+					jasmine.getFixtures().fixturesPath = '/base/dev/tests/fixtures';
+					// start runner
 					window.__karma__.start();
 				}
 			}
