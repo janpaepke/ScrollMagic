@@ -4,10 +4,10 @@ var
 		"basic": {
 			title: "Basic",
 			sub: {
-				"scene_manipulation.html" :		"Scene Manipulation",
 				"simple_tweening.html" :			"Animating with GSAP",
 				"simple_velocity.html" :			"Animating with Velocity",
 				"simple_pinning.html" :				"Sticky Elements (pinning)",
+				"scene_manipulation.html" :		"Scene Manipulation",
 				"going_horizontal.html" :			"Going Horizontal",
 				"class_toggles.html" :				"CSS Class Toggles",
 				"responsive_duration.html" :	"Responsive Duration",
@@ -205,48 +205,68 @@ $(document).ready(function () {
 	
 
 	// build menu
-	var $menu = $("ul#menu");
+	var
+		$menu = $("ul#menu")
+			.wrap("<div>"),
+		$menuwrap = $menu.parent()
+			.addClass("menuwrap");
+
 	if ($menu.length > 0) {
-		$.each(MENU, function (key, value) {
+		var
+			path = document.location.href.split("/"),
+			curSub = path.pop(),
+			curMain = path.pop(),
+			lastExample, prevExample, nextExample, foundExample;
+		$.each(MENU, function (mainID, submenu) {
 			var
-				path = isRoot ? key : "../" + key;
+				path = isRoot ? mainID : "../" + mainID;
 				$li = $("<li>").appendTo($menu),
-				$a = $("<a href='" + path + "'>" + value.title + "</a>").appendTo($li),
+				$a = $("<a href='" + path + "'>" + submenu.title + "</a>").appendTo($li),
 				$ul_sub = $("<ul>").appendTo($li);
-			$.each(value.sub, function (key, value) {
+			if (mainID == curMain) {
+				$li.addClass("current");
+			}
+			$.each(submenu.sub, function (subURL, subTitle) {
 				var
 					$li = $("<li>").appendTo($ul_sub),
-					$a = $("<a href='" + path + "/" + key + "'>" + value + "</a>").appendTo($li);
+					$a = $("<a href='" + path + "/" + subURL + "'>" + subTitle + "</a>").appendTo($li);
+				if (mainID == curMain && subURL == curSub) {
+					$li.addClass("current");
+					prevExample = lastExample;
+					foundExample = true;
+					return;
+				}
+				lastExample = {url: path + "/" + subURL, title: submenu.title + " / " + subTitle};
+				if (foundExample === true) {
+					nextExample = lastExample;
+					foundExample = false;
+				}
 			});
 		});
 
-		if ($menu.parent().is("body")) {
-			var
-				$flag = $("<div>Menu</div>")
-							.addClass("flag");
-				$menuwrap = $("<div>")
-							.addClass("menuwrap")
-							.prependTo("body")
-							.before($menu)
-							.append($menu)
-							.append($flag);
+		if ($menuwrap.parent().is("body")) {
 
-			$(document).on("touchstart", ".menuwrap", function (e) {
-				$menuwrap.addClass("open");
-				e.stopPropagation();
-			});
-			$(document).on("touchstart", ":not(.menuwrap)", function (e) {
-				$menuwrap.removeClass("open");
-			});
-		}
-		$(document).on("touchstart", "ul#menu li", function (e) {
-			$("ul#menu li").removeClass("open");
-			var $parent = $(e.target).parents("ul#menu li");
-			if ($parent.length > 0) {
-				$parent.addClass("open");
-				e.stopPropagation();
+			if (prevExample) {
+				$("<a href='" + prevExample.url + "' title='" + prevExample.title + "'>◄</a>").addClass("prev").appendTo($menuwrap);
 			}
-		});
+			if (nextExample) {
+				$("<a href='" + nextExample.url + "' title='" + nextExample.title + "'>►</a>").addClass("next").appendTo($menuwrap);
+			}
+
+		}
+		if (Modernizr.touch) { // add touch menu
+			$menubtn = $("<button>")
+						.append("<span class='button-lines' aria-hidden='true'></span>")
+						.addClass("menubtn")
+						.appendTo($menu.parent());
+			$menubtn.on("click", function () {
+				$menuwrap.toggleClass("open");
+			});
+			$menuwrap.prependTo("body");
+
+			// hack for viewport height
+			$("section#titlechart").height($(window).height()); // dirty, but vh seems to be inconsistent on mobile
+		}
 	}
 
 	// store initial HTML of code
@@ -304,19 +324,21 @@ $(document).on("keydown", function (e) {
 
 // dragables / slider
 $(document).on("mousedown", ".slider, .move", function (e) {
-	var $this = $(this);
-	if ($this.is(".slider") || e.target == this) { // only the element itself,  not the children, unless its the slider
-		e.stopPropagation();
-		var
-			offset = $this.offset(),
-			drag = {top: offset.top - $(document).scrollTop(), left: offset.left - $(document).scrollLeft()};
-		if ($this.is(".move")) {
-			drag.top -= e.pageY;
-			drag.left -= e.pageX;
+	if (e.which === 1) { // only left mouse button
+		var $this = $(this);
+		if ($this.is(".slider") || e.target == this) { // only the element itself,  not the children, unless its the slider
+			e.stopPropagation();
+			var
+				offset = $this.offset(),
+				drag = {top: offset.top - $(document).scrollTop(), left: offset.left - $(document).scrollLeft()};
+			if ($this.is(".move")) {
+				drag.top -= e.pageY;
+				drag.left -= e.pageX;
+			}
+			$this.data("drag", drag);
+			$this.addClass("dragging");
+			$("html").addClass("noselect");
 		}
-		$this.data("drag", drag);
-		$this.addClass("dragging");
-		$("html").addClass("noselect");
 	}
 });
 

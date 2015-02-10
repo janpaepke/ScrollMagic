@@ -1,18 +1,16 @@
 # Source
- - feature: add mobile plugin for container#
+ - feature: add mobile plugin for controller
  - prepare stubs
 
 # Build (gulpfile.js)
  - 
 
-# Test
+# Testing
  - cross browser test scrollPosition getter functions
- - add tests for _utils
- - test all variants (regular, minified) and plugins
+ - add missing tests (core methods, _utils)
 
 # Project
  - add missing docs (global search TODO)
- - add "next example" btn.
  - review texts
  - prepare cdnjs
 
