@@ -1,6 +1,5 @@
 # Source
  - feature: add mobile plugin for controller
- - prepare stubs
 
 # Build (gulpfile.js)
  - 
