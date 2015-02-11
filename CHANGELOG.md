@@ -54,9 +54,10 @@ CHANGELOG
  - when pinning absolutely positioned elements using `bottom` or `right`, the positioning was off (See issue [226](https://github.com/janpaepke/ScrollMagic/issues/226))
 
 #### project management:
- - changed build system to [gulp](http://gulpjs.com/)
- - moved all Module dist files to '/scrollmagic'
- - TODO: document file structure and gulp options
+ - changed build system to [gulp](http://gulpjs.com/) [see here](CONTRIBUTING.md#development-contribution)
+ - moved all Module dist files to '/scrollmagic' [see here](scrollmagic)
+ - published scrollmagic on npm as `scrollmagic`
+ - renamed package on bower from `ScrollMagic` to `scrollmagic` to adhere to naming conventions
 
 
 ## 1.3.0 (2014-11-13)

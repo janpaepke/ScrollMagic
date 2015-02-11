@@ -2,7 +2,7 @@
  - feature: add mobile plugin for controller
 
 # Build (gulpfile.js)
- - 
+ - autoupdate npm on new git version
 
 # Testing
  - cross browser test scrollPosition getter functions
@@ -11,8 +11,6 @@
 # Project
  - add missing docs (global search TODO)
  - review texts
- - prepare cdnjs
-
 
 # Release guide
 - fork master to 1.3
@@ -28,5 +26,16 @@
 - update gh-pages
 - push stub files to gh-pages/js
 
-- push to fork of cdnjs
+- publish on npm
+
+- bower unregister current name (camelCase) http://bower.io/docs/creating-packages/#unregister
+- boer clear cache
+- bower register new name (slugstyle) http://bower.io/docs/creating-packages/#register
+
+- update dist files in cdnjs
+- run cdnjs test
+- commit to fork of cdnjs and push
 - send pull request to cdnjs
+
+- share on twitter
+- send mail
