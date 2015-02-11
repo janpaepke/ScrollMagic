@@ -190,10 +190,15 @@ To run a single test cycle and exit immediately, use the following command:
 $ gulp test
 ```
 
+**NOTE**: The main scene methods have not been fully specced out yet, but will be added in the future.
+
+### Pull Requests
+
 Before sending a pull request, please make sure all tests run successfully.
 When you've added a new feature to ScrollMagic please be sure to write a new test for it if you're able to do so.
 
-**NOTE**: The main scene methods have not been fully specced out yet, but will be added in the future.
+Please __do not__ include dist files in your pull request (everything in `/scrollmagic`).
+They will only be included with a new release and an updated version number.
 
 ---
 
