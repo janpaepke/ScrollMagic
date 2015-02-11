@@ -44,9 +44,9 @@ ScrollMagic was developed with these principles in mind:
 ScrollMagic takes an object oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relies on element attributes and thus requires minimal to no javascript knowledge.
 
-## Getting it
+## Availability
 
-You can chose between four options to get your copy of ScrollMagic:
+To get your copy of ScrollMagic you have the choice between four options:
   
 __Option 1: GitHub__  
 Download a zip file containing the source code, demo page, all examples and documentation from the [GitHub releases page](https://github.com/janpaepke/ScrollMagic/releases) or clone the package to your machine using the git command line interface:

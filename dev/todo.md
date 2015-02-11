@@ -28,8 +28,8 @@
 
 - publish on npm
 
-- bower unregister current name (camelCase) http://bower.io/docs/creating-packages/#unregister
-- boer clear cache
+- bower unregister current name (camelCase) (first try to register lower case) http://bower.io/docs/creating-packages/#unregister
+- bower clear cache
 - bower register new name (slugstyle) http://bower.io/docs/creating-packages/#register
 
 - update dist files in cdnjs
