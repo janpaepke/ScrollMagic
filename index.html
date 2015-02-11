@@ -4,9 +4,9 @@
 	<meta charset="utf-8"> 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
 	<meta name="viewport"			content="width=700" />
-	<meta name="keywords"			content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama" />
-	<meta name="description"		content="ScrollMagic - The jQuery plugin for magical scroll interactions.
-											 A jQuery plugin which essentially lets you use the scrollbar like a playback scrub control." />
+	<meta name="keywords"			content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama, scroll, interaction, animation, sticky, pinning, parallax" />
+	<meta name="description"		content="ScrollMagic - The javascript library for magical scroll interactions.
+											 ScrollMagic helps you to easily react to the user's current scroll position." />
 	<meta name="author"				content="Jan Paepke (www.janpaepke.de)" />
 	<meta name="designer"			content="Jan Paepke (www.janpaepke.de)" />
 	<meta property="fb:admins"		content="595418934" />
@@ -14,7 +14,7 @@
 	<meta property="og:url"			content="http://janpaepke.github.io/ScrollMagic/" />
 	<meta property="og:image"		content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg" />
 	<meta property="og:title"		content="ScrollMagic" />
-	<meta property="og:description"	content="The jQuery plugin for magical scroll interactions. ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control." />
+	<meta property="og:description"	content="The javascript library for magical scroll interactions. ScrollMagic helps you to easily react to the user's current scroll position." />
 
 	<title>ScrollMagic - Demo</title>
 
@@ -353,7 +353,7 @@
 		<section id="info">
 			<h1>ScrollMagic</h1>
 			<h2>
-				The jQuery Plugin for magical scroll interactions.
+				The javascript library for magical scroll interactions.
 				<div id="sublinecover"></div>
 			</h2><br>
 			<div class="content">
@@ -372,39 +372,39 @@
 					</a>
 				</div>
 				<p>
-					ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.<br>
-					It's the plugin for you, if you want to ...
+					ScrollMagic helps you to easily react to the user's current scroll position.<br>
+					It's the perfect library for you, if you want to ...
 				</p>
 				<ul class="nexttohat">
-					<li>... start an animation at a specific scroll position.</li>
-					<li>... synchronize an animation to the scrollbar movement.</li>
-					<li>... pin an element at a specific scroll position (sticky elements).</li>
-					<li>... pin an element for a limited amount of scroll progress (sticky elements).</li>
-					<li>... easily add a parallax effect to your website.</li>
-					<li>... create an inifinitely scrolling page (ajax load of additional content).</li>
-					<li>... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.</li>
+					<li>animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).</li>
+					<li>pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).</li>
+					<li>toggle CSS classes of elements on and off based on scroll position.</li>
+					<li>effortlessly add parallax effects to your website.</li>
+					<li>create an infinitely scrolling page (ajax load of additional content).</li>
+					<li>add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.</li>
 				</ul>
 				<p>
-					<b>Browse <a href="examples/index.html">the examples</a> or read <a href="docs/index.html">the documentation</a> to get started.</b><br>
-					For the installation manual and source code visit the <a href="https://github.com/janpaepke/ScrollMagic">project on github</a> or download the latest version as <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">zip</a> or <a href="https://github.com/janpaepke/ScrollMagic/tarball/master">tar</a>.
+					Download your copy now in form of a <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">ZIP Package</a> or visit the <a href="https://github.com/janpaepke/ScrollMagic/tree/development#availability">GitHub project page</a> to find out about other sources.<br>
+					<b>To learn more about ScrollMagic check out the <a href="examples/index.html">the examples</a> and read <a href="docs/index.html">the documentation</a>.</b>
 				</p>
 				<p>
-					To get <b>help</b> please make sure to read the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">support guidelines</a> before posting your question in the <a href="https://github.com/janpaepke/ScrollMagic/issues">GitHub issues section</a>.
+					Should you run into any problems when using ScrollMagic, please follow the <a href="https://github.com/janpaepke/ScrollMagic/blob/development/CONTRIBUTING.md#troubleshooting">troubleshooting guide</a> before posting your question in the <a href="https://github.com/janpaepke/ScrollMagic/issues">GitHub issues section</a>.
 				</p>
-				<h3>History</h3>
+				<h3>About</h3>
 				<p>
 					ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama" target="_blank">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>
-					Like Superscrollorama it relies on the <a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Platform (GSAP)</a> to build animations, but was developed with specific regard to former shortcomings.
+					A plugin-based architecture offers easy customizability and extendability.
 				</p>
 				<p>
-					The major perks of using ScrollMagic include:
+					ScrollMagic was developed with these principles in mind:
 				</p>
 				<ul>
 					<li>optimized performance</li>
-					<li>flexibility</li>
+					<li>lightweight (6KB gzipped)</li>
+					<li>flexibility and extendibility</li>
 					<li>mobile compatibility</li>
 					<li>event management</li>
-					<li>ready for responsive webdesign</li>
+					<li>support for responsive web design</li>
 					<li>object oriented programming and object chaining</li>
 					<li>readable, centralized code and intuitive development</li>
 					<li>support for both scroll directions (even different on one page)</li>
@@ -449,16 +449,16 @@
 				<h3>Credits</h3>
 				<p>
 					ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a> <a href="https://twitter.com/janpaepke" class="twitter-follow-button" data-show-count="false">follow @janpaepke</a>
-					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				</p>
+				<p>
+					Demo Page made by <a href="https://digital.scotch.io/" target="_blank">Nicholas Cerminara</a> <a href="https://twitter.com/nickforthought" class="twitter-follow-button" data-show-count="false">follow @nickforthought</a>
 				</p>
 				<p>
 					<a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
 				</p>
-				<p>
-					<a href="http://www.greensock.com/gsap-js/" target="_blank">Greensock Animation Plattform (GSAP)</a> by <a href="http://www.greensock.com" target="_blank">Greensock</a>
-				</p>
 				<a id="donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"></a>
 			</div>
+			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			<script type="text/javascript">
 				// subline
 				new ScrollMagic.Scene({
