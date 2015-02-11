@@ -1,6 +1,6 @@
 /*!
  * ScrollMagic v2.0.0-beta (2015-01-30)
- * The javascript library for doing magical scroll interactions.
+ * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
@@ -87,7 +87,7 @@
 			_isDocument = true,
 			_viewPortSize = 0,
 			_enabled = true,
-			_updateCycle, _refreshInterval;
+			_updateCycle, _refreshTimeout;
 
 		/*
 		 * ----------------------------------------------------------------
@@ -123,12 +123,16 @@
 			_options.container.addEventListener("resize", onChange);
 			_options.container.addEventListener("scroll", onChange);
 
-			_options.refreshInterval = parseInt(_options.refreshInterval);
-			if (_options.refreshInterval > 0) {
-				_refreshInterval = window.setInterval(refresh, _options.refreshInterval);
-			}
+			_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
+			scheduleRefresh();
 
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
+		};
+
+		var scheduleRefresh = function () {
+			if (_options.refreshInterval > 0) {
+				_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
+			}
 		};
 
 		/**
@@ -206,6 +210,7 @@
 		 * @private
 		 */
 		var onChange = function (e) {
+			log(3, "event fired causing an update:", e.type);
 			if (e.type == "resize") {
 				_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 			}
@@ -236,6 +241,7 @@
 			_sceneObjects.forEach(function (scene, index) { // refresh all scenes
 				scene.refresh();
 			});
+			scheduleRefresh();
 		};
 
 		/**
@@ -387,9 +393,9 @@
 			} else {
 				if (immediately) {
 					Scene.update(true);
-				} else if (!_updateScenesOnNextCycle && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle, all connected scenes are gonna be updated anyway...
+				} else if (_updateScenesOnNextCycle !== true && Scene instanceof ScrollMagic.Scene) { // if _updateScenesOnNextCycle is true, all connected scenes are already scheduled for update
 					// prep array for next update cycle
-					_updateScenesOnNextCycle = [];
+					_updateScenesOnNextCycle = _updateScenesOnNextCycle || [];
 					if (_updateScenesOnNextCycle.indexOf(Scene) == -1) {
 						_updateScenesOnNextCycle.push(Scene);
 					}
@@ -638,7 +644,7 @@
 		 * @returns {null} Null to unset handler variables.
 		 */
 		this.destroy = function (resetScenes) {
-			window.clearTimeout(_refreshInterval);
+			window.clearTimeout(_refreshTimeout);
 			var i = _sceneObjects.length;
 			while (i--) {
 				_sceneObjects[i].destroy(resetScenes);
@@ -2235,7 +2241,7 @@
 					_pinOptions.spacer.parentNode.insertBefore(spacerChild, _pinOptions.spacer);
 					_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
 					if (!_pin.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // if it's the last pin for this element -> restore inline styles
-						// TODO: only correctly set for first pin - how to fix?
+						// TODO: only correctly set for first pin (when cascading) - how to fix?
 						_util.css(_pin, _pin.___origStyle);
 						delete _pin.___origStyle;
 					}

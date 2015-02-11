@@ -1,6 +1,6 @@
 /*!
  * ScrollMagic v2.0.0-beta (2015-01-30)
- * The javascript library for doing magical scroll interactions.
+ * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
@@ -30,7 +30,7 @@
 	"use strict";
 	var NAMESPACE = "animation.gsap";
 
-	var err = Function.prototype.bind.call((console && console.error || console.log) ||
+	var err = Function.prototype.bind.call((console && (console.error || console.log)) ||
 	function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
@@ -177,7 +177,7 @@
 		 */
 		Scene.setTween = function (TweenObject, duration, params) {
 			var newTween;
-			if (ScrollMagic._util.type.String(TweenObject) && arguments.length > 1) {
+			if (arguments.length > 1) {
 				if (arguments.length < 3) {
 					params = duration;
 					duration = 1;
