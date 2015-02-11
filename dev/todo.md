@@ -10,7 +10,6 @@
 
 # Project
  - add missing docs (global search TODO)
- - review texts
 
 # Release guide
 - fork master to 1.3

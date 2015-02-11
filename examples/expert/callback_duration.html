@@ -34,10 +34,16 @@
 						<h1 class="badge gsap">Callback Duration</h1>
 						<h2>Use a function returning a scene's duration.</h2>
 						<p>
-							TODO: write
-							With some responsive layouts you might want the scene to take exactly as long as the height of the viewport is.<br>
-							This behaviour can easily achieved by updating the scene's duration when the window resize event is triggered.<br>
-							Try resizing this window and watch how the scene behaves.
+							In certain cases a scene's duration is subject to frequent change – for example when it depends on user input, like in the scene below.
+						</p>
+						<p>
+							Sure, you could update the respective scene's duration whenever that value changes, but this will get confusing when multiple scenes depend on the same value.
+						</p>
+						<p>
+							For these cases ScrollMagic offers the possibility to supply a callback function as the duration. It is very important that this callback executes <b>FAST</b> as it will get called <b>a lot</b>. So if you need to retreive things like element positions or sizes (that take time to calculate), make sure to cache them in a separate variable and make the callback return it.
+						</p>
+						<p>
+							On this page you can see how to use this technique to have the duration be dependent on the vertical mouse position within the viewport. Move the mouse up and down to see the duration change accordingly.
 						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
@@ -56,7 +62,7 @@
 						var mouseTopPerc = 0;
 						// function to be used to retrieve variable
 						function getMousePos() {
-							return (mouseTopPerc * 800) + 10;
+							return (mouseTopPerc * 400) + 10;
 						}
 						// update variable on mouse move
 						$("body").on("mousemove", function (e) {

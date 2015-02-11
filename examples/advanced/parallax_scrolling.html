@@ -97,10 +97,8 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: $(window).width()})
 										.setTween(tween)
+										.addIndicators() // add indicators (requires plugin)
 										.addTo(controller);
-
-						// show indicators (requires debug extension)
-						scene.addIndicators();
 					</script>
 				</section>
 				<div class="spacer s_viewport"></div>

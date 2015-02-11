@@ -45,6 +45,7 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
+						// init controller
 						var controller = new ScrollMagic.Controller();
 					</script>
 				</section>
@@ -66,7 +67,7 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 200, offset: -50})
 										.setTween(tween)
-										.addIndicators() // add indicators (requires plugin)
+										.addIndicators({name: "loop"}) // add indicators (requires plugin)
 										.addTo(controller);
 					</script>
 				</section>
@@ -131,10 +132,9 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2"})
 										.setTween(tween)
+										.addIndicators({name: "timeline"}) // add indicators (requires plugin)
 										.addTo(controller);
 
-						// show indicators (requires debug extension)
-						scene.addIndicators();
 					</script>
 				</section>
 				<section class="demo">
@@ -157,10 +157,9 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#trigger3", duration: 200, offset: -50})
 										.setTween(tween)
+										.addIndicators({name: "tween css class"}) // add indicators (requires plugin)
 										.addTo(controller);
 
-						// show indicators (requires debug extension)
-						scene.addIndicators();
 					</script>
 				</section>
 				<section class="demo" style="overflow-x: hidden">
@@ -188,10 +187,9 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#trigger4", duration: 300})
 										.setTween(tween)
+										.addIndicators({name: "staggering"}) // add indicators (requires plugin)
 										.addTo(controller);
 
-						// show indicators (requires debug extension)
-							scene.addIndicators();
 					</script>
 				</section>		
 				<div class="spacer s_viewport"></div>

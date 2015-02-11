@@ -59,8 +59,8 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: "#multiDirect", duration: 400, offset: 250})
 										.setTween(tween)
-										.addTo(controller)
-										.addIndicators({name: "resize"});// show indicators (requires debug extension)
+										.addIndicators({name: "resize"}) // add indicators (requires plugin)
+										.addTo(controller);
 
 						// init controller horizontal
 						var controller_h = new ScrollMagic.Controller({vertical: false});
@@ -72,8 +72,8 @@
 						var scene_h = new ScrollMagic.Scene({duration: 700})
 										.setTween(tween_h)
 										.setPin("#animate")
-										.addTo(controller_h)
-										.addIndicators({name: "rotate"});// show indicators (requires debug extension)
+										.addIndicators({name: "rotate"}) // add indicators (requires plugin)
+										.addTo(controller_h);
 					</script>
 				</section>
 				<div class="spacer s_viewport doublewidth"></div>

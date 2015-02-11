@@ -19,9 +19,7 @@
 	<script type="text/javascript" src="../../js/lib/modernizr.custom.min.js"></script>
 	<script type="text/javascript" src="../../js/examples.js"></script>
 	
-	<script type="text/javascript" src="../../js/lib/velocity.min.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
-	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/animation.velocity.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
 </head>
 <body>
@@ -31,35 +29,79 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1 class="badge velocity">Trigger CSS Animations</h1>
-						<h2>ScrollMagic can  animations.</h2>
+						<h1>Trigger CSS Animations</h1>
+						<h2>Look, Ma! No animation framework needed!</h2>
+						<p>
+							Note this will not work for IE9, as it doesn't support CSS transitions.
+						</p>
 						<ol>
-							<li>The most simple way to animate using CSS is by defining TODO WRITE TEXT, MAKE EXAMPLE</li>
-							<li></li>
+							<li>The easiest way to animate using CSS is by defining a class that contains the changes and then appling the class to an element using <a href="../basic/class_toggles.html">class toggles</a>.</li>
+							<li>The alternative is to change an object's inline style using ScrollMagic's scene events.</li>
 						</ol>
 						<p>
-							Sadly there is no timeline object for CSS animations, so they can only be triggered and not be bound directly to scroll progress.
+							Sadly there is no timeline object for CSS animations, so they can only be triggered and not have their progress directly bound to scroll progress.
+						</p>
+						<p>
+							The duration can however be used to revert the animation to the previous state after a specific scroll distance. If classes are used for animating this happens automatically if the scene has a duration.
 						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
+					<script>
+						// init controller
+						var controller = new ScrollMagic.Controller();
+					</script>
 				</section>
 				<section class="demo">
+					<style type="text/css">
+					#animate1 {
+						transition: transform 0.3s ease-out;
+					}
+					.zap {
+						transform: scale(2.5, 0);
+					}
+					</style>
 					<div class="spacer s2"></div>
-					<div id="trigger" class="spacer s0"></div>
-					<div id="animate" class="box1 blue">
-						<p>Now you see me...</p>
+					<div id="trigger1" class="spacer s0"></div>
+					<div id="animate1" class="box1 red">
+						<p>Zap.</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						// init controller
-						var controller = new ScrollMagic.Controller();
-
 						// build scene
-						var scene = new ScrollMagic.Scene({triggerElement: "#trigger"})
-										// triger a velocity opaticy animation
-										.setVelocity("#animate", {opacity: 0}, {duration: 400})
-										.addIndicators() // add indicators (requires plugin)
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger1"})
+										// trigger animation by adding a css class
+										.setClassToggle("#animate1", "zap")
+										.addIndicators({name: "1 - add a class"}) // add indicators (requires plugin)
+										.addTo(controller);
+					</script>
+				</section>
+				<section class="demo">
+					<style type="text/css">
+					#animate2 {
+						transition: background-color 1s;
+					}
+					</style>
+					<div class="spacer s2"></div>
+					<div id="trigger2" class="spacer s0"></div>
+					<div id="animate2" class="box1 green">
+						<p>This is a grey area.</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+					<div class="spacer s2"></div>
+					<script>
+						// build scene
+						var animateElem = document.getElementById("animate2");
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger2", duration: 100})
+										.on("enter", function () {
+											// trigger animation by changing inline style.
+											animateElem.style.backgroundColor = "grey";
+										})
+										.on("leave", function () {
+											// reset style
+											animateElem.style.backgroundColor = "";
+										})
+										.addIndicators({name: "2 - change inline style"}) // add indicators (requires plugin)
 										.addTo(controller);
 					</script>
 				</section>

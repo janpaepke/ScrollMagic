@@ -42,6 +42,7 @@
 						<a href="#" class="viewsource">view source</a>
 					</div>
 					<script>
+						// init controller
 						var controller = new ScrollMagic.Controller();
 					</script>
 				</section>
@@ -57,7 +58,7 @@
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
 											.setPin("#pin1")
-											.addIndicators() // add indicators (requires plugin)
+											.addIndicators({name: "1 (duration: 300)"}) // add indicators (requires plugin)
 											.addTo(controller);
 					</script>
 				</section>
@@ -73,7 +74,7 @@
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#pin2"})
 											.setPin("#pin2")
-											.addIndicators() // add indicators (requires plugin)
+											.addIndicators({name: "2 (duration: 0)"}) // add indicators (requires plugin)
 											.addTo(controller);
 					</script>
 				</section>			
