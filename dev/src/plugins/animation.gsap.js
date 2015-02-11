@@ -171,7 +171,7 @@
 		 */
 		Scene.setTween = function (TweenObject, duration, params) {
 			var newTween;
-			if (ScrollMagic._util.type.String(TweenObject) && arguments.length > 1) {
+			if (arguments.length > 1) {
 				if ( arguments.length < 3) {
 					params = duration;
 					duration = 1;
