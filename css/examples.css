@@ -874,14 +874,7 @@ a.viewsource:before {
 	font-style: normal;
 	font-weight: normal;
 }
-#parallax1, #parallax2, #parallax3 {
-	position: relative;
-	overflow: hidden;
-	height: 100vh;
-}
 #parallax1 > div, #parallax2 > div, #parallax3 > div {
-	position: relative;
-	height: 200%;
 	-webkit-transform: translateZ(0);-webkit-backface-visibility: hidden;-webkit-perspective: 1000;
 }
 

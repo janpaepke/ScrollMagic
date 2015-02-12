@@ -44,8 +44,19 @@
 					</div>
 				</section>
 				<section class="demo">
+					<style type="text/css">
+						.parallaxParent {
+							height: 100vh;
+							overflow: hidden;
+						}
+						.parallaxParent > * {
+							height: 200%;
+							position: relative;
+							top: -100%;
+						}
+					</style>
 					<div class="spacer s0"></div>
-					<div id="parallax1">
+					<div id="parallax1" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg1.png);"></div>
 					</div>
 					<div class="spacer s1">
@@ -55,7 +66,7 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax2">
+					<div id="parallax2" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg2.png);"></div>
 					</div>
 					<div class="spacer s1">
@@ -65,7 +76,7 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax3">
+					<div id="parallax3" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg3.png);"></div>
 					</div>
 					<div class="spacer s2"></div>
@@ -75,17 +86,17 @@
 
 						// build scenes
 						new ScrollMagic.Scene({triggerElement: "#parallax1"})
-										.setTween(TweenMax.from("#parallax1 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.setTween("#parallax1 > div", {y: "80%", ease: Linear.easeNone})
 										.addIndicators()
 										.addTo(controller);
 
 						new ScrollMagic.Scene({triggerElement: "#parallax2"})
-										.setTween(TweenMax.from("#parallax2 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.setTween("#parallax2 > div", {y: "80%", ease: Linear.easeNone})
 										.addIndicators()
 										.addTo(controller);
 
 						new ScrollMagic.Scene({triggerElement: "#parallax3"})
-										.setTween(TweenMax.from("#parallax3 > div", 1, {y: "-80%", ease: Linear.easeNone}))
+										.setTween("#parallax3 > div", {y: "80%", ease: Linear.easeNone})
 										.addIndicators()
 										.addTo(controller);
 					</script>

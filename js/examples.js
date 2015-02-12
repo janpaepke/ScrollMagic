@@ -271,8 +271,11 @@ $(document).ready(function () {
 
 	// store initial HTML of code
 	$("a.viewsource").each(function () {
-		var $parent = $(this).parents(".demowrap, section.demo:not(.demowrap .demo), div#example-wrapper, body").first().clone();
-		$(this).data("code", $parent.clone());
+		var
+			demoSelector = ".demowrap, section.demo:not(.demowrap .demo)",
+			$demoElements = $(demoSelector),
+			$relevantCode = $demoElements.length <= 1 ? $demoElements : $(this).parents(demoSelector + ", div#example-wrapper, body").first();
+		$(this).data("code", $relevantCode.clone());
 	});
 
 	// build sliders
