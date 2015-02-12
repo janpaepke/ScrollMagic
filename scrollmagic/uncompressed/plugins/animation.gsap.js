@@ -15,7 +15,14 @@
  * Greensock License info at http://www.greensock.com/licensing/
  */
 /**
- * TODO: doc
+ * This plugin is meant to be used in conjunction with the Greensock Animation Plattform.  
+ * It offers an easy API to trigger Tweens or synchronize them to the scrollbar movement.
+ *
+ * Both the `lite` and the `max` versions of the GSAP library are supported.  
+ * The most basic requirement is `TweenLite`.
+ * 
+ * To have access to this extension, please include `plugins/animation.gsap.js`.
+ * @requires {@link http://greensock.com/gsap|GSAP ~1.14.x}
  * @mixin animation.GSAP
  */
 (function (root, factory) {
@@ -45,7 +52,7 @@
 	 * ----------------------------------------------------------------
 	 */
 	/**
-	 * Every new scene now supports an additional option.  
+	 * Every instance of ScrollMagic.Scene now accepts an additional option.  
 	 * See {@link ScrollMagic.Scene} for a complete list of the standard options.
 	 * @memberof! animation.GSAP#
 	 * @method new ScrollMagic.Scene(options)
@@ -57,7 +64,9 @@
 	 Does not affect animations where duration is `0`.
 	 */
 	/**
-	 * **Get** or **Set** the tweenChanges option value.
+	 * **Get** or **Set** the tweenChanges option value.  
+	 * This only affects scenes with a duration. If `tweenChanges` is `true`, the progress update when scrolling will not be immediate, but instead the animation will smoothly animate to the target state.  
+	 * For a better understanding, try enabling and disabling this option in the [Scene Manipulation Example](../examples/basic/scene_manipulation.html).
 	 * @memberof! animation.GSAP#
 	 * @method Scene.tweenChanges
 	 * 
@@ -73,7 +82,7 @@
 	 * @returns {boolean} `get` -  Current tweenChanges option value.
 	 * @returns {Scene} `set` -  Parent object for chaining.
 	 */
-	// add option (TODO: DOC)
+	// add option (TODO: DOC (private for dev))
 	ScrollMagic.Scene.addOption("tweenChanges", // name
 	false, // default
 
@@ -142,8 +151,13 @@
 
 		/**
 		 * Add a tween to the scene.  
-		 * If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.  
-		 * The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of `0`.
+		 * If you want to add multiple tweens, add them into a GSAP Timeline object and supply it instead (see example below).  
+		 * 
+		 * If the scene has a duration, the tween's duration will be projected to the scroll distance of the scene, meaning its progress will be synced to scrollbar movement.  
+		 * For a scene with a duration of `0`, the tween will be triggered when scrolling forward past the scene's trigger position and reversed, when scrolling back.  
+		 * To gain better understanding, check out the [Simple Tweening example](../examples/basic/simple_tweening.html).
+		 *
+		 * Instead of supplying a tween this method can also be used as a shorthand for `TweenMax.to()` (see example below).
 		 * @memberof! animation.GSAP#
 		 *
 		 * @example
@@ -163,10 +177,10 @@
 		 *		.add(tween2);
 		 * scene.addTween(timeline);
 		 *
-		 * // short hand to add a .to() tween
+		 * // short hand to add a TweenMax.to() tween
 		 * scene.setTween("obj3", 0.5, {y: 100});
 		 *
-		 * // short hand to add a .to() tween for 1 second
+		 * // short hand to add a TweenMax.to() tween for 1 second
 		 * // this is useful, when the scene has a duration and the tween duration isn't important anyway
 		 * scene.setTween("obj3", {y: 100});
 		 *
@@ -257,7 +271,10 @@
 		};
 
 		/**
-		 * Remove the tween from the scene.
+		 * Remove the tween from the scene.  
+		 * This will terminate the control of the Scene over the tween.
+		 *
+		 * Using the reset option you can decide if the tween should remain in the current state or be rewound to set the target elements back to the state they were in before the tween was added to the scene.
 		 * @memberof! animation.GSAP#
 		 *
 		 * @example

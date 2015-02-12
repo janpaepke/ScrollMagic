@@ -377,7 +377,7 @@ this.removePin = function (reset) {
 			_pinOptions.spacer.parentNode.insertBefore(spacerChild, _pinOptions.spacer);
 			_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
 			if (!_pin.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // if it's the last pin for this element -> restore inline styles
-				// TODO: only correctly set for first pin - how to fix?
+				// TODO: only correctly set for first pin (when cascading) - how to fix?
 				_util.css(_pin, _pin.___origStyle);
 				delete _pin.___origStyle;
 			}

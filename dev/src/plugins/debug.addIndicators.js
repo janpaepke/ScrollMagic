@@ -2,7 +2,11 @@
  * @file Debug Extension for ScrollMagic.
  */
 /**
- * ScrollScene extension for addIndicators and removeIndicators
+ * This plugin was formerly known as the ScrollMagic debug extension.
+ *
+ * It enables you to add visual indicators to your page, to be able to see exactly when a scene is triggered.
+ *
+ * To have access to this extension, please include `plugins/debug.addIndicators.js`.
  * @mixin debug.addIndicators
  */
 (function (root, factory) {
@@ -52,8 +56,7 @@
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		/**
-		 * Add Indicators for a ScrollScene.  
-		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
+		 * Add visual indicators for a ScrollMagic.Scene.  
 		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
@@ -102,8 +105,7 @@
 		};
 
 		/**
-		 * Removes indicators from a ScrollScene.  
-		 * __REQUIRES__ ScrollMagic addIndicators Plugin: `plugins/debug.addIndicators.js`
+		 * Removes visual indicators from a ScrollMagic.Scene.
 		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
@@ -130,15 +132,19 @@
 	 */
 	// add option to globally auto-add indicators to scenes
 	/**
-	 * Every new controller now supports an additional option.  
+	 * Every ScrollMagic.Controller instance now accepts an additional option.  
 	 * See {@link ScrollMagic.Controller} for a complete list of the standard options.
 	 * @memberof! debug.addIndicators#
 	 * @method new ScrollMagic.Controller(options)
 	 * @example
+	 * // make a controller and add indicators to all scenes attached
 	 * var controller = new ScrollMagic.Controller({addIndicators: true});
+	 * // this scene will automatically have indicators added to it
+	 * new ScrollMagic.Scene()
+	 *                .addTo(controller);
 	 *
 	 * @param {object} [options] - Options for the Controller.
-	 * @param {boolean} [options.addIndicators=false] - TODO: doc
+	 * @param {boolean} [options.addIndicators=false] - If set to `true` every scene that is added to the controller will automatically get indicators added to it.
 	 */
 	ScrollMagic.Controller.addOption("addIndicators", false);
 	// extend Controller

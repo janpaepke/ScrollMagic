@@ -148,7 +148,10 @@
 
     
         
-            <div class="description"><p>TODO: doc</p></div>
+            <div class="description"><p>This plugin is meant to be used in conjunction with jQuery.<br>It enables ScrollMagic to make use of jQuery's advanced selector engine (sizzle) for all elements supplied to ScrollMagic objects, like scroll containers or trigger elements.<br>ScrollMagic also accepts jQuery elements for all methods that expect references to DOM elements. Please note, that in most cases the first element of the matched set will be used.</p>
+<p>Additionally it provides the ScrollMagic object within the jQuery namespace, so it can be accessed using <code>$.ScrollMagic</code>.</p>
+<p>In contrast to most other plugins it does not offer new API additions for ScrollMagic.</p>
+<p>To have access to this extension, please include <code>plugins/jquery.ScrollMagic.js</code>.</p></div>
         
 
         
@@ -187,6 +190,12 @@
 
 
         
+            <h3>Example</h3>
+            
+    <pre class="sunlight-highlight-javascript">// create a new scene making use of jQuery's advanced selector enginevar scene = new $.ScrollMagic.Scene({  triggerElement: "#parent div.trigger[attr='thisone']:not(.notthisone)"});</pre>
+
+
+        
     
     </div>
 
@@ -194,6 +203,12 @@
 
     
 
+    
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="http://jquery.com/">jQuery ~1.11 or ~2.1</a></li>
+        </ul>
     
 
     

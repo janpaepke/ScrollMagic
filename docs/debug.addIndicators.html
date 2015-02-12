@@ -148,7 +148,9 @@
 
     
         
-            <div class="description"><p>ScrollScene extension for addIndicators and removeIndicators</p></div>
+            <div class="description"><p>This plugin was formerly known as the ScrollMagic debug extension.</p>
+<p>It enables you to add visual indicators to your page, to be able to see exactly when a scene is triggered.</p>
+<p>To have access to this extension, please include <code>plugins/debug.addIndicators.js</code>.</p></div>
         
 
         
@@ -216,7 +218,7 @@
     
     
     <div class="description">
-        <p>Every new controller now supports an additional option.<br>See <a href="ScrollMagic.Controller.html"><code>ScrollMagic.Controller</code></a> for a complete list of the standard options.</p>
+        <p>Every ScrollMagic.Controller instance now accepts an additional option.<br>See <a href="ScrollMagic.Controller.html"><code>ScrollMagic.Controller</code></a> for a complete list of the standard options.</p>
     </div>
     
 
@@ -340,7 +342,7 @@
                 </td>
             
 
-            <td class="description last"><p>TODO: doc</p></td>
+            <td class="description last"><p>If set to <code>true</code> every scene that is added to the controller will automatically get indicators added to it.</p></td>
         </tr>
 
 	
@@ -379,7 +381,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-132">line 132</a>
+        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-134">line 134</a>
     </li></ul></dd>
     
 
@@ -404,7 +406,7 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">var controller = new ScrollMagic.Controller({addIndicators: true});</pre>
+    <pre class="sunlight-highlight-javascript">// make a controller and add indicators to all scenes attachedvar controller = new ScrollMagic.Controller({addIndicators: true});// this scene will automatically have indicators added to itnew ScrollMagic.Scene()               .addTo(controller);</pre>
 
 
     
@@ -425,7 +427,7 @@
     
     
     <div class="description">
-        <p>Add Indicators for a ScrollScene.<br><strong>REQUIRES</strong> ScrollMagic addIndicators Plugin: <code>plugins/debug.addIndicators.js</code></p>
+        <p>Add visual indicators for a ScrollMagic.Scene.</p>
     </div>
     
 
@@ -786,7 +788,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-75">line 75</a>
+        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-78">line 78</a>
     </li></ul></dd>
     
 
@@ -828,7 +830,7 @@
     
     
     <div class="description">
-        <p>Removes indicators from a ScrollScene.<br><strong>REQUIRES</strong> ScrollMagic addIndicators Plugin: <code>plugins/debug.addIndicators.js</code></p>
+        <p>Removes visual indicators from a ScrollMagic.Scene.</p>
     </div>
     
 
@@ -861,7 +863,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-114">line 114</a>
+        <a href="plugins_debug.addIndicators.js.html">plugins/debug.addIndicators.js</a>, <a href="plugins_debug.addIndicators.js.html#sunlight-1-line-116">line 116</a>
     </li></ul></dd>
     
 

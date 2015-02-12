@@ -1,10 +1,24 @@
 /*!
  * @file ScrollMagic jQuery plugin.
  *
- * requires: jQuery ~1.11
+ * requires: jQuery ~1.11 or ~2.1
  */
 /**
- * TODO: doc
+ * This plugin is meant to be used in conjunction with jQuery.  
+ * It enables ScrollMagic to make use of jQuery's advanced selector engine (sizzle) for all elements supplied to ScrollMagic objects, like scroll containers or trigger elements.  
+ * ScrollMagic also accepts jQuery elements for all methods that expect references to DOM elements. Please note, that in most cases the first element of the matched set will be used.
+ * 
+ * Additionally it provides the ScrollMagic object within the jQuery namespace, so it can be accessed using `$.ScrollMagic`.
+ *
+ * In contrast to most other plugins it does not offer new API additions for ScrollMagic.
+ *
+ * To have access to this extension, please include `plugins/jquery.ScrollMagic.js`.
+ * @example
+ * // create a new scene making use of jQuery's advanced selector engine
+ * var scene = new $.ScrollMagic.Scene({
+ *   triggerElement: "#parent div.trigger[attr='thisone']:not(.notthisone)"
+ * });
+ * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
  * @mixin framework.jQuery
  */
 (function (root, factory) {

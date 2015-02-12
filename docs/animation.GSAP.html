@@ -148,7 +148,9 @@
 
     
         
-            <div class="description"><p>TODO: doc</p></div>
+            <div class="description"><p>This plugin is meant to be used in conjunction with the Greensock Animation Plattform.<br>It offers an easy API to trigger Tweens or synchronize them to the scrollbar movement.</p>
+<p>Both the <code>lite</code> and the <code>max</code> versions of the GSAP library are supported.<br>The most basic requirement is <code>TweenLite</code>.</p>
+<p>To have access to this extension, please include <code>plugins/animation.gsap.js</code>.</p></div>
         
 
         
@@ -195,6 +197,12 @@
     
 
     
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="http://greensock.com/gsap">GSAP ~1.14.x</a></li>
+        </ul>
+    
 
     
 
@@ -216,7 +224,7 @@
     
     
     <div class="description">
-        <p>Every new scene now supports an additional option.<br>See <a href="ScrollMagic.Scene.html"><code>ScrollMagic.Scene</code></a> for a complete list of the standard options.</p>
+        <p>Every instance of ScrollMagic.Scene now accepts an additional option.<br>See <a href="ScrollMagic.Scene.html"><code>ScrollMagic.Scene</code></a> for a complete list of the standard options.</p>
     </div>
     
 
@@ -340,7 +348,7 @@
                 </td>
             
 
-            <td class="description last"><p>Tweens Animation to the progress target instead of setting it.<br>                                                        Does not affect animations where duration is <code>0</code>.</p></td>
+            <td class="description last"><p>Tweens Animation to the progress target instead of setting it.<br>                                                       Does not affect animations where duration is <code>0</code>.</p></td>
         </tr>
 
 	
@@ -379,7 +387,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-39">line 39</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-46">line 46</a>
     </li></ul></dd>
     
 
@@ -425,7 +433,8 @@
     
     
     <div class="description">
-        <p>Remove the tween from the scene.</p>
+        <p>Remove the tween from the scene.<br>This will terminate the control of the Scene over the tween.</p>
+<p>Using the reset option you can decide if the tween should remain in the current state or be rewound to set the target elements back to the state they were in before the tween was added to the scene.</p>
     </div>
     
 
@@ -527,7 +536,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-269">line 269</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-286">line 286</a>
     </li></ul></dd>
     
 
@@ -588,7 +597,9 @@ scene.removeTween(true);</pre>
     
     
     <div class="description">
-        <p>Add a tween to the scene.<br>If you want to add multiple tweens, wrap them into one GSAP Timeline object and add it.<br>The duration of the tween is converted to the scroll duration of the scene, unless the scene has a duration of <code>0</code>.</p>
+        <p>Add a tween to the scene.<br>If you want to add multiple tweens, add them into a GSAP Timeline object and supply it instead (see example below).  </p>
+<p>If the scene has a duration, the tween's duration will be projected to the scroll distance of the scene, meaning its progress will be synced to scrollbar movement.<br>For a scene with a duration of <code>0</code>, the tween will be triggered when scrolling forward past the scene's trigger position and reversed, when scrolling back.<br>To gain better understanding, check out the <a href="../examples/basic/simple_tweening.html">Simple Tweening example</a>.</p>
+<p>Instead of supplying a tween this method can also be used as a shorthand for <code>TweenMax.to()</code> (see example below).</p>
     </div>
     
 
@@ -722,7 +733,7 @@ scene.removeTween(true);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-172">line 172</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-186">line 186</a>
     </li></ul></dd>
     
 
@@ -778,10 +789,10 @@ timeline
 		.add(tween2);
 scene.addTween(timeline);
 
-// short hand to add a .to() tween
+// short hand to add a TweenMax.to() tween
 scene.setTween("obj3", 0.5, {y: 100});
 
-// short hand to add a .to() tween for 1 second
+// short hand to add a TweenMax.to() tween for 1 second
 // this is useful, when the scene has a duration and the tween duration isn't important anyway
 scene.setTween("obj3", {y: 100});</pre>
 
@@ -804,7 +815,7 @@ scene.setTween("obj3", {y: 100});</pre>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the tweenChanges option value.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the tweenChanges option value.<br>This only affects scenes with a duration. If <code>tweenChanges</code> is <code>true</code>, the progress update when scrolling will not be immediate, but instead the animation will smoothly animate to the target state.<br>For a better understanding, try enabling and disabling this option in the <a href="../examples/basic/scene_manipulation.html">Scene Manipulation Example</a>.</p>
     </div>
     
 
@@ -898,7 +909,7 @@ scene.setTween("obj3", {y: 100});</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-51">line 51</a>
+        <a href="plugins_animation.gsap.js.html">plugins/animation.gsap.js</a>, <a href="plugins_animation.gsap.js.html#sunlight-1-line-58">line 58</a>
     </li></ul></dd>
     
 

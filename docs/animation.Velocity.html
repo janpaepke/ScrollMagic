@@ -148,7 +148,9 @@
 
     
         
-            <div class="description"><p>TODO: docs</p></div>
+            <div class="description"><p>This plugin is meant to be used in conjunction with the Velocity animation framework.<br>It offers an easy API to <strong>trigger</strong> Velocity animations.</p>
+<p>With the current version of Velocity scrollbound animations (scenes with duration) are not supported.<br>This feature will be added as soon as Velocity provides the appropriate API.</p>
+<p>To have access to this extension, please include <code>plugins/animation.velocity.js</code>.</p></div>
         
 
         
@@ -195,6 +197,12 @@
     
 
     
+        <h3 class="subsection-title">Requires</h3>
+
+        <ul>
+            <li><a href="http://julian.com/research/velocity/">Velocity ~1.2.0</a></li>
+        </ul>
+    
 
     
 
@@ -208,7 +216,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="Scene.removeVelocity"><span class="type-signature"></span>Scene.removeVelocity<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Scene.removeVelocity"><span class="type-signature"></span>Scene.removeVelocity<span class="signature">(<span class="optional">reset</span>)</span><span class="type-signature"> &rarr; {Scene}</span></h4>
     
     
 </dt>
@@ -216,7 +224,8 @@
     
     
     <div class="description">
-        <p>TODO: DOC</p>
+        <p>Remove the animation from the scene.<br>This will stop the scene from triggering the animation.</p>
+<p>Using the reset option you can decide if the animation should remain in the current state or be rewound to set the target elements back to the state they were in before the animation was added to the scene.</p>
     </div>
     
 
@@ -224,6 +233,75 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+		<th>Argument</th>
+		
+
+		
+		<th>Default</th>
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>reset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If <code>true</code> the animation will rewound.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     
@@ -249,7 +327,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.velocity.js.html">plugins/animation.velocity.js</a>, <a href="plugins_animation.velocity.js.html#sunlight-1-line-172">line 172</a>
+        <a href="plugins_animation.velocity.js.html">plugins/animation.velocity.js</a>, <a href="plugins_animation.velocity.js.html#sunlight-1-line-202">line 202</a>
     </li></ul></dd>
     
 
@@ -270,14 +348,39 @@
     
     
     
+    <h5>Returns:</h5>
     
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type">Scene</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// remove the animation from the scene without resetting it
+scene.removeVelocity();
+
+// remove the animation from the scene and reset the elements to initial state
+scene.removeVelocity(true);</pre>
+
+
     
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="Scene.setVelocity"><span class="type-signature"></span>Scene.setVelocity<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Scene.setVelocity"><span class="type-signature"></span>Scene.setVelocity<span class="signature">(elems, properties, options)</span><span class="type-signature"> &rarr; {Scene}</span></h4>
     
     
 </dt>
@@ -285,7 +388,8 @@
     
     
     <div class="description">
-        <p>TODO: DOC</p>
+        <p>Add a Velocity animation to the scene.<br>The method accepts the same parameters as Velocity, with the first parameter being the target element.</p>
+<p>To gain better understanding, check out the <a href="../examples/basic/simple_velocity.html">Velocity example</a>.</p>
     </div>
     
 
@@ -293,6 +397,104 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>elems</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+|
+
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>One or more Dom Elements or a Selector that should be used as the target of the animation.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>properties</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The CSS properties that should be animated.</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Options for the animation, like duration or easing.</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
     
     
@@ -318,7 +520,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugins_animation.velocity.js.html">plugins/animation.velocity.js</a>, <a href="plugins_animation.velocity.js.html#sunlight-1-line-131">line 131</a>
+        <a href="plugins_animation.velocity.js.html">plugins/animation.velocity.js</a>, <a href="plugins_animation.velocity.js.html#sunlight-1-line-149">line 149</a>
     </li></ul></dd>
     
 
@@ -339,7 +541,29 @@
     
     
     
+    <h5>Returns:</h5>
     
+            
+<div class="param-desc tag-returns">
+    <p>Parent object for chaining.</p>
+
+	{
+<span class="param-type">Scene</span>
+
+}
+
+</div>
+
+
+        
+    
+    
+        <h5>Example</h5>
+        
+    <pre class="sunlight-highlight-javascript">// trigger a Velocity animation
+scene.setVelocity("#myElement", {opacity: 0.5}, {duration: 1000, easing: "linear"});</pre>
+
+
     
 </dd>
 

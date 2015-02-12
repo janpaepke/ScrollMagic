@@ -1,5 +1,6 @@
 # Source
- - feature: add mobile plugin for controller
+ - feature: new plugin: mobile scrolling
+ - feature: new plugin: AngularJS
 
 # Build (gulpfile.js)
  - autoupdate npm on new git version
@@ -9,10 +10,11 @@
  - add missing tests (core methods, _utils)
 
 # Project
- - add missing docs (global search TODO)
+ - add missing private docs (global search TODO)
 
 # Release guide
-- fork master to 1.3
+- copy current master to new branch "1.3"
+- update release date in CHANGELOG.md
 - build new version (update version number, generate docs)
 - run test a couple of times
 - commit
@@ -21,6 +23,7 @@
 - push tags
 - edit tag on github -> Release
 - merge dev to master
+- change title on github to new tagline
 
 - update gh-pages
 - push stub files to gh-pages/js

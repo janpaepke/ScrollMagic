@@ -1,5 +1,5 @@
 /*
- * TODO: DOCS
+ * TODO: DOCS (private for dev)
  */
 
 var _util = ScrollMagic._util = (function (window) {

@@ -6,7 +6,14 @@
  * Velocity is published under MIT license.
  */
 /**
- * TODO: docs
+ * This plugin is meant to be used in conjunction with the Velocity animation framework.  
+ * It offers an easy API to __trigger__ Velocity animations.
+ *
+ * With the current version of Velocity scrollbound animations (scenes with duration) are not supported.  
+ * This feature will be added as soon as Velocity provides the appropriate API.
+ * 
+ * To have access to this extension, please include `plugins/animation.velocity.js`.
+ * @requires {@link http://julian.com/research/velocity/|Velocity ~1.2.0}
  * @mixin animation.Velocity
  */
 (function (root, factory) {
@@ -124,9 +131,20 @@
 		};
 
 		/**
-		 * TODO: DOC
+		 * Add a Velocity animation to the scene.  
+		 * The method accepts the same parameters as Velocity, with the first parameter being the target element.
+		 *
+		 * To gain better understanding, check out the [Velocity example](../examples/basic/simple_velocity.html).
 		 * @memberof! animation.Velocity#
 		 *
+		 * @example
+		 * // trigger a Velocity animation
+		 * scene.setVelocity("#myElement", {opacity: 0.5}, {duration: 1000, easing: "linear"});
+		 *
+		 * @param {(object|string)} elems - One or more Dom Elements or a Selector that should be used as the target of the animation.
+		 * @param {object} properties - The CSS properties that should be animated.
+		 * @param {object} options - Options for the animation, like duration or easing.
+		 * @returns {Scene} Parent object for chaining.
 		 */
 		Scene.setVelocity = function (elems, properties, options) {
 			if (_elems) { // kill old ani?
@@ -165,9 +183,21 @@
 			return Scene;
 		};
 		/**
-		 * TODO: DOC
+		 * Remove the animation from the scene.  
+		 * This will stop the scene from triggering the animation.
+		 *
+		 * Using the reset option you can decide if the animation should remain in the current state or be rewound to set the target elements back to the state they were in before the animation was added to the scene.
 		 * @memberof! animation.Velocity#
 		 *
+		 * @example
+		 * // remove the animation from the scene without resetting it
+		 * scene.removeVelocity();
+		 *
+		 * // remove the animation from the scene and reset the elements to initial state
+		 * scene.removeVelocity(true);
+		 *
+		 * @param {boolean} [reset=false] - If `true` the animation will rewound.
+		 * @returns {Scene} Parent object for chaining.
 		 */
 		Scene.removeVelocity = function (reset) {
 			if (_elems) {

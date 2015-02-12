@@ -56,7 +56,7 @@ var SCENE_OPTIONS = {
 };
 /*
  * method used to add an option to ScrollMagic Scenes.
- * TODO: doc
+ * TODO: DOC (private for dev)
  */
 ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
 	if (!(name in SCENE_OPTIONS.defaults)) {
@@ -66,12 +66,11 @@ ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, 
 			SCENE_OPTIONS.shifts.push(name);
 		}
 	} else {
-		// TODO: check if removed in minified
 		ScrollMagic._util.log(1, "[static] ScrollMagic.Scene -> Cannot add Scene option '" + name + "', because it already exists.");
 	}
 };
 // instance extension function for plugins
-// TODO: doc
+// TODO: DOC (private for dev)
 ScrollMagic.Scene.extend = function (extension) {
 	var oldClass = this;
 	ScrollMagic.Scene = function () {
