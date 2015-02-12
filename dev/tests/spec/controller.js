@@ -207,7 +207,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 				expect(ctrl.scrollPos()).toBe(250);
 			});
 
-			it("scrolls to a certain scrollScene", function () {
+			it("scrolls to a certain scene", function () {
 				var scene = new ScrollMagic.Scene({offset: 150}).addTo(ctrl);
 				ctrl.scrollTo(scene);
 				expect(ctrl.scrollPos()).toBe(150);
