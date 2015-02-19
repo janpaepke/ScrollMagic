@@ -78,6 +78,7 @@ When posting a bug or a question, we request that you keep these guidelines in m
  - **Focus**: Only one issue per post, please.
  - **Caption**: Try to find a title that helps other people see what the post is about and makes it easy to find later. Avoid generic titles like "Problem with Scrolling".
  - **Description**: Try to describe your problem as simple as possible and always keep in mind that the people reading it have no idea about your project and its parameters. How would you explain it to someone who doesn't even know ScrollMagic?
+ - **Configuration**: Please include OS, browser name and other information that might be necessary to reproduce your issue.
  - **Format**: Use paragraphs and structure your text using all the great features of [GitHub markdown](https://help.github.com/articles/github-flavored-markdown). Pay special attention to the triple ticks (\`\`\`) followed by the language name to ensure [syntax highlighting](https://help.github.com/articles/github-flavored-markdown#syntax-highlighting). Formatting greatly improves understanding and ultimately helps you to get better answers.
  - **Code**: In many cases constructive support can only be provided if the issue is accompanied by the __relevant__ code.
 We can't stress the word 'relevant' enough: Please don't post 500 lines of code from 3 files into your question.
