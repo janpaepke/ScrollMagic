@@ -4,6 +4,7 @@
 body {
 	font-family: "Source Sans Pro", Arial, sans-serif;
 	background-color: #c7e1ff;
+    background-color: red;
 	font-size: 13px;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
@@ -47,7 +48,7 @@ html.touch .touchonly {
 	-webkit-user-select: auto;
 	-khtml-user-select: auto;
 	-moz-user-select: auto;
-	-o-user-select: auto;	
+	-o-user-select: auto;
 }
 
 .clearfix:after {
@@ -58,15 +59,15 @@ html.touch .touchonly {
     line-height: 0;
     height: 0;
 }
- 
+
 .clearfix {
     display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
     display: block;
 }
- 
+
 * html .clearfix {
     height: 1%;
 }
