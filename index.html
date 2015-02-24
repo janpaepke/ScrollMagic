@@ -6,437 +6,442 @@
 <!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Product" lang="en-US" prefix="og: http://ogp.me/ns#"><!--<![endif]-->
 <head>
 
-	<meta charset="utf-8">
-	<!--
-	   SSSSSSSSSSSSSSS         CCCCCCCCCCCCCRRRRRRRRRRRRRRRRR        OOOOOOOOO     LLLLLLLLLLL             LLLLLLLLLLL
-	 SS:::::::::::::::S     CCC::::::::::::CR::::::::::::::::R     OO:::::::::OO   L:::::::::L             L:::::::::L
-	S:::::SSSSSS::::::S   CC:::::::::::::::CR::::::RRRRRR:::::R  OO:::::::::::::OO L:::::::::L             L:::::::::L
-	S:::::S     SSSSSSS  C:::::CCCCCCCC::::CRR:::::R     R:::::RO:::::::OOO:::::::OLL:::::::LL             LL:::::::LL
-	S:::::S             C:::::C       CCCCCC  R::::R     R:::::RO::::::O   O::::::O  L:::::L                 L:::::L
-	S:::::S            C:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
-	 S::::SSSS         C:::::C                R::::RRRRRR:::::R O:::::O     O:::::O  L:::::L                 L:::::L
-	  SS::::::SSSSS    C:::::C                R:::::::::::::RR  O:::::O     O:::::O  L:::::L                 L:::::L
-	    SSS::::::::SS  C:::::C                R::::RRRRRR:::::R O:::::O     O:::::O  L:::::L                 L:::::L
-	       SSSSSS::::S C:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
-	            S:::::SC:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
-	            S:::::S C:::::C       CCCCCC  R::::R     R:::::RO::::::O   O::::::O  L:::::L         LLLLLL  L:::::L         LLLLLL
-	SSSSSSS     S:::::S  C:::::CCCCCCCC::::CRR:::::R     R:::::RO:::::::OOO:::::::OLL:::::::LLLLLLLLL:::::LLL:::::::LLLLLLLLL:::::L
-	S::::::SSSSSS:::::S   CC:::::::::::::::CR::::::R     R:::::R OO:::::::::::::OO L::::::::::::::::::::::LL::::::::::::::::::::::L
-	S:::::::::::::::SS      CCC::::::::::::CR::::::R     R:::::R   OO:::::::::OO   L::::::::::::::::::::::LL::::::::::::::::::::::L
-	 SSSSSSSSSSSSSSS           CCCCCCCCCCCCCRRRRRRRR     RRRRRRR     OOOOOOOOO     LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+    <meta charset="utf-8">
+    <!--
+       SSSSSSSSSSSSSSS         CCCCCCCCCCCCCRRRRRRRRRRRRRRRRR        OOOOOOOOO     LLLLLLLLLLL             LLLLLLLLLLL
+     SS:::::::::::::::S     CCC::::::::::::CR::::::::::::::::R     OO:::::::::OO   L:::::::::L             L:::::::::L
+    S:::::SSSSSS::::::S   CC:::::::::::::::CR::::::RRRRRR:::::R  OO:::::::::::::OO L:::::::::L             L:::::::::L
+    S:::::S     SSSSSSS  C:::::CCCCCCCC::::CRR:::::R     R:::::RO:::::::OOO:::::::OLL:::::::LL             LL:::::::LL
+    S:::::S             C:::::C       CCCCCC  R::::R     R:::::RO::::::O   O::::::O  L:::::L                 L:::::L
+    S:::::S            C:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
+     S::::SSSS         C:::::C                R::::RRRRRR:::::R O:::::O     O:::::O  L:::::L                 L:::::L
+      SS::::::SSSSS    C:::::C                R:::::::::::::RR  O:::::O     O:::::O  L:::::L                 L:::::L
+        SSS::::::::SS  C:::::C                R::::RRRRRR:::::R O:::::O     O:::::O  L:::::L                 L:::::L
+           SSSSSS::::S C:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
+                S:::::SC:::::C                R::::R     R:::::RO:::::O     O:::::O  L:::::L                 L:::::L
+                S:::::S C:::::C       CCCCCC  R::::R     R:::::RO::::::O   O::::::O  L:::::L         LLLLLL  L:::::L         LLLLLL
+    SSSSSSS     S:::::S  C:::::CCCCCCCC::::CRR:::::R     R:::::RO:::::::OOO:::::::OLL:::::::LLLLLLLLL:::::LLL:::::::LLLLLLLLL:::::L
+    S::::::SSSSSS:::::S   CC:::::::::::::::CR::::::R     R:::::R OO:::::::::::::OO L::::::::::::::::::::::LL::::::::::::::::::::::L
+    S:::::::::::::::SS      CCC::::::::::::CR::::::R     R:::::R   OO:::::::::OO   L::::::::::::::::::::::LL::::::::::::::::::::::L
+     SSSSSSSSSSSSSSS           CCCCCCCCCCCCCRRRRRRRR     RRRRRRR     OOOOOOOOO     LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
 
-	MMMMMMMM               MMMMMMMM               AAA                  GGGGGGGGGGGGGIIIIIIIIII      CCCCCCCCCCCCC
-	M:::::::M             M:::::::M              A:::A              GGG::::::::::::GI::::::::I   CCC::::::::::::C
-	M::::::::M           M::::::::M             A:::::A           GG:::::::::::::::GI::::::::I CC:::::::::::::::C
-	M:::::::::M         M:::::::::M            A:::::::A         G:::::GGGGGGGG::::GII::::::IIC:::::CCCCCCCC::::C
-	M::::::::::M       M::::::::::M           A:::::::::A       G:::::G       GGGGGG  I::::I C:::::C       CCCCCC
-	M:::::::::::M     M:::::::::::M          A:::::A:::::A     G:::::G                I::::IC:::::C
-	M:::::::M::::M   M::::M:::::::M         A:::::A A:::::A    G:::::G                I::::IC:::::C
-	M::::::M M::::M M::::M M::::::M        A:::::A   A:::::A   G:::::G    GGGGGGGGGG  I::::IC:::::C
-	M::::::M  M::::M::::M  M::::::M       A:::::A     A:::::A  G:::::G    G::::::::G  I::::IC:::::C
-	M::::::M   M:::::::M   M::::::M      A:::::AAAAAAAAA:::::A G:::::G    GGGGG::::G  I::::IC:::::C
-	M::::::M    M:::::M    M::::::M     A:::::::::::::::::::::AG:::::G        G::::G  I::::IC:::::C
-	M::::::M     MMMMM     M::::::M    A:::::AAAAAAAAAAAAA:::::AG:::::G       G::::G  I::::I C:::::C       CCCCCC
-	M::::::M               M::::::M   A:::::A             A:::::AG:::::GGGGGGGG::::GII::::::IIC:::::CCCCCCCC::::C
-	M::::::M               M::::::M  A:::::A               A:::::AGG:::::::::::::::GI::::::::I CC:::::::::::::::C
-	M::::::M               M::::::M A:::::A                 A:::::A GGG::::::GGG:::GI::::::::I   CCC::::::::::::C
-	MMMMMMMM               MMMMMMMMAAAAAAA                   AAAAAAA   GGGGGG   GGGGIIIIIIIIII      CCCCCCCCCCCCC
-	-->
+    MMMMMMMM               MMMMMMMM               AAA                  GGGGGGGGGGGGGIIIIIIIIII      CCCCCCCCCCCCC
+    M:::::::M             M:::::::M              A:::A              GGG::::::::::::GI::::::::I   CCC::::::::::::C
+    M::::::::M           M::::::::M             A:::::A           GG:::::::::::::::GI::::::::I CC:::::::::::::::C
+    M:::::::::M         M:::::::::M            A:::::::A         G:::::GGGGGGGG::::GII::::::IIC:::::CCCCCCCC::::C
+    M::::::::::M       M::::::::::M           A:::::::::A       G:::::G       GGGGGG  I::::I C:::::C       CCCCCC
+    M:::::::::::M     M:::::::::::M          A:::::A:::::A     G:::::G                I::::IC:::::C
+    M:::::::M::::M   M::::M:::::::M         A:::::A A:::::A    G:::::G                I::::IC:::::C
+    M::::::M M::::M M::::M M::::::M        A:::::A   A:::::A   G:::::G    GGGGGGGGGG  I::::IC:::::C
+    M::::::M  M::::M::::M  M::::::M       A:::::A     A:::::A  G:::::G    G::::::::G  I::::IC:::::C
+    M::::::M   M:::::::M   M::::::M      A:::::AAAAAAAAA:::::A G:::::G    GGGGG::::G  I::::IC:::::C
+    M::::::M    M:::::M    M::::::M     A:::::::::::::::::::::AG:::::G        G::::G  I::::IC:::::C
+    M::::::M     MMMMM     M::::::M    A:::::AAAAAAAAAAAAA:::::AG:::::G       G::::G  I::::I C:::::C       CCCCCC
+    M::::::M               M::::::M   A:::::A             A:::::AG:::::GGGGGGGG::::GII::::::IIC:::::CCCCCCCC::::C
+    M::::::M               M::::::M  A:::::A               A:::::AGG:::::::::::::::GI::::::::I CC:::::::::::::::C
+    M::::::M               M::::::M A:::::A                 A:::::A GGG::::::GGG:::GI::::::::I   CCC::::::::::::C
+    MMMMMMMM               MMMMMMMMAAAAAAA                   AAAAAAA   GGGGGG   GGGGIIIIIIIIII      CCCCCCCCCCCCC
+    -->
 
-	<title>ScrollMagic ♥ Demo</title>
+    <title>ScrollMagic ♥ Demo</title>
 
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport"			content="width=700">
-	<meta name="keywords"			content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama, scroll, interaction, animation, sticky, pinning, parallax">
-	<meta name="description"		content="ScrollMagic - The javascript library for magical scroll interactions.
-											 ScrollMagic helps you to easily react to the user's current scroll position.">
-	<meta name="author"				content="Jan Paepke (www.janpaepke.de)">
-	<meta name="designer"			content="Jan Paepke (www.janpaepke.de)">
-	<meta property="fb:admins"		content="595418934">
-	<meta property="og:type"		content="website">
-	<meta property="og:url"			content="http://janpaepke.github.io/ScrollMagic/">
-	<meta property="og:image"		content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg">
-	<meta property="og:title"		content="ScrollMagic">
-	<meta property="og:description"	content="The javascript library for magical scroll interactions. ScrollMagic helps you to easily react to the user's current scroll position.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"           content="width=700">
+    <meta name="keywords"           content="ScrollMagic, scrolling, animation, Superscrollorama, Scrollorama, scroll, interaction, animation, sticky, pinning, parallax">
+    <meta name="description"        content="ScrollMagic - The javascript library for magical scroll interactions.
+                                             ScrollMagic helps you to easily react to the user's current scroll position.">
+    <meta name="author"             content="Jan Paepke (www.janpaepke.de)">
+    <meta name="designer"           content="Jan Paepke (www.janpaepke.de)">
+    <meta property="fb:admins"      content="595418934">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="http://janpaepke.github.io/ScrollMagic/">
+    <meta property="og:image"       content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg">
+    <meta property="og:title"       content="ScrollMagic">
+    <meta property="og:description" content="The javascript library for magical scroll interactions. ScrollMagic helps you to easily react to the user's current scroll position.">
 
-	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-	<link rel="apple-touch-icon" href="img/apple-touch-icon-precomposed.png">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="img/apple-touch-icon-precomposed.png">
 
-	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Fira+Sans:300,400,700|Roboto+Condensed:400,300,700|Oswald:400,300,700|Passion+One:400,700">
-	<link rel="stylesheet" href="css/normalize.css">
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="stylesheet" href="css/demo.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Roboto+Condensed:400,300,700">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo.css">
 
-	<script src="js/lib/greensock/TweenMax.min.js"></script>
-	<script src="js/lib/greensock/plugins/ScrollToPlugin.min.js"></script>
-	<script src="js/lib/jquery.min.js"></script>
-  	<script src="js/lib/modernizr.custom.min.js"></script>
-  	<script src="js/lib/iscroll-probe.js"></script>
-  	<script src="scrollmagic/minified/ScrollMagic.min.js"></script>
-  	<script src="scrollmagic/minified/plugins/animation.gsap.min.js"></script>
-  	<script src="scrollmagic/minified/plugins/debug.addIndicators.min.js"></script>
-  	<script src="js/demo.js"></script>
+    <script src="js/lib/greensock/TweenMax.min.js"></script>
+    <script src="js/lib/greensock/plugins/ScrollToPlugin.min.js"></script>
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/modernizr.custom.min.js"></script>
+    <script src="js/lib/iscroll-probe.js"></script>
+    <script src="scrollmagic/minified/ScrollMagic.min.js"></script>
+    <script src="scrollmagic/minified/plugins/animation.gsap.min.js"></script>
+    <script src="scrollmagic/minified/plugins/debug.addIndicators.min.js"></script>
+    <script src="js/demo.js"></script>
 
 </head>
 <body>
-	<a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+    <a id="github-ribbon" href="https://github.com/janpaepke/ScrollMagic"><img src="https://github-camo.global.ssl.fastly.net/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
 
 
-	<div id="content-wrapper">
-		<span id="overlay"></span>
+    <div id="content-wrapper">
+        <span id="overlay"></span>
 
-	  	<script>
-	  		var controller;
-				// detect if mobile browser. regex -> http://detectmobilebrowsers.com
-				var isMobile = (function(a){return /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))})(navigator.userAgent||navigator.vendor||window.opera);
+        <script>
+            var controller;
+                // detect if mobile browser. regex -> http://detectmobilebrowsers.com
+                var isMobile = (function(a){return /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))})(navigator.userAgent||navigator.vendor||window.opera);
 
-	  		if (isMobile) {
-	  			var myScroll;
-	  			$(document).ready(function () {
-	  				// wrap for iscroll
-		  			$("#content-wrapper")
-		  				.addClass("scrollContainer")
-		  				.wrapInner('<div class="scrollContent"></div>');
+            if (isMobile) {
+                var myScroll;
+                $(document).ready(function () {
+                    // wrap for iscroll
+                    $("#content-wrapper")
+                        .addClass("scrollContainer")
+                        .wrapInner('<div class="scrollContent"></div>');
 
-		  			// add iScroll
-	  				myScroll = new IScroll('#content-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3, click: true});
+                    // add iScroll
+                    myScroll = new IScroll('#content-wrapper', {scrollX: false, scrollY: true, scrollbars: true, useTransform: false, useTransition: false, probeType: 3, click: true});
 
-	  				// update container on scroll
-					myScroll.on("scroll", function () {
-						controller.update();
-					});
+                    // update container on scroll
+                    myScroll.on("scroll", function () {
+                        controller.update();
+                    });
 
-					// overwrite scroll position calculation to use child's offset instead of parents scrollTop();
-					controller.scrollPos(function () {
-						return -myScroll.y;
-					});
+                    // overwrite scroll position calculation to use child's offset instead of parents scrollTop();
+                    controller.scrollPos(function () {
+                        return -myScroll.y;
+                    });
 
-					// refresh height, so all is included.
-					setTimeout(function () {
-					    myScroll.refresh();
-					}, 0);
+                    // refresh height, so all is included.
+                    setTimeout(function () {
+                        myScroll.refresh();
+                    }, 0);
 
-					// manual set hight (so height 100% is available within scroll container)
-		  			$(document).on("orientationchange", function () {
-			  			$("section")
-			  				.css("min-height", $(window).height())
-			  				.parent(".scrollmagic-pin-spacer").css("min-height", $(window).height());
-		  			});
-		  			$(document).trigger("orientationchange"); // trigger to init
-	  			});
-	  			// init the controller
-	  			controller = new ScrollMagic.Controller({
-		  			container: "#content-wrapper",
-		  			globalSceneOptions: {
-		  				triggerHook: "onLeave"
-		  			}
-		  		});
-	  		} else {
-	  			// init the controller
-		  		controller = new ScrollMagic.Controller({
-		  			globalSceneOptions: {
-		  				triggerHook: "onLeave"
-		  			}
-		  		});
-	  		}
+                    // manual set hight (so height 100% is available within scroll container)
+                    $(document).on("orientationchange", function () {
+                        $("section")
+                            .css("min-height", $(window).height())
+                            .parent(".scrollmagic-pin-spacer").css("min-height", $(window).height());
+                    });
+                    $(document).trigger("orientationchange"); // trigger to init
+                });
+                // init the controller
+                controller = new ScrollMagic.Controller({
+                    container: "#content-wrapper",
+                    globalSceneOptions: {
+                        triggerHook: "onLeave"
+                    }
+                });
+            } else {
+                // init the controller
+                controller = new ScrollMagic.Controller({
+                    globalSceneOptions: {
+                        triggerHook: "onLeave"
+                    }
+                });
+            }
 
-	  	</script>
-		<section id="start">
-			<div id="intro">
-				<h1>ScrollMagic</h1>
-				<div class="buttons" id="toggle">
-					<a href="#" class="has-code active" data-code="cdn">CDN</a>
-					<a href="#" class="has-code" data-code="bower">Bower</a>
-					<a href="#" class="has-code" data-code="npm">NPM</a>
-					<a href="#" class="download">Download</a>
-				</div>
-				<div id="get-it-now">
-					<code class="cdn active">
-					&lt;script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/1.3.0/jquery.scrollmagic.min.js"&gt;&lt;/script&gt;<br>
-					&lt;script src="https://cdn.com/animation.gsap.js"&gt;&lt;/script&gt;<br>
-					&lt;script src="https://cdn.com/addIndicators.js"&gt;&lt;/script&gt;
-					</code>
-					<code class="bower">
-					bower install ScrollMagic
-					</code>
-					<code class="npm">
-					npm install ScrollMagic
-					</code>
-				</div>
-				<img class="tophat" src="img/demo_tophat.png">
-				<img class="wand" src="img/demo_wand.png">
-				<div class="sparkpoint"></div>
-				<script>
-				$('#toggle.buttons a.has-code').click(function() {
-					$('#get-it-now code').removeClass('active');
-					$('#toggle.buttons a').removeClass('active');
+        </script>
+        <section id="start">
+            <div id="intro">
+                <h1>ScrollMagic</h1>
+                <div class="buttons" id="toggle">
+                    <a href="#" class="has-code active" data-code="cdn">CDN</a>
+                    <a href="#" class="has-code" data-code="bower">Bower</a>
+                    <a href="#" class="has-code" data-code="npm">NPM</a>
+                    <a href="#" class="has-code" data-code="download">Download</a>
+                </div>
+                <div id="get-it-now">
+                    <code class="cdn active item">
+                    &lt;script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/jquery.scrollmagic.min.js"&gt;&lt;/script&gt;<br>
+                    </code>
+                    <code class="bower item">
+                    bower install ScrollMagic
+                    </code>
+                    <code class="npm item">
+                    npm install ScrollMagic
+                    </code>
+                    <div class="item download">
+                        <a href="#"><i class="fa fa-download"></i> Download</a>
+                        <a href="#"><i class="fa fa-github"></i> GitHub</a>
+                    </div>
+                </div>
+                <img class="tophat" src="img/demo_tophat.png">
+                <img class="wand" src="img/demo_wand.png">
+                <div class="sparkpoint"></div>
+                <script>
+                $('#toggle.buttons a.has-code').click(function() {
+                    $('#get-it-now .item').removeClass('active');
+                    $('#toggle.buttons a').removeClass('active');
 
-					$(this).addClass('active');
-					$('#get-it-now .'+$(this).data('code')).addClass('active');
+                    $(this).addClass('active');
+                    $('#get-it-now .'+$(this).data('code')).addClass('active');
 
-					return false;
-				});
-				</script>
+                    $('#get-it-now').removeAttr('class').addClass($(this).data('code'));
 
-
-			</div>
-			<script>
-				// wrap each title letter
-				$("#start h1").wrapEach(/(.)/g, "<span>$1</span>");
-
-				// animations
-				var nervousHat = new TimelineMax({repeat: -1, yoyo: true})
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -3}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10", left: "+=6", rotation: 0}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=6", rotation: 3}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=5", left: "-=3", rotation: 1.5}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -1.5}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=3", rotation: 0}))
-					.add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10"}));
-				var abracadabra = TweenMax.fromTo("#start .wand", 1, {top: -$(window).height()/3, left: 370, rotation: 20}, {top: 10, rotation: -20});
-				var reveal = new TimelineMax()
-					.add([
-							TweenMax.to("#start .tophat", 1, {bottom: $(window).height(), left: "-=50", rotation: -20}),
-							TweenMax.from("#start h1", 1, {scale: 0.2, top: "+=70"}),
-							TweenMax.to("#start .wand", 0.8, {top: -$(window).height()/3, left: 450, rotation: 30}),
-							TweenMax.to("#start .floor", 1, {autoAlpha: 0})
-						]);
-				var laola = new TimelineMax()
-					.add(TweenMax.staggerTo("#start h1 span", 0.5, {top: -150, x: -75, scale: 2, color: '#ff4468' }, 0.2))
-					.add(TweenMax.staggerTo("#start h1 span", 0.5, {top: 0, x: 0, scale: 1, color: '#fff'}, 0.2), 0.5);
-
-				// container pin
-				var startpin = new ScrollMagic.Scene({
-						duration: 700
-					})
-					.setPin("section#start")
-					.addTo(controller);
-
-				// msg scroll ani
-				new ScrollMagic.Scene({
-						duration: 140,
-						offset: -100
-					})
-					.setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
-					.addTo(controller);
-				// msg hide
-				new ScrollMagic.Scene({
-						offset: 40
-					})
-					.setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
-					.addTo(controller);
-
-				// hat movement
-				new ScrollMagic.Scene({
-						duration: 300,
-						offset: -100
-					})
-					.setTween(nervousHat)
-					.addTo(controller);
-
-				// magic wand
-				new ScrollMagic.Scene({
-						offset: 20,
-						duration: 180
-					})
-					.on("end", function (e) {
-						if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.37) { // check pin progress so it doesnt launch on refresh
-							// make it rain!
-							$("#start .sparkpoint").sparkle({
-								amount: 40,
-								duration: 0.2
-							});
-						}
-					})
-					.setTween(abracadabra)
-					.addTo(controller);
-
-				// big reveal
-				new ScrollMagic.Scene({
-						duration: 300,
-						offset: 260
-					})
-					.setTween(reveal)
-					.addTo(controller);
-
-				// jumping text
-				new ScrollMagic.Scene({
-						duration: 200,
-						offset: 450
-					})
-					.setTween(laola)
-					.addTo(controller);
-
-			</script>
-		</section>
+                    return false;
+                });
+                </script>
 
 
-		<section id="info">
-			<h2>The javascript library for magical scroll interactions.</h2>
-			<br>
-			<div class="content">
-				<div id="hatcontainer">
-					<a href="examples/index.html">
-						<div id="speechbubble">
-							<p>check out the</p>
-							<p>examples</p>
-						</div>
-						<img class="hat" src="img/demo_hat.png">
-						<div id="bunny">
-							<img src="img/demo_bunny.png">
-							<img class="eye" src="img/demo_bunny_wink.png">
-						</div>
-						<img class="hat" src="img/demo_hat_front.png">
-					</a>
-				</div>
-				<p>
-					ScrollMagic helps you to easily react to the user's current scroll position.<br>
-					It's the perfect library for you, if you want to ...
-				</p>
-				<ul class="nexttohat">
-					<li>animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).</li>
-					<li>pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).</li>
-					<li>toggle CSS classes of elements on and off based on scroll position.</li>
-					<li>effortlessly add parallax effects to your website.</li>
-					<li>create an infinitely scrolling page (ajax load of additional content).</li>
-					<li>add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.</li>
-				</ul>
-				<p>
-					Download your copy now in form of a <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">ZIP Package</a> or visit the <a href="https://github.com/janpaepke/ScrollMagic/tree/development#availability">GitHub project page</a> to find out about other sources.<br>
-					<b>To learn more about ScrollMagic check out the <a href="examples/index.html">the examples</a> and read <a href="docs/index.html">the documentation</a>.</b>
-				</p>
-				<p>
-					Should you run into any problems when using ScrollMagic, please follow the <a href="https://github.com/janpaepke/ScrollMagic/blob/development/CONTRIBUTING.md#troubleshooting">troubleshooting guide</a> before posting your question in the <a href="https://github.com/janpaepke/ScrollMagic/issues">GitHub issues section</a>.
-				</p>
-				<h3>About</h3>
-				<p>
-					ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama" target="_blank">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>
-					A plugin-based architecture offers easy customizability and extendability.
-				</p>
-				<p>
-					ScrollMagic was developed with these principles in mind:
-				</p>
-				<ul>
-					<li>optimized performance</li>
-					<li>lightweight (6KB gzipped)</li>
-					<li>flexibility and extendibility</li>
-					<li>mobile compatibility</li>
-					<li>event management</li>
-					<li>support for responsive web design</li>
-					<li>object oriented programming and object chaining</li>
-					<li>readable, centralized code and intuitive development</li>
-					<li>support for both scroll directions (even different on one page)</li>
-					<li>support for scrolling inside div containers (even multiple on one page)</li>
-					<li>extensive debugging and logging capabilities</li>
-					<li>detailed documentation</li>
-					<li>many application examples</li>
-				</ul>
-				<h3>Made with ScrollMagic</h3>
-				<p>
-					Check out these amazing websites that were created using ScrollMagic.
-				</p>
-				<div id="madewith" class="clearfix">
-					<a href="https://digital.scotch.io" target="_blank" title="Scotch Digital">
-						<img src="img/madewith_scotchdigital.jpg" alt="">
-					</a>
-					<a href="http://www.viko.net" target="_blank" title="viko">
-						<img src="img/madewith_viko.jpg" alt="">
-					</a>
-					<a href="https://www.tinkapp.com/en/" target="_blank" title="tink">
-						<img src="img/madewith_tink.jpg" alt="">
-					</a>
-					<a href="http://buntspenden.bleech.de/" target="_blank" title="Bunt Spenden">
-						<img src="img/madewith_buntspenden.jpg" alt="">
-					</a>
-					<a href="http://www.flyacts.com/multi-channel-app/" target="_blank" title="Multi Channel App">
-						<img src="img/madewith_flyacts.jpg" alt="">
-					</a>
-					<a href="http://www.lempens-design.com/" target="_blank" title="Sébastien Lempens Design">
-						<img src="img/madewith_sebastienlempens.jpg" alt="">
-					</a>
-					<a href="https://developers.google.com/cardboard/" target="_blank" title="The Google Cardboard Project">
-						<img src="img/madewith_googlecardboard.jpg" alt="">
-					</a>
-					<a href="http://www.appliancetecltd.com" target="_blank" title="Appliance Tec Limited">
-						<img src="img/madewith_appliancetec.jpg" alt="">
-					</a>
-					<a href="http://www.framescollection.com/tunnelrats.html" target="_blank" title="Frames Collection Edition 2: Tunnel Rats">
-						<img src="img/madewith_framescollection.jpg" alt="">
-					</a>
-				</div>
-				<h3>Credits</h3>
-				<p>
-					ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a> <a href="https://twitter.com/janpaepke" class="twitter-follow-button" data-show-count="false">follow @janpaepke</a>
-				</p>
-				<p>
-					Demo Page made by <a href="https://scotch.io/" target="_blank">Nicholas Cerminara</a> from <a href="https://twitter.com/scotch_io" class="twitter-follow-button" data-show-count="false">@scotch_io</a>
-				</p>
-				<p>
-					<a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
-				</p>
-				<a id="donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"></a>
-			</div>
-			<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			<script>
-				// subline
-				new ScrollMagic.Scene({
-					triggerElement: "section#info",
-					duration: 500,
-					offset: -600
-				})
-				.addTo(controller)
-				.triggerHook("onCenter")
-				.setTween(
-					new TimelineMax({delay: 1})
-						.add(TweenMax.to('#info, #overlay', 1, { opacity: 1 } ))
-				);
+            </div>
+            <script>
+                // wrap each title letter
+                $("#start h1").wrapEach(/(.)/g, "<span>$1</span>");
 
-				new ScrollMagic.Scene({
-					triggerElement: "section#info",
-					duration: 400,
-					offset: -550
-				})
-				.addTo(controller)
-				.triggerHook("onCenter")
-				.setTween(
-					new TimelineMax({delay: 1})
-						.add(TweenMax.to('#get-it-now, #toggle', 1, { y: -80, opacity: 0, scale: 0.95 } ))
-				);
+                // animations
+                var nervousHat = new TimelineMax({repeat: -1, yoyo: true})
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -3}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10", left: "+=6", rotation: 0}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=6", rotation: 3}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=5", left: "-=3", rotation: 1.5}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "-=6", rotation: -1.5}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "+=5", left: "+=3", rotation: 0}))
+                    .add(TweenMax.to("#start .tophat", 0.3, {bottom: "-=10"}));
+                var abracadabra = TweenMax.fromTo("#start .wand", 1, {top: -$(window).height()/3, left: 370, rotation: 20}, {top: 10, rotation: -20});
+                var reveal = new TimelineMax()
+                    .add([
+                            TweenMax.to("#start .tophat", 1, {bottom: $(window).height(), left: "-=50", rotation: -20}),
+                            TweenMax.from("#start h1", 1, {scale: 0.2, top: "+=70"}),
+                            TweenMax.to("#start .wand", 0.8, {top: -$(window).height()/3, left: 450, rotation: 30}),
+                            TweenMax.to("#start .floor", 1, {autoAlpha: 0})
+                        ]);
+                var laola = new TimelineMax()
+                    .add(TweenMax.staggerTo("#start h1 span", 0.5, {top: -150, x: -75, scale: 2, color: '#ff4468' }, 0.2))
+                    .add(TweenMax.staggerTo("#start h1 span", 0.5, {top: 0, x: 0, scale: 1, color: '#fff'}, 0.2), 0.5);
 
-				// bunny
-				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-				new ScrollMagic.Scene({
-					 	triggerElement: "#info #hatcontainer",
-						offset: -20
-					})
-					.addTo(controller)
-					.triggerHook("onCenter")
-					.setTween(
-						new TimelineMax({delay: 1})
-							.add(TweenMax.from("#hatcontainer #bunny", 0.5, {bottom: 5, ease: Power2.easeOut}))
-							.add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
-					);
-				TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
-				new ScrollMagic.Scene({
-						triggerElement: "section#info"
-					})
-					.addTo(controller)
-					.setTween(new TimelineMax({repeat: -1})
-						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "block", delay: 0.15}))
-						.add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "none", delay: 3}))
-					);
+                // container pin
+                var startpin = new ScrollMagic.Scene({
+                        duration: 700
+                    })
+                    .setPin("section#start")
+                    .addTo(controller);
 
-				// donate btn
-				new ScrollMagic.Scene({
-						triggerElement: "#info #donate",
-						offset: 50
-					})
-					.addTo(controller)
-					.triggerHook("onEnter")
-					.setTween(TweenMax.from("#info #donate img", 0.5, {scale: 0, ease: Elastic.easeOut, delay: 0.5}));
-			</script>
-		</section>
-	</div>
-	<script src="js/tracking.js"></script>
+                // msg scroll ani
+                new ScrollMagic.Scene({
+                        duration: 140,
+                        offset: -100
+                    })
+                    .setTween(TweenMax.to("#msg div.scroll", 1, {backgroundPosition: "0 13px", repeat: -1, delay: 1, repeatDelay: 2, ease: Linear.easeNone}))
+                    .addTo(controller);
+                // msg hide
+                new ScrollMagic.Scene({
+                        offset: 40
+                    })
+                    .setTween(TweenMax.to("#msg", 0.5, {bottom: -40}))
+                    .addTo(controller);
+
+                // hat movement
+                new ScrollMagic.Scene({
+                        duration: 300,
+                        offset: -100
+                    })
+                    .setTween(nervousHat)
+                    .addTo(controller);
+
+                // magic wand
+                new ScrollMagic.Scene({
+                        offset: 20,
+                        duration: 180
+                    })
+                    .on("end", function (e) {
+                        if (e.scrollDirection == "FORWARD" && startpin.progress() < 0.37) { // check pin progress so it doesnt launch on refresh
+                            // make it rain!
+                            $("#start .sparkpoint").sparkle({
+                                amount: 40,
+                                duration: 0.2
+                            });
+                        }
+                    })
+                    .setTween(abracadabra)
+                    .addTo(controller);
+
+                // big reveal
+                new ScrollMagic.Scene({
+                        duration: 300,
+                        offset: 260
+                    })
+                    .setTween(reveal)
+                    .addTo(controller);
+
+                // jumping text
+                new ScrollMagic.Scene({
+                        duration: 200,
+                        offset: 450
+                    })
+                    .setTween(laola)
+                    .addTo(controller);
+
+            </script>
+        </section>
+
+
+        <section id="info">
+            <h2>The javascript library for magical scroll interactions.</h2>
+            <br>
+            <div class="content">
+                <div id="hatcontainer">
+                    <a href="examples/index.html">
+                        <div id="speechbubble">
+                            <p>check out the</p>
+                            <p>examples</p>
+                        </div>
+                        <img class="hat" src="img/demo_hat.png">
+                        <div id="bunny">
+                            <img src="img/demo_bunny.png">
+                            <img class="eye" src="img/demo_bunny_wink.png">
+                        </div>
+                        <img class="hat" src="img/demo_hat_front.png">
+                    </a>
+                </div>
+                <p>
+                    ScrollMagic helps you to easily react to the user's current scroll position.<br>
+                    It's the perfect library for you, if you want to ...
+                </p>
+                <ul class="nexttohat">
+                    <li>animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).</li>
+                    <li>pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).</li>
+                    <li>toggle CSS classes of elements on and off based on scroll position.</li>
+                    <li>effortlessly add parallax effects to your website.</li>
+                    <li>create an infinitely scrolling page (ajax load of additional content).</li>
+                    <li>add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.</li>
+                </ul>
+                <p>
+                    Download your copy now in form of a <a href="https://github.com/janpaepke/ScrollMagic/zipball/master">ZIP Package</a> or visit the <a href="https://github.com/janpaepke/ScrollMagic/tree/development#availability">GitHub project page</a> to find out about other sources.<br>
+                    <b>To learn more about ScrollMagic check out the <a href="examples/index.html">the examples</a> and read <a href="docs/index.html">the documentation</a>.</b>
+                </p>
+                <p>
+                    Should you run into any problems when using ScrollMagic, please follow the <a href="https://github.com/janpaepke/ScrollMagic/blob/development/CONTRIBUTING.md#troubleshooting">troubleshooting guide</a> before posting your question in the <a href="https://github.com/janpaepke/ScrollMagic/issues">GitHub issues section</a>.
+                </p>
+                <h3>About</h3>
+                <p>
+                    ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama" target="_blank">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>
+                    A plugin-based architecture offers easy customizability and extendability.
+                </p>
+                <p>
+                    ScrollMagic was developed with these principles in mind:
+                </p>
+                <ul>
+                    <li>optimized performance</li>
+                    <li>lightweight (6KB gzipped)</li>
+                    <li>flexibility and extendibility</li>
+                    <li>mobile compatibility</li>
+                    <li>event management</li>
+                    <li>support for responsive web design</li>
+                    <li>object oriented programming and object chaining</li>
+                    <li>readable, centralized code and intuitive development</li>
+                    <li>support for both scroll directions (even different on one page)</li>
+                    <li>support for scrolling inside div containers (even multiple on one page)</li>
+                    <li>extensive debugging and logging capabilities</li>
+                    <li>detailed documentation</li>
+                    <li>many application examples</li>
+                </ul>
+                <h3>Made with ScrollMagic</h3>
+                <p>
+                    Check out these amazing websites that were created using ScrollMagic.
+                </p>
+                <div id="madewith" class="clearfix">
+                    <a href="https://digital.scotch.io" target="_blank" title="Scotch Digital">
+                        <img src="img/madewith_scotchdigital.jpg" alt="">
+                    </a>
+                    <a href="http://www.viko.net" target="_blank" title="viko">
+                        <img src="img/madewith_viko.jpg" alt="">
+                    </a>
+                    <a href="https://www.tinkapp.com/en/" target="_blank" title="tink">
+                        <img src="img/madewith_tink.jpg" alt="">
+                    </a>
+                    <a href="http://buntspenden.bleech.de/" target="_blank" title="Bunt Spenden">
+                        <img src="img/madewith_buntspenden.jpg" alt="">
+                    </a>
+                    <a href="http://www.flyacts.com/multi-channel-app/" target="_blank" title="Multi Channel App">
+                        <img src="img/madewith_flyacts.jpg" alt="">
+                    </a>
+                    <a href="http://www.lempens-design.com/" target="_blank" title="Sébastien Lempens Design">
+                        <img src="img/madewith_sebastienlempens.jpg" alt="">
+                    </a>
+                    <a href="https://developers.google.com/cardboard/" target="_blank" title="The Google Cardboard Project">
+                        <img src="img/madewith_googlecardboard.jpg" alt="">
+                    </a>
+                    <a href="http://www.appliancetecltd.com" target="_blank" title="Appliance Tec Limited">
+                        <img src="img/madewith_appliancetec.jpg" alt="">
+                    </a>
+                    <a href="http://www.framescollection.com/tunnelrats.html" target="_blank" title="Frames Collection Edition 2: Tunnel Rats">
+                        <img src="img/madewith_framescollection.jpg" alt="">
+                    </a>
+                </div>
+                <h3>Credits</h3>
+                <p>
+                    ScrollMagic © <a href="http://www.janpaepke.de" target="_blank">Jan Paepke</a> <a href="https://twitter.com/janpaepke" class="twitter-follow-button" data-show-count="false">follow @janpaepke</a>
+                </p>
+                <p>
+                    Demo Page made by <a href="https://scotch.io/" target="_blank">Nicholas Cerminara</a> from <a href="https://twitter.com/scotch_io" class="twitter-follow-button" data-show-count="false">@scotch_io</a>
+                </p>
+                <p>
+                    <a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">License Information</a>
+                </p>
+                <a id="donate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"></a>
+            </div>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+            <script>
+                // subline
+                new ScrollMagic.Scene({
+                    triggerElement: "section#info",
+                    duration: 500,
+                    offset: -600
+                })
+                .addTo(controller)
+                .triggerHook("onCenter")
+                .setTween(
+                    new TimelineMax({delay: 1})
+                        .add(TweenMax.to('#info, #overlay', 1, { opacity: 1 } ))
+                );
+
+                new ScrollMagic.Scene({
+                    triggerElement: "section#info",
+                    duration: 400,
+                    offset: -550
+                })
+                .addTo(controller)
+                .triggerHook("onCenter")
+                .setTween(
+                    new TimelineMax({delay: 1})
+                        .add(TweenMax.to('#get-it-now, #toggle', 1, { y: -80, opacity: 0, scale: 0.95 } ))
+                );
+
+                // bunny
+                TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+                new ScrollMagic.Scene({
+                        triggerElement: "#info #hatcontainer",
+                        offset: -20
+                    })
+                    .addTo(controller)
+                    .triggerHook("onCenter")
+                    .setTween(
+                        new TimelineMax({delay: 1})
+                            .add(TweenMax.from("#hatcontainer #bunny", 0.5, {bottom: 5, ease: Power2.easeOut}))
+                            .add(TweenMax.from("#hatcontainer #speechbubble", 1, {autoAlpha: 0, left: "+=60", top: "+=50", scale: 0.2, ease: Elastic.easeOut, delay: 0.3}))
+                    );
+                TweenMax.set("#hatcontainer #speechbubble", {rotation: -10}); // rotate bubble a bit
+                new ScrollMagic.Scene({
+                        triggerElement: "section#info"
+                    })
+                    .addTo(controller)
+                    .setTween(new TimelineMax({repeat: -1})
+                        .add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "block", delay: 0.15}))
+                        .add(TweenMax.from("#hatcontainer #bunny .eye", 0.001, {display: "none", delay: 3}))
+                    );
+
+                // donate btn
+                new ScrollMagic.Scene({
+                        triggerElement: "#info #donate",
+                        offset: 50
+                    })
+                    .addTo(controller)
+                    .triggerHook("onEnter")
+                    .setTween(TweenMax.from("#info #donate img", 0.5, {scale: 0, ease: Elastic.easeOut, delay: 0.5}));
+            </script>
+        </section>
+    </div>
+    <script src="js/tracking.js"></script>
 </body>
 </html>
