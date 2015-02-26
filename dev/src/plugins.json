@@ -1,0 +1,18 @@
+{
+	"plugins" : {
+		"Scene" : {
+			"addIndicators" : "debug.addIndicators",
+			"removeIndicators" : "debug.addIndicators",
+
+			"setTween" : "animation.gsap",
+			"removeTween" : "animation.gsap",
+
+			"setVelocity" : "animation.velocity",
+			"removeVelocity" : "animation.velocity"
+		},
+		"Controller" : {
+
+		}
+	},
+	"warningTPL" : "ScrollMagic.%CLASSNAME%.prototype.%METHOD% = function () {\n ScrollMagic._util.log(1, '(ScrollMagic.%CLASSNAME%) -> ERROR calling %METHOD%() due to missing Plugin \\'%PLUGIN%\\'. Please make sure to include plugins/%PLUGIN%.js' );\n return this;}"
+}

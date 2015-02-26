@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="utf-8"> 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=500" />
+	<meta name="keywords" content="ScrollMagic, example, scrolling, attaching, scrollbar, responsive, duration, update, on-the-fly" />
+	<meta name="author"	content="Jan Paepke (www.janpaepke.de)" />
+	<title>Responsive Duration - Examples - ScrollMagic</title>
+
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="../../css/style.css" type="text/css">
+	<link rel="stylesheet" href="../../css/examples.css" type="text/css">
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+	<script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/lib/highlight.pack.js"></script>
+	<script type="text/javascript" src="../../js/lib/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="../../js/examples.js"></script>
+	
+	<script type="text/javascript" src="../../js/lib/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
+	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/animation.gsap.js"></script>
+	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
+</head>
+<body>
+	<ul id="menu"></ul>
+	<div id="content-wrapper">
+		<div id="example-wrapper">
+			<div class="scrollContent">
+				<section id="titlechart">
+					<div id="description">
+						<h1 class="badge gsap">Responsive Duration</h1>
+						<h2>Scene duration depending on viewport size.</h2>
+						<p>
+							With some responsive layouts you might want the scene to take exactly as long as the height of the viewport is.
+						</p>
+						<p>
+							For this purpose ScrollMagic conveniently lets you define percentage values as the scene duration. So if you set it to <code>"100%"</code> the scene will always have the same duration as the height of the viewport (or the width for horizontally scrolling containers).
+						</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+				</section>
+				<section class="demo fullheight responsiveDuration">
+					<div class="spacer s0" id="trigger"></div>
+					<div id="animate" class="box1 blue">
+						<p>Just breathe.</p>
+						<a href="#" class="viewsource">view source</a>
+					</div>
+					<script>
+						// init controller
+						var controller = new ScrollMagic.Controller();
+
+						// build tween
+						var tween = TweenMax.to("#animate", 0.5, {scale: 1.3, repeat: 5, yoyo: true});
+
+						// build scene and set duration to window height
+						var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: "100%"})
+										.setTween(tween)
+										.addIndicators() // add indicators (requires plugin)
+										.addTo(controller);
+					</script>
+				</section>
+				<div class="spacer s_viewport"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../js/tracking.js"></script>
+</body>
+</html>

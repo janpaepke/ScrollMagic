@@ -1,6 +1,65 @@
 CHANGELOG
 =========
 
+## 2.0.0 (2015-02-26)
+
+#### changes (non-breaking)
+ - **removal of all dependencies (jQuery & GSAP) – _ScrollMagic is now stand-alone._**
+ - new file structure:
+   - main module: 'ScrollMagic.js'
+   - all available plugins in folder '/plugins'
+ - new scene event: [add](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:add) fires when scene is added to a controller
+ - new scene event: [remove](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:remove) fires when scene is removed from a controller
+ - option changes in `Scene.addIndicators()`:
+   - indicators are now always on top (option `zindex` removed)
+   - option `suffix` is renamed to `name`
+ - several performance tweaks
+ - lots more info and warning messages (in the uncompressed development version)
+
+#### changes (potentially breaking):
+ - ScrollMagic Controllers are now instantiated using `var controller = new ScrollMagic.Controller();`
+ - ScrollMagic Scenes are now instantiated using `var scene = new ScrollMagic.Scene();`
+ - renamed method `Scene.parent()` to `Scene.controller()`
+ - **removed scene method `triggerOffset()`**  
+   Method was marked deprecated since v1.1.0 and has now been replaced by `triggerPosition()`.
+ - **removed `Scene.setPin()` option `pinClass`**  
+   Was used to add a class to the pinned element. The same can now be achieved using `setClassToggle()`.
+
+#### features:
+ - **new plugin 'debug.addIndicators' (formerly 'jquery.scrollmagic.debug')**
+   - indicators can now be added to the scene before it was added to a controller
+   - indicators also work when scenes are removed and readded
+   - indicator labels are autoindexed, when no explicit label is supplied
+   - new controller option 'addIndicators', when a controller is initialized using `new ScrollMagic.Controller({addIndicators: true})` all added scenes will automatically have indicators added to them
+   - start indicator is now above the line for less overlays (i.e. one scene starts, where another ends)
+   - huge performance optimization, especially when using indicators for multiple scenes
+   - new method `removeIndicators()`
+ - **new plugin 'animation.gsap'**  
+    - Contains all GSAP tween functionality formerly integrated into ScrollMagic (`setTween()` and `removeTween()`)
+    - new feature for shorthand TweenMax.to() animation using `setTween(target, duration, parameters)` or `setTween(target, parameters)`
+ - **new plugin 'animation.velocity'**  
+   The velocity animation framework can now be used to trigger animations using `Scene.setVelocity(target, properties, options)`
+   Note that for the time being velocity only works with 0 duration scenes, because timeline scrubbing isnt supported by velocity (yet).
+ - **new plugin 'jquery.ScrollMagic'**  
+   - adds support for jQuery selectors and makes all methods accept jQuery objects as element parameters.
+   - moves ScrollMagic global to `$.ScrollMagic`. To instantiate a controller respectively call `new $.ScrollMagic.Controller()`.
+ - **new option for responsive duration**
+   The Scene duration can now be a percentage string like `"100%"`.  
+   It will be calculated in relation to the size of the scroll container. It use the container's height for vertically scrolling applications and its width for horizontally scrolling containers.
+
+#### bugfixes:
+ - vertical Pins in DIV scroll containers did not work, when using a mousewheel while the cursor was over the pinned element
+ - using `removeTween(true)` to remove and reset a Tween didn't work when the scene's duration was 0
+ - when removing pins from cascaded pins using `removePin(true)` messed up the DOM structure (long term bug)
+ - when pinning absolutely positioned elements using `bottom` or `right`, the positioning was off (See issue [226](https://github.com/janpaepke/ScrollMagic/issues/226))
+
+#### project management:
+ - changed build system to [gulp](http://gulpjs.com/) [see here](CONTRIBUTING.md#development-contribution)
+ - moved all Module dist files to '/scrollmagic' [see here](scrollmagic)
+ - published scrollmagic on npm as `scrollmagic`
+ - renamed package on bower from `ScrollMagic` to `scrollmagic` to adhere to naming conventions
+
+
 ## 1.3.0 (2014-11-13)
 
 #### changes (potentially breaking):
@@ -10,6 +69,7 @@ CHANGELOG
  - added Error message for missing dependencies
  - fixed bubbling of pseudo-resize event of div containers
  - reference bug with AMD loading
+
 
 ## 1.2.0 (2014-10-14)
 
@@ -37,7 +97,7 @@ CHANGELOG
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
    Furthemore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
-   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#progress).
+   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#progress).
  - **removed method `startPosition()`**  
    Method was marked deprecated since v1.0.7 and has now been replaced by `triggerPosition()`.  
    The terms "_offset_" and "_position_" were used too randomly.  
@@ -59,13 +119,13 @@ CHANGELOG
    All debug logging functionality was removed when using the minified version to save on filesize.
 
 #### features:
- - new controller method: [scrollTo](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.html#scrollTo)
- - new controller method: [scrollPos](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.html#scrollPos)
- - new scene method: [refresh](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#refresh)
- - new scene method: [setClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#setClassToggle), [removeClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#removeClassToggle) respectively
- - new scene event: [shift](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:shift) fires when scene position changes
- - new scene event: [destroy](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#event:destroy) fires when scene is destroyed
- - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollScene.html#duration) to support dynamic updates in responsive layouts
+ - new controller method: [scrollTo](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollTo)
+ - new controller method: [scrollPos](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollPos)
+ - new scene method: [refresh](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#refresh)
+ - new scene method: [setClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#setClassToggle), [removeClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#removeClassToggle) respectively
+ - new scene event: [shift](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:shift) fires when scene position changes
+ - new scene event: [destroy](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:destroy) fires when scene is destroyed
+ - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#duration) to support dynamic updates in responsive layouts
  - docs: grouped methods for more clear arrangement
  - docs: various additions and clarifications
 

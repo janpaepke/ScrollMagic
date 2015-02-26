@@ -47,7 +47,7 @@ html.touch .touchonly {
 	-webkit-user-select: auto;
 	-khtml-user-select: auto;
 	-moz-user-select: auto;
-	-o-user-select: auto;	
+	-o-user-select: auto;
 }
 
 .clearfix:after {
@@ -58,15 +58,15 @@ html.touch .touchonly {
     line-height: 0;
     height: 0;
 }
- 
+
 .clearfix {
     display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
     display: block;
 }
- 
+
 * html .clearfix {
     height: 1%;
 }

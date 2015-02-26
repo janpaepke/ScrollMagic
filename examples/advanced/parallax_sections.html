@@ -14,13 +14,15 @@
 	<link rel="stylesheet" href="../../css/examples.css" type="text/css">
 	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
 
-	<script type="text/javascript" src="../../js/_dependent/greensock/TweenMax.min.js"></script>
-	<script type="text/javascript" src="../../js/_dependent/jquery.min.js"></script>
-	<script type="text/javascript" src="../../js/_examples/general.js"></script>
-	<script type="text/javascript" src="../../js/_examples/highlight.pack.js"></script>
-	<script type="text/javascript" src="../../js/_examples/modernizr.custom.min.js"></script>
-	<script type="text/javascript" src="../../js/jquery.scrollmagic.js"></script>
-	<script type="text/javascript" src="../../js/jquery.scrollmagic.debug.js"></script>
+	<script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
+	<script type="text/javascript" src="../../js/lib/highlight.pack.js"></script>
+	<script type="text/javascript" src="../../js/lib/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="../../js/examples.js"></script>
+	
+	<script type="text/javascript" src="../../js/lib/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
+  <script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/animation.gsap.js"></script>
+	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
 </head>
 <body>
 	<ul id="menu"></ul>
@@ -29,26 +31,32 @@
 			<div class="scrollContent">
 				<section id="titlechart">
 					<div id="description">
-						<h1>Parallax Sections</h1>
+						<h1 class="badge gsap">Parallax Sections</h1>
 						<h2>The most common parallax application</h2>
 						<p>
 							To create a classic parallax page effect simply add elements that contain the parallax background.<br>
-							Then use ScrollScenes to animate the child elements position.
+							Then use scenes to animate the child element's position.
 						</p>
 						<p>
 							The DOM is very straight forward and consists of consecutive containers.
-						</p>
-						<p>
-							<b>Please Note:</b> For brevity reasons this example uses fixed durations.<br>
-							This means the parallax movement won't exactly look the same, if the user resizes the window.<br>
-							To learn how to use dynamic durations, please check out the expert example <a href="../expert/responsive_duration.html">Responsive Duration</a>.
 						</p>
 						<a href="#" class="viewsource">view source</a>
 					</div>
 				</section>
 				<section class="demo">
+					<style type="text/css">
+						.parallaxParent {
+							height: 100vh;
+							overflow: hidden;
+						}
+						.parallaxParent > * {
+							height: 200%;
+							position: relative;
+							top: -100%;
+						}
+					</style>
 					<div class="spacer s0"></div>
-					<div id="parallax1">
+					<div id="parallax1" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg1.png);"></div>
 					</div>
 					<div class="spacer s1">
@@ -58,7 +66,7 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax2">
+					<div id="parallax2" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg2.png);"></div>
 					</div>
 					<div class="spacer s1">
@@ -68,45 +76,35 @@
 						</div>
 					</div>
 					<div class="spacer s0"></div>
-					<div id="parallax3">
+					<div id="parallax3" class="parallaxParent">
 						<div style="background-image: url(../../img/example_parallax_bg3.png);"></div>
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						$(document).ready(function($) {
-							// init controller
-							var controller = new ScrollMagic({globalSceneOptions: {triggerHook: "onEnter", duration: $(window).height()*2}});
+						// init controller
+						var controller = new ScrollMagic.Controller({globalSceneOptions: {triggerHook: "onEnter", duration: "200%"}});
 
-							// build scenes
-							new ScrollScene({triggerElement: "#parallax1"})
-											.setTween(TweenMax.from("#parallax1 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addTo(controller)
-											.addIndicators({zindex: 1, suffix: "1"});
+						// build scenes
+						new ScrollMagic.Scene({triggerElement: "#parallax1"})
+										.setTween("#parallax1 > div", {y: "80%", ease: Linear.easeNone})
+										.addIndicators()
+										.addTo(controller);
 
-							new ScrollScene({triggerElement: "#parallax2"})
-											.setTween(TweenMax.from("#parallax2 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addTo(controller)
-											.addIndicators({zindex: 1, suffix: "2"});
+						new ScrollMagic.Scene({triggerElement: "#parallax2"})
+										.setTween("#parallax2 > div", {y: "80%", ease: Linear.easeNone})
+										.addIndicators()
+										.addTo(controller);
 
-							new ScrollScene({triggerElement: "#parallax3"})
-											.setTween(TweenMax.from("#parallax3 > div", 1, {top: "-80%", ease: Linear.easeNone}))
-											.addTo(controller)
-											.addIndicators({zindex: 1, suffix: "3"});
-
-						});
+						new ScrollMagic.Scene({triggerElement: "#parallax3"})
+										.setTween("#parallax3 > div", {y: "80%", ease: Linear.easeNone})
+										.addIndicators()
+										.addTo(controller);
 					</script>
 				</section>
 				<div class="spacer s_viewport"></div>
 			</div>
 		</div>
 	</div>
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
-		ga('send', 'pageview');
-	</script>
+	<script type="text/javascript" src="../../js/tracking.js"></script>
 </body>
 </html>

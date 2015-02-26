@@ -56,15 +56,14 @@ var navigationMaster = {
 		link    : helper.getUniqueFilename( 'classes.list' ),
 		members : []
 	},
-
-	mixin    : {
-		title   : "Mixins",
-		link    : helper.getUniqueFilename( "mixins.list" ),
-		members : []
-	},
 	event    : {
 		title   : "Events",
 		link    : helper.getUniqueFilename( "events.list" ),
+		members : []
+	},
+	mixin    : {
+		title   : "Plugins",
+		link    : helper.getUniqueFilename( "mixins.list" ),
 		members : []
 	},
 	tutorial : {
@@ -147,6 +146,18 @@ function addSignatureTypes( f ) {
 
 function addAttribs( f ) {
 	var attribs = helper.getAttribs( f );
+
+	// KILLED WORKAROUND. Better solution is using @memberof! classname#
+
+	// WORKAROUND to remove 'static' note for mixins
+	//if (attribs.length && attribs.indexOf("static") > -1) {
+		// var members = helper.getMembers( data );
+		// var mixins = taffy( members.mixins );
+		// var isMixin = !!helper.find( mixins, {longname : f.memberof}).length;
+		// if (isMixin) {
+		// 	// attribs = [];
+		// }
+	//}
 
 	f.attribs = '<span class="type-signature">' + htmlsafe( attribs.length ? '<' + attribs.join( ', ' ) + '> ' : '' ) + '</span>';
 }
@@ -355,7 +366,7 @@ function buildNav( members ) {
 
 	var topLevelNav = [];
 	_.each( nav, function ( entry, name ) {
-		if ( entry.members.length > 0 && name !== "index" ) {
+		if ( entry.members.length > 0 && name !== "index" && name !== 'namespace') {
 			topLevelNav.push( {
 				title   : entry.title,
 				link    : entry.link,
@@ -475,9 +486,17 @@ exports.publish = function ( taffyData, opts, tutorials ) {
 
 	data().each( function ( doclet ) {
 		var url = helper.longnameToUrl[doclet.longname];
-
 		if ( url.indexOf( '#' ) > -1 ) {
 			doclet.id = helper.longnameToUrl[doclet.longname].split( /#/ ).pop();
+			// WORKAROUND
+			//  fix for id's starting with .
+			if (doclet.id.charAt(0) === '.') {
+				doclet.id = doclet.id.substr(1);
+			}
+			//  fix for names starting with . or #
+			if (doclet.name && (doclet.name.charAt(0) === '.' || doclet.name.charAt(0) === '#')) {
+				doclet.name = doclet.name.substr(1);
+			}
 		}
 		else {
 			doclet.id = doclet.name;
@@ -610,7 +629,7 @@ exports.publish = function ( taffyData, opts, tutorials ) {
 
 			var myMixins = helper.find( mixins, {longname : longname} );
 			if ( myMixins.length ) {
-				generate( 'mixin', 'Mixin: ' + myMixins[0].name, myMixins, helper.longnameToUrl[longname] );
+				generate( 'mixin', 'Plugin: ' + myMixins[0].name, myMixins, helper.longnameToUrl[longname] );
 			}
 
 			var myExternals = helper.find( externals, {longname : longname} );

@@ -1,24 +1,28 @@
 // Karma configuration
 module.exports = function(config) {
   var configuration = {
-    basePath: '',
-    frameworks: ['jasmine'],
+    basePath: '../../',
+    frameworks: ['jasmine', 'requirejs'],
 
     // needed files
     files: [
-      {pattern: 'fixtures/*.html', included: false},
-      '../../js/_dependent/jquery.min.js',
-      '../../js/_dependent/greensock/TweenMax.min.js',
-      '../../js/jquery.scrollmagic.js',
-      '../../js/jquery.scrollmagic.debug.js',
-      'additional/vendor/**/*.js',
-      'additional/settings.js',
-      'spec/*.js'
+      // libs
+      {included: false, pattern: 'js/lib/**/*.js'},
+      // additional libs & settings
+      {included: false, pattern: 'dev/tests/karma/**/*.js'},
+      // fixtures
+      {included: false, pattern: 'dev/tests/fixtures/*.html'},
+      // scrollmagic
+      {included: false, pattern: 'scrollmagic/uncompressed/**/*.js'},
+      // specs
+      {included: false, pattern: 'dev/tests/spec/**/*.js'},
+      // main file to bootstrap tests
+      'dev/tests/main.js',
     ],
 
     // list of files to exclude
     exclude: [
-      'spec/_*.js'
+        '**/karma.conf.js'
     ],
 
     // test results reporter to use

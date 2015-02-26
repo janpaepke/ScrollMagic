@@ -33,11 +33,11 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="ScrollMagic.html">ScrollMagic</a>
+							<a href="ScrollMagic.Controller.html">Controller</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html">ScrollScene</a>
+							<a href="ScrollMagic.Scene.html">Scene</a>
 						</li>
 						
 
@@ -51,39 +51,73 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="ScrollScene.html#event:change">change</a>
+							<a href="ScrollMagic.Scene.html#event:add">add</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:destroy">destroy</a>
+							<a href="ScrollMagic.Scene.html#event:change">change</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:end">end</a>
+							<a href="ScrollMagic.Scene.html#event:destroy">destroy</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:enter">enter</a>
+							<a href="ScrollMagic.Scene.html#event:end">end</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:leave">leave</a>
+							<a href="ScrollMagic.Scene.html#event:enter">enter</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:progress">progress</a>
+							<a href="ScrollMagic.Scene.html#event:leave">leave</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:shift">shift</a>
+							<a href="ScrollMagic.Scene.html#event:progress">progress</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:start">start</a>
+							<a href="ScrollMagic.Scene.html#event:remove">remove</a>
 						</li>
 						
 						<li>
-							<a href="ScrollScene.html#event:update">update</a>
+							<a href="ScrollMagic.Scene.html#event:shift">shift</a>
+						</li>
+						
+						<li>
+							<a href="ScrollMagic.Scene.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="ScrollMagic.Scene.html#event:update">update</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="mixins.list.html" class="dropdown-toggle" data-toggle="dropdown">Plugins<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="animation.GSAP.html">GSAP</a>
+						</li>
+						
+						<li>
+							<a href="animation.Velocity.html">Velocity</a>
+						</li>
+						
+						<li>
+							<a href="debug.addIndicators.html">addIndicators</a>
+						</li>
+						
+						<li>
+							<a href="framework.jQuery.html">jQuery</a>
 						</li>
 						
 
@@ -127,25 +161,28 @@
 
 
     <section>
-        <article><h1>ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v1.3.0</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1><h3>The jQuery plugin for magical scroll interactions. <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h3><p>ScrollMagic is a jQuery plugin which essentially lets you use the scrollbar like a playback scrub control.<br>It's the plugin for you, if you want to ...</p>
+        <article><h1>ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.0</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1><h3>The javascript library for magical scroll interactions. <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h3><p>ScrollMagic helps you to easily react to the user's current scroll position.<br>It's the perfect library for you, if you want to ...</p>
 <ul>
-<li>... start an animation at a specific scroll position.</li>
-<li>... synchronize an animation to the scrollbar movement.</li>
-<li>... pin an element at a specific scroll position (sticky elements).</li>
-<li>... pin an element for a limited amount of scroll progress (sticky elements).</li>
-<li>... easily add a parallax effect to your website.</li>
-<li>... create an inifinitely scrolling page (ajax load of additional content).</li>
-<li>... call functions when the user hits certain scroll positions or react in any other way to the current scroll position.</li>
+<li>animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).</li>
+<li>pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).</li>
+<li>toggle CSS classes of elements on and off based on scroll position.</li>
+<li>effortlessly add parallax effects to your website.</li>
+<li>create an infinitely scrolling page (ajax load of additional content).</li>
+<li>add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.</li>
 </ul>
 <p>Check out <a href="http://janpaepke.github.com/ScrollMagic">the demo page</a>, browse <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">the examples</a> or read <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">the documentation</a> to get started.</p>
-<h2>About the Plugin</h2><p>ScrollMagic is a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>Like Superscrollorama it relies on the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> to build animations, but was developed with specific regard to former shortcomings.</p>
-<p>The major perks of using ScrollMagic include:</p>
+<h2>About the Library</h2><p>ScrollMagic is a scroll interaction library.</p>
+<p>It's a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>A plugin-based architecture offers easy customizability and extendability.</p>
+<p>To implement animations, ScrollMagic can work with multiple frameworks.
+The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> due to its stability and feature richness. For a more lightweight approach the <a href="http://VelocityJS.org">VelocityJS</a> framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply  using CSS and class toggles.</p>
+<p>ScrollMagic was developed with these principles in mind:</p>
 <ul>
 <li>optimized performance</li>
-<li>flexibility</li>
+<li>lightweight (6KB gzipped)</li>
+<li>flexibility and extendibility</li>
 <li>mobile compatibility</li>
 <li>event management</li>
-<li>ready for responsive webdesign</li>
+<li>support for responsive web design</li>
 <li>object oriented programming and object chaining</li>
 <li>readable, centralized code and intuitive development</li>
 <li>support for both scroll directions (even different on one page)</li>
@@ -154,38 +191,37 @@
 <li>detailed documentation</li>
 <li>many application examples</li>
 </ul>
-<p><strong>Is ScrollMagic the right plugin for you?</strong><br>ScrollMagic takes an object oriented approach using a controller for each scroll container and multiple &quot;scroll scenes&quot; to define what should happen at what point in time. While this offers a great deal of control it might be a little confusing, especially if you're just starting out with javascript.<br>If the above points are not crucial for you and you are just looking for a simple solution to implement basic css animations I would strongly recommend taking a look at the awesome <a href="http://prinzhorn.github.io/skrollr/">skrollr</a> project. It almost solely relys on element attributes and thus requires minimal to no javascript knowledge.</p>
-<h2>Installation</h2><p>Aside from <a href="http://jquery.com/">jQuery</a> make sure you have loaded the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Plattform (TweenMax)</a>.<br>To use ScrollMagic in your project simply include the plugin js file in the head section of your HTML file:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.js&quot;>&lt;/script></code></pre><p>For deployment use the minified version <strong>instead</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version for obvious file size considerations.</em></p>
-<p>To have access to the debugging extension during development, include this file <strong>additionally</strong>:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script type=&quot;text/javascript&quot; src=&quot;js/jquery.scrollmagic.debug.js&quot;>&lt;/script></code></pre><p>You can remove the debugging extension for actual deployment.</p>
-<h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has several scenes attached.<br>Each scene has a definite start and end position and defines what happens when the container is scrolled to the specific offset.</p>
-<pre class="prettyprint source lang-javascript"><code>/*
-    Basic workflow example
-*/
+<p><strong>Is ScrollMagic the right library for you?</strong><br>ScrollMagic takes an object oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.<br>If the above points are not crucial for you and you are just looking for a simple solution to implement css animations I would strongly recommend taking a look at the awesome <a href="http://prinzhorn.github.io/skrollr/">skrollr</a> project. It almost solely relies on element attributes and thus requires minimal to no javascript knowledge.</p>
+<h2>Availability</h2><p>To get your copy of ScrollMagic you have the choice between four options:</p>
+<p><strong>Option 1: GitHub</strong><br>Download a zip file containing the source code, demo page, all examples and documentation from the <a href="https://github.com/janpaepke/ScrollMagic/releases">GitHub releases page</a> or clone the package to your machine using the git command line interface:</p>
+<pre class="prettyprint source lang-bash"><code>git clone git://github.com/janpaepke/ScrollMagic.git</code></pre><p><strong>Option 2: Bower</strong><br>ScrollMagic is also available on bower and will only install the necessary source code, ignoring all example and documentation files.<br>Please mind that since they are not core dependencies, you will have to add frameworks like GSAP, jQuery or Velocity manually, should you choose to use them.</p>
+<pre class="prettyprint source lang-bash"><code>bower install scrollmagic</code></pre><p><strong>Option 3: npm</strong><br>If you prefer the node package manager, feel free to use it.<br>Keep in mind that like with bower non-crucial files will be ignored (see above).</p>
+<pre class="prettyprint source lang-bash"><code>npm install scrollmagic</code></pre><p><strong>Option 4: CDN</strong><br>If you don't want to host ScrollMagic yourself, you can include it from <a href="https://cdnjs.com/libraries/scrollmagic">cdnjs</a>:</p>
+<pre class="prettyprint source"><code>http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/ScrollMagic.min.js</code></pre><p>All plugins and uncompressed files are also available on cdnjs.</p>
+<h2>Installation</h2><p>Include the <strong>core</strong> library in your HTML file:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/ScrollMagic.js&quot;>&lt;/script></code></pre><p>And you're ready to go!<br>For deployment use the minified version <strong>instead</strong>:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/minified/ScrollMagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version due to file size considerations.</em></p>
+<p>To use <strong>plugins</strong> like the indicators visualization, simply include them additionally to the main library:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/plugins/debug.addIndicators.js&quot;>&lt;/script></code></pre><p>To learn how to configure <strong>RequireJS</strong>, when using AMD, please <a href="https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-Using-AMD">read here</a>.</p>
+<h2>Usage</h2><p>The basic ScrollMagic design pattern is one controller, which has one or more scenes attached to it.<br>Each scene is used to define what happens when the container is scrolled to a specific offset.</p>
+<p>Here's a basic workflow example:</p>
+<pre class="prettyprint source lang-javascript"><code>// init controller
+var controller = new ScrollMagic.Controller();
 
-// init controller
-var controller = new ScrollMagic();
-
-// assign handler &quot;scene&quot; and add it to controller
-var scene = new ScrollScene({duration: 100})
-                .setPin(&quot;#my-sticky-element&quot;) // pins the element for a scroll distance of 100px
-                .addTo(controller); // add scene to controller
-
-// adding multiple scenes at once
-var scene2 = new ScrollScene();
-var scene3;
-controller.addScene([
-    scene2,
-    scene3 = new ScrollScene({duration: 200}), // add scene and assign handler &quot;scene2&quot;
-    new ScrollScene({offset: 20}) // add anonymous scene
-]);</code></pre><h2>Help</h2><p>To get started check out the available learning resources <a href="https://github.com/janpaepke/ScrollMagic/wiki">in the wiki section</a>.<br>Be sure to have a look at the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> to get source code pointers and make use of the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for a complete reference.</p>
-<p>If you're having trouble using ScrollMagic please read the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">support guidelines</a>.<br>Should you still be unable to figure it out, feel free to post your questions in the <a href="https://github.com/janpaepke/ScrollMagic/issues">project's issues section</a>.</p>
-<h2>Browser Support</h2><p>ScrollMagic aims to support all major browsers in recent versions:<br>Firefox 26+, Chrome 30+, Safari 6+, Opera 19+, IE 9+</p>
-<h2>About the Author</h2><p>I am a freelance Art Director based in Lausanne, Switzerland.<br>I started this project to deepen my understanding of javascript (which it has).</p>
+// create a scene
+new ScrollMagic.Scene({
+        duration: 100,    // the scne should last for a scroll distance of 100px
+        offset: 50        // start this scene after scrolling for 50px
+    })
+    .setPin(&quot;#my-sticky-element&quot;) // pins the element for the the scene's duration
+    .addTo(controller); // assign the scene to the controller</code></pre><p>To learn more about the ScrollMagic code structure, please <a href="https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic">read here</a>.</p>
+<h2>Help</h2><p>To get started, check out the available learning resources <a href="https://github.com/janpaepke/ScrollMagic/wiki">in the wiki section</a>.<br>Be sure to have a look at the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> to get source code pointers and make use of the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for a complete reference.</p>
+<p>If you run into trouble using ScrollMagic please follow the <a href="https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md">Troubleshooting guide</a>.<br>Should you still be unable to figure it out, feel free to post your questions in the <a href="https://github.com/janpaepke/ScrollMagic/issues">project's issues section</a>.</p>
+<h2>Browser Support</h2><p>ScrollMagic aims to support all major browsers in recent versions:<br>Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+</p>
+<h2>About the Author</h2><p>I am a digital creative based in Lausanne, Switzerland.<br>I started this project to extend my understanding of javascript (which it has).</p>
 <p><a href="http://www.janpaepke.de">Check out my website</a> or <a href="http://twitter.com/janpaepke">Follow me on Twitter</a></p>
-<h2>License</h2><p>ScrollMagic is dual licensed under the MIT license and GPL.<br>For more information click <a href="LICENSE.md">here</a>.<br>Click <a href="http://www.greensock.com/licensing/">here</a> to get more information on greensock licensing.</p></article>
+<h2>License</h2><p>ScrollMagic is dual licensed under the MIT license and GPL.<br>For more information click <a href="https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md">here</a>.</p>
+<h2>Thanks</h2><p>This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: <a href="https://github.com/johnpolacek">John Polacek</a>, <a href="https://github.com/greensock">Jack Doyle</a>, <a href="https://github.com/paulirish">Paul Irish</a>, <a href="https://github.com/ncerminara">Nicholas Cerminara</a>, <a href="https://github.com/krnlde">Kai Dorschner</a>, <a href="https://github.com/petr-tichy">Petr Tichy</a> and <a href="https://github.com/grayghostvisuals">Dennis Gaebel</a>.</p></article>
     </section>
     <style type="text/css">
     	h1.page-title {
@@ -205,102 +241,6 @@ controller.addScene([
 
 
 
-
-	<h1 class="page-title">Documentation</h1>
-<section>
-
-<header>
-    <h2>
-    jquery.scrollmagic.js
-    </h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-
-    
-        
-            <div class="description"><h2>Info</h2></div>
-        
-
-        
-<dl class="details">
-    
-
-    
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>1.3.0</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-author">Author:</dt>
-    <dd class="tag-author">
-        <ul>
-            <li>Jan Paepke - e-mail@janpaepke.de</li>
-        </ul>
-    </dd>
-    
-
-    
-
-    
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license"><ul class="dummy"><li>Dual licensed under MIT license and GPL.</li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jquery.scrollmagic.js.html">jquery.scrollmagic.js</a>, <a href="jquery.scrollmagic.js.html#sunlight-1-line-13">line 13</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
-
-
-
-
 				</div>
 
 				<div class="clearfix"></div>
@@ -308,12 +248,12 @@ controller.addScene([
 					
 					
 		<span class="copyright">
-		© Jan Paepke 2014
+		© Jan Paepke 2015
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-alpha9</a>
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-beta1</a>
 		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
 		</span>
 				</footer>
@@ -405,13 +345,6 @@ controller.addScene([
 	</script>
 	
 
-	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-		ga('create', 'UA-37524344-3', 'janpaepke.github.io');
-		ga('send', 'pageview');
-	</script>
+	<script type="text/javascript" src="../js/tracking.js"></script>
 </body>
 </html>

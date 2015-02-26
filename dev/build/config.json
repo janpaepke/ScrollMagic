@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"lastupdate": "2015-02-26",
+	"info": {
+		"description": "The javascript library for magical scroll interactions.",
+		"homepage": "http://janpaepke.github.io/ScrollMagic/",
+		"keywords": [
+			"scroll",
+			"scrolling",
+			"animation",
+			"sticky",
+			"pin",
+			"fixed",
+			"scrollbar",
+			"scrub",
+			"sync",
+			"position",
+			"progress",
+			"parallax",
+			"events",
+			"classes"
+		]
+	},
+	"karma": {
+		"config": "/dev/tests/karma.conf.js"
+	},
+	"dirs": {
+		"source": "dev/src",
+		"defaultOutput": "scrollmagic",
+		"defaultDocsOutput": "docs"
+	},
+	"banner": {
+		"uncompressed": "dev/build/banner.regular.txt",
+		"minified": "dev/build/banner.min.txt"
+	},
+	"files": [
+		"dev/src/*.js",
+		"dev/src/plugins/*.js"
+	]
+}

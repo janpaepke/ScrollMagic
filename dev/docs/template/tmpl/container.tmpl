@@ -13,9 +13,13 @@
 		<h1 class="page-title"><?js= title ?></h1>
     <?js= self.partial('source.tmpl', doc) ?>
 <?js } else { ?>
-	<h1 class="page-title"><?js= title ?></h1>
+	<h1 class="page-title"><?js if (doc.ancestors && doc.ancestors.length) { ?>
+        <span class="ancestors"><?js= doc.ancestors.join('') ?></span><?js= doc.name ?></h1>
+    <?js } else { ?>
+        <?js= title ?></h1>
+    <?js } ?>
 <section>
-
+<?js /* ?>
 <header>
     <h2><?js if (doc.ancestors && doc.ancestors.length) { ?>
         <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
@@ -28,7 +32,7 @@
         <div class="class-description"><?js= doc.classdesc ?></div>
     <?js } ?>
 </header>
-
+<?js */ ?>
 <article>
     <div class="container-overview">
     <?js if (doc.kind === 'module' && doc.module) { ?>
@@ -117,7 +121,9 @@
         var methods = self.find({kind: 'function', memberof: member});
         var methodsOutput = {};
         var methodsInGroups = [];
-        var groupDefinitions = this.env.conf._custom.methodGroupDefinitions || {};
+        var templates = this.env.conf.templates || {};
+        var custom = templates._custom || {};
+        var groupDefinitions = custom.methodGroupDefinitions || {};
         var methodGroups = groupDefinitions[member];
         
         if (methods && methods.length && methods.forEach) {

@@ -11,31 +11,43 @@
 		},
 		"systemName"      : "ScrollMagic",
 		"footer"          : "",
-		"copyright"       : "© Jan Paepke 2014",
+		"copyright"       : "© Jan Paepke 2015",
 		"navType"         : "vertical",
 		"theme"           : "cosmo",
 		"linenums"        : true,
 		"collapseSymbols" : true,
-		"inverseNav"      : true
+		"inverseNav"      : true,
+		"_custom" : {
+			"methodGroupDefinitions" : {
+				"ScrollMagic.Controller" : {
+					"Control Methods" : "Methods",
+					"Parameters (getter / setter)" : ["enabled", "loglevel", "scrollPos"],
+					"Properties (getter)" : ["info"]
+				},
+				"ScrollMagic.Scene" : {
+					"Scene Control Methods" : "Methods",
+					"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook"],
+					"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
+					"Event Handling" : ["off", "on", "trigger"],
+					"Debuging" : ["addIndicators"]
+				},
+				"animation.GSAP" : {
+					"Scene Constructor Extension" : ["new ScrollMagic.Scene"],
+					"Scene Control Methods" : "Methods",
+					"Scene Parameters (getter / setter)" : ["Scene.tweenChanges"]
+				},
+				"animation.Velocity" : {
+					"Scene Control Methods" : "Methods"
+				},
+				"debug.addIndicators" : {
+					"Controller Constructor Extension" : ["new ScrollMagic.Controller"],
+					"Scene Control Methods" : "Methods"
+				}
+			}
+		}
 	},
 	"markdown"  : {
 		"parser"   : "gfm",
 		"hardwrap" : true
-	},
-	"_custom" : {
-		"methodGroupDefinitions" : {
-			"ScrollMagic" : {
-				"Control Methods" : "Methods",
-				"Parameters (getter / setter)" : ["enabled", "loglevel", "scrollPos"],
-				"Properties (getter)" : ["info"]
-			},
-			"ScrollScene" : {
-				"Scene Control Methods" : "Methods",
-				"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook", "tweenChanges"],
-				"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
-				"Event Handling" : ["off", "on", "trigger"],
-				"Debuging" : ["addIndicators"]
-			}
-		}
 	}
 }
