@@ -148,11 +148,11 @@ h3 {
     display: block;
     width: 650px;
     height: 400px;
-    top: 50%;
+    top: 45%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -60%);
+    -moz-transform: translate(-50%, -60%);
+    transform: translate(-50%, -60%);
     position: absolute;
 }
 #intro h1 {
@@ -170,6 +170,7 @@ h3 {
     bottom: 110px;
     left: 50%;
     margin-left: -144px;
+    margin-bottom: 50px;
 }
 #intro .sparkpoint {
     top: 60px;
@@ -359,6 +360,7 @@ a:hover #speechbubble p:last-child {
     height: 90px;
     white-space: nowrap;
     transform: translateZ(0);
+    marign-top: 20px;
 }
 #get-it-now .item {
     font-size: 14px;
@@ -394,7 +396,7 @@ a:hover #speechbubble p:last-child {
     color: #fff;
     border-radius: 5px;
     margin: 0 12px;
-    width: 100px;
+    width: 130px;
     position: relative;
 }
 #get-it-now .item.download a:hover {
