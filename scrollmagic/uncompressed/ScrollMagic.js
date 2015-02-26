@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.0-beta (2015-01-30)
+ * ScrollMagic v2.0.0 (2015-02-26)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
- * @version 2.0.0-beta
+ * @version 2.0.0
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -28,7 +28,7 @@
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
-	ScrollMagic.version = "2.0.0-beta";
+	ScrollMagic.version = "2.0.0";
 
 	/**
 	 * The main class that is needed once per scroll container.
@@ -57,11 +57,11 @@
 	 *
 	 */
 	ScrollMagic.Controller = function (options) {
-		/*
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 		var
 		NAMESPACE = "ScrollMagic.Controller",
 			SCROLL_DIRECTIONS = {
@@ -71,11 +71,11 @@
 			},
 			DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 		var
 		Controller = this,
 			_options = _util.extend({}, DEFAULT_OPTIONS, options),
@@ -89,11 +89,11 @@
 			_enabled = true,
 			_updateCycle, _refreshTimeout;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private functions
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private functions
+	 * ----------------------------------------------------------------
+	 */
 
 		/**
 		 * Internal constructor function of the ScrollMagic Controller
@@ -671,9 +671,9 @@
 			refreshInterval: 100
 		}
 	};
-	/*
-	 * method used to add an option to ScrollMagic Scenes.
-	 */
+/*
+ * method used to add an option to ScrollMagic Scenes.
+ */
 	ScrollMagic.Controller.addOption = function (name, defaultValue) {
 		CONTROLLER_OPTIONS.defaults[name] = defaultValue;
 	};
@@ -731,22 +731,22 @@
 	 */
 	ScrollMagic.Scene = function (options) {
 
-		/*
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		NAMESPACE = "ScrollMagic.Scene",
 			PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
 			DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		Scene = this,
@@ -1508,11 +1508,11 @@
 			return pos;
 		};
 
-		/*
-		 * ----------------------------------------------------------------
-		 * Event Management
-		 * ----------------------------------------------------------------
-		 */
+/*
+ * ----------------------------------------------------------------
+ * Event Management
+ * ----------------------------------------------------------------
+ */
 
 		var _listeners = {};
 		/**
@@ -2391,10 +2391,10 @@
 		shifts: ["duration", "offset", "triggerHook"],
 		// list of options that trigger a `shift` event
 	};
-	/*
-	 * method used to add an option to ScrollMagic Scenes.
-	 * TODO: DOC (private for dev)
-	 */
+/*
+ * method used to add an option to ScrollMagic Scenes.
+ * TODO: DOC (private for dev)
+ */
 	ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
 		if (!(name in SCENE_OPTIONS.defaults)) {
 			SCENE_OPTIONS.defaults[name] = defaultValue;
@@ -2438,9 +2438,9 @@
 		return this;
 	};
 
-	/*
-	 * TODO: DOCS (private for dev)
-	 */
+/*
+ * TODO: DOCS (private for dev)
+ */
 
 	var _util = ScrollMagic._util = (function (window) {
 		var U = {},

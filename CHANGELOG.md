@@ -1,7 +1,7 @@
 CHANGELOG
 =========
 
-## 2.0.0 (unreleased)
+## 2.0.0 (2015-02-26)
 
 #### changes (non-breaking)
  - **removal of all dependencies (jQuery & GSAP) – _ScrollMagic is now stand-alone._**

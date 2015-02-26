@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.0-beta (2015-01-30)
+ * ScrollMagic v2.0.0 (2015-02-26)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
- * @version 2.0.0-beta
+ * @version 2.0.0
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -131,7 +131,7 @@
 	});
 
 
-	/*
+/*
 	 * ----------------------------------------------------------------
 	 * Extension for controller to store and update related indicators
 	 * ----------------------------------------------------------------
@@ -177,14 +177,14 @@
 
 		// add indicators container
 		this._indicators = _indicators;
-		/*
-					needed updates:
-					+++++++++++++++
-					start/end position on scene shift (handled in Indicator class)
-					trigger parameters on triggerHook value change (handled in Indicator class)
-					bounds position on container scroll or resize (to keep alignment to bottom/right)
-					trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
-		 */
+/*
+			needed updates:
+			+++++++++++++++
+			start/end position on scene shift (handled in Indicator class)
+			trigger parameters on triggerHook value change (handled in Indicator class)
+			bounds position on container scroll or resize (to keep alignment to bottom/right)
+			trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
+		*/
 
 		// event handler for when associated bounds markers need to be repositioned
 		var handleBoundsPositionChange = function () {
@@ -305,7 +305,7 @@
 
 	});
 
-	/*
+/*
 	 * ----------------------------------------------------------------
 	 * Internal class for the construction of Indicators
 	 * ----------------------------------------------------------------
@@ -396,7 +396,7 @@
 			}
 		};
 
-		/*
+/*
 		 * ----------------------------------------------------------------
 		 * internal Event Handlers
 		 * ----------------------------------------------------------------
@@ -414,7 +414,7 @@
 			}
 		};
 
-		/*
+/*
 		 * ----------------------------------------------------------------
 		 * Bounds (start / stop) management
 		 * ----------------------------------------------------------------
@@ -463,7 +463,7 @@
 			});
 		};
 
-		/*
+/*
 		 * ----------------------------------------------------------------
 		 * trigger and trigger group management
 		 * ----------------------------------------------------------------
@@ -499,7 +499,7 @@
 		};
 
 		// updates the trigger group -> either join existing or add new one
-		/*	
+/*	
 		 * Logic:
 		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
 		 * 2 try to find an existing one that matches Scene parameters
@@ -577,7 +577,7 @@
 		};
 	};
 
-	/*
+/*
 	 * ----------------------------------------------------------------
 	 * Templates for the indicators
 	 * ----------------------------------------------------------------
