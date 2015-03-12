@@ -13,6 +13,9 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(['ScrollMagic'], factory);
+    } else if (typeof exports === 'object') {
+    		// CommonJS
+    		factory(require('scrollmagic'));
     } else {
     		// no browser global export needed, just execute
         factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));

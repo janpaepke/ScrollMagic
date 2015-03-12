@@ -20,6 +20,11 @@
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(['ScrollMagic', 'TweenMax', 'TimelineMax'], factory);
+	} else if (typeof exports === 'object') {
+		// CommonJS
+		// Loads whole gsap package onto global scope.
+		require('gsap');
+		factory(require('scrollmagic'), TweenMax, TimelineMax);
 	} else {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);
