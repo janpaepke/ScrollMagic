@@ -1,6 +1,6 @@
-#ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.0</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
+# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.0</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
 
-###The javascript library for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
+### The javascript library for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
@@ -14,7 +14,7 @@ It's the perfect library for you, if you want to ...
 
 Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) to get started.
 
-##About the Library
+## About the Library
 
 ScrollMagic is a scroll interaction library.
 
@@ -80,6 +80,7 @@ http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/ScrollMagic.min.js
 All plugins and uncompressed files are also available on cdnjs.
 
 ## Installation
+
 Include the __core__ library in your HTML file:
 
 ```html
@@ -102,6 +103,7 @@ To use __plugins__ like the indicators visualization, simply include them additi
 To learn how to configure __RequireJS__, when using AMD, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-Using-AMD).
 
 ## Usage
+
 The basic ScrollMagic design pattern is one controller, which has one or more scenes attached to it.  
 Each scene is used to define what happens when the container is scrolled to a specific offset.
 
@@ -121,29 +123,31 @@ new ScrollMagic.Scene({
 ```
 To learn more about the ScrollMagic code structure, please [read here](https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic).
 
-##Help
+## Help
+
 To get started, check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 
 If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
 Should you still be unable to figure it out, feel free to post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
 
-##Browser Support
+## Browser Support
 
 ScrollMagic aims to support all major browsers in recent versions:  
 Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+
 
-##About the Author
+## About the Author
 
 I am a digital creative based in Lausanne, Switzerland.  
 I started this project to extend my understanding of javascript (which it has).
 
 [Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
 
-##License
+## License
 
 ScrollMagic is dual licensed under the MIT license and GPL.  
 For more information click [here](https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md).
 
-##Thanks
+## Thanks
+
 This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebel](https://github.com/grayghostvisuals).
