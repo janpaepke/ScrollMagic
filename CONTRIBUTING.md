@@ -85,7 +85,7 @@ We can't stress the word 'relevant' enough: Please don't post 500 lines of code 
  - **Showcase**: The VERY best way to ensure quick and competent help is to provide an __isolated__ showcase of the issue.
 This could be done on [jsfiddle](http://jsfiddle.net/), [CodePen](http://codepen.io/) or [Plunker](http://plnkr.co/edit).  
 Again: Try to make this as concise as possible, instead of copying your entire website's code.  
-*__HINT:__ For your convenience we prepared a jsfiddle base template for you: http://jsfiddle.net/janpaepke/mnogw9b4/ (Please fork and then update.)*
+*__HINT:__ For your convenience we prepared a jsfiddle base template for you: http://jsfiddle.net/janpaepke/nLzgLL1s/ (Please fork and then update.)*
  - **Links**: If you feel you HAVE to post a link to your own environment because an abstract example isn't possible for some reason, please make sure it's a dedicated URL which will remain available after your issue was resolved and development has finished. This way it will be available for future users with the same problem.
 
 Thank you for helping us maintain this project by abiding by these rules.
