@@ -140,6 +140,19 @@
                     }
                 });
             }
+            $(function () {
+                // set current version in cdn link(s)
+                var cdnLinks = [
+                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/ScrollMagic.min.js",
+                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/addIndicators.min.js",
+                ];
+                var cdnCode = cdnLinks.map(function(link) {
+                    return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '></script' + '>';
+                }).join("\n");
+                console.log(cdnCode);
+
+                $("<pre>").text(cdnCode).appendTo("#get-it-now code.cdn");
+            });
 
         </script>
         <section id="start">
@@ -153,13 +166,12 @@
                 </div>
                 <div id="get-it-now">
                     <code class="cdn active item">
-                    &lt;script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/ScrollMagic.min.js"&gt;&lt;/script&gt;<br>
                     </code>
                     <code class="bower item">
-                    bower install ScrollMagic
+                        bower install ScrollMagic
                     </code>
                     <code class="npm item">
-                    npm install ScrollMagic
+                        npm install ScrollMagic
                     </code>
                     <div class="item download">
                         <a href="https://github.com/janpaepke/ScrollMagic/zipball/master"><i class="fa fa-download"></i> Download (zip)</a>

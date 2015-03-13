@@ -367,6 +367,7 @@ a:hover #speechbubble p:last-child {
     color: #FDFFAC;
     line-height: 20px;
     opacity: 0;
+    visibility: hidden;
     -webkit-transition: all 225ms ease;
     -moz-transition: all 225ms ease;
     transition: all 225ms ease;
@@ -379,6 +380,7 @@ a:hover #speechbubble p:last-child {
 }
 #get-it-now .item.active {
     opacity: 1;
+    visibility: visible;
 }
 #get-it-now.download {
     overflow: hidden;
