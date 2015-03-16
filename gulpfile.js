@@ -240,8 +240,13 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
 });
 
-gulp.task('generate:docs', ['clean:docs'], function(callback) {
-		// use uncompiled source files for now
+gulp.task('copy:static-docs', ['clean:docs'], function(callback) {
+		// copy static doc files
+		return gulp.src("dev/docs/static/**/*.*", { base: process.cwd() + "/dev/docs/static" })
+      .pipe(gulp.dest(options.folderDocsOut));
+});
+gulp.task('generate:docs', ['clean:docs', 'copy:static-docs'], function(callback) {
+		// use uncompiled source files
 		return gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
       .pipe(jsdoc({
       	conf: './dev/docs/jsdoc.conf.json',
