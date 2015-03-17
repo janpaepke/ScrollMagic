@@ -103,13 +103,7 @@ var updatePinDimensions = function () {
 		// if relsize: spacer -> pin | else: pin -> spacer
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 			if (during) {
-				if (_util.get.width(window) == _util.get.width(_pinOptions.spacer.parentNode)) {
-					// relative to body
-					_util.css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
-				} else {
-					// not relative to body -> need to calculate
-					_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
-				}
+				_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
 			} else {
 				_util.css(_pin, {"width": "100%"});
 			}

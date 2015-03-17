@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+## 2.0.1 (2015-03-17)
+
+#### features
+ - better npm/browserify support [see here](https://github.com/janpaepke/ScrollMagic/pull/254)
+
+#### bugfixes:
+ - missing browser global when using jQuery plugin [see here](https://github.com/janpaepke/ScrollMagic/issues/268)
+ - resolving jitters due to out-of-sync scroll positions [see here](https://github.com/janpaepke/ScrollMagic/issues/255)
+
+
 ## 2.0.0 (2015-02-26)
 
 #### changes (non-breaking)

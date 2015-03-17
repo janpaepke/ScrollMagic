@@ -175,7 +175,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 					"size": $c.height(), // will be set inside test
 					"vertical": true,
 					"scrollPos": 100,
-					"scrollDirection": "FORWARD",
+					"scrollDirection": "PAUSED",
 					"container": $c[0],
 					"isDocument": false
 				};
