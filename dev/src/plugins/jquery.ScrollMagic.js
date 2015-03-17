@@ -31,7 +31,6 @@
 	} else {
 		// Browser global
 		factory(root.ScrollMagic, root.jQuery);
-		delete root.ScrollMagic;
 	}
 }(this, function (ScrollMagic, $) {
 	"use strict";
