@@ -77,7 +77,14 @@ If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](
 ```
 http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/ScrollMagic.min.js
 ```
-All plugins and uncompressed files are also available on cdnjs.
+
+All plugins and uncompressed files are also available on cdnjs.  
+For example:
+
+```
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/plugins/debug.addIndicators.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.0/plugins/debug.addIndicators.min.js
+```
 
 ## Installation
 
