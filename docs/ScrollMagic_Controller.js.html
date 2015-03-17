@@ -291,6 +291,9 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var updateScenes = function () {
 		if (_enabled &amp;&amp; _updateScenesOnNextCycle) {
+			// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
+			updateScrollPos();
+			// determine scenes to update
 			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
 			if (_scrollDirection === SCROLL_DIRECTIONS.r) {
