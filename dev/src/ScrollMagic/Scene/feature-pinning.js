@@ -114,13 +114,8 @@ var updatePinDimensions = function () {
 		}
 		if (_pinOptions.relSize.height) {
 			if (during) {
-				if (_util.get.height(window) == _util.get.height(_pinOptions.spacer.parentNode)) {
-					// relative to body
-					_util.css(_pin, {"height": "inherit"});
-				} else {
-					// not relative to body -> need to calculate
-					_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer)});
-				}
+				// the only padding the spacer should ever include is the duration, so we need to substract that.
+				_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer) - _options.duration});
 			} else {
 				_util.css(_pin, {"height": "100%"});
 			}
