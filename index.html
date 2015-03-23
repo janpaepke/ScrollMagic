@@ -147,7 +147,7 @@
                     "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/addIndicators.min.js",
                 ];
                 var cdnCode = cdnLinks.map(function(link) {
-                    return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '></script' + '>';
+                    return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '"></script' + '>';
                 }).join("\n");
                 console.log(cdnCode);
 

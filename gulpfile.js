@@ -11,6 +11,7 @@ var
 	fs = 					require('fs'),
 	del = 				require('del'),
 	semver =			require('semver'),
+	path = 				require('path'),
 	exec =				require('child_process').exec,
 // gulp & plugins
 	gulp =				require('gulp'),
@@ -124,13 +125,13 @@ if (options.dodocs) {
 gulp.task('default', defaultDeps, function () {
 	log.info("Generated new build to", options.folderOut);
 	// gulp.src(options.folderOut + "/*.js")
-	gulp.src(options.folderOut + "/uncompressed/*.js")
+	gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
 			.pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}));
-	gulp.src(options.folderOut + "/uncompressed/plugins/*.js")
+	gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
 			.pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}));
-	gulp.src(options.folderOut + "/minified/*.js")
+	gulp.src(options.folderOut + "/" + options.subfolder.minified + "/*.js")
 			.pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}));
-	gulp.src(options.folderOut + "/minified/plugins/*.js")
+	gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
 			.pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
 	if (options.version != config.version) {
 		log.info("Updated to version", options.version);
@@ -146,10 +147,10 @@ gulp.task('open-demo', function() { // just open the index file
 });
 
 gulp.task('clean:uncompressed', ['lint:source'], function(callback) {
-	del(options.folderOut + "/"+ options.subfolder.uncompressed +"/*", callback);
+	del(options.folderOut + "/" + options.subfolder.uncompressed + "/*", callback);
 });
 gulp.task('clean:minified', ['lint:source'], function(callback) {
-	del(options.folderOut + "/"+ options.subfolder.minified +"/*", callback);
+	del(options.folderOut + "/" + options.subfolder.minified + "/*", callback);
 });
 gulp.task('clean:docs', ['lint:source'], function(callback) {
 	if (options.dodocs) {
@@ -302,6 +303,26 @@ gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 		.on('error', function(err) {
 			throw err;
 		});
+});
+
+gulp.task("npm:prepublish", [], function () {
+	// update package.json
+	gulp.src("./package.json")
+			.pipe(jeditor({main: "ScrollMagic.js"}, {keep_array_indentation: true}))
+			.pipe(gulp.dest("./"));
+	// copy dist files to root.
+	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/**/*.js")
+			.pipe(gulp.src(options.folderOut + "/" + options.subfolder.minified + "/**/*.js"))
+			.pipe(gulp.dest("./"));
+});
+
+gulp.task("npm:postpublish", [], function (callback) {
+	// update package.json
+	gulp.src("./package.json")
+			.pipe(jeditor({main: path.relative("./", options.folderOut + "/" + options.subfolder.uncompressed + "/ScrollMagic.js")}, {keep_array_indentation: true}))
+			.pipe(gulp.dest("./"));
+	// remove root dist files and plugin folder
+	del(["./ScrollMagic*.js", "./plugins"], callback);
 });
 
 gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);

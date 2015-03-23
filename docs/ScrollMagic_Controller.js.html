@@ -275,24 +275,13 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
-	* Update the scroll position &amp; direction
-	* @private
-	*/
-	var updateScrollPos = function () {
-		var oldScrollPos = _scrollPos;
-		_scrollPos = Controller.scrollPos();
-		var deltaScroll = _scrollPos - oldScrollPos;
-		_scrollDirection = (deltaScroll === 0) ? SCROLL_DIRECTIONS.p : (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
-	};
-
-	/**
 	* Handle updates in cycles instead of on scroll (performance)
 	* @private
 	*/
 	var updateScenes = function () {
 		if (_enabled &amp;&amp; _updateScenesOnNextCycle) {
 			// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
-			updateScrollPos();
+			_scrollPos = Controller.scrollPos();
 			// determine scenes to update
 			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
@@ -326,9 +315,19 @@ ScrollMagic.Controller = function(options) {
 	var onChange = function (e) {
 		log(3, "event fired causing an update:", e.type);
 		if (e.type == "resize") {
+			// resize
 			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+			_scrollDirection = SCROLL_DIRECTIONS.p;
+		} else {
+			// scroll
+			var oldScrollPos = _scrollPos;
+			_scrollPos = Controller.scrollPos();
+			var deltaScroll = _scrollPos - oldScrollPos;
+			if (deltaScroll !== 0) { // invalid scroll events, happen with smooth scroll
+				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+			}
 		}
-		updateScrollPos();
+		// schedule update
 		if (!_updateScenesOnNextCycle) {
 			_updateScenesOnNextCycle = true;
 			debounceUpdate();

@@ -1,7 +1,7 @@
 {
   "name": "scrollmagic",
   "title": "ScrollMagic",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "The javascript library for magical scroll interactions.",
   "author": {
     "name": "Jan Paepke",
@@ -60,7 +60,9 @@
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
-    "start": "node ./node_modules/gulp/bin/gulp open-demo"
+    "start": "node ./node_modules/gulp/bin/gulp open-demo",
+    "prepublish": "node ./node_modules/gulp/bin/gulp npm:prepublish",
+    "postpublish": "node ./node_modules/gulp/bin/gulp npm:postpublish"
   },
   "homepage": "http://janpaepke.github.io/ScrollMagic/",
   "keywords": [
@@ -81,7 +83,9 @@
   ],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
   "files": [
-    "scrollmagic",
+    "plugins",
+    "ScrollMagic.js",
+    "ScrollMagic.min.js",
     "LICENSE.md",
     "README.md"
   ]
