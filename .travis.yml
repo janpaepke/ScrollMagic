@@ -13,6 +13,7 @@ deploy:
   email: e-mail@janpaepke.de
   api_key:
     secure: GJhwr9MBlgp8CDMtmMoTZ1elxbL5RZVp+PZGBGPusFI8GnvzDlrJ0GjoddTzN1eY+bTNG/s+xPuhqKkFQrDa2oapLVKIDsaPJ9Epp6615m1NlOppM7lurD67wqMwoPKbHHHjkWssymTcgSKlIWKGhR1rkSlawXw/3Hx++QVyQoU=
+  skip_cleanup: true
   on:
     branch: travis
     tags: false
