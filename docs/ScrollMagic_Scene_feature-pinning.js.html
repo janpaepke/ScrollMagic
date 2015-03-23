@@ -246,13 +246,7 @@ var updatePinDimensions = function () {
 		// if relsize: spacer -> pin | else: pin -> spacer
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 			if (during) {
-				if (_util.get.width(window) == _util.get.width(_pinOptions.spacer.parentNode)) {
-					// relative to body
-					_util.css(_pin, {"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"});
-				} else {
-					// not relative to body -> need to calculate
-					_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
-				}
+				_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
 			} else {
 				_util.css(_pin, {"width": "100%"});
 			}
@@ -263,13 +257,8 @@ var updatePinDimensions = function () {
 		}
 		if (_pinOptions.relSize.height) {
 			if (during) {
-				if (_util.get.height(window) == _util.get.height(_pinOptions.spacer.parentNode)) {
-					// relative to body
-					_util.css(_pin, {"height": "inherit"});
-				} else {
-					// not relative to body -> need to calculate
-					_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer)});
-				}
+				// the only padding the spacer should ever include is the duration, so we need to substract that.
+				_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer) - _options.duration});
 			} else {
 				_util.css(_pin, {"height": "100%"});
 			}

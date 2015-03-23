@@ -1,6 +1,16 @@
 CHANGELOG
 =========
 
+## 2.0.2 (2015-03-23)
+
+#### changes (potentially breaking):
+ - changed file structure for package published via NPM
+
+#### bugfixes:
+ - Size calculations for pinned elements were off in certain conditions [see here](https://github.com/janpaepke/ScrollMagic/issues/252)
+ - scrollDirection detection broke in 2.0.1 [see here](https://github.com/janpaepke/ScrollMagic/issues/271)
+
+
 ## 2.0.1 (2015-03-17)
 
 #### features
