@@ -1,6 +1,7 @@
 # Source
  - feature: new plugin: mobile scrolling
  - feature: new plugin: AngularJS
+ - enhancement: cache trigger element positions
 
 # Build (gulpfile.js)
  - autoupdate npm on new git version

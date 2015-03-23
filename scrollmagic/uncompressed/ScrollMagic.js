@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.1 (2015-03-17)
+ * ScrollMagic v2.0.2 (2015-03-23)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
- * @version 2.0.1
+ * @version 2.0.2
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -31,7 +31,7 @@
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
-	ScrollMagic.version = "2.0.1";
+	ScrollMagic.version = "2.0.2";
 
 	/**
 	 * The main class that is needed once per scroll container.
@@ -167,24 +167,13 @@
 		};
 
 		/**
-		 * Update the scroll position & direction
-		 * @private
-		 */
-		var updateScrollPos = function () {
-			var oldScrollPos = _scrollPos;
-			_scrollPos = Controller.scrollPos();
-			var deltaScroll = _scrollPos - oldScrollPos;
-			_scrollDirection = (deltaScroll === 0) ? SCROLL_DIRECTIONS.p : (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
-		};
-
-		/**
 		 * Handle updates in cycles instead of on scroll (performance)
 		 * @private
 		 */
 		var updateScenes = function () {
 			if (_enabled && _updateScenesOnNextCycle) {
 				// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
-				updateScrollPos();
+				_scrollPos = Controller.scrollPos();
 				// determine scenes to update
 				var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 				// reverse order of scenes if scrolling reverse
@@ -218,9 +207,19 @@
 		var onChange = function (e) {
 			log(3, "event fired causing an update:", e.type);
 			if (e.type == "resize") {
+				// resize
 				_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+				_scrollDirection = SCROLL_DIRECTIONS.p;
+			} else {
+				// scroll
+				var oldScrollPos = _scrollPos;
+				_scrollPos = Controller.scrollPos();
+				var deltaScroll = _scrollPos - oldScrollPos;
+				if (deltaScroll !== 0) { // invalid scroll events, happen with smooth scroll
+					_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+				}
 			}
-			updateScrollPos();
+			// schedule update
 			if (!_updateScenesOnNextCycle) {
 				_updateScenesOnNextCycle = true;
 				debounceUpdate();
@@ -1962,17 +1961,9 @@
 				// if relsize: spacer -> pin | else: pin -> spacer
 				if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 					if (during) {
-						if (_util.get.width(window) == _util.get.width(_pinOptions.spacer.parentNode)) {
-							// relative to body
-							_util.css(_pin, {
-								"width": _pinOptions.relSize.autoFullWidth ? "100%" : "inherit"
-							});
-						} else {
-							// not relative to body -> need to calculate
-							_util.css(_pin, {
-								"width": _util.get.width(_pinOptions.spacer)
-							});
-						}
+						_util.css(_pin, {
+							"width": _util.get.width(_pinOptions.spacer)
+						});
 					} else {
 						_util.css(_pin, {
 							"width": "100%"
@@ -1985,17 +1976,10 @@
 				}
 				if (_pinOptions.relSize.height) {
 					if (during) {
-						if (_util.get.height(window) == _util.get.height(_pinOptions.spacer.parentNode)) {
-							// relative to body
-							_util.css(_pin, {
-								"height": "inherit"
-							});
-						} else {
-							// not relative to body -> need to calculate
-							_util.css(_pin, {
-								"height": _util.get.height(_pinOptions.spacer)
-							});
-						}
+						// the only padding the spacer should ever include is the duration, so we need to substract that.
+						_util.css(_pin, {
+							"height": _util.get.height(_pinOptions.spacer) - _options.duration
+						});
 					} else {
 						_util.css(_pin, {
 							"height": "100%"
