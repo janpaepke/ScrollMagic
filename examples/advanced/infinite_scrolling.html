@@ -55,7 +55,7 @@
 						// build scene
 						var scene = new ScrollMagic.Scene({triggerElement: ".dynamicContent #loader", triggerHook: "onEnter"})
 										.addTo(controller)
-										.on("start", function (e) {
+										.on("enter", function (e) {
 											if (!$("#loader").hasClass("active")) {
 												$("#loader").addClass("active");
 												if (console){
