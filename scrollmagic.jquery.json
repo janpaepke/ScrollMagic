@@ -18,8 +18,7 @@
 		}
 	],
 	"dependencies": {
-		"jquery": ">=1.7",
-		"greensock": ">=1.14"
+		"jquery": ">=1.7"
 	},
 	"keywords": [
 		"scroll",
