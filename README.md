@@ -56,7 +56,7 @@ git clone git://github.com/janpaepke/ScrollMagic.git
 ```
 
 __Option 2: Bower__  
-ScrollMagic is also available on bower and will only install the necessary source code, ignoring all example and documentation files.  
+ScrollMagic is also [available on bower](http://bower.io/search/?q=scrollmagic) and will only install the necessary source code, ignoring all example and documentation files.  
 Please mind that since they are not core dependencies, you will have to add frameworks like GSAP, jQuery or Velocity manually, should you choose to use them.
 
 ```bash
@@ -64,7 +64,7 @@ bower install scrollmagic
 ```
 
 __Option 3: npm__  
-If you prefer the node package manager, feel free to use it.  
+If you prefer the [node package manager](https://www.npmjs.com/package/scrollmagic), feel free to use it.  
 Keep in mind that like with bower non-crucial files will be ignored (see above).
 
 ```bash
