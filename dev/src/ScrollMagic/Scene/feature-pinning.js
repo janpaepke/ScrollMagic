@@ -172,7 +172,7 @@ var updateRelativePinSpacer = function () {
 var onMousewheelOverPin = function (e) {
 	if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) { // in pin state
 		e.preventDefault();
-		_controller.scrollTo(_controller.info("scrollPos") - (e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"]/3 || -e.detail*30));
+		_controller._setScrollPos(_controller.info("scrollPos") - (e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"]/3 || -e.detail*30));
 	}
 };
 

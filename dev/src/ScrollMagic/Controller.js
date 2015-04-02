@@ -113,9 +113,10 @@ ScrollMagic.Controller = function(options) {
 
 	/**
 	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
+	* Make available publicly for pinned mousewheel workaround.
 	* @private
 	*/
-	var setScrollPos = function (pos) {
+	var setScrollPos = this._setScrollPos = function (pos) {
 		if (_options.vertical) {
 			if (_isDocument) {
 				window.scrollTo(_util.get.scrollLeft(), pos);
@@ -451,7 +452,7 @@ ScrollMagic.Controller = function(options) {
 				while (elem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
 					elem = elem.parentNode;
 				}
-				
+
 				var
 					param = _options.vertical ? "top" : "left", // which param is of interest ?
 					containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
