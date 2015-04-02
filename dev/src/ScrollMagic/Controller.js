@@ -447,6 +447,11 @@ ScrollMagic.Controller = function(options) {
 		} else { // scroll to element
 			var elem = _util.get.elements(scrollTarget)[0];
 			if (elem) {
+				// if parent is pin spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (elem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+					elem = elem.parentNode;
+				}
+				
 				var
 					param = _options.vertical ? "top" : "left", // which param is of interest ?
 					containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.

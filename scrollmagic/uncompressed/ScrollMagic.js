@@ -33,6 +33,9 @@
 
 	ScrollMagic.version = "2.0.2";
 
+	// global const
+	var PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer";
+
 	/**
 	 * The main class that is needed once per scroll container.
 	 *
@@ -485,6 +488,11 @@
 			} else { // scroll to element
 				var elem = _util.get.elements(scrollTarget)[0];
 				if (elem) {
+					// if parent is pin spacer, use spacer position instead so correct start position is returned for pinned elements.
+					while (elem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+						elem = elem.parentNode;
+					}
+
 					var
 					param = _options.vertical ? "top" : "left",
 						// which param is of interest ?
@@ -744,7 +752,6 @@
 
 		var
 		NAMESPACE = "ScrollMagic.Scene",
-			PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer",
 			DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
 /*

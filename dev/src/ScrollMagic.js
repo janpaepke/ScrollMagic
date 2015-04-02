@@ -24,6 +24,9 @@
 
 	ScrollMagic.version = "%VERSION%";
 
+	// global const
+	var PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer";
+
 // @include('ScrollMagic/Controller.js')
 
 // @include('ScrollMagic/Scene.js')
