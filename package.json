@@ -60,9 +60,7 @@
   },
   "scripts": {
     "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
-    "start": "node ./node_modules/gulp/bin/gulp open-demo",
-    "prepublish": "node ./node_modules/gulp/bin/gulp npm:prepublish",
-    "postpublish": "node ./node_modules/gulp/bin/gulp npm:postpublish"
+    "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://janpaepke.github.io/ScrollMagic/",
   "keywords": [
@@ -83,9 +81,7 @@
   ],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
   "files": [
-    "plugins",
-    "ScrollMagic.js",
-    "ScrollMagic.min.js",
+    "scrollmagic",
     "LICENSE.md",
     "README.md"
   ]

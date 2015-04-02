@@ -305,17 +305,22 @@ gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 		});
 });
 
+// Currently not  used.
+/*
 gulp.task("npm:prepublish", [], function () {
 	// update package.json
 	gulp.src("./package.json")
 			.pipe(jeditor({main: "ScrollMagic.js"}, {keep_array_indentation: true}))
 			.pipe(gulp.dest("./"));
 	// copy dist files to root.
-	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/**/*.js")
-			.pipe(gulp.src(options.folderOut + "/" + options.subfolder.minified + "/**/*.js"))
+	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/** /*.js")
+			.pipe(gulp.src(options.folderOut + "/" + options.subfolder.minified + "/** /*.js"))
 			.pipe(gulp.dest("./"));
 });
+*/
 
+// Currently not  used.
+/*
 gulp.task("npm:postpublish", [], function (callback) {
 	// update package.json
 	gulp.src("./package.json")
@@ -324,6 +329,7 @@ gulp.task("npm:postpublish", [], function (callback) {
 	// remove root dist files and plugin folder
 	del(["./ScrollMagic*.js", "./plugins"], callback);
 });
+*/
 
 gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
 
