@@ -1976,9 +1976,9 @@
 				}
 				if (_pinOptions.relSize.height) {
 					if (during) {
-						// the only padding the spacer should ever include is the duration, so we need to substract that.
+						// the only padding the spacer should ever include is the duration (if pushFollowers = true), so we need to substract that.
 						_util.css(_pin, {
-							"height": _util.get.height(_pinOptions.spacer) - _options.duration
+							"height": _util.get.height(_pinOptions.spacer) - (_pinOptions.pushFollowers ? _options.duration : 0)
 						});
 					} else {
 						_util.css(_pin, {
