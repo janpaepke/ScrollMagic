@@ -78,7 +78,7 @@
 						});
 
 						//  bind scroll to anchor links
-						$(document).on("click", "a[href^=#]", function (e) {
+						$(document).on("click", "a[href^='#']", function (e) {
 							var id = $(this).attr("href");
 							if ($(id).length > 0) {
 								e.preventDefault();
