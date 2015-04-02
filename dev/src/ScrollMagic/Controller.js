@@ -151,9 +151,11 @@ ScrollMagic.Controller = function(options) {
 				log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
 				scene.update(true);
 			});
+			// (BUILD) - REMOVE IN MINIFY - START
 			if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 				log(3, "updating 0 Scenes (nothing added to controller)");
 			}
+			// (BUILD) - REMOVE IN MINIFY - END
 			_updateScenesOnNextCycle = false;
 		}
 	};
@@ -566,11 +568,13 @@ ScrollMagic.Controller = function(options) {
 	 * @returns {(number|Controller)} Current loglevel or parent object for chaining.
 	 */
 	this.loglevel = function (newLoglevel) {
+		// (BUILD) - REMOVE IN MINIFY - START
 		if (!arguments.length) { // get
 			return _options.loglevel;
 		} else if (_options.loglevel != newLoglevel) { // set
 			_options.loglevel = newLoglevel;
 		}
+		// (BUILD) - REMOVE IN MINIFY - END
 		return Controller;
 	};
 
