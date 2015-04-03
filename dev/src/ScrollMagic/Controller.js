@@ -425,23 +425,52 @@ ScrollMagic.Controller = function(options) {
 	 * controller.scrollTo(function (newScrollPos) {
 	 *	$("body").animate({scrollTop: newScrollPos});
 	 * });
+	 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 	 *
-	 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
+ 	 * // define a new scroll function with an additional parameter
+	 * controller.scrollTo(function (newScrollPos, message) {
+	 *  console.log(message);
+	 *	$(this).animate({scrollTop: newScrollPos});
+	 * });
+	 * // call as usual, but supply an extra parameter to the defined custom function
+	 * controller.scrollTo(100, "my message");
+	 *
+ 	 * // define a new scroll function with an additional parameter containing multiple variables
+	 * controller.scrollTo(function (newScrollPos, options) {
+	 *  someGlobalVar = options.a + options.b;
+	 *	$(this).animate({scrollTop: newScrollPos});
+	 * });
+	 * // call as usual, but supply an extra parameter containing multiple options
+	 * controller.scrollTo(100, {a: 1, b: 2});
+	 *
+ 	 * // define a new scroll function with a callback supplied as an additional parameter
+	 * controller.scrollTo(function (newScrollPos, callback) {
+	 *	$(this).animate({scrollTop: newScrollPos}, 400, "swing", callback);
+	 * });
+	 * // call as usual, but supply an extra parameter, which is used as a callback in the previously defined custom scroll function
+	 * controller.scrollTo(100, function() {
+	 *	console.log("scroll has finished.");
+	 * });
+	 *
+	 * @param {mixed} scrollTarget - The supplied argument can be one of these types:
 	 * 1. `number` -> The container will scroll to this new scroll offset.
 	 * 2. `string` or `object` -> Can be a selector or a DOM object.  
 	 *  The container will scroll to the position of this element.
 	 * 3. `ScrollMagic Scene` -> The container will scroll to the start of this scene.
-	 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  
-	 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using `this`.  
-	 *  _**NOTE:** All other options will still work as expected, using the new function to scroll._
+	 * 4. `function` -> This function will be used for future scroll position modifications.  
+	 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The function receives the new scroll position as a parameter and a reference to the container element using `this`.  
+	 *  It may also optionally receive an optional additional parameter (see below)  
+	 *  _**NOTE:**  
+	 *  All other options will still work as expected, using the new function to scroll._
+	 * @param {mixed} [additionalParameter] - If a custom scroll function was defined (see above 4.), you may want to supply additional parameters to it, when calling it. You can do this using this parameter – see examples for details. Please note, that this parameter will have no effect, if you use the default scrolling function.
 	 * @returns {Controller} Parent object for chaining.
 	 */
-	this.scrollTo = function (scrollTarget) {
+	this.scrollTo = function (scrollTarget, additionalParameter) {
 		if (_util.type.Number(scrollTarget)) { // excecute
-			setScrollPos.call(_options.container, scrollTarget);
+			setScrollPos.call(_options.container, scrollTarget, additionalParameter);
 		} else if (scrollTarget instanceof ScrollMagic.Scene) { // scroll to scene
 			if (scrollTarget.controller() === Controller) { // check if the controller is associated with this scene
-				Controller.scrollTo(scrollTarget.scrollOffset());
+				Controller.scrollTo(scrollTarget.scrollOffset(), additionalParameter);
 			} else {
 				log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 			}
@@ -464,7 +493,7 @@ ScrollMagic.Controller = function(options) {
 					containerOffset[param] -= Controller.scrollPos();
 				}
 
-				Controller.scrollTo(elementOffset[param] - containerOffset[param]);
+				Controller.scrollTo(elementOffset[param] - containerOffset[param], additionalParameter);
 			} else {
 				log (2, "scrollTo(): The supplied argument is invalid. Scroll cancelled.", scrollTarget);
 			}
