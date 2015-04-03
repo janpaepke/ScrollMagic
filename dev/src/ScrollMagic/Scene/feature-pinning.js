@@ -244,9 +244,11 @@ this.setPin = function (element, settings) {
 		settings.pushFollowers = false;
 	}
 	// (BUILD) - REMOVE IN MINIFY - START
-	if (_pin && _options.duration === 0 && settings.pushFollowers) {
-		log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
-	}
+	window.setTimeout(function () { // wait until all finished, because with responsive duration it will only be set after scene is added to controller
+		if (_pin && _options.duration === 0 && settings.pushFollowers) {
+			log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
+		}
+	}, 0);
 	// (BUILD) - REMOVE IN MINIFY - END
 
 	// create spacer and insert
