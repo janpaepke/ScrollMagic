@@ -52,7 +52,8 @@
 					</div>
 					<div class="spacer s7"></div>
 		  			<script type="text/javascript" src="../../js/lib/iscroll-probe.js"></script>
-					<script>							
+					<script>
+						$(function () { // wait for document ready					
 							// init controller
 							var controller = new ScrollMagic.Controller({container: "#example-wrapper"});
 
@@ -108,7 +109,7 @@
 								// add indicators (requires plugin)
 								scene.addIndicators();						
 							}
-
+						});
 					</script>
 				</section>
 			</div>

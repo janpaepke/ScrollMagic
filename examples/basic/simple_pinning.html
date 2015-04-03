@@ -55,11 +55,13 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
+						$(function () { // wait for document ready
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#trigger1", duration: 300})
 											.setPin("#pin1")
 											.addIndicators({name: "1 (duration: 300)"}) // add indicators (requires plugin)
 											.addTo(controller);
+						});
 					</script>
 				</section>
 				<section class="demo">
@@ -71,11 +73,13 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
+						$(function () { // wait for document ready
 							// build scene
 							var scene = new ScrollMagic.Scene({triggerElement: "#pin2"})
 											.setPin("#pin2")
 											.addIndicators({name: "2 (duration: 0)"}) // add indicators (requires plugin)
 											.addTo(controller);
+						});
 					</script>
 				</section>			
 				<div class="spacer s_viewport"></div>
