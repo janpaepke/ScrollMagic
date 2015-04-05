@@ -324,6 +324,15 @@ h1.badge.velocity:after {
 .blue {
 	background-color: #3883d8;
 }
+.turqoise {
+	background-color: #38ced7;
+}
+.brown {
+	background-color: #a66f28;
+}
+.bordeaux {
+	background-color: #953543;
+}
 .skin {
 	background-color: #ED9F4C;
 }
@@ -337,7 +346,7 @@ h1.badge.velocity:after {
 	background-color: #cf3535;
 }
 .green {
-	background-color: #00af10;
+	background-color: #22d659;
 }
 .orange {
 	background-color: #ea6300;
@@ -975,6 +984,27 @@ a.viewsource:before {
 #bezier a.viewsource {
 	margin: 100px;
 	display: inline-block;
+}
+
+.demo#section-slides, .demo#section-wipes {
+	height: 100%;
+	width: 100%;
+	background-image: none;
+}
+.demo#section-slides .panel, .demo#section-wipes .panel {
+	background-image: url("../img/example_bg_spacer_v.gif");
+}
+.demo#section-wipes #pinContainer .turqoise, .demo#section-wipes #pinContainer .green, .demo#section-slides #slideContainer .panel {
+	background-image: url("../img/example_bg_spacer_h.gif");
+}
+.demo#section-slides .panel > b, .demo#section-wipes .panel > b {
+	font-size: 15px;
+	color: white;
+	position: relative;
+	display: block;
+	height: 0;
+	overflow: visible;
+	top: 50%;
 }
 
 /*

@@ -4,15 +4,16 @@ var
 		"basic": {
 			title: "Basic",
 			sub: {
-				"simple_tweening.html" :			"Animating with GSAP",
-				"simple_velocity.html" :			"Animating with Velocity",
-				"simple_pinning.html" :				"Sticky Elements (pinning)",
-				"scene_manipulation.html" :		"Scene Manipulation",
-				"going_horizontal.html" :			"Going Horizontal",
-				"class_toggles.html" :				"CSS Class Toggles",
-				"responsive_duration.html" :	"Responsive Duration",
-				"custom_actions.html" :				"Custom Actions",
-				"debugging.html" :						"Debugging",
+				"simple_tweening.html" :				"Animating with GSAP",
+				"simple_velocity.html" :				"Animating with Velocity",
+				"simple_pinning.html" :					"Sticky Elements (pinning)",
+				"section_wipes_natural.html" :	"Section Wipes (natural)",
+				"scene_manipulation.html" :			"Scene Manipulation",
+				"going_horizontal.html" :				"Going Horizontal",
+				"class_toggles.html" :					"CSS Class Toggles",
+				"responsive_duration.html" :		"Responsive Duration",
+				"custom_actions.html" :					"Custom Actions",
+				"debugging.html" :							"Debugging",
 			}
 		},
 		"advanced": {
@@ -20,6 +21,8 @@ var
 			sub: {
 				"animate_css.html" :						"Animating with CSS",
 				"advanced_tweening.html" :			"Advanced Tweening",
+				"section_wipes_manual.html" :		"Section Wipes (manual)",
+				"section_slides_manual.html" :	"Section Slides (manual)",
 				"svg_drawing.html" :						"SVG Drawing",
 				"custom_containers.html" :			"Custom Containers",
 				"mobile_basic.html" :						"Mobile Support (Basic)",
