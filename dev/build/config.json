@@ -18,7 +18,9 @@
 			"progress",
 			"parallax",
 			"events",
-			"classes"
+			"classes",
+			"jquery-plugin",
+			"ecosystem:jquery"
 		]
 	},
 	"karma": {

@@ -258,7 +258,7 @@ gulp.task('generate:docs', ['clean:docs', 'copy:static-docs'], function(callback
 });
 
 gulp.task('sync:json-files', function() {
-	gulp.src(["./package.json", "./bower.json", "./scrollmagic.jquery.json"])
+	gulp.src(["./package.json", "./bower.json"])
 			.pipe(jeditor(config.info, {keep_array_indentation: true}))
 			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
 			.pipe(gulp.dest("./"));
