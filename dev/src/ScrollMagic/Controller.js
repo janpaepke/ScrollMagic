@@ -54,7 +54,7 @@ ScrollMagic.Controller = function(options) {
 		_isDocument = true,
 		_viewPortSize = 0,
 		_enabled = true,
-		_updateCycle,
+		_updateTimeout,
 		_refreshTimeout;
 
 	/*
@@ -86,7 +86,7 @@ ScrollMagic.Controller = function(options) {
 			_options.container = window;
 		}
 		// update container size immediately
-		_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+		_viewPortSize = getViewportSize();
 		// set event handlers
 		_options.container.addEventListener("resize", onChange);
 		_options.container.addEventListener("scroll", onChange);
@@ -97,6 +97,10 @@ ScrollMagic.Controller = function(options) {
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 	};
 
+	/**
+	* Schedule the next execution of the refresh function
+	* @private
+	*/
 	var scheduleRefresh = function () {
 		if (_options.refreshInterval > 0) {
 			_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
@@ -109,6 +113,14 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var getScrollPos = function () {
 		return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
+	};
+
+	/**
+	* Returns the current viewport Size (width vor horizontal, height for vertical)
+	* @private
+	*/
+	var getViewportSize = function () {
+		return _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 	};
 
 	/**
@@ -138,8 +150,14 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var updateScenes = function () {
 		if (_enabled && _updateScenesOnNextCycle) {
-			// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
+			_updateScenesOnNextCycle = false;
+			var oldScrollPos = _scrollPos;
+			// update scroll pos now instead of onChange, as it might have changed since scheduling (i.e. in-browser smooth scroll)
 			_scrollPos = Controller.scrollPos();
+			var deltaScroll = _scrollPos - oldScrollPos;
+			if (deltaScroll !== 0) { // scroll position changed?
+				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+			}
 			// determine scenes to update
 			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
@@ -156,7 +174,6 @@ ScrollMagic.Controller = function(options) {
 				log(3, "updating 0 Scenes (nothing added to controller)");
 			}
 			// (BUILD) - REMOVE IN MINIFY - END
-			_updateScenesOnNextCycle = false;
 		}
 	};
 	
@@ -165,7 +182,7 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var debounceUpdate = function () {
-		_updateCycle = _util.rAF(updateScenes);
+		_updateTimeout = _util.rAF(updateScenes);
 	};
 	
 	/**
@@ -176,16 +193,8 @@ ScrollMagic.Controller = function(options) {
 		log(3, "event fired causing an update:", e.type);
 		if (e.type == "resize") {
 			// resize
-			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+			_viewPortSize = getViewportSize();
 			_scrollDirection = SCROLL_DIRECTIONS.p;
-		} else {
-			// scroll
-			var oldScrollPos = _scrollPos;
-			_scrollPos = Controller.scrollPos();
-			var deltaScroll = _scrollPos - oldScrollPos;
-			if (deltaScroll !== 0) { // invalid scroll events, happen with smooth scroll
-				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
-			}
 		}
 		// schedule update
 		if (!_updateScenesOnNextCycle) {
@@ -197,7 +206,7 @@ ScrollMagic.Controller = function(options) {
 	var refresh = function () {
 		if (!_isDocument) {
 			// simulate resize event. Only works for viewport relevant param (performance)
-			if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
+			if (_viewPortSize != getViewportSize()) {
 				var resizeEvent;
 				try {
 					resizeEvent = new Event('resize', {bubbles: false, cancelable: false});
@@ -654,7 +663,7 @@ ScrollMagic.Controller = function(options) {
 		}
 		_options.container.removeEventListener("resize", onChange);
 		_options.container.removeEventListener("scroll", onChange);
-		_util.cAF(_updateCycle);
+		_util.cAF(_updateTimeout);
 		log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 		return null;
 	};
