@@ -38,34 +38,49 @@ var
 
 // command line options (use gulp -h to for details)
 var args = require('yargs')
-						.usage('Build new ScrollMagic dist files from source.')
+						.usage('Usage: gulp [options]')
 						.describe('o', 'Specify output folder for dist files ')
-							.alias("o", "out")
+							.alias('o', 'out')
 							.default('o', './' + config.dirs.defaultOutput)
 						.describe('d', 'Generate new docs, optionally supplying output folder [default folder: ./"' + config.dirs.defaultDocsOutput + '"]')
-							.alias("d", "doc")
+							.alias('d', 'doc')
 							.default('d', false)
-						.describe('ver', 'Set the version number for output')
-							.default('ver', config.version)
+						.describe('b', 'Bumps ScrollMagic version number. Accepts \'patch\', \'minor\' and \'major\'.')
+							.alias('b', 'bump')
 						.help('h')
-							.alias("h", "?")
+							.alias('h', '?')
 						// examples
 						.example("$0 -o=mybuild", 		'build and output to folder "mybuild"')
 						.example("$0 -d", 						'build and generate new docs')
 						.example("$0 --doc=newdocs", 	'build and generate new docs into folder "newdocs"')
-						.example("$0 --ver=2.1.0", 		'build and update version number to 2.1.0')
+						.example("$0 --bump=patch", 	'build and update version number from to 2.1.1 to 2.1.2')
 						.argv;
+
+
+/* ########################################## */
+/* ########### validate parameters ########## */
+/* ########################################## */
+
+// bump
+if (args.bump) {
+	var validBumps = ["patch", "minor", "major"];
+	if (args.bump === true) {
+		args.b = args.bump = validBumps[0];
+	} else if (validBumps.indexOf(args.bump) === -1) {
+		log.exit("Supplied option for bump ('" + args.bump + "') is invalid. Allowed values are: '" + validBumps.join("', '") + "'");
+	}
+}
 
 /* ########################################## */
 /* ################ settings ################ */
 /* ########################################## */
 
 var options = {
-	version: args.ver,
+	version: args.bump ? semver.inc(config.version, args.bump) : config.version,
 	dodocs: !!args.doc || args._[0] === 'generate:docs',
 	folderOut: args.out,
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
-	date: config.version === args.ver ? new Date(config.lastupdate) : new Date(),
+	date: args.bump ? new Date() : new Date(config.lastupdate),
 	banner: {
 		uncompressed: fs.readFileSync(config.banner.uncompressed, 'utf-8') + "\n",
 		minified: fs.readFileSync(config.banner.minified, 'utf-8') + "\n"
@@ -94,24 +109,17 @@ options.replaceVars = {
 };
 
 /* ########################################## */
-/* ########### validate parameters ########## */
+/* ############ validate options ############ */
 /* ########################################## */
 
-// version
-if (!semver.valid(options.version)) {
-	log.exit("Invalid version number supplied");
-} else if (semver.lt(options.version, config.version)) {
-	log.exit("Supplied version (" + options.version + ") is older than current (" + config.version + "), defined in dev/build/config.json");
-}
 // output
 if (!fs.existsSync(options.folderOut)) {
-	log.exit("Supplied output path not found.");
+	log.exit("Supplied output path not found: " + options.folderOut);
 }
 // docs output
 if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
-	log.exit("Supplied output path for docs not found.");
+	log.exit("Supplied output path for docs not found: " + options.folderDocsOut);
 }
-
 
 /* ########################################## */
 /* ############### MAIN TASKS ############### */
@@ -133,8 +141,8 @@ gulp.task('default', defaultDeps, function () {
 			.pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}));
 	gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
 			.pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
-	if (options.version != config.version) {
-		log.info("Updated to version", options.version);
+	if (args.bump) {
+		log.info("Bumped version number from v" + config.version + " to v" + options.version);
 	}
 	if (options.dodocs) {
 		log.info("Generated new docs to", options.folderDocsOut);

@@ -140,29 +140,30 @@ $ gulp
 You can pass in various command line arguments to influence the build:
 
 ```
---ver=VERSION
-Updates the ScrollMagic version number
-example: gulp -v=1.0.4
+-b=[RELEASE] | alias: --bump=[RELEASE]
+If supplied, this flag will update the ScrollMagic major, minor or patch version.
+Can be 'major', 'minor' or 'patch' and will default to 'patch', if undefined.
+example: gulp -b=patch
 
--o=DIR      | alias: --out=DIR
+-o=DIR       | alias: --out=DIR
 Define output directory. If not supplied the default directory '/scrollmagic' will be used.
 example: node build -o=tmp
 
--d=[DIR]    | alias: --doc=[DIR]
+-d=[DIR]     | alias: --doc=[DIR]
 Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
 example: node build -d
 
--h          | alias: -?
+-h           | alias: -?
 display available command line options
 ```
 
 For new releases the build command would be:
 
 ```bash
-$ gulp -v=2.1.1 -d
+$ gulp -b -d
 ```
 
-This will update the version to 2.1.1 and also generate new docs.  
+This will update the version from X.X.1 to X.X.2 and also generate new docs.  
 In most cases you won't need these parameters, though.
 
 The build supports another relevant option: During the development phase you won't need to generate minified files or update docs. In order to save time and make the build finish much faster run this:
