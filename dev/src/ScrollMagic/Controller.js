@@ -150,6 +150,9 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var updateScenes = function () {
 		if (_enabled && _updateScenesOnNextCycle) {
+			// determine scenes to update
+			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
+			// reset scenes
 			_updateScenesOnNextCycle = false;
 			var oldScrollPos = _scrollPos;
 			// update scroll pos now instead of onChange, as it might have changed since scheduling (i.e. in-browser smooth scroll)
@@ -158,8 +161,6 @@ ScrollMagic.Controller = function(options) {
 			if (deltaScroll !== 0) { // scroll position changed?
 				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
 			}
-			// determine scenes to update
-			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
 			if (_scrollDirection === SCROLL_DIRECTIONS.r) {
 				scenesToUpdate.reverse();

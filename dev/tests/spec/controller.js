@@ -119,6 +119,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 		describe(".updateScene()", function () {
 			it("updates a scene with delay, but only once per cycle", function (done) {
 				var scene = new ScrollMagic.Scene();
+				scene.abc = true;
 				spyOn(scene, 'update');
 				ctrl.updateScene(scene);
 				ctrl.updateScene(scene);
@@ -175,7 +176,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 					"size": $c.height(), // will be set inside test
 					"vertical": true,
 					"scrollPos": 100,
-					"scrollDirection": "PAUSED",
+					"scrollDirection": "FORWARD",
 					"container": $c[0],
 					"isDocument": false
 				};
@@ -217,7 +218,14 @@ define(["ScrollMagic"], function (ScrollMagic) {
 				var callback = jasmine.createSpy("cb");
 				ctrl.scrollTo(callback);
 				ctrl.scrollTo(150);
-				expect(callback).toHaveBeenCalledWith(150);
+				expect(callback).toHaveBeenCalledWith(150, undefined);
+			});
+
+			it("is replaceable with an alternate function, which accepts an additional parameter", function () {
+				var callback = jasmine.createSpy("cb");
+				ctrl.scrollTo(callback);
+				ctrl.scrollTo(150, 5);
+				expect(callback).toHaveBeenCalledWith(150, 5);
 			});
 		});
 
