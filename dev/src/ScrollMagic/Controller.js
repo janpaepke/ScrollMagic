@@ -197,7 +197,7 @@ ScrollMagic.Controller = function(options) {
 			_scrollDirection = SCROLL_DIRECTIONS.p;
 		}
 		// schedule update
-		if (!_updateScenesOnNextCycle) {
+		if (_updateScenesOnNextCycle !== true) {
 			_updateScenesOnNextCycle = true;
 			debounceUpdate();
 		}
