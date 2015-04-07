@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.2 (2015-03-23)
+ * ScrollMagic v2.0.3 (2015-04-07)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://janpaepke.github.io/ScrollMagic
  * 
- * @version 2.0.2
+ * @version 2.0.3
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -31,7 +31,10 @@
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
-	ScrollMagic.version = "2.0.2";
+	ScrollMagic.version = "2.0.3";
+
+	// TODO: temporary workaround for chrome's scroll jitter bug
+	window.addEventListener("mousewheel", function () {});
 
 	// global const
 	var PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer";
@@ -93,7 +96,7 @@
 			_isDocument = true,
 			_viewPortSize = 0,
 			_enabled = true,
-			_updateCycle, _refreshTimeout;
+			_updateTimeout, _refreshTimeout;
 
 /*
 	 * ----------------------------------------------------------------
@@ -124,7 +127,7 @@
 				_options.container = window;
 			}
 			// update container size immediately
-			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+			_viewPortSize = getViewportSize();
 			// set event handlers
 			_options.container.addEventListener("resize", onChange);
 			_options.container.addEventListener("scroll", onChange);
@@ -135,6 +138,10 @@
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
 
+		/**
+		 * Schedule the next execution of the refresh function
+		 * @private
+		 */
 		var scheduleRefresh = function () {
 			if (_options.refreshInterval > 0) {
 				_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
@@ -147,6 +154,14 @@
 		 */
 		var getScrollPos = function () {
 			return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
+		};
+
+		/**
+		 * Returns the current viewport Size (width vor horizontal, height for vertical)
+		 * @private
+		 */
+		var getViewportSize = function () {
+			return _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 		};
 
 		/**
@@ -176,8 +191,14 @@
 		 */
 		var updateScenes = function () {
 			if (_enabled && _updateScenesOnNextCycle) {
-				// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
+				_updateScenesOnNextCycle = false;
+				var oldScrollPos = _scrollPos;
+				// update scroll pos now instead of onChange, as it might have changed since scheduling (i.e. in-browser smooth scroll)
 				_scrollPos = Controller.scrollPos();
+				var deltaScroll = _scrollPos - oldScrollPos;
+				if (deltaScroll !== 0) { // scroll position changed?
+					_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+				}
 				// determine scenes to update
 				var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 				// reverse order of scenes if scrolling reverse
@@ -192,7 +213,6 @@
 				if (scenesToUpdate.length === 0 && _options.loglevel >= 3) {
 					log(3, "updating 0 Scenes (nothing added to controller)");
 				}
-				_updateScenesOnNextCycle = false;
 			}
 		};
 
@@ -201,7 +221,7 @@
 		 * @private
 		 */
 		var debounceUpdate = function () {
-			_updateCycle = _util.rAF(updateScenes);
+			_updateTimeout = _util.rAF(updateScenes);
 		};
 
 		/**
@@ -212,19 +232,11 @@
 			log(3, "event fired causing an update:", e.type);
 			if (e.type == "resize") {
 				// resize
-				_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+				_viewPortSize = getViewportSize();
 				_scrollDirection = SCROLL_DIRECTIONS.p;
-			} else {
-				// scroll
-				var oldScrollPos = _scrollPos;
-				_scrollPos = Controller.scrollPos();
-				var deltaScroll = _scrollPos - oldScrollPos;
-				if (deltaScroll !== 0) { // invalid scroll events, happen with smooth scroll
-					_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
-				}
 			}
 			// schedule update
-			if (!_updateScenesOnNextCycle) {
+			if (_updateScenesOnNextCycle !== true) {
 				_updateScenesOnNextCycle = true;
 				debounceUpdate();
 			}
@@ -233,7 +245,7 @@
 		var refresh = function () {
 			if (!_isDocument) {
 				// simulate resize event. Only works for viewport relevant param (performance)
-				if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
+				if (_viewPortSize != getViewportSize()) {
 					var resizeEvent;
 					try {
 						resizeEvent = new Event('resize', {
@@ -464,23 +476,52 @@
 		 * controller.scrollTo(function (newScrollPos) {
 		 *	$("body").animate({scrollTop: newScrollPos});
 		 * });
+		 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 		 *
-		 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
+		 * // define a new scroll function with an additional parameter
+		 * controller.scrollTo(function (newScrollPos, message) {
+		 *  console.log(message);
+		 *	$(this).animate({scrollTop: newScrollPos});
+		 * });
+		 * // call as usual, but supply an extra parameter to the defined custom function
+		 * controller.scrollTo(100, "my message");
+		 *
+		 * // define a new scroll function with an additional parameter containing multiple variables
+		 * controller.scrollTo(function (newScrollPos, options) {
+		 *  someGlobalVar = options.a + options.b;
+		 *	$(this).animate({scrollTop: newScrollPos});
+		 * });
+		 * // call as usual, but supply an extra parameter containing multiple options
+		 * controller.scrollTo(100, {a: 1, b: 2});
+		 *
+		 * // define a new scroll function with a callback supplied as an additional parameter
+		 * controller.scrollTo(function (newScrollPos, callback) {
+		 *	$(this).animate({scrollTop: newScrollPos}, 400, "swing", callback);
+		 * });
+		 * // call as usual, but supply an extra parameter, which is used as a callback in the previously defined custom scroll function
+		 * controller.scrollTo(100, function() {
+		 *	console.log("scroll has finished.");
+		 * });
+		 *
+		 * @param {mixed} scrollTarget - The supplied argument can be one of these types:
 		 * 1. `number` -> The container will scroll to this new scroll offset.
 		 * 2. `string` or `object` -> Can be a selector or a DOM object.  
 		 *  The container will scroll to the position of this element.
 		 * 3. `ScrollMagic Scene` -> The container will scroll to the start of this scene.
-		 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  
-		 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using `this`.  
-		 *  _**NOTE:** All other options will still work as expected, using the new function to scroll._
+		 * 4. `function` -> This function will be used for future scroll position modifications.  
+		 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The function receives the new scroll position as a parameter and a reference to the container element using `this`.  
+		 *  It may also optionally receive an optional additional parameter (see below)  
+		 *  _**NOTE:**  
+		 *  All other options will still work as expected, using the new function to scroll._
+		 * @param {mixed} [additionalParameter] - If a custom scroll function was defined (see above 4.), you may want to supply additional parameters to it, when calling it. You can do this using this parameter – see examples for details. Please note, that this parameter will have no effect, if you use the default scrolling function.
 		 * @returns {Controller} Parent object for chaining.
 		 */
-		this.scrollTo = function (scrollTarget) {
+		this.scrollTo = function (scrollTarget, additionalParameter) {
 			if (_util.type.Number(scrollTarget)) { // excecute
-				setScrollPos.call(_options.container, scrollTarget);
+				setScrollPos.call(_options.container, scrollTarget, additionalParameter);
 			} else if (scrollTarget instanceof ScrollMagic.Scene) { // scroll to scene
 				if (scrollTarget.controller() === Controller) { // check if the controller is associated with this scene
-					Controller.scrollTo(scrollTarget.scrollOffset());
+					Controller.scrollTo(scrollTarget.scrollOffset(), additionalParameter);
 				} else {
 					log(2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 				}
@@ -505,7 +546,7 @@
 						containerOffset[param] -= Controller.scrollPos();
 					}
 
-					Controller.scrollTo(elementOffset[param] - containerOffset[param]);
+					Controller.scrollTo(elementOffset[param] - containerOffset[param], additionalParameter);
 				} else {
 					log(2, "scrollTo(): The supplied argument is invalid. Scroll cancelled.", scrollTarget);
 				}
@@ -665,7 +706,7 @@
 			}
 			_options.container.removeEventListener("resize", onChange);
 			_options.container.removeEventListener("scroll", onChange);
-			_util.cAF(_updateCycle);
+			_util.cAF(_updateTimeout);
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 			return null;
 		};
@@ -2043,7 +2084,7 @@
 		var onMousewheelOverPin = function (e) {
 			if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) { // in pin state
 				e.preventDefault();
-				_controller._setScrollPos(_controller.info("scrollPos") - (e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"] / 3 || -e.detail * 30));
+				_controller._setScrollPos(_controller.info("scrollPos") - ((e.wheelDelta || e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"]) / 3 || -e.detail * 30));
 			}
 		};
 
@@ -2113,9 +2154,11 @@
 				log(2, "WARNING: If the pinned element is positioned absolutely pushFollowers will be disabled.");
 				settings.pushFollowers = false;
 			}
-			if (_pin && _options.duration === 0 && settings.pushFollowers) {
-				log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
-			}
+			window.setTimeout(function () { // wait until all finished, because with responsive duration it will only be set after scene is added to controller
+				if (_pin && _options.duration === 0 && settings.pushFollowers) {
+					log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
+				}
+			}, 0);
 
 			// create spacer and insert
 			var

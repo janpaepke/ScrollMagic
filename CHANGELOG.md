@@ -1,10 +1,33 @@
 CHANGELOG
 =========
 
-## 2.0.2 (2015-03-23)
+## 2.0.3 (2015-04-07)
 
-#### changes (potentially breaking):
- - changed file structure for package published via NPM
+#### changes (non-breaking)
+ - moved to new jQuery plugin definition via npm [see here](http://blog.npmjs.org/post/111475741445/publishing-your-jquery-plugin-to-npm-the-quick)
+ - updated and improved several examples
+ - optimized minification
+ - changed command line options for build (version bumping)
+
+#### bugfixes:
+ - height calculation for pinned elements when using `pushFollowers: false` was faulty
+ - parallax jitter fix for chrome
+ - when using responsive duration and `pushFollowers = true`, an invalid console warning message was triggered
+ - the sourcecode viewer in the examples code was showing modified code
+ - fixed a problem when using the mousewheel to scroll over fixed elements after replacing the default scroll method of the controller
+ - using pinned elements as `Controller.scrollTo()` targets didn't work properly
+ - mousewheel over pinned elements inside of div scroll containers didn't work in IE
+
+#### features
+ - it's now possible to supply additional parameters to custom scrollTo functions [see here](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollTo)
+
+#### new examples:
+ - basic: [Section Wipes (natural)](http://janpaepke.github.io/ScrollMagic/examples/basic/section_wipes_natural.html)
+ - advanced: [Section Wipes (manual)](http://janpaepke.github.io/ScrollMagic/examples/advanced/section_wipes_manual.html)
+ - advanced: [Section Slides (manual)](http://janpaepke.github.io/ScrollMagic/examples/advanced/section_slides_manual.html)
+
+
+## 2.0.2 (2015-03-23)
 
 #### bugfixes:
  - Size calculations for pinned elements were off in certain conditions [see here](https://github.com/janpaepke/ScrollMagic/issues/252)
@@ -158,7 +181,7 @@ CHANGELOG
  - event namespace issues
  - docs: fixed highlight & deeplink issues
 
-#### examples:
+#### new examples:
  - basic: [CSS Class Toggles](http://janpaepke.github.io/ScrollMagic/examples/basic/class_toggles.html)
  - advanced: [SVG Line Drawing](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html)
  - advanced: [Parallax Sections](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html)

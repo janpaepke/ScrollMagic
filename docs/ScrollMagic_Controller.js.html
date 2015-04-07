@@ -197,7 +197,7 @@ ScrollMagic.Controller = function(options) {
 		_isDocument = true,
 		_viewPortSize = 0,
 		_enabled = true,
-		_updateCycle,
+		_updateTimeout,
 		_refreshTimeout;
 
 	/*
@@ -229,7 +229,7 @@ ScrollMagic.Controller = function(options) {
 			_options.container = window;
 		}
 		// update container size immediately
-		_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+		_viewPortSize = getViewportSize();
 		// set event handlers
 		_options.container.addEventListener("resize", onChange);
 		_options.container.addEventListener("scroll", onChange);
@@ -240,6 +240,10 @@ ScrollMagic.Controller = function(options) {
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 	};
 
+	/**
+	* Schedule the next execution of the refresh function
+	* @private
+	*/
 	var scheduleRefresh = function () {
 		if (_options.refreshInterval > 0) {
 			_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
@@ -255,10 +259,19 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
-	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
+	* Returns the current viewport Size (width vor horizontal, height for vertical)
 	* @private
 	*/
-	var setScrollPos = function (pos) {
+	var getViewportSize = function () {
+		return _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+	};
+
+	/**
+	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
+	* Make available publicly for pinned mousewheel workaround.
+	* @private
+	*/
+	var setScrollPos = this._setScrollPos = function (pos) {
 		if (_options.vertical) {
 			if (_isDocument) {
 				window.scrollTo(_util.get.scrollLeft(), pos);
@@ -280,8 +293,14 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var updateScenes = function () {
 		if (_enabled &amp;&amp; _updateScenesOnNextCycle) {
-			// update scroll pos again, because it might have changed since scheduling (in browser smooth scroll)
+			_updateScenesOnNextCycle = false;
+			var oldScrollPos = _scrollPos;
+			// update scroll pos now instead of onChange, as it might have changed since scheduling (i.e. in-browser smooth scroll)
 			_scrollPos = Controller.scrollPos();
+			var deltaScroll = _scrollPos - oldScrollPos;
+			if (deltaScroll !== 0) { // scroll position changed?
+				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+			}
 			// determine scenes to update
 			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
@@ -293,10 +312,11 @@ ScrollMagic.Controller = function(options) {
 				log(3, "updating Scene " + (index + 1) + "/" + scenesToUpdate.length + " (" + _sceneObjects.length + " total)");
 				scene.update(true);
 			});
+			// (BUILD) - REMOVE IN MINIFY - START
 			if (scenesToUpdate.length === 0 &amp;&amp; _options.loglevel >= 3) {
 				log(3, "updating 0 Scenes (nothing added to controller)");
 			}
-			_updateScenesOnNextCycle = false;
+			// (BUILD) - REMOVE IN MINIFY - END
 		}
 	};
 	
@@ -305,7 +325,7 @@ ScrollMagic.Controller = function(options) {
 	* @private
 	*/
 	var debounceUpdate = function () {
-		_updateCycle = _util.rAF(updateScenes);
+		_updateTimeout = _util.rAF(updateScenes);
 	};
 	
 	/**
@@ -316,19 +336,11 @@ ScrollMagic.Controller = function(options) {
 		log(3, "event fired causing an update:", e.type);
 		if (e.type == "resize") {
 			// resize
-			_viewPortSize = _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
+			_viewPortSize = getViewportSize();
 			_scrollDirection = SCROLL_DIRECTIONS.p;
-		} else {
-			// scroll
-			var oldScrollPos = _scrollPos;
-			_scrollPos = Controller.scrollPos();
-			var deltaScroll = _scrollPos - oldScrollPos;
-			if (deltaScroll !== 0) { // invalid scroll events, happen with smooth scroll
-				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
-			}
 		}
 		// schedule update
-		if (!_updateScenesOnNextCycle) {
+		if (_updateScenesOnNextCycle !== true) {
 			_updateScenesOnNextCycle = true;
 			debounceUpdate();
 		}
@@ -337,7 +349,7 @@ ScrollMagic.Controller = function(options) {
 	var refresh = function () {
 		if (!_isDocument) {
 			// simulate resize event. Only works for viewport relevant param (performance)
-			if (_viewPortSize != (_options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container))) {
+			if (_viewPortSize != getViewportSize()) {
 				var resizeEvent;
 				try {
 					resizeEvent = new Event('resize', {bubbles: false, cancelable: false});
@@ -565,23 +577,52 @@ ScrollMagic.Controller = function(options) {
 	 * controller.scrollTo(function (newScrollPos) {
 	 *	$("body").animate({scrollTop: newScrollPos});
 	 * });
+	 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 	 *
-	 * @param {mixed} [scrollTarget] - The supplied argument can be one of these types:
+ 	 * // define a new scroll function with an additional parameter
+	 * controller.scrollTo(function (newScrollPos, message) {
+	 *  console.log(message);
+	 *	$(this).animate({scrollTop: newScrollPos});
+	 * });
+	 * // call as usual, but supply an extra parameter to the defined custom function
+	 * controller.scrollTo(100, "my message");
+	 *
+ 	 * // define a new scroll function with an additional parameter containing multiple variables
+	 * controller.scrollTo(function (newScrollPos, options) {
+	 *  someGlobalVar = options.a + options.b;
+	 *	$(this).animate({scrollTop: newScrollPos});
+	 * });
+	 * // call as usual, but supply an extra parameter containing multiple options
+	 * controller.scrollTo(100, {a: 1, b: 2});
+	 *
+ 	 * // define a new scroll function with a callback supplied as an additional parameter
+	 * controller.scrollTo(function (newScrollPos, callback) {
+	 *	$(this).animate({scrollTop: newScrollPos}, 400, "swing", callback);
+	 * });
+	 * // call as usual, but supply an extra parameter, which is used as a callback in the previously defined custom scroll function
+	 * controller.scrollTo(100, function() {
+	 *	console.log("scroll has finished.");
+	 * });
+	 *
+	 * @param {mixed} scrollTarget - The supplied argument can be one of these types:
 	 * 1. `number` -> The container will scroll to this new scroll offset.
 	 * 2. `string` or `object` -> Can be a selector or a DOM object.  
 	 *  The container will scroll to the position of this element.
 	 * 3. `ScrollMagic Scene` -> The container will scroll to the start of this scene.
-	 * 4. `function` -> This function will be used as a callback for future scroll position modifications.  
-	 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using `this`.  
-	 *  _**NOTE:** All other options will still work as expected, using the new function to scroll._
+	 * 4. `function` -> This function will be used for future scroll position modifications.  
+	 *  This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The function receives the new scroll position as a parameter and a reference to the container element using `this`.  
+	 *  It may also optionally receive an optional additional parameter (see below)  
+	 *  _**NOTE:**  
+	 *  All other options will still work as expected, using the new function to scroll._
+	 * @param {mixed} [additionalParameter] - If a custom scroll function was defined (see above 4.), you may want to supply additional parameters to it, when calling it. You can do this using this parameter – see examples for details. Please note, that this parameter will have no effect, if you use the default scrolling function.
 	 * @returns {Controller} Parent object for chaining.
 	 */
-	this.scrollTo = function (scrollTarget) {
+	this.scrollTo = function (scrollTarget, additionalParameter) {
 		if (_util.type.Number(scrollTarget)) { // excecute
-			setScrollPos.call(_options.container, scrollTarget);
+			setScrollPos.call(_options.container, scrollTarget, additionalParameter);
 		} else if (scrollTarget instanceof ScrollMagic.Scene) { // scroll to scene
 			if (scrollTarget.controller() === Controller) { // check if the controller is associated with this scene
-				Controller.scrollTo(scrollTarget.scrollOffset());
+				Controller.scrollTo(scrollTarget.scrollOffset(), additionalParameter);
 			} else {
 				log (2, "scrollTo(): The supplied scene does not belong to this controller. Scroll cancelled.", scrollTarget);
 			}
@@ -590,6 +631,11 @@ ScrollMagic.Controller = function(options) {
 		} else { // scroll to element
 			var elem = _util.get.elements(scrollTarget)[0];
 			if (elem) {
+				// if parent is pin spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (elem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+					elem = elem.parentNode;
+				}
+
 				var
 					param = _options.vertical ? "top" : "left", // which param is of interest ?
 					containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
@@ -599,7 +645,7 @@ ScrollMagic.Controller = function(options) {
 					containerOffset[param] -= Controller.scrollPos();
 				}
 
-				Controller.scrollTo(elementOffset[param] - containerOffset[param]);
+				Controller.scrollTo(elementOffset[param] - containerOffset[param], additionalParameter);
 			} else {
 				log (2, "scrollTo(): The supplied argument is invalid. Scroll cancelled.", scrollTarget);
 			}
@@ -703,11 +749,13 @@ ScrollMagic.Controller = function(options) {
 	 * @returns {(number|Controller)} Current loglevel or parent object for chaining.
 	 */
 	this.loglevel = function (newLoglevel) {
+		// (BUILD) - REMOVE IN MINIFY - START
 		if (!arguments.length) { // get
 			return _options.loglevel;
 		} else if (_options.loglevel != newLoglevel) { // set
 			_options.loglevel = newLoglevel;
 		}
+		// (BUILD) - REMOVE IN MINIFY - END
 		return Controller;
 	};
 
@@ -758,7 +806,7 @@ ScrollMagic.Controller = function(options) {
 		}
 		_options.container.removeEventListener("resize", onChange);
 		_options.container.removeEventListener("scroll", onChange);
-		_util.cAF(_updateCycle);
+		_util.cAF(_updateTimeout);
 		log(3, "destroyed " + NAMESPACE + " (reset: " + (resetScenes ? "true" : "false") + ")");
 		return null;
 	};

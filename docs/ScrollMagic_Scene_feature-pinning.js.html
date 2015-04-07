@@ -257,8 +257,8 @@ var updatePinDimensions = function () {
 		}
 		if (_pinOptions.relSize.height) {
 			if (during) {
-				// the only padding the spacer should ever include is the duration, so we need to substract that.
-				_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer) - _options.duration});
+				// the only padding the spacer should ever include is the duration (if pushFollowers = true), so we need to substract that.
+				_util.css(_pin, {"height": _util.get.height(_pinOptions.spacer) - (_pinOptions.pushFollowers ? _options.duration : 0)});
 			} else {
 				_util.css(_pin, {"height": "100%"});
 			}
@@ -315,7 +315,7 @@ var updateRelativePinSpacer = function () {
 var onMousewheelOverPin = function (e) {
 	if (_controller &amp;&amp; _pin &amp;&amp; _state === "DURING" &amp;&amp; !_controller.info("isDocument")) { // in pin state
 		e.preventDefault();
-		_controller.scrollTo(_controller.info("scrollPos") - (e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"]/3 || -e.detail*30));
+		_controller._setScrollPos(_controller.info("scrollPos") - ((e.wheelDelta || e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"])/3 || -e.detail*30));
 	}
 };
 
@@ -387,9 +387,11 @@ this.setPin = function (element, settings) {
 		settings.pushFollowers = false;
 	}
 	// (BUILD) - REMOVE IN MINIFY - START
-	if (_pin &amp;&amp; _options.duration === 0 &amp;&amp; settings.pushFollowers) {
-		log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
-	}
+	window.setTimeout(function () { // wait until all finished, because with responsive duration it will only be set after scene is added to controller
+		if (_pin &amp;&amp; _options.duration === 0 &amp;&amp; settings.pushFollowers) {
+			log(2, "WARNING: pushFollowers =", true, "has no effect, when scene duration is 0.");
+		}
+	}, 0);
 	// (BUILD) - REMOVE IN MINIFY - END
 
 	// create spacer and insert

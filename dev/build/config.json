@@ -1,6 +1,6 @@
 {
-	"version": "2.0.2",
-	"lastupdate": "2015-03-23",
+	"version": "2.0.3",
+	"lastupdate": "2015-04-07",
 	"info": {
 		"description": "The javascript library for magical scroll interactions.",
 		"homepage": "http://janpaepke.github.io/ScrollMagic/",
