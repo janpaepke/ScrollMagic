@@ -149,7 +149,6 @@
                 var cdnCode = cdnLinks.map(function(link) {
                     return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '"></script' + '>';
                 }).join("\n");
-                console.log(cdnCode);
 
                 $("<pre>").text(cdnCode).appendTo("#get-it-now code.cdn");
             });

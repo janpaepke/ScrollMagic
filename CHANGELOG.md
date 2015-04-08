@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+## 2.0.4 (unreleased)
+
+#### bugfixes:
+ - fixed JS error in IE9 [see here](https://github.com/janpaepke/ScrollMagic/issues/289)
+
+
 ## 2.0.3 (2015-04-07)
 
 #### changes (non-breaking)
