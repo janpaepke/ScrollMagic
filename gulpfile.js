@@ -23,7 +23,6 @@ var
 	replace =			require('gulp-replace-task'),
 	concat =			require('gulp-concat-util'),
 	uglify =			require('gulp-uglify'),
-	gulpFilter =	require('gulp-filter'),
 	gutil = 			require('gulp-util'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-beautify'),

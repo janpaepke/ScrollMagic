@@ -31,7 +31,6 @@
     "gulp-beautify": "^1.1.1",
     "gulp-concat-util": "^0.5.1",
     "gulp-file-include": "^0.7.0",
-    "gulp-filter": "^1.0.2",
     "gulp-jshint": "^1.9.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-karma": "0.0.4",
@@ -62,7 +61,7 @@
     "test": "./node_modules/karma/bin/karma start ./dev/tests/karma.conf.js",
     "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
-  "homepage": "http://janpaepke.github.io/ScrollMagic/",
+  "homepage": "http://ScrollMagic.io",
   "keywords": [
     "scroll",
     "scrolling",
