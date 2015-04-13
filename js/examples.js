@@ -50,11 +50,11 @@ var
 // badges
 var badges = {
 	'gsap' : {
-		url : "http://janpaepke.github.io/ScrollMagic/docs/animation.GSAP.html",
+		url : "http://scrollmagic.io/docs/animation.GSAP.html",
 		name : "the Greensock Animation Platform"
 	},
 	'velocity' : {
-		url : "http://janpaepke.github.io/ScrollMagic/docs/animation.Velocity.html",
+		url : "http://scrollmagic.io/docs/animation.Velocity.html",
 		name : "Velocity.js"
 	}
 };

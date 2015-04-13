@@ -93,7 +93,7 @@
 	});
 
 	// turn over to the dark side
-	if (window.location.hostname === "janpaepke.github.io") {
+	if (window.location.hostname === "janpaepke.github.io" || window.location.hostname === "scrollmagic.io") {
 		$(document).ready (function () {
 			google_ad_client = "ca-pub-8286077135621931";
 			google_ad_slot = "4607084004";
