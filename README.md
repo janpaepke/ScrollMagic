@@ -12,7 +12,7 @@ It's the perfect library for you, if you want to ...
 * create an infinitely scrolling page (ajax load of additional content).
 * add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.
 
-Check out [the demo page](http://janpaepke.github.com/ScrollMagic), browse [the examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) or read [the documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) to get started.
+Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.
 
 ## About the Library
 
