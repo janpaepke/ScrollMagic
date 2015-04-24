@@ -144,7 +144,7 @@
                 // set current version in cdn link(s)
                 var cdnLinks = [
                     "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/ScrollMagic.min.js",
-                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/addIndicators.min.js",
+                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/debug.addIndicators.min.js",
                 ];
                 var cdnCode = cdnLinks.map(function(link) {
                     return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '"></script' + '>';
