@@ -258,12 +258,12 @@ this.progress = function (progress) {
 			_state = _progress === 0 ? 'BEFORE' : 'DURING';
 		} else {
 			// scenes with start and end
-			if (progress <= 0 && _state !== 'BEFORE' && reverseOrForward) {
+			if (progress < 0 && _state !== 'BEFORE' && reverseOrForward) {
 				// go back to initial state
 				_progress = 0;
 				_state = 'BEFORE';
 				doUpdate = true;
-			} else if (progress > 0 && progress < 1 && reverseOrForward) {
+			} else if (progress >= 0 && progress < 1 && reverseOrForward) {
 				_progress = progress;
 				_state = 'DURING';
 				doUpdate = true;
