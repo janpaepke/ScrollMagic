@@ -5,7 +5,7 @@ var
 Scene
 	.on("shift.internal", function (e) {
 		var durationChanged = e.reason === "duration";
-		if ((_state === "AFTER" && durationChanged) || (_state === 'DURING' && _options.duration === 0)) {
+		if ((_state === SCENE_STATE_AFTER && durationChanged) || (_state === SCENE_STATE_DURING && _options.duration === 0)) {
 			// if [duration changed after a scene (inside scene progress updates pin position)] or [duration is 0, we are in pin phase and some other value changed].
 			updatePinState();
 		}
@@ -31,7 +31,7 @@ var updatePinState = function (forceUnpin) {
 		var 
 			containerInfo = _controller.info();
 
-		if (!forceUnpin && _state === "DURING") { // during scene or if duration is 0 and we are past the trigger
+		if (!forceUnpin && _state === SCENE_STATE_DURING) { // during scene or if duration is 0 and we are past the trigger
 			// pinned state
 			if (_util.css(_pin, "position") != "fixed") {
 				// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
@@ -67,9 +67,9 @@ var updatePinState = function (forceUnpin) {
 			if (!_pinOptions.pushFollowers) {
 				newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 			} else if (_options.duration > 0) { // only concerns scenes with duration
-				if (_state === "AFTER" && parseFloat(_util.css(_pinOptions.spacer, "padding-top")) === 0) {
+				if (_state === SCENE_STATE_AFTER && parseFloat(_util.css(_pinOptions.spacer, "padding-top")) === 0) {
 					change = true; // if in after state but havent updated spacer yet (jumped past pin)
-				} else if (_state === "BEFORE" && parseFloat(_util.css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
+				} else if (_state === SCENE_STATE_BEFORE && parseFloat(_util.css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
 					change = true; // jumped past fixed state upward direction
 				}
 			}
@@ -91,9 +91,9 @@ var updatePinState = function (forceUnpin) {
 var updatePinDimensions = function () {
 	if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 		var
-			after = (_state === "AFTER"),
-			before = (_state === "BEFORE"),
-			during = (_state === "DURING"),
+			after = (_state === SCENE_STATE_AFTER),
+			before = (_state === SCENE_STATE_BEFORE),
+			during = (_state === SCENE_STATE_DURING),
 			vertical = _controller.info("vertical"),
 			spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
 			marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
@@ -141,7 +141,7 @@ var updatePinDimensions = function () {
  * @private
  */
 var updatePinInContainer = function () {
-	if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) {
+	if (_controller && _pin && _state === SCENE_STATE_DURING && !_controller.info("isDocument")) {
 		updatePinState();
 	}
 };
@@ -154,7 +154,7 @@ var updatePinInContainer = function () {
  */
 var updateRelativePinSpacer = function () {
 	if ( _controller && _pin && // well, duh
-			_state === "DURING" && // element in pinned state?
+			_state === SCENE_STATE_DURING && // element in pinned state?
 			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
 				((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
 				(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
@@ -170,7 +170,7 @@ var updateRelativePinSpacer = function () {
  * @private
  */
 var onMousewheelOverPin = function (e) {
-	if (_controller && _pin && _state === "DURING" && !_controller.info("isDocument")) { // in pin state
+	if (_controller && _pin && _state === SCENE_STATE_DURING && !_controller.info("isDocument")) { // in pin state
 		e.preventDefault();
 		_controller._setScrollPos(_controller.info("scrollPos") - ((e.wheelDelta || e[_controller.info("vertical") ? "wheelDeltaY" : "wheelDeltaX"])/3 || -e.detail*30));
 	}
@@ -350,7 +350,7 @@ this.setPin = function (element, settings) {
  */
 this.removePin = function (reset) {
 	if (_pin) {
-		if (_state === "DURING") {
+		if (_state === SCENE_STATE_DURING) {
 			updatePinState(true); // force unpin at position
 		}
 		if (reset || !_controller) { // if there's no controller no progress was made anyway...

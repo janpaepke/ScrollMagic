@@ -157,7 +157,7 @@ this.update = function (immediately) {
 				Scene.trigger("update", {startPos: _scrollOffset.start, endPos: _scrollOffset.end, scrollPos: scrollPos});
 
 				Scene.progress(newProgress);
-			} else if (_pin && _state === "DURING") {
+			} else if (_pin && _state === SCENE_STATE_DURING) {
 				updatePinState(true); // unpin in position
 			}
 		} else {
@@ -255,23 +255,23 @@ this.progress = function (progress) {
 			// zero duration scenes
 			doUpdate = _progress != progress;
 			_progress = progress < 1 && reverseOrForward ? 0 : 1;
-			_state = _progress === 0 ? 'BEFORE' : 'DURING';
+			_state = _progress === 0 ? SCENE_STATE_BEFORE : SCENE_STATE_DURING;
 		} else {
 			// scenes with start and end
-			if (progress < 0 && _state !== 'BEFORE' && reverseOrForward) {
+			if (progress < 0 && _state !== SCENE_STATE_BEFORE && reverseOrForward) {
 				// go back to initial state
 				_progress = 0;
-				_state = 'BEFORE';
+				_state = SCENE_STATE_BEFORE;
 				doUpdate = true;
 			} else if (progress >= 0 && progress < 1 && reverseOrForward) {
 				_progress = progress;
-				_state = 'DURING';
+				_state = SCENE_STATE_DURING;
 				doUpdate = true;
-			} else if (progress >= 1 && _state !== 'AFTER') {
+			} else if (progress >= 1 && _state !== SCENE_STATE_AFTER) {
 				_progress = 1;
-				_state = 'AFTER';
+				_state = SCENE_STATE_AFTER;
 				doUpdate = true;
-			} else if (_state === 'DURING' && !reverseOrForward) {
+			} else if (_state === SCENE_STATE_DURING && !reverseOrForward) {
 				updatePinState(); // in case we scrolled backwards mid-scene and reverse is disabled => update the pin position, so it doesn't move back as well.
 			}
 		}
@@ -286,15 +286,15 @@ this.progress = function (progress) {
 			};
 
 			if (stateChanged) { // enter events
-				if (oldState !== 'DURING') {
+				if (oldState !== SCENE_STATE_DURING) {
 					trigger("enter");
-					trigger(oldState === 'BEFORE' ? "start" : "end");
+					trigger(oldState === SCENE_STATE_BEFORE ? "start" : "end");
 				}
 			}
 			trigger("progress");
 			if (stateChanged) { // leave events
-				if (_state !== 'DURING') {
-					trigger(_state === 'BEFORE' ? "start" : "end");
+				if (_state !== SCENE_STATE_DURING) {
+					trigger(_state === SCENE_STATE_BEFORE ? "start" : "end");
 					trigger("leave");
 				}
 			}

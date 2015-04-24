@@ -46,7 +46,10 @@ ScrollMagic.Scene = function (options) {
 	 */
 
 	var
-		NAMESPACE = "ScrollMagic.Scene",
+		NAMESPACE = 'ScrollMagic.Scene',
+		SCENE_STATE_BEFORE = 'BEFORE',
+		SCENE_STATE_DURING = 'DURING',
+		SCENE_STATE_AFTER = 'AFTER',
 		DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
 	/*
@@ -58,7 +61,7 @@ ScrollMagic.Scene = function (options) {
 	var
 		Scene = this,
 		_options = _util.extend({}, DEFAULT_OPTIONS, options),
-		_state = 'BEFORE',
+		_state = SCENE_STATE_BEFORE,
 		_progress = 0,
 		_scrollOffset = {start: 0, end: 0}, // reflects the controllers's scroll position for the start and end of the scene respectively
 		_triggerPos = 0,
