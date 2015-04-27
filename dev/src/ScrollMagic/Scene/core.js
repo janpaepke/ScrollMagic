@@ -1,3 +1,19 @@
+// set event listeners
+Scene
+	.on("change.internal", function (e) {
+		if (e.what !== "loglevel" && e.what !== "tweenChanges") { // no need for a scene update scene with these options...
+			if (e.what === "triggerElement") {
+				updateTriggerElementPosition();
+			} else if (e.what === "reverse") { // the only property left that may have an impact on the current scene state. Everything else is handled by the shift event.
+				Scene.update();
+			}
+		}
+	})
+	.on("shift.internal", function (e) {
+		updateScrollOffset();
+		Scene.update(); // update scene to reflect new position
+	});
+	
 // (BUILD) - REMOVE IN MINIFY - START
 /**
  * Send a debug message to the console.
