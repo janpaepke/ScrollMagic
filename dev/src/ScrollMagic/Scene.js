@@ -98,7 +98,6 @@ ScrollMagic.Scene = function (options) {
 				}
 			})
 			.on("shift.internal", function (e) {
-				updateScrollOffset();
 				Scene.update(); // update scene to reflect new position
 			});
 	};
@@ -110,6 +109,10 @@ ScrollMagic.Scene = function (options) {
 	// @include('Scene/getters-setters.js')
 	
 	// @include('Scene/event-management.js')
+
+    Scene.on("shift.internal", function(e) {
+        updateScrollOffset();
+    });
 	
 	// @include('Scene/feature-pinning.js')
 
