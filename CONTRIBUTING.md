@@ -76,6 +76,7 @@ In order for us to be able to do that efficiently, and also for future users to 
 When posting a bug or a question, we request that you keep these guidelines in mind to make it easier for us to get you the best help we can and for everybody else to learn from the answer.
 
  - **Focus**: Only one issue per post, please.
+ Don't hijack someone else's post: If you have a new question, please post a new issue.
  - **Caption**: Try to find a title that helps other people see what the post is about and makes it easy to find later. Avoid generic titles like "Problem with Scrolling".
  - **Description**: Try to describe your problem as simple as possible and always keep in mind that the people reading it have no idea about your project and its parameters. How would you explain it to someone who doesn't even know ScrollMagic?
  - **Configuration**: Please include OS, browser name and other information that might be necessary to reproduce your issue.
