@@ -431,7 +431,7 @@ ScrollMagic.Controller = function(options) {
 	 *
  	 * // define a new scroll position modification function (jQuery animate instead of jump)
 	 * controller.scrollTo(function (newScrollPos) {
-	 *	$("body").animate({scrollTop: newScrollPos});
+	 *	$("html, body").animate({scrollTop: newScrollPos});
 	 * });
 	 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 	 *
