@@ -29,13 +29,14 @@ Scene
 var updatePinState = function (forceUnpin) {
 	if (_pin && _controller) {
 		var 
-			containerInfo = _controller.info();
+			containerInfo = _controller.info(),
+			pinTarget = _pinOptions.spacer.firstChild; // may be pin element or another spacer, if cascading pins
 
 		if (!forceUnpin && _state === SCENE_STATE_DURING) { // during scene or if duration is 0 and we are past the trigger
 			// pinned state
-			if (_util.css(_pin, "position") != "fixed") {
+			if (_util.css(pinTarget, "position") != "fixed") {
 				// change state before updating pin spacer (position changes due to fixed collapsing might occur.)
-				_util.css(_pin, {"position": "fixed"});
+				_util.css(pinTarget, {"position": "fixed"});
 				// update pin spacer
 				updatePinDimensions();
 			}
@@ -50,7 +51,7 @@ var updatePinState = function (forceUnpin) {
 			fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
 			// set new values
-			_util.css(_pin, {
+			_util.css(_pinOptions.spacer.firstChild, {
 				top: fixedPos.top,
 				left: fixedPos.left
 			});
@@ -62,7 +63,7 @@ var updatePinState = function (forceUnpin) {
 					top:  0,
 					left: 0
 				},
-				change = _util.css(_pin, "position") != newCSS.position;
+				change = _util.css(pinTarget, "position") != newCSS.position;
 			
 			if (!_pinOptions.pushFollowers) {
 				newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
@@ -74,7 +75,7 @@ var updatePinState = function (forceUnpin) {
 				}
 			}
 			// set new values
-			_util.css(_pin, newCSS);
+			_util.css(pinTarget, newCSS);
 			if (change) {
 				// update pin spacer if state changed
 				updatePinDimensions();
@@ -95,7 +96,7 @@ var updatePinDimensions = function () {
 			before = (_state === SCENE_STATE_BEFORE),
 			during = (_state === SCENE_STATE_DURING),
 			vertical = _controller.info("vertical"),
-			spacerChild = _pinOptions.spacer.children[0], // usually the pined element but can also be another spacer (cascaded pins)
+			pinTarget = _pinOptions.spacer.firstChild, // usually the pined element but can also be another spacer (cascaded pins)
 			marginCollapse = _util.isMarginCollapseType(_util.css(_pinOptions.spacer, "display")),
 			css = {};
 
@@ -109,7 +110,7 @@ var updatePinDimensions = function () {
 			}
 		} else {
 			// minwidth is needed for cascaded pins.
-			css["min-width"] = _util.get.width(vertical ? _pin : spacerChild, true, true);
+			css["min-width"] = _util.get.width(vertical ? _pin : pinTarget, true, true);
 			css.width = during ? css["min-width"] : "auto";
 		}
 		if (_pinOptions.relSize.height) {
@@ -121,7 +122,7 @@ var updatePinDimensions = function () {
 			}
 		} else {
 			// margin is only included if it's a cascaded pin to resolve an IE9 bug
-			css["min-height"] = _util.get.height(vertical ? spacerChild : _pin, true , !marginCollapse); // needed for cascading pins
+			css["min-height"] = _util.get.height(vertical ? pinTarget : _pin, true , !marginCollapse); // needed for cascading pins
 			css.height = during ? css["min-height"] : "auto";
 		}
 
@@ -354,8 +355,8 @@ this.removePin = function (reset) {
 			updatePinState(true); // force unpin at position
 		}
 		if (reset || !_controller) { // if there's no controller no progress was made anyway...
-			var spacerChild = _pinOptions.spacer.children[0]; // usually the pin element, but may be another spacer...
-			if (spacerChild.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
+			var pinTarget = _pinOptions.spacer.firstChild; // usually the pin element, but may be another spacer (cascaded pins)...
+			if (pinTarget.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
 				var
 					style = _pinOptions.spacer.style,
 					values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
@@ -363,9 +364,9 @@ this.removePin = function (reset) {
 				values.forEach(function (val) {
 					margins[val] = style[val] || "";
 				});
-				_util.css(spacerChild, margins);
+				_util.css(pinTarget, margins);
 			}
-			_pinOptions.spacer.parentNode.insertBefore(spacerChild, _pinOptions.spacer);
+			_pinOptions.spacer.parentNode.insertBefore(pinTarget, _pinOptions.spacer);
 			_pinOptions.spacer.parentNode.removeChild(_pinOptions.spacer);
 			if (!_pin.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // if it's the last pin for this element -> restore inline styles
 				// TODO: only correctly set for first pin (when cascading) - how to fix?
