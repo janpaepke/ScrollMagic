@@ -289,7 +289,9 @@ $(document).ready(function () {
 		})
 		.prev()
 			.append("<div class=\"trackbar\"></div>")
-			.append("<div class=\"handle\"></div>");
+			.append("<div class=\"handle\"></div>")
+			.end()
+		.change(); // trigger to init
 
 
 	// add tooltips to badges

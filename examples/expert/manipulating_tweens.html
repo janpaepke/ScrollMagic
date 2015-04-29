@@ -48,12 +48,12 @@
 							<div>
 								<label for="scaleX">scaleX</label>
 								<div class="slider liveupdate"></div>
-								<input type="text" id="scaleX" size="3" value="1" min="0.1" max="3" step="0.1">
+								<input type="text" id="scaleX" size="3" value="1.0" min="0.1" max="3" step="0.1">
 							</div>
 							<div>
 								<label for="scaleY">scaleY</label>
 								<div class="slider liveupdate"></div>
-								<input type="text" id="scaleY" size="3" value="1" min="0.1" max="3" step="0.1">
+								<input type="text" id="scaleY" size="3" value="1.0" min="0.1" max="3" step="0.1">
 							</div>
 						</fieldset>
 					</form>
@@ -77,8 +77,6 @@
 										.setTween(tween)
 										.addIndicators() // add indicators (requires plugin)
 										.addTo(controller);
-
-						$("div.slider+input").change(); // trigger change to init sliders.
 
 						$("#tweenparams input").on("change", function () {
 							var params = {css: {
