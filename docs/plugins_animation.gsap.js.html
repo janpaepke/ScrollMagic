@@ -265,9 +265,9 @@
 					state = Scene.state();
 				if (_tween.repeat &amp;&amp; _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if (state === SCENE_STATE_DURING &amp;&amp; _tween.paused()) {
+					if (state === 'DURING' &amp;&amp; _tween.paused()) {
 						_tween.play();
-					} else if (state !== SCENE_STATE_DURING &amp;&amp; !_tween.paused()) {
+					} else if (state !== 'DURING' &amp;&amp; !_tween.paused()) {
 						_tween.pause();
 					}
 				} else if (progress != _tween.progress()) { // do we even need to update the progress?
