@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.3 (2015-04-07)
+ * ScrollMagic v2.0.4 (2015-04-29)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
- * Project Website: http://janpaepke.github.io/ScrollMagic
+ * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.3
+ * @version 2.0.4
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -42,8 +42,10 @@
 	"use strict";
 	var NAMESPACE = "animation.gsap";
 
-	var err = Function.prototype.bind.call((console && (console.error || console.log)) ||
-	function () {}, console);
+	var
+	console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log ||
+		function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
@@ -126,9 +128,9 @@
 					state = Scene.state();
 				if (_tween.repeat && _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if (state === "DURING" && _tween.paused()) {
+					if (state === SCENE_STATE_DURING && _tween.paused()) {
 						_tween.play();
-					} else if (state !== "DURING" && !_tween.paused()) {
+					} else if (state !== SCENE_STATE_DURING && !_tween.paused()) {
 						_tween.pause();
 					}
 				} else if (progress != _tween.progress()) { // do we even need to update the progress?

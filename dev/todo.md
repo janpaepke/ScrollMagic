@@ -14,8 +14,8 @@
 
 # Release Guide
 - add release date and changes to CHANGELOG.md
-- build new version (update version number, generate docs)
-- run test a couple of times
+- build new version `gulp -b -d` (update version number, generate docs)
+- run test a couple of times `gulp test`
 - commit
 - push
 - add git tag

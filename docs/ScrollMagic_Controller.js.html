@@ -174,12 +174,10 @@ ScrollMagic.Controller = function(options) {
 	 * ----------------------------------------------------------------
 	 */
 	var
-		NAMESPACE = "ScrollMagic.Controller",
-		SCROLL_DIRECTIONS = {
-			f : "FORWARD",
-			r : "REVERSE",
-			p : "PAUSED"
-		},
+		NAMESPACE = 'ScrollMagic.Controller',
+		SCROLL_DIRECTION_FORWARD = 'FORWARD',
+		SCROLL_DIRECTION_REVERSE = 'REVERSE',
+		SCROLL_DIRECTION_PAUSED = 'PAUSED',
 		DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
 	/*
@@ -193,7 +191,7 @@ ScrollMagic.Controller = function(options) {
 		_sceneObjects = [],
 		_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
 		_scrollPos = 0,
-		_scrollDirection = SCROLL_DIRECTIONS.p,
+		_scrollDirection = SCROLL_DIRECTION_PAUSED,
 		_isDocument = true,
 		_viewPortSize = 0,
 		_enabled = true,
@@ -293,18 +291,19 @@ ScrollMagic.Controller = function(options) {
 	*/
 	var updateScenes = function () {
 		if (_enabled &amp;&amp; _updateScenesOnNextCycle) {
+			// determine scenes to update
+			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
+			// reset scenes
 			_updateScenesOnNextCycle = false;
 			var oldScrollPos = _scrollPos;
 			// update scroll pos now instead of onChange, as it might have changed since scheduling (i.e. in-browser smooth scroll)
 			_scrollPos = Controller.scrollPos();
 			var deltaScroll = _scrollPos - oldScrollPos;
 			if (deltaScroll !== 0) { // scroll position changed?
-				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTIONS.f : SCROLL_DIRECTIONS.r;
+				_scrollDirection = (deltaScroll > 0) ? SCROLL_DIRECTION_FORWARD : SCROLL_DIRECTION_REVERSE;
 			}
-			// determine scenes to update
-			var scenesToUpdate = _util.type.Array(_updateScenesOnNextCycle) ? _updateScenesOnNextCycle : _sceneObjects.slice(0);
 			// reverse order of scenes if scrolling reverse
-			if (_scrollDirection === SCROLL_DIRECTIONS.r) {
+			if (_scrollDirection === SCROLL_DIRECTION_REVERSE) {
 				scenesToUpdate.reverse();
 			}
 			// update scenes
@@ -337,7 +336,7 @@ ScrollMagic.Controller = function(options) {
 		if (e.type == "resize") {
 			// resize
 			_viewPortSize = getViewportSize();
-			_scrollDirection = SCROLL_DIRECTIONS.p;
+			_scrollDirection = SCROLL_DIRECTION_PAUSED;
 		}
 		// schedule update
 		if (_updateScenesOnNextCycle !== true) {
@@ -575,7 +574,7 @@ ScrollMagic.Controller = function(options) {
 	 *
  	 * // define a new scroll position modification function (jQuery animate instead of jump)
 	 * controller.scrollTo(function (newScrollPos) {
-	 *	$("body").animate({scrollTop: newScrollPos});
+	 *	$("html, body").animate({scrollTop: newScrollPos});
 	 * });
 	 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 	 *
@@ -816,7 +815,8 @@ ScrollMagic.Controller = function(options) {
 	return Controller;
 };
 
-// @include('Controller/_static.js')</pre>
+// @include('Controller/_static.js')
+</pre>
         </article>
     </section>
 
