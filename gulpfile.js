@@ -81,8 +81,8 @@ var options = {
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
 	date: args.bump ? new Date() : new Date(config.lastupdate),
 	banner: {
-		uncompressed: fs.readFileSync(config.banner.uncompressed, 'utf-8') + "\n",
-		minified: fs.readFileSync(config.banner.minified, 'utf-8') + "\n"
+		uncompressed: fs.readFileSync(config.banner.uncompressed, 'utf-8'),
+		minified: fs.readFileSync(config.banner.minified, 'utf-8')
 	},
 	subfolder: {
 		uncompressed: "uncompressed",
