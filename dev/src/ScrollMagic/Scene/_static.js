@@ -20,7 +20,7 @@ var SCENE_OPTIONS = {
 			val = val || undefined;
 			if (val) {
 				var elem = _util.get.elements(val)[0];
-				if (elem) {
+				if (elem && elem.parentNode) {
 					val = elem;
 				} else {
 					throw ["Element defined in option \"triggerElement\" was not found:", val];

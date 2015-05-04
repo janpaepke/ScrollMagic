@@ -54,29 +54,38 @@ var updateTriggerElementPosition = function (suppressEvents) {
 	var
 		elementPos = 0,
 		telem = _options.triggerElement;
-	if (_controller && telem) {
-		var
-			controllerInfo = _controller.info(),
-			containerOffset = _util.get.offset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
-			param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
-			
-		// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-		while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
-			telem = telem.parentNode;
+	if (_controller && (telem || _triggerPos > 0)) { // either an element exists or was removed and the triggerPos is still > 0
+		if (telem) { // there currently a triggerElement set
+			if (telem.parentNode) { // check if element is still attached to DOM
+				var
+					controllerInfo = _controller.info(),
+					containerOffset = _util.get.offset(controllerInfo.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
+					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+					
+				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+				while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+					telem = telem.parentNode;
+				}
+
+				var elementOffset = _util.get.offset(telem);
+
+				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+					containerOffset[param] -= _controller.scrollPos();
+				}
+
+				elementPos = elementOffset[param] - containerOffset[param];
+
+			} else { // there was an element, but it was removed from DOM
+				log(2, "WARNING: triggerElement was removed from DOM and will be reset to", undefined);
+				Scene.triggerElement(undefined); // unset, so a change event is triggered
+			}
 		}
 
-		var elementOffset = _util.get.offset(telem);
-
-		if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-			containerOffset[param] -= _controller.scrollPos();
+		var changed = elementPos != _triggerPos;
+		_triggerPos = elementPos;
+		if (changed && !suppressEvents) {
+			Scene.trigger("shift", {reason: "triggerElementPosition"});
 		}
-
-		elementPos = elementOffset[param] - containerOffset[param];
-	}
-	var changed = elementPos != _triggerPos;
-	_triggerPos = elementPos;
-	if (changed && !suppressEvents) {
-		Scene.trigger("shift", {reason: "triggerElementPosition"});
 	}
 };
 
