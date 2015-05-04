@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+## 2.0.6 (unreleased)
+
+#### bugfixes:
+ - errors occurred, when removing a triggerElement [see here](https://github.com/janpaepke/ScrollMagic/issues/307)
+
+
 ## 2.0.5 (2015-04-29)
 
 #### bugfixes:
