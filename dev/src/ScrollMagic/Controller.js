@@ -89,7 +89,8 @@ ScrollMagic.Controller = function(options) {
 		_options.container.addEventListener("resize", onChange);
 		_options.container.addEventListener("scroll", onChange);
 
-		_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
+		var ri = parseInt(_options.refreshInterval, 10);
+		_options.refreshInterval = (typeof ri == 'number' && isFinite(ri)) ? ri : DEFAULT_OPTIONS.refreshInterval;
 		scheduleRefresh();
 
 		log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
