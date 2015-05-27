@@ -262,4 +262,22 @@ define(["ScrollMagic"], function (ScrollMagic) {
 		});
 
 	});
+
+	describe('ScrollMagic.Controller', function() {
+		describe("refreshInterval option value", function () {
+			beforeEach(function() {
+				spyOn(jasmine.getGlobal(), "setTimeout");
+			});
+			it("> 0, should poll", function () {
+				new ScrollMagic.Controller({refreshInterval: 123456});
+				expect(setTimeout).toHaveBeenCalled();
+			});
+			it("<= 0, should not poll", function () {
+				new ScrollMagic.Controller({refreshInterval: 0});
+				new ScrollMagic.Controller({refreshInterval: -123456});
+				expect(setTimeout).not.toHaveBeenCalled();
+			});
+		});
+	});
+
 });
