@@ -72,7 +72,7 @@ npm install scrollmagic
 ```
 
 __Option 4: CDN__  
-If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/scrollmagic):
+If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/ScrollMagic):
 
 ```
 http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js
