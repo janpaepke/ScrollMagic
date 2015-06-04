@@ -30,6 +30,9 @@
 	var ScrollMagic = function () {
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
+	
+	var ua     = window.navigator.userAgent.toLowerCase(),
+        mobile = /mobile|android|kindle|silk|midp|phone|(windows .+arm|touch)/.test(ua);
 
 	ScrollMagic.version = "2.0.5";
 
@@ -128,13 +131,24 @@
 			_viewPortSize = getViewportSize();
 			// set event handlers
 			_options.container.addEventListener("resize", onChange);
-			_options.container.addEventListener("scroll", onChange);
+			!mobile && _options.container.addEventListener("scroll", onChange);
+			// TODO: mobile parallex
+			mobile && document.addEventListener("touchmove", onMobileChange);
 
 			_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
 			scheduleRefresh();
 
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
 		};
+		
+		// TODO: nokey update rewrite onmobile, but is not enough robust
+		var onMobileChange = function(){
+			// schedule update
+			if (_updateScenesOnNextCycle !== true) {
+				_updateScenesOnNextCycle = true;
+				updateScenes();
+			}
+		}
 
 		/**
 		 * Schedule the next execution of the refresh function
