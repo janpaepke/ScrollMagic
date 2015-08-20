@@ -2660,7 +2660,7 @@
 					return arr;
 				}
 			}
-			if (_type(selector) === 'nodelist' || _type.Array(selector)) {
+			if (_type(selector) === 'nodelist' || _type.Array(selector) || selector instanceof NodeList) {
 				for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
 					var elem = selector[i];
 					arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
