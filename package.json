@@ -22,6 +22,9 @@
     }
   ],
   "main": "scrollmagic/uncompressed/ScrollMagic.js",
+  "browser": {
+    "velocity": "velocity-animate"
+  },
   "engines": {
     "node": "0.10.x"
   },
