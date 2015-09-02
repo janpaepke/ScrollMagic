@@ -2277,7 +2277,7 @@
 					if (pinTarget.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
 						var
 						style = _pinOptions.spacer.style,
-							values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
+							values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"],
 						margins = {};
 						values.forEach(function (val) {
 							margins[val] = style[val] || "";
