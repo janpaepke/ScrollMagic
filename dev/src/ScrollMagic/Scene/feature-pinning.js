@@ -134,7 +134,7 @@ var updatePinDimensions = function () {
 
 		// Preserve the width of the pin spacer. When the _pin is set to 'fixed', the pin spacer would collapse to 0,
 		// and if it is horizontally centered (with flex or auto margin), its `left` would change.
-		css["width"] = _util.get.width(_pin);
+		css.width = _util.get.width(_pin);
 
 		_util.css(_pinOptions.spacer, css);
 	}
