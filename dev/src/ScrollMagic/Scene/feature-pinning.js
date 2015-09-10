@@ -131,6 +131,11 @@ var updatePinDimensions = function () {
 			css["padding" + (vertical ? "Top" : "Left")] = _options.duration * _progress;
 			css["padding" + (vertical ? "Bottom" : "Right")] = _options.duration * (1 - _progress);
 		}
+
+		// Preserve the width of the pin spacer. When the _pin is set to 'fixed', the pin spacer would collapse to 0,
+		// and if it is horizontally centered (with flex or auto margin), its `left` would change.
+		css["width"] = _util.get.width(_pin);
+
 		_util.css(_pinOptions.spacer, css);
 	}
 };
