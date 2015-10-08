@@ -1,6 +1,8 @@
 var 
 	_cssClasses,
-	_cssClassElems = [];
+	_cssClassElems = [],
+    _cssClassToggle = false,
+    _cssClassToggleOnRemove = false;
 
 Scene
 	.on("destroy.internal", function (e) {
@@ -20,10 +22,11 @@ Scene
  *
  * @param {(string|object)} element - A Selector targeting one or more elements or a DOM object that is supposed to be modified.
  * @param {string} classes - One or more Classnames (separated by space) that should be added to the element during the scene.
+ * @param {boolean} toggleClass - Whether to use toggleClass jQuery method, rather than addClass and removeClass
  *
  * @returns {Scene} Parent object for chaining.
  */
-this.setClassToggle = function (element, classes) {
+this.setClassToggle = function (element, classes, toggleClass) {
 	var elems = _util.get.elements(element);
 	if (elems.length === 0 || !_util.type.String(classes)) {
 		log(1, "ERROR calling method 'setClassToggle()': Invalid " + (elems.length === 0 ? "element" : "classes") + " supplied.");
@@ -35,12 +38,19 @@ this.setClassToggle = function (element, classes) {
 	}
 	_cssClasses = classes;
 	_cssClassElems = elems;
-	Scene.on("enter.internal_class leave.internal_class", function (e) {
-		var toggle = e.type === "enter" ? _util.addClass : _util.removeClass;
-		_cssClassElems.forEach(function (elem, key) {
-			toggle(elem, _cssClasses);
-		});
-	});
+    _cssClassToggle = toggleClass;
+    Scene.on("enter.internal_class leave.internal_class", function (e) {
+        var toggle = e.type === "enter" ? _util.addClass : _util.removeClass;
+        _cssClassElems.forEach(function (elem, key) {
+            if (_cssClassToggle) {
+                _util.toggleClass(elem, _cssClasses);
+                _cssClassToggleOnRemove = !_cssClassToggleOnRemove;
+            }
+            else {
+                toggle(elem, _cssClasses);
+            }
+        });
+    });
 	return Scene;
 };
 
@@ -60,11 +70,18 @@ this.setClassToggle = function (element, classes) {
 this.removeClassToggle = function (reset) {
 	if (reset) {
 		_cssClassElems.forEach(function (elem, key) {
-			_util.removeClass(elem, _cssClasses);
+            if (!_cssClassToggle) {
+                _util.removeClass(elem, _cssClasses);
+            }
+            else if (_cssClassToggleOnRemove) {
+                _util.toggleClass(elem, _cssClasses);
+            }
 		});
 	}
 	Scene.off("start.internal_class end.internal_class");
 	_cssClasses = undefined;
 	_cssClassElems = [];
+    _cssClassToggle = false;
+    _cssClassToggleOnRemove = false;
 	return Scene;
 };

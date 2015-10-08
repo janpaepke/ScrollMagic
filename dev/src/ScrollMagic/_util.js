@@ -233,6 +233,14 @@ var _util = ScrollMagic._util = (function (window) {
 				elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 		}
 	};
+    U.toggleClass = function(elem, classname) {
+        if (classname) {
+            if (elem.className.split(/\s+/).indexOf(classname) > -1)
+                U.removeClass(elem, classname);
+            else
+                U.addClass(elem, classname);
+        }
+    };
 	// if options is string -> returns css value
 	// if options is array -> returns object with css value pairs
 	// if options is object -> set new css values
