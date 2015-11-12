@@ -68,11 +68,16 @@ var updatePinState = function (forceUnpin) {
 			if (!_pinOptions.pushFollowers) {
 				newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 			} else if (_options.duration > 0) { // only concerns scenes with duration
-				if (_state === SCENE_STATE_AFTER && parseFloat(_util.css(_pinOptions.spacer, "padding-top")) === 0) {
-					change = true; // if in after state but havent updated spacer yet (jumped past pin)
-				} else if (_state === SCENE_STATE_BEFORE && parseFloat(_util.css(_pinOptions.spacer, "padding-bottom")) === 0) { // before
-					change = true; // jumped past fixed state upward direction
-				}
+				var
+					stateAfter = _state === SCENE_STATE_AFTER,
+					stateBefore = _state === SCENE_STATE_BEFORE,
+					paddingTop = parseFloat(_util.css(_pinOptions.spacer, "padding-top")),
+					paddingBottom = parseFloat(_util.css(_pinOptions.spacer, "padding-bottom"));
+				
+				// if jumped past start/end of the scene
+				
+				change = (stateAfter && paddingTop === 0 || paddingBottom !== 0)
+					|| (stateBefore && paddingBottom === 0 || paddingTop !== 0); 
 			}
 			// set new values
 			_util.css(pinTarget, newCSS);
