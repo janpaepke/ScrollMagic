@@ -76,8 +76,8 @@ var updatePinState = function (forceUnpin) {
 				
 				// if jumped past start/end of the scene
 				
-				change = (stateAfter && paddingTop === 0 || paddingBottom !== 0)
-					|| (stateBefore && paddingBottom === 0 || paddingTop !== 0); 
+				change = (stateAfter && paddingTop === 0 || paddingBottom !== 0) ||
+					(stateBefore && paddingBottom === 0 || paddingTop !== 0);
 			}
 			// set new values
 			_util.css(pinTarget, newCSS);
