@@ -296,7 +296,11 @@ ScrollMagic.Scene = function (options) {
 
 	<script>
 		function openDeeplinkedElement (skipAni) {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
+			try {
+				$("dt h4.member-collapsed").filter(window.location.hash.substring(1).replace(":", "\\:")).trigger("click", skipAni);
+			} catch (e) {
+				console.warn("ah ah ah! :p");
+			}
 		}
 		$( function () {
 			$( "#toc" ).toc( {

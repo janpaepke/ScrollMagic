@@ -630,7 +630,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-286">line 286</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-287">line 287</a>
     </li></ul></dd>
     
 
@@ -789,7 +789,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-657">line 657</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-658">line 658</a>
     </li></ul></dd>
     
 
@@ -931,7 +931,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-329">line 329</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-330">line 330</a>
     </li></ul></dd>
     
 
@@ -1122,7 +1122,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-476">line 476</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-477">line 477</a>
     </li></ul></dd>
     
 
@@ -1282,7 +1282,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-407">line 407</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-408">line 408</a>
     </li></ul></dd>
     
 
@@ -1476,7 +1476,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-368">line 368</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-369">line 369</a>
     </li></ul></dd>
     
 
@@ -1631,7 +1631,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-633">line 633</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-634">line 634</a>
     </li></ul></dd>
     
 
@@ -1785,7 +1785,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-607">line 607</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-608">line 608</a>
     </li></ul></dd>
     
 
@@ -1943,7 +1943,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-541">line 541</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-542">line 542</a>
     </li></ul></dd>
     
 
@@ -2109,7 +2109,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-574">line 574</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-575">line 575</a>
     </li></ul></dd>
     
 
@@ -2214,7 +2214,11 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 
 	<script>
 		function openDeeplinkedElement (skipAni) {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
+			try {
+				$("dt h4.member-collapsed").filter(window.location.hash.substring(1).replace(":", "\\:")).trigger("click", skipAni);
+			} catch (e) {
+				console.warn("ah ah ah! :p");
+			}
 		}
 		$( function () {
 			$( "#toc" ).toc( {
