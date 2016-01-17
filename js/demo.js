@@ -95,8 +95,8 @@
 	// turn over to the dark side
 	if (window.location.hostname === "janpaepke.github.io" || window.location.hostname === "scrollmagic.io") {
 		$(document).ready (function () {
-			google_ad_client = "ca-pub-8286077135621931";
-			google_ad_slot = "4607084004";
+			google_ad_client = "ca-pub-8391065704522728";
+			google_ad_slot = "6437098893";
 			google_ad_width = 728;
 			google_ad_height = 90;
 			var text = $("<div>")
