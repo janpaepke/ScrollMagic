@@ -103,7 +103,8 @@
 				.addClass("content")
 				.append("<h3>Support ScrollMagic</h3>")
 				.append("<p>Maintaining and updating ScrollMagic takes up a lot of my time. To be able to provide the project with the attention it deserves, I decided to experiment with including ads (feedback & evaluation pending).</p>")
-				.append("<p>If the plugin saved you some time or helped you to create something awesome, please consider making use of the donate button above. Alternatively you can have a closer look at the ad below, because every click and every donation helps me spend more time on ScrollMagic and you contribute to making it a little better each time.</p>")
+				.append("<p>If the plugin saved you some time or helped you to create something awesome, please consider making use of the donate button above. </p>")
+					//Alternatively you can have a closer look at the ad below, because every click and every donation helps me spend more time on ScrollMagic and you contribute to making it a little better each time.</p>")
 				.append("<p>Thank you!</p>");
 			var container = $("<div>")
 				.addClass("darkside")
