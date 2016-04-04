@@ -130,7 +130,8 @@
 			_options.container.addEventListener("resize", onChange);
 			_options.container.addEventListener("scroll", onChange);
 
-			_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
+			var ri = parseInt(_options.refreshInterval, 10);
+			_options.refreshInterval = _util.type.Number(ri) ? ri : DEFAULT_OPTIONS.refreshInterval;
 			scheduleRefresh();
 
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
@@ -1316,6 +1317,8 @@
 				reset: reset
 			});
 			Scene.remove();
+			//need to clear triggerElement reference avoid memory leaks and detached dom nodes
+			Scene.triggerElement(null);
 			Scene.off("*.*");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
@@ -1578,31 +1581,40 @@
 			var
 			elementPos = 0,
 				telem = _options.triggerElement;
-			if (_controller && telem) {
-				var
-				controllerInfo = _controller.info(),
-					containerOffset = _util.get.offset(controllerInfo.container),
-					// container position is needed because element offset is returned in relation to document, not in relation to container.
-					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
-				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
-					telem = telem.parentNode;
+			if (_controller && (telem || _triggerPos > 0)) { // either an element exists or was removed and the triggerPos is still > 0
+				if (telem) { // there currently a triggerElement set
+					if (telem.parentNode) { // check if element is still attached to DOM
+						var
+						controllerInfo = _controller.info(),
+							containerOffset = _util.get.offset(controllerInfo.container),
+							// container position is needed because element offset is returned in relation to document, not in relation to container.
+							param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+						// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+						while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+							telem = telem.parentNode;
+						}
+
+						var elementOffset = _util.get.offset(telem);
+
+						if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+							containerOffset[param] -= _controller.scrollPos();
+						}
+
+						elementPos = elementOffset[param] - containerOffset[param];
+
+					} else { // there was an element, but it was removed from DOM
+						log(2, "WARNING: triggerElement was removed from DOM and will be reset to", undefined);
+						Scene.triggerElement(undefined); // unset, so a change event is triggered
+					}
 				}
 
-				var elementOffset = _util.get.offset(telem);
-
-				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-					containerOffset[param] -= _controller.scrollPos();
+				var changed = elementPos != _triggerPos;
+				_triggerPos = elementPos;
+				if (changed && !suppressEvents) {
+					Scene.trigger("shift", {
+						reason: "triggerElementPosition"
+					});
 				}
-
-				elementPos = elementOffset[param] - containerOffset[param];
-			}
-			var changed = elementPos != _triggerPos;
-			_triggerPos = elementPos;
-			if (changed && !suppressEvents) {
-				Scene.trigger("shift", {
-					reason: "triggerElementPosition"
-				});
 			}
 		};
 
@@ -1617,6 +1629,7 @@
 				});
 			}
 		};
+
 
 		var _validate = _util.extend(SCENE_OPTIONS.validate, {
 			// validation for duration handled internally for reference to private var _durationMethod
@@ -2298,6 +2311,8 @@
 				_pin.removeEventListener("mousewheel", onMousewheelOverPin);
 				_pin.removeEventListener("DOMMouseScroll", onMousewheelOverPin);
 				_pin = undefined;
+				//remove reference to spacer elements to avoid memory leaks and avoid detached dom nodes
+				_pinOptions.spacer = null;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
 			return Scene;
@@ -2400,7 +2415,7 @@
 				val = val || undefined;
 				if (val) {
 					var elem = _util.get.elements(val)[0];
-					if (elem) {
+					if (elem && elem.parentNode) {
 						val = elem;
 					} else {
 						throw ["Element defined in option \"triggerElement\" was not found:", val];
@@ -2466,6 +2481,7 @@
 		ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
 		ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
 	};
+
 
 
 	/**

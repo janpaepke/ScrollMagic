@@ -380,6 +380,8 @@ this.removePin = function (reset) {
 		_pin.removeEventListener("mousewheel", onMousewheelOverPin);
 		_pin.removeEventListener("DOMMouseScroll", onMousewheelOverPin);
 		_pin = undefined;
+		//remove reference to spacer elements to avoid memory leaks and avoid detached dom nodes
+		_pinOptions.spacer = null;
 		log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 	}
 	return Scene;
