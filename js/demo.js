@@ -108,12 +108,12 @@
 				.append("<p>Thank you!</p>");
 			var container = $("<div>")
 				.addClass("darkside")
-				.append(text)
-				.append('<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>')
-				.append('<ins class="adsbygoogle" style="display:block;width:' + google_ad_width + 'px;height:' + google_ad_height + 'px;margin: 20px auto 0 auto;" data-ad-client="' + google_ad_client + '" data-ad-slot="' + google_ad_slot + '"></ins>');
+				.append(text);
+				// .append('<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>');;
+				// .append('<ins class="adsbygoogle" style="display:block;width:' + google_ad_width + 'px;height:' + google_ad_height + 'px;margin: 20px auto 0 auto;" data-ad-client="' + google_ad_client + '" data-ad-slot="' + google_ad_slot + '"></ins>');
 		
 			$("section#info > div.content").first().after(container);
-			(adsbygoogle = window.adsbygoogle || []).push({});
+			// (adsbygoogle = window.adsbygoogle || []).push({});
 		});
 	}
 
