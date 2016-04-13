@@ -101,12 +101,12 @@ var addSceneOption = function (optionName) {
 
 /**
  * **Get** or **Set** the duration option value.
- * As a setter it also accepts a function returning a numeric value.  
+ * As a setter it also accepts a function returning a numeric value.
  * This is particularly useful for responsive setups.
  *
- * The duration is updated using the supplied function every time `Scene.refresh()` is called, which happens periodically from the controller (see ScrollMagic.Controller option `refreshInterval`).  
- * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
- * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
+ * The duration is updated using the supplied function every time `Scene.refresh()` is called, which happens periodically from the controller (see ScrollMagic.Controller option `refreshInterval`).
+ * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.
+ * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)
  * This counts double if you use the same function for multiple scenes._
  *
  * @method ScrollMagic.Scene#duration
@@ -173,7 +173,7 @@ var addSceneOption = function (optionName) {
  */
 
 /**
- * **Get** or **Set** the triggerHook option value.
+ * **Get** or **Set** the triggerHook option value. Where 0 is the top of the viewport and 1 is the bottom. Default 0.5
  * @method ScrollMagic.Scene#triggerHook
  * @example
  * // get the current triggerHook value
@@ -250,8 +250,8 @@ this.state = function () {
 };
 
 /**
- * **Get** the current scroll offset for the start of the scene.  
- * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).  
+ * **Get** the current scroll offset for the start of the scene.
+ * Mind, that the scrollOffset is related to the size of the container, if `triggerHook` is bigger than `0` (or `"onLeave"`).
  * This means, that resizing the container or changing the `triggerHook` will influence the scene's start offset.
  * @method ScrollMagic.Scene#scrollOffset
  * @example
@@ -267,7 +267,7 @@ this.scrollOffset = function () {
 };
 
 /**
- * **Get** the trigger position of the scene (including the value of the `offset` option).  
+ * **Get** the trigger position of the scene (including the value of the `offset` option).
  * @method ScrollMagic.Scene#triggerPosition
  * @example
  * // get the scene's trigger position
