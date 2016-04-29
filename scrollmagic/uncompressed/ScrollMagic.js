@@ -1595,7 +1595,7 @@
 					containerOffset[param] -= _controller.scrollPos();
 				}
 
-				elementPos = elementOffset[param] - containerOffset[param];
+				elementPos = Math.round(elementOffset[param] - containerOffset[param]);
 			}
 			var changed = elementPos != _triggerPos;
 			_triggerPos = elementPos;
