@@ -61,7 +61,7 @@
 		// (BUILD) - REMOVE IN MINIFY - END
 
 		/**
-		 * Add visual indicators for a ScrollMagic.Scene.  
+		 * Add visual indicators for a ScrollMagic.Scene.
 		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
@@ -72,7 +72,7 @@
 		 * scene.addIndicators({name: "pin scene", colorEnd: "#FFFFFF"});
 		 *
 		 * @param {object} [options] - An object containing one or more options for the indicators.
-		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
+		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.
 		 														 														 If undefined, the controller's container will be used.
 		 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
 		 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
@@ -91,7 +91,7 @@
 						colorEnd: "red",
 						colorTrigger: "blue",
 					};
-				
+
 				options = _util.extend({}, DEFAULT_OPTIONS, options);
 
 				_autoindex++;
@@ -137,7 +137,7 @@
 	 */
 	// add option to globally auto-add indicators to scenes
 	/**
-	 * Every ScrollMagic.Controller instance now accepts an additional option.  
+	 * Every ScrollMagic.Controller instance now accepts an additional option.
 	 * See {@link ScrollMagic.Controller} for a complete list of the standard options.
 	 * @memberof! debug.addIndicators#
 	 * @method new ScrollMagic.Controller(options)
@@ -175,7 +175,7 @@
 			log(2, "WARNING: Scene already has a property '_indicators', which will be overwritten by plugin.");
 		}
 		// (BUILD) - REMOVE IN MINIFY - END
-	
+
 		// add indicators container
 		this._indicators = _indicators;
 		/*
@@ -186,7 +186,7 @@
 			bounds position on container scroll or resize (to keep alignment to bottom/right)
 			trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
 		*/
-		
+
 		// event handler for when associated bounds markers need to be repositioned
 		var handleBoundsPositionChange = function () {
 			_indicators.updateBoundsPositions();
@@ -197,14 +197,14 @@
 			_indicators.updateTriggerGroupPositions();
 		};
 
-		_container.addEventListener("resize", handleTriggerPositionChange);
+		_container.addEventListener("resize", handleTriggerPositionChange, { passive: true });
 		if (!_isDocument) {
-			window.addEventListener("resize", handleTriggerPositionChange);
-			window.addEventListener("scroll", handleTriggerPositionChange);
+			window.addEventListener("resize", handleTriggerPositionChange, { passive: true });
+			window.addEventListener("scroll", handleTriggerPositionChange, { passive: true });
 		}
 		// update all related bounds containers
-		_container.addEventListener("resize", handleBoundsPositionChange);
-		_container.addEventListener("scroll", handleBoundsPositionChange);
+		_container.addEventListener("resize", handleBoundsPositionChange, { passive: true });
+		_container.addEventListener("scroll", handleBoundsPositionChange, { passive: true });
 
 
 		// updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
@@ -295,13 +295,13 @@
 
 		// remove all previously set listeners on destroy
 		this.destroy = function () {
-			_container.removeEventListener("resize", handleTriggerPositionChange);
+			_container.removeEventListener("resize", handleTriggerPositionChange, { passive: true });
 			if (!_isDocument) {
-				window.removeEventListener("resize", handleTriggerPositionChange);
-				window.removeEventListener("scroll", handleTriggerPositionChange);
+				window.removeEventListener("resize", handleTriggerPositionChange, { passive: true });
+				window.removeEventListener("scroll", handleTriggerPositionChange, { passive: true });
 			}
-			_container.removeEventListener("resize", handleBoundsPositionChange);
-			_container.removeEventListener("scroll", handleBoundsPositionChange);
+			_container.removeEventListener("resize", handleBoundsPositionChange, { passive: true });
+			_container.removeEventListener("scroll", handleBoundsPositionChange, { passive: true });
 			// call original destroy method
 			this.$super.destroy.apply(this, arguments);
 		};
@@ -396,7 +396,7 @@
 	 				removeTriggerGroup();
 	 			}
 				removeBounds();
-				
+
 				log(3, "removed indicators");
 			}
 		};
@@ -504,7 +504,7 @@
 		};
 
 		// updates the trigger group -> either join existing or add new one
-		/*	
+		/*
 		 * Logic:
 		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
 		 * 2 try to find an existing one that matches Scene parameters
@@ -645,7 +645,7 @@
 				position: "relative",
 			});
 			// inner wrapper for right: 0 and main element has no size
-			var w = document.createElement('div'); 
+			var w = document.createElement('div');
 			_util.css(w, {
 				position: "absolute",
 				overflow: "visible",

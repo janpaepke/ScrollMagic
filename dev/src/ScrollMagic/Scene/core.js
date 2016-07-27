@@ -13,7 +13,7 @@ Scene
 		updateScrollOffset();
 		Scene.update(); // update scene to reflect new position
 	});
-	
+
 // (BUILD) - REMOVE IN MINIFY - START
 /**
  * Send a debug message to the console.
@@ -32,7 +32,7 @@ var log = this._log = function (loglevel, output) {
 // (BUILD) - REMOVE IN MINIFY - END
 
 /**
- * Add the scene to a controller.  
+ * Add the scene to a controller.
  * This is the equivalent to `Controller.addScene(scene)`.
  * @method ScrollMagic.Scene#addTo
  *
@@ -56,7 +56,7 @@ this.addTo = function (controller) {
 		updateDuration(true);
 		updateTriggerElementPosition(true);
 		updateScrollOffset();
-		_controller.info("container").addEventListener('resize', onContainerResize);
+		_controller.info("container").addEventListener('resize', onContainerResize, { passive: true });
 		controller.addScene(Scene);
 		Scene.trigger("add", {controller: _controller});
 		log(3, "added " + NAMESPACE + " to controller");
@@ -66,7 +66,7 @@ this.addTo = function (controller) {
 };
 
 /**
- * **Get** or **Set** the current enabled state of the scene.  
+ * **Get** or **Set** the current enabled state of the scene.
  * This can be used to disable this scene without removing or destroying it.
  * @method ScrollMagic.Scene#enabled
  *
@@ -91,7 +91,7 @@ this.enabled = function (newState) {
 };
 
 /**
- * Remove the scene from the controller.  
+ * Remove the scene from the controller.
  * This is the equivalent to `Controller.removeScene(scene)`.
  * The scene will not be updated anymore until you readd it to a controller.
  * To remove the pin or the tween you need to call removeTween() or removePin() respectively.
@@ -104,7 +104,7 @@ this.enabled = function (newState) {
  */
 this.remove = function () {
 	if (_controller) {
-		_controller.info("container").removeEventListener('resize', onContainerResize);
+		_controller.info("container").removeEventListener('resize', onContainerResize, { passive: true });
 		var tmpParent = _controller;
 		_controller = undefined;
 		tmpParent.removeScene(Scene);
@@ -137,11 +137,11 @@ this.destroy = function (reset) {
 
 
 /**
- * Updates the Scene to reflect the current state.  
- * This is the equivalent to `Controller.updateScene(scene, immediately)`.  
- * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.  
+ * Updates the Scene to reflect the current state.
+ * This is the equivalent to `Controller.updateScene(scene, immediately)`.
+ * The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.
  * It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
- * This means an update doesn't necessarily result in a progress change. The `progress` event will be fired if the progress has indeed changed between this update and the last.  
+ * This means an update doesn't necessarily result in a progress change. The `progress` event will be fired if the progress has indeed changed between this update and the last.
  * _**NOTE:** This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters._
  * @method ScrollMagic.Scene#update
  * @example
@@ -186,7 +186,7 @@ this.update = function (immediately) {
 /**
  * Updates dynamic scene variables like the trigger element position or the duration.
  * This method is automatically called in regular intervals from the controller. See {@link ScrollMagic.Controller} option `refreshInterval`.
- * 
+ *
  * You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
  * If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.
  *
@@ -194,7 +194,7 @@ this.update = function (immediately) {
  * @since 1.1.0
  * @example
  * scene = new ScrollMagic.Scene({triggerElement: "#trigger"});
- * 
+ *
  * // change the position of the trigger
  * $("#trigger").css("top", 500);
  * // immediately let the scene know of this change
@@ -213,33 +213,33 @@ this.refresh = function () {
 };
 
 /**
- * **Get** or **Set** the scene's progress.  
- * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().  
+ * **Get** or **Set** the scene's progress.
+ * Usually it shouldn't be necessary to use this as a setter, as it is set automatically by scene.update().
  * The order in which the events are fired depends on the duration of the scene:
- *  1. Scenes with `duration == 0`:  
- *  Scenes that have no duration by definition have no ending. Thus the `end` event will never be fired.  
- *  When the trigger position of the scene is passed the events are always fired in this order:  
- *  `enter`, `start`, `progress` when scrolling forward  
- *  and  
+ *  1. Scenes with `duration == 0`:
+ *  Scenes that have no duration by definition have no ending. Thus the `end` event will never be fired.
+ *  When the trigger position of the scene is passed the events are always fired in this order:
+ *  `enter`, `start`, `progress` when scrolling forward
+ *  and
  *  `progress`, `start`, `leave` when scrolling in reverse
- *  2. Scenes with `duration > 0`:  
- *  Scenes with a set duration have a defined start and end point.  
- *  When scrolling past the start position of the scene it will fire these events in this order:  
- *  `enter`, `start`, `progress`  
- *  When continuing to scroll and passing the end point it will fire these events:  
- *  `progress`, `end`, `leave`  
- *  When reversing through the end point these events are fired:  
- *  `enter`, `end`, `progress`  
- *  And when continuing to scroll past the start position in reverse it will fire:  
- *  `progress`, `start`, `leave`  
+ *  2. Scenes with `duration > 0`:
+ *  Scenes with a set duration have a defined start and end point.
+ *  When scrolling past the start position of the scene it will fire these events in this order:
+ *  `enter`, `start`, `progress`
+ *  When continuing to scroll and passing the end point it will fire these events:
+ *  `progress`, `end`, `leave`
+ *  When reversing through the end point these events are fired:
+ *  `enter`, `end`, `progress`
+ *  And when continuing to scroll past the start position in reverse it will fire:
+ *  `progress`, `start`, `leave`
  *  In between start and end the `progress` event will be called constantly, whenever the progress changes.
- * 
- * In short:  
- * `enter` events will always trigger **before** the progress update and `leave` envents will trigger **after** the progress update.  
+ *
+ * In short:
+ * `enter` events will always trigger **before** the progress update and `leave` envents will trigger **after** the progress update.
  * `start` and `end` will always trigger at their respective position.
- * 
+ *
  * Please review the event descriptions for details on the events and the event object that is passed to the callback.
- * 
+ *
  * @method ScrollMagic.Scene#progress
  * @example
  * // get the current scene progress
