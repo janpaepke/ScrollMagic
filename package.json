@@ -46,8 +46,9 @@
     "karma": "^0.12.21",
     "karma-chrome-launcher": "^0.1.4",
     "karma-jasmine": "^0.2.2",
-    "karma-requirejs": "^0.2.2",
+    "karma-requirejs": "^0.2.6",
     "pretty-bytes": "^1.0.2",
+    "requirejs": "^2.3.2",
     "semver": "^3.0.1",
     "through2": "^0.6.3",
     "yargs": "^1.3.2"
