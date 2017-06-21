@@ -3,7 +3,7 @@
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
- * 
+ *
  * @version 2.0.5
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
@@ -21,7 +21,7 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic'], factory);
+		define(['scrollmagic'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		factory(require('scrollmagic'));
@@ -67,7 +67,7 @@
 		};
 
 		/**
-		 * Add visual indicators for a ScrollMagic.Scene.  
+		 * Add visual indicators for a ScrollMagic.Scene.
 		 * @memberof! debug.addIndicators#
 		 *
 		 * @example
@@ -78,7 +78,7 @@
 		 * scene.addIndicators({name: "pin scene", colorEnd: "#FFFFFF"});
 		 *
 		 * @param {object} [options] - An object containing one or more options for the indicators.
-		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
+		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.
 		 If undefined, the controller's container will be used.
 		 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
 		 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
@@ -143,7 +143,7 @@
 	 */
 	// add option to globally auto-add indicators to scenes
 	/**
-	 * Every ScrollMagic.Controller instance now accepts an additional option.  
+	 * Every ScrollMagic.Controller instance now accepts an additional option.
 	 * See {@link ScrollMagic.Controller} for a complete list of the standard options.
 	 * @memberof! debug.addIndicators#
 	 * @method new ScrollMagic.Controller(options)
@@ -167,7 +167,7 @@
 			_isDocument = _info.isDocument,
 			_vertical = _info.vertical,
 			_indicators = { // container for all indicators and methods
-				groups: []
+				groups: [],
 			};
 
 		var log = function () {
@@ -215,7 +215,7 @@
 		this._indicators.updateBoundsPositions = function (specificIndicator) {
 			var // constant for all bounds
 			groups = specificIndicator ? [_util.extend({}, specificIndicator.triggerGroup, {
-				members: [specificIndicator]
+				members: [specificIndicator],
 			})] : // create a group with only one element
 			_indicators.groups,
 				// use all
@@ -244,7 +244,7 @@
 				container = _isDocument ? document.body : _container,
 				containerOffset = _isDocument ? {
 					top: 0,
-					left: 0
+					left: 0,
 				} : _util.get.offset(container, true),
 				edge = _vertical ? _util.get.width(_container) - EDGE_OFFSET : _util.get.height(_container) - EDGE_OFFSET,
 				paramDimension = _vertical ? "width" : "height",
@@ -260,12 +260,12 @@
 
 				_util.css(elem, {
 					top: containerOffset.top + (_vertical ? pos : edge - group.members[0].options.indent),
-					left: containerOffset.left + (_vertical ? edge - group.members[0].options.indent : pos)
+					left: containerOffset.left + (_vertical ? edge - group.members[0].options.indent : pos),
 				});
 				_util.css(elem.firstChild.firstChild, {
 					"-ms-transform": transform,
 					"-webkit-transform": transform,
-					"transform": transform
+					"transform": transform,
 				});
 			}
 		};
@@ -359,7 +359,7 @@
 			if (!isDocument && _util.css(_boundsContainer, "position") === 'static') {
 				// position mode needed for correct positioning of indicators
 				_util.css(_boundsContainer, {
-					position: "relative"
+					position: "relative",
 				});
 			}
 
@@ -443,7 +443,7 @@
 				"right": v ? options.indent : "",
 				"bottom": v ? "" : options.indent,
 				"left": v ? "" : "100%",
-				"padding": v ? "0 8px" : "2px 4px"
+				"padding": v ? "0 8px" : "2px 4px",
 			});
 			// append
 			_boundsContainer.appendChild(_elemBounds);
@@ -464,7 +464,7 @@
 			css[_vertical ? "height" : "width"] = Scene.duration();
 			_util.css(_elemBounds, css);
 			_util.css(_elemEnd, {
-				display: Scene.duration() > 0 ? "" : "none"
+				display: Scene.duration() > 0 ? "" : "none",
 			});
 		};
 
@@ -482,13 +482,13 @@
 			css[_vertical ? "border-top-width" : "border-left-width"] = 1;
 			_util.css(triggerElem.firstChild, css);
 			_util.css(triggerElem.firstChild.firstChild, {
-				padding: _vertical ? "0 8px 3px 8px" : "3px 4px"
+				padding: _vertical ? "0 8px 3px 8px" : "3px 4px",
 			});
 			document.body.appendChild(triggerElem); // directly add to body
 			var newGroup = {
 				triggerHook: Scene.triggerHook(),
 				element: triggerElem,
-				members: [Indicator]
+				members: [Indicator],
 			};
 			_ctrl._indicators.groups.push(newGroup);
 			Indicator.triggerGroup = newGroup;
@@ -504,7 +504,7 @@
 		};
 
 		// updates the trigger group -> either join existing or add new one
-/*	
+/*
 		 * Logic:
 		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
 		 * 2 try to find an existing one that matches Scene parameters
@@ -598,7 +598,7 @@
 				"border-width": 0,
 				"border-style": "solid",
 				color: color,
-				"border-color": color
+				"border-color": color,
 			});
 			var e = document.createElement('div');
 			// wrapper
@@ -606,7 +606,7 @@
 				position: "absolute",
 				overflow: "visible",
 				width: 0,
-				height: 0
+				height: 0,
 			});
 			e.appendChild(inner);
 			return e;
@@ -620,7 +620,7 @@
 				"border-width": 0,
 				"border-style": "solid",
 				color: color,
-				"border-color": color
+				"border-color": color,
 			});
 			return e;
 		},
@@ -631,7 +631,7 @@
 				overflow: "visible",
 				"white-space": "nowrap",
 				"pointer-events": "none",
-				"font-size": FONT_SIZE
+				"font-size": FONT_SIZE,
 			});
 			e.style.zIndex = ZINDEX;
 			return e;
@@ -651,7 +651,7 @@
 				"border-width": 0,
 				"border-style": "solid",
 				color: color,
-				"border-color": color
+				"border-color": color,
 			});
 			w.appendChild(inner);
 			// wrapper
@@ -661,7 +661,7 @@
 				overflow: "visible",
 				"white-space": "nowrap",
 				"pointer-events": "none",
-				"font-size": FONT_SIZE
+				"font-size": FONT_SIZE,
 			});
 			e.style.zIndex = ZINDEX;
 			e.appendChild(w);
