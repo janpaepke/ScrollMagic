@@ -383,7 +383,7 @@ a:hover #speechbubble p:last-child {
     visibility: visible;
 }
 #get-it-now.download {
-    overflow: hidden;
+    overflow-y: hidden;
     width: 100%;
     padding: 0;
 }
