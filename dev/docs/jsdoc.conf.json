@@ -29,7 +29,7 @@
 					"Scene Parameters (getter / setter)" : ["offset", "duration", "enabled", "loglevel", "reverse", "triggerElement", "triggerHook"],
 					"Scene Properties (getter)" : ["parent", "scrollOffset", "state", "triggerOffset", "triggerPosition"],
 					"Event Handling" : ["off", "on", "trigger"],
-					"Debuging" : ["addIndicators"]
+					"Debugging" : ["addIndicators"]
 				},
 				"animation.GSAP" : {
 					"Scene Constructor Extension" : ["new ScrollMagic.Scene"],
