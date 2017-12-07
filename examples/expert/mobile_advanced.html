@@ -100,7 +100,7 @@
 
 								// thanks to iScroll 5 we now have a real onScroll event (with some performance drawbacks)
 								myScroll.on("scroll", function () {
-									controller.update();
+									controller.update(true);
 								});
 
 								// add indicators to scrollcontent so they will be moved with it.
