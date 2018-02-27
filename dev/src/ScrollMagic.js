@@ -25,7 +25,10 @@
 	ScrollMagic.version = "%VERSION%";
 
 	// TODO: temporary workaround for chrome's scroll jitter bug
-	window.addEventListener("mousewheel", function () {});
+	window.addEventListener("mousewheel", function () {}, {
+		capture: true,
+		passive: true
+	});
 
 	// global const
 	var PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer";
