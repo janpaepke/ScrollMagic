@@ -103,7 +103,7 @@ var updatePinDimensions = function () {
 		// set new size
 		// if relsize: spacer -> pin | else: pin -> spacer
 		if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
-			if (during) {
+			if (during && _util.css(_pin, "width") !== "100%") {
 				_util.css(_pin, {"width": _util.get.width(_pinOptions.spacer)});
 			} else {
 				_util.css(_pin, {"width": "100%"});

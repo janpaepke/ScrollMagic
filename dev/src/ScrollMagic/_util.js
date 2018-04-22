@@ -238,7 +238,11 @@ var _util = ScrollMagic._util = (function (window) {
 	// if options is object -> set new css values
 	U.css = function (elem, options) {
 		if (_type.String(options)) {
-			return _getComputedStyle(elem)[_camelCase(options)];
+			if (options === 'width') {
+				return elem.style.width;
+			} else {
+				return _getComputedStyle(elem)[_camelCase(options)];
+			}
 		} else if (_type.Array(options)) {
 			var
 				obj = {},
