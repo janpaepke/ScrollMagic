@@ -18,6 +18,12 @@
  * To have access to this extension, please include `plugins/debug.addIndicators.js`.
  * @mixin debug.addIndicators
  */
+
+// server-side rendering
+if (typeof window === 'undefined') {
+	window = {};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.

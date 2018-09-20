@@ -25,6 +25,12 @@
  * @requires {@link http://greensock.com/gsap|GSAP ~1.14.x}
  * @mixin animation.GSAP
  */
+
+// server-side rendering
+if (typeof window === 'undefined') {
+	window = {};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -45,7 +51,7 @@
 	var
 	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+			function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
