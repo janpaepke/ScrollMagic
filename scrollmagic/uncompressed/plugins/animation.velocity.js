@@ -25,6 +25,12 @@
  * @requires {@link http://julian.com/research/velocity/|Velocity ~1.2.0}
  * @mixin animation.Velocity
  */
+
+// server-side rendering
+if (typeof window === 'undefined') {
+	window = {};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
