@@ -30,6 +30,12 @@
  * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
  * @mixin framework.jQuery
  */
+
+// server-side rendering
+if (typeof window === 'undefined') {
+	window = {};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
