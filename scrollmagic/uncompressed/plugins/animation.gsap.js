@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-29)
+ * ScrollMagic v2.0.5 (2015-04-27)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -25,12 +25,6 @@
  * @requires {@link http://greensock.com/gsap|GSAP ~1.14.x}
  * @mixin animation.GSAP
  */
-
-// server-side rendering
-if (typeof window === 'undefined') {
-	window = {};
-}
-
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -44,6 +38,23 @@ if (typeof window === 'undefined') {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);
 	}
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function () {},
+			cancelAnimationFrame: function () {},
+			clearTimeout: function () {},
+			console: function () {},
+			getComputedStyle: function () {},
+			innerHeight: function () {},
+			pageXOffset: function () {},
+			pageYOffset: function () {},
+			removeEventListener: function () {},
+			requestAnimationFrame: function () {},
+			scrollTo: function () {},
+			setTimeout: function () {},
+		};
+	}
 }(this, function (ScrollMagic, Tween, Timeline) {
 	"use strict";
 	var NAMESPACE = "animation.gsap";
@@ -51,7 +62,7 @@ if (typeof window === 'undefined') {
 	var
 	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log ||
-			function () {}, console);
+		function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}

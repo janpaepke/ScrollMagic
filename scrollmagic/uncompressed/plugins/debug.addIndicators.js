@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-29)
+ * ScrollMagic v2.0.5 (2015-04-27)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -18,12 +18,6 @@
  * To have access to this extension, please include `plugins/debug.addIndicators.js`.
  * @mixin debug.addIndicators
  */
-
-// server-side rendering
-if (typeof window === 'undefined') {
-	window = {};
-}
-
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -34,6 +28,23 @@ if (typeof window === 'undefined') {
 	} else {
 		// no browser global export needed, just execute
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
+	}
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function () {},
+			cancelAnimationFrame: function () {},
+			clearTimeout: function () {},
+			console: function () {},
+			getComputedStyle: function () {},
+			innerHeight: function () {},
+			pageXOffset: function () {},
+			pageYOffset: function () {},
+			removeEventListener: function () {},
+			requestAnimationFrame: function () {},
+			scrollTo: function () {},
+			setTimeout: function () {},
+		};
 	}
 }(this, function (ScrollMagic) {
 	"use strict";
@@ -143,10 +154,10 @@ if (typeof window === 'undefined') {
 
 
 /*
-	 * ----------------------------------------------------------------
-	 * Extension for controller to store and update related indicators
-	 * ----------------------------------------------------------------
-	 */
+     * ----------------------------------------------------------------
+     * Extension for controller to store and update related indicators
+     * ----------------------------------------------------------------
+     */
 	// add option to globally auto-add indicators to scenes
 	/**
 	 * Every ScrollMagic.Controller instance now accepts an additional option.  
@@ -195,7 +206,7 @@ if (typeof window === 'undefined') {
 			trigger parameters on triggerHook value change (handled in Indicator class)
 			bounds position on container scroll or resize (to keep alignment to bottom/right)
 			trigger position on container resize, window resize (if container isn't document) and window scroll (if container isn't document)
-		*/
+			*/
 
 		// event handler for when associated bounds markers need to be repositioned
 		var handleBoundsPositionChange = function () {
@@ -317,10 +328,10 @@ if (typeof window === 'undefined') {
 	});
 
 /*
-	 * ----------------------------------------------------------------
-	 * Internal class for the construction of Indicators
-	 * ----------------------------------------------------------------
-	 */
+     * ----------------------------------------------------------------
+     * Internal class for the construction of Indicators
+     * ----------------------------------------------------------------
+     */
 	var Indicator = function (Scene, options) {
 		var
 		Indicator = this,
@@ -408,10 +419,10 @@ if (typeof window === 'undefined') {
 		};
 
 /*
-		 * ----------------------------------------------------------------
-		 * internal Event Handlers
-		 * ----------------------------------------------------------------
-		 */
+	 * ----------------------------------------------------------------
+	 * internal Event Handlers
+	 * ----------------------------------------------------------------
+	 */
 
 		// event handler for when bounds params change
 		var handleBoundsParamsChange = function () {
@@ -426,10 +437,10 @@ if (typeof window === 'undefined') {
 		};
 
 /*
-		 * ----------------------------------------------------------------
-		 * Bounds (start / stop) management
-		 * ----------------------------------------------------------------
-		 */
+	 * ----------------------------------------------------------------
+	 * Bounds (start / stop) management
+	 * ----------------------------------------------------------------
+	 */
 
 		// adds an new bounds elements to the array and to the DOM
 		var addBounds = function () {
@@ -475,10 +486,10 @@ if (typeof window === 'undefined') {
 		};
 
 /*
-		 * ----------------------------------------------------------------
-		 * trigger and trigger group management
-		 * ----------------------------------------------------------------
-		 */
+	 * ----------------------------------------------------------------
+	 * trigger and trigger group management
+	 * ----------------------------------------------------------------
+	 */
 
 		// adds an new trigger group to the array and to the DOM
 		var addTriggerGroup = function () {
@@ -511,19 +522,19 @@ if (typeof window === 'undefined') {
 
 		// updates the trigger group -> either join existing or add new one
 /*	
-		 * Logic:
-		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
-		 * 2 try to find an existing one that matches Scene parameters
-		 * 	 2.1 If a match is found check if already assigned to an existing group
-		 *			 If so:
-		 *       A: it was the last member of existing group -> kill whole group
-		 *       B: the existing group has other members -> just remove from member list
-		 *	 2.2 Assign to matching group
-		 * 3 if no new match could be found, check if assigned to existing group
-		 *   A: yes, and it's the only member -> just update parameters and positions and keep using this group
-		 *   B: yes but there are other members -> remove from member list and create a new one
-		 *   C: no, so create a new one
-		 */
+	 * Logic:
+	 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
+	 * 2 try to find an existing one that matches Scene parameters
+	 * 	 2.1 If a match is found check if already assigned to an existing group
+	 *			 If so:
+	 *       A: it was the last member of existing group -> kill whole group
+	 *       B: the existing group has other members -> just remove from member list
+	 *	 2.2 Assign to matching group
+	 * 3 if no new match could be found, check if assigned to existing group
+	 *   A: yes, and it's the only member -> just update parameters and positions and keep using this group
+	 *   B: yes but there are other members -> remove from member list and create a new one
+	 *   C: no, so create a new one
+	 */
 		var updateTriggerGroup = function () {
 			var
 			triggerHook = Scene.triggerHook(),
@@ -589,10 +600,10 @@ if (typeof window === 'undefined') {
 	};
 
 /*
-	 * ----------------------------------------------------------------
-	 * Templates for the indicators
-	 * ----------------------------------------------------------------
-	 */
+     * ----------------------------------------------------------------
+     * Templates for the indicators
+     * ----------------------------------------------------------------
+     */
 	var TPL = {
 		start: function (color) {
 			// inner element (for bottom offset -1, while keeping top position 0)

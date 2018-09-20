@@ -32,13 +32,31 @@
 		// Browser global
 		factory(root.ScrollMagic, root.jQuery);
 	}
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function() {},
+			cancelAnimationFrame: function() {},
+			clearTimeout: function() {},
+			console: function() {},
+			getComputedStyle: function() {},
+			innerHeight: function() {},
+			pageXOffset: function() {},
+			pageYOffset: function() {},
+			removeEventListener: function() {},
+			requestAnimationFrame: function() {},
+			scrollTo: function() {},
+			setTimeout: function() {},
+		};
+	}
+
 }(this, function (ScrollMagic, $) {
 	"use strict";
 	var NAMESPACE = "jquery.ScrollMagic";
 
 	// (BUILD) - REMOVE IN MINIFY - START
 	var
-		console = window.console || {},
+	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");

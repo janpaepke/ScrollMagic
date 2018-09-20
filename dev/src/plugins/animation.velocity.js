@@ -27,13 +27,30 @@
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.Velocity || (root.jQuery && root.jQuery.Velocity));
 	}
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function() {},
+			cancelAnimationFrame: function() {},
+			clearTimeout: function() {},
+			console: function() {},
+			getComputedStyle: function() {},
+			innerHeight: function() {},
+			pageXOffset: function() {},
+			pageYOffset: function() {},
+			removeEventListener: function() {},
+			requestAnimationFrame: function() {},
+			scrollTo: function() {},
+			setTimeout: function() {},
+		};
+	}
 }(this, function(ScrollMagic, velocity) {
 	"use strict";
 	var NAMESPACE = "animation.velocity";
 
 	// (BUILD) - REMOVE IN MINIFY - START
 	var
-		console = window.console || {},
+	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
@@ -42,12 +59,12 @@
 		err("(" + NAMESPACE + ") -> ERROR: Velocity could not be found. Please make sure it's loaded before ScrollMagic or use an asynchronous loader like requirejs.");
 	}
 	// (BUILD) - REMOVE IN MINIFY - END
-	
+
 	var autoindex = 0;
 
 	ScrollMagic.Scene.extend(function () {
 		var
-			Scene = this,
+		Scene = this,
 			_util = ScrollMagic._util,
 			_currentProgress = 0,
 			_elems,

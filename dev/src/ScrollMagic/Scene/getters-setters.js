@@ -1,3 +1,19 @@
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		setTimeout: function() {},
+	};
+}
+
 var _validate = _util.extend(SCENE_OPTIONS.validate, {
 	// validation for duration handled internally for reference to private var _durationMethod
 	duration : function (val) {
@@ -67,7 +83,7 @@ var validateOption = function (check) {
  */
 var changeOption = function(varname, newval) {
 	var
-		changed = false,
+	changed = false,
 		oldval = _options[varname];
 	if (_options[varname] != newval) {
 		_options[varname] = newval;
@@ -114,7 +130,7 @@ var addSceneOption = function (optionName) {
  * // get the current duration value
  * var duration = scene.duration();
  *
-	 * // set a new duration
+ * // set a new duration
  * scene.duration(300);
  *
  * // use a function to automatically adjust the duration to the window height.
@@ -143,7 +159,7 @@ var addSceneOption = function (optionName) {
  * // get the current offset
  * var offset = scene.offset();
  *
-	 * // set a new offset
+ * // set a new offset
  * scene.offset(100);
  *
  * @fires {@link Scene.change}, when used as setter
@@ -161,9 +177,9 @@ var addSceneOption = function (optionName) {
  * // get the current triggerElement
  * var triggerElement = scene.triggerElement();
  *
-	 * // set a new triggerElement using a selector
+ * // set a new triggerElement using a selector
  * scene.triggerElement("#trigger");
-	 * // set a new triggerElement using a DOM object
+ * // set a new triggerElement using a DOM object
  * scene.triggerElement(document.getElementById("trigger"));
  *
  * @fires {@link Scene.change}, when used as setter
@@ -179,9 +195,9 @@ var addSceneOption = function (optionName) {
  * // get the current triggerHook value
  * var triggerHook = scene.triggerHook();
  *
-	 * // set a new triggerHook using a string
+ * // set a new triggerHook using a string
  * scene.triggerHook("onLeave");
-	 * // set a new triggerHook using a number
+ * // set a new triggerHook using a number
  * scene.triggerHook(0.7);
  *
  * @fires {@link Scene.change}, when used as setter
@@ -198,7 +214,7 @@ var addSceneOption = function (optionName) {
  * // get the current reverse option
  * var reverse = scene.reverse();
  *
-	 * // set new reverse option
+ * // set new reverse option
  * scene.reverse(false);
  *
  * @fires {@link Scene.change}, when used as setter
@@ -214,7 +230,7 @@ var addSceneOption = function (optionName) {
  * // get the current loglevel
  * var loglevel = scene.loglevel();
  *
-	 * // set new loglevel
+ * // set new loglevel
  * scene.loglevel(3);
  *
  * @fires {@link Scene.change}, when used as setter

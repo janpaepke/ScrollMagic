@@ -1,27 +1,10 @@
 {
 	"version": "2.0.5",
-	"lastupdate": "2015-04-29",
+	"lastupdate": "2015-04-27",
 	"info": {
 		"description": "The javascript library for magical scroll interactions.",
 		"homepage": "http://ScrollMagic.io",
-		"keywords": [
-			"scroll",
-			"scrolling",
-			"animation",
-			"sticky",
-			"pin",
-			"fixed",
-			"scrollbar",
-			"scrub",
-			"sync",
-			"position",
-			"progress",
-			"parallax",
-			"events",
-			"classes",
-			"jquery-plugin",
-			"ecosystem:jquery"
-		]
+		"keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"]
 	},
 	"karma": {
 		"config": "/dev/tests/karma.conf.js"
@@ -35,8 +18,5 @@
 		"uncompressed": "dev/build/banner.regular.txt",
 		"minified": "dev/build/banner.min.txt"
 	},
-	"files": [
-		"dev/src/*.js",
-		"dev/src/plugins/*.js"
-	]
+	"files": ["dev/src/*.js", "dev/src/plugins/*.js"]
 }

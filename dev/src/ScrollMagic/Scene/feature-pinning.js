@@ -1,5 +1,5 @@
 var
-	_pin,
+_pin,
 	_pinOptions;
 
 Scene
@@ -29,7 +29,7 @@ Scene
 var updatePinState = function (forceUnpin) {
 	if (_pin && _controller) {
 		var 
-			containerInfo = _controller.info(),
+		containerInfo = _controller.info(),
 			pinTarget = _pinOptions.spacer.firstChild; // may be pin element or another spacer, if cascading pins
 
 		if (!forceUnpin && _state === SCENE_STATE_DURING) { // during scene or if duration is 0 and we are past the trigger
@@ -42,11 +42,11 @@ var updatePinState = function (forceUnpin) {
 			}
 
 			var
-				fixedPos = _util.get.offset(_pinOptions.spacer, true), // get viewport position of spacer
+			fixedPos = _util.get.offset(_pinOptions.spacer, true), // get viewport position of spacer
 				scrollDistance = _options.reverse || _options.duration === 0 ?
-								 	 containerInfo.scrollPos - _scrollOffset.start // quicker
-								 : Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
-			
+				containerInfo.scrollPos - _scrollOffset.start // quicker
+				: Math.round(_progress * _options.duration * 10)/10; // if no reverse and during pin the position needs to be recalculated using the progress
+
 			// add scrollDistance
 			fixedPos[containerInfo.vertical ? "top" : "left"] += scrollDistance;
 
@@ -58,13 +58,13 @@ var updatePinState = function (forceUnpin) {
 		} else {
 			// unpinned state
 			var
-				newCSS = {
-					position: _pinOptions.inFlow ? "relative" : "absolute",
-					top:  0,
-					left: 0
-				},
+			newCSS = {
+				position: _pinOptions.inFlow ? "relative" : "absolute",
+				top:  0,
+				left: 0
+			},
 				change = _util.css(pinTarget, "position") != newCSS.position;
-			
+
 			if (!_pinOptions.pushFollowers) {
 				newCSS[containerInfo.vertical ? "top" : "left"] = _options.duration * _progress;
 			} else if (_options.duration > 0) { // only concerns scenes with duration
@@ -92,7 +92,7 @@ var updatePinState = function (forceUnpin) {
 var updatePinDimensions = function () {
 	if (_pin && _controller && _pinOptions.inFlow) { // no spacerresize, if original position is absolute
 		var
-			after = (_state === SCENE_STATE_AFTER),
+		after = (_state === SCENE_STATE_AFTER),
 			before = (_state === SCENE_STATE_BEFORE),
 			during = (_state === SCENE_STATE_DURING),
 			vertical = _controller.info("vertical"),
@@ -155,11 +155,11 @@ var updatePinInContainer = function () {
  */
 var updateRelativePinSpacer = function () {
 	if ( _controller && _pin && // well, duh
-			_state === SCENE_STATE_DURING && // element in pinned state?
-			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-				((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
-				(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
-			)
+		_state === SCENE_STATE_DURING && // element in pinned state?
+		( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+			((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) ||
+			(_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode))
+		)
 	) {
 		updatePinDimensions();
 	}
@@ -194,17 +194,17 @@ var onMousewheelOverPin = function (e) {
  * @param {(string|object)} element - A Selector targeting an element or a DOM object that is supposed to be pinned.
  * @param {object} [settings] - settings for the pin
  * @param {boolean} [settings.pushFollowers=true] - If `true` following elements will be "pushed" down for the duration of the pin, if `false` the pinned element will just scroll past them.  
- 												   Ignored, when duration is `0`.
+												   Ignored, when duration is `0`.
  * @param {string} [settings.spacerClass="scrollmagic-pin-spacer"] - Classname of the pin spacer element, which is used to replace the element.
  *
  * @returns {Scene} Parent object for chaining.
  */
 this.setPin = function (element, settings) {
 	var
-		defaultSettings = {
-			pushFollowers: true,
-			spacerClass: "scrollmagic-pin-spacer"
-		};
+	defaultSettings = {
+		pushFollowers: true,
+		spacerClass: "scrollmagic-pin-spacer"
+	};
 	settings = _util.extend({}, defaultSettings, settings);
 
 	// validate Element
@@ -225,17 +225,17 @@ this.setPin = function (element, settings) {
 			// kill old pin
 			Scene.removePin();
 		}
-		
+
 	}
 	_pin = element;
-	
+
 	var
-		parentDisplay = _pin.parentNode.style.display,
+	parentDisplay = _pin.parentNode.style.display,
 		boundsParams = ["top", "left", "bottom", "right", "margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
 
 	_pin.parentNode.style.display = 'none'; // hack start to force css to return stylesheet values instead of calculated px values.
 	var
-		inFlow = _util.css(_pin, "position") != "absolute",
+	inFlow = _util.css(_pin, "position") != "absolute",
 		pinCSS = _util.css(_pin, boundsParams.concat(["display"])),
 		sizeCSS = _util.css(_pin, ["width", "height"]);
 	_pin.parentNode.style.display = parentDisplay; // hack end.
@@ -254,13 +254,13 @@ this.setPin = function (element, settings) {
 
 	// create spacer and insert
 	var
-		spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
+	spacer = _pin.parentNode.insertBefore(document.createElement('div'), _pin),
 		spacerCSS = _util.extend(pinCSS, {
-				position: inFlow ? "relative" : "absolute",
-				boxSizing: "content-box",
-				mozBoxSizing: "content-box",
-				webkitBoxSizing: "content-box"
-			});
+			position: inFlow ? "relative" : "absolute",
+			boxSizing: "content-box",
+			mozBoxSizing: "content-box",
+			webkitBoxSizing: "content-box"
+		});
 
 	if (!inFlow) { // copy size if positioned absolutely, to work for bottom/right positioned elements.
 		_util.extend(spacerCSS, _util.css(_pin, ["width", "height"]));
@@ -281,11 +281,11 @@ this.setPin = function (element, settings) {
 		pushFollowers: settings.pushFollowers,
 		inFlow: inFlow, // stores if the element takes up space in the document flow
 	};
-	
+
 	if (!_pin.___origStyle) {
 		_pin.___origStyle = {};
 		var
-			pinInlineCSS = _pin.style,
+		pinInlineCSS = _pin.style,
 			copyStyles = boundsParams.concat(["width", "height", "position", "boxSizing", "mozBoxSizing", "webkitBoxSizing"]);
 		copyStyles.forEach(function (val) {
 			_pin.___origStyle[val] = pinInlineCSS[val] || "";
@@ -311,7 +311,7 @@ this.setPin = function (element, settings) {
 		bottom: "auto",
 		right: "auto"
 	});
-	
+
 	if (_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) {
 		_util.css(_pin, {
 			boxSizing : "border-box",
@@ -349,6 +349,16 @@ this.setPin = function (element, settings) {
  * @param {boolean} [reset=false] - If `false` the spacer will not be removed and the element's position will not be reset.
  * @returns {Scene} Parent object for chaining.
  */
+
+if (typeof window === 'undefined') {
+    window = {
+	    console: function() {},
+	    setTimeout: function() {},
+	    addEventListener: function() {},
+	    removeEventListener: function() {},
+    };
+}
+
 this.removePin = function (reset) {
 	if (_pin) {
 		if (_state === SCENE_STATE_DURING) {
@@ -358,9 +368,9 @@ this.removePin = function (reset) {
 			var pinTarget = _pinOptions.spacer.firstChild; // usually the pin element, but may be another spacer (cascaded pins)...
 			if (pinTarget.hasAttribute(PIN_SPACER_ATTRIBUTE)) { // copy margins to child spacer
 				var
-					style = _pinOptions.spacer.style,
+				style = _pinOptions.spacer.style,
 					values = ["margin", "marginLeft", "marginRight", "marginTop", "marginBottom"];
-					margins = {};
+				margins = {};
 				values.forEach(function (val) {
 					margins[val] = style[val] || "";
 				});
