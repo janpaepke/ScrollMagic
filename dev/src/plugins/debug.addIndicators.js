@@ -9,6 +9,24 @@
  * To have access to this extension, please include `plugins/debug.addIndicators.js`.
  * @mixin debug.addIndicators
  */
+
+if (typeof window === 'undefined') {
+    window = {
+	addEventListener: function() {},
+	cancelAnimationFrame: function() {},
+	clearTimeout: function() {},
+	console: function() {},
+	getComputedStyle: function() {},
+	innerHeight: function() {},
+	pageXOffset: function() {},
+	pageYOffset: function() {},
+	removeEventListener: function() {},
+	requestAnimationFrame: function() {},
+	scrollTo: function() {},
+	setTimeout: function() {},
+    };
+}
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
 	// AMD. Register as an anonymous module.
@@ -19,23 +37,6 @@
     } else {
 	// no browser global export needed, just execute
 	factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic));
-    }
-
-    if (typeof window === 'undefined') {
-	window = {
-	    addEventListener: function() {},
-	    cancelAnimationFrame: function() {},
-	    clearTimeout: function() {},
-	    console: function() {},
-	    getComputedStyle: function() {},
-	    innerHeight: function() {},
-	    pageXOffset: function() {},
-	    pageYOffset: function() {},
-	    removeEventListener: function() {},
-	    requestAnimationFrame: function() {},
-	    scrollTo: function() {},
-	    setTimeout: function() {},
-	};
     }
 }(this, function(ScrollMagic) {
     "use strict";
