@@ -2,6 +2,21 @@
  * TODO: DOCS (private for dev)
  */
 
+if (typeof window === 'undefined') {
+    window = {
+	    addEventListener: function() {},
+	    cancelAnimationFrame: function() {},
+	    clearTimeout: function() {},
+	    console: function() {},
+	    getComputedStyle: function() {},
+	    pageXOffset: function() {},
+	    pageYOffset: function() {},
+	    removeEventListener: function() {},
+	    requestAnimationFrame: function() {},
+	    setTimeout: function() {},
+    };
+}
+
 var _util = ScrollMagic._util = (function (window) {
 	var U = {}, i;
 	

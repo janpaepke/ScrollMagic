@@ -9,18 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/janpaepke/ScrollMagic.git"
+    "url": "git://github.com/ByteGain/ScrollMagic.git"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md"
-    },
-    {
-      "type": "GPL-3.0+",
-      "url": "http://www.gnu.org/licenses/gpl-3.0.html"
-    }
-  ],
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/ByteGain/ScrollMagic/blob/master/LICENSE.md"
+  }, {
+    "type": "GPL-3.0+",
+    "url": "http://www.gnu.org/licenses/gpl-3.0.html"
+  }],
   "main": "scrollmagic/uncompressed/ScrollMagic.js",
   "engines": {
     "node": "0.10.x"
@@ -41,13 +38,15 @@
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.1",
     "gzip-size": "^1.0.0",
+    "jasmine-core": "^3.2.1",
     "jsdoc": "^3.3.0-beta1",
     "jshint-stylish": "^1.0.0",
-    "karma": "^0.12.21",
-    "karma-chrome-launcher": "^0.1.4",
-    "karma-jasmine": "^0.2.2",
-    "karma-requirejs": "^0.2.2",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.2",
+    "karma-requirejs": "^1.1.0",
     "pretty-bytes": "^1.0.2",
+    "requirejs": "^2.3.6",
     "semver": "^3.0.1",
     "through2": "^0.6.3",
     "yargs": "^1.3.2"
@@ -62,28 +61,7 @@
     "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://ScrollMagic.io",
-  "keywords": [
-    "scroll",
-    "scrolling",
-    "animation",
-    "sticky",
-    "pin",
-    "fixed",
-    "scrollbar",
-    "scrub",
-    "sync",
-    "position",
-    "progress",
-    "parallax",
-    "events",
-    "classes",
-    "jquery-plugin",
-    "ecosystem:jquery"
-  ],
+  "keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
-  "files": [
-    "scrollmagic",
-    "LICENSE.md",
-    "README.md"
-  ]
+  "files": ["scrollmagic", "LICENSE.md", "README.md"]
 }

@@ -1,9 +1,27 @@
 /*!
  * @file ScrollMagic main library.
  */
- /**
+/**
  * @namespace ScrollMagic
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -30,15 +48,15 @@
 	// global const
 	var PIN_SPACER_ATTRIBUTE = "data-scrollmagic-pin-spacer";
 
-// @include('ScrollMagic/Controller.js')
+	// @include('ScrollMagic/Controller.js')
 
-// @include('ScrollMagic/Scene.js')
+	// @include('ScrollMagic/Scene.js')
 
-// @include('ScrollMagic/Event.js')
+	// @include('ScrollMagic/Event.js')
 
-// @include('ScrollMagic/_util.js')
+	// @include('ScrollMagic/_util.js')
 
-// @generate PlugInWarnings
+	// @generate PlugInWarnings
 
 	return ScrollMagic;
 }));

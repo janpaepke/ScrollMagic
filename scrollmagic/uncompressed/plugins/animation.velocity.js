@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-29)
+ * ScrollMagic v2.0.5 (2015-04-23)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -25,10 +25,28 @@
  * @requires {@link http://julian.com/research/velocity/|Velocity ~1.2.0}
  * @mixin animation.Velocity
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function () {},
+		cancelAnimationFrame: function () {},
+		clearTimeout: function () {},
+		console: function () {},
+		getComputedStyle: function () {},
+		innerHeight: function () {},
+		pageXOffset: function () {},
+		pageYOffset: function () {},
+		removeEventListener: function () {},
+		requestAnimationFrame: function () {},
+		scrollTo: function () {},
+		setTimeout: function () {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'velocity'], factory);
+		define(['scrollmagic', 'velocity'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		factory(require('scrollmagic'), require('velocity'));

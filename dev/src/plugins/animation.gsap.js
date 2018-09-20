@@ -16,15 +16,32 @@
  * @requires {@link http://greensock.com/gsap|GSAP ~1.14.x}
  * @mixin animation.GSAP
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'TweenMax', 'TimelineMax'], factory);
+		define(['scrollmagic', 'gsap/TweenMax', 'gsap/TimelineMax'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		// Loads whole gsap package onto global scope.
-		require('gsap');
-		factory(require('scrollmagic'), TweenMax, TimelineMax);
+		factory(require('scrollmagic'), require('gsap/TweenMax'), require('gsap/TimelineMax'));
 	} else {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);
@@ -35,7 +52,7 @@
 
 	// (BUILD) - REMOVE IN MINIFY - START
 	var
-		console = window.console || {},
+	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
@@ -44,7 +61,7 @@
 		err("(" + NAMESPACE + ") -> ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use an asynchronous loader like requirejs.");
 	}
 	// (BUILD) - REMOVE IN MINIFY - END
-	
+
 	/*
 	 * ----------------------------------------------------------------
 	 * Extensions for Scene
@@ -60,8 +77,8 @@
 	 *
 	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
-	 												  Does not affect animations where duration is `0`.
-	 */
+													  Does not affect animations where duration is `0`.
+													  */
 	/**
 	 * **Get** or **Set** the tweenChanges option value.  
 	 * This only affects scenes with a duration. If `tweenChanges` is `true`, the progress update when scrolling will not be immediate, but instead the animation will smoothly animate to the target state.  
@@ -92,7 +109,7 @@
 	// extend scene
 	ScrollMagic.Scene.extend(function () {
 		var Scene = this,
-		_tween;
+			_tween;
 
 		// (BUILD) - REMOVE IN MINIFY - START
 		var log = function () {
@@ -118,7 +135,7 @@
 		var updateTweenProgress = function () {
 			if (_tween) {
 				var
-					progress = Scene.progress(),
+				progress = Scene.progress(),
 					state = Scene.state();
 				if (_tween.repeat && _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
@@ -232,11 +249,11 @@
 			// check if there are position tweens defined for the trigger and warn about it :)
 			if (_tween && Scene.controller()  && Scene.triggerElement() && Scene.loglevel() >= 2) {// controller is needed to know scroll direction.
 				var
-					triggerTweens = Tween.getTweensOf(Scene.triggerElement()),
+				triggerTweens = Tween.getTweensOf(Scene.triggerElement()),
 					vertical = Scene.controller().info("vertical");
 				triggerTweens.forEach(function (value, index) {
 					var
-						tweenvars = value.vars.css || value.vars,
+					tweenvars = value.vars.css || value.vars,
 						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
 					if (condition) {
 						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
@@ -248,7 +265,7 @@
 			// warn about tween overwrites, when an element is tweened multiple times
 			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
 				var
-					list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
+				list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
 					newCallback = function () {
 						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
 					};

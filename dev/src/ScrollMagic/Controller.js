@@ -15,15 +15,33 @@
  * @param {boolean} [options.vertical=true] - Sets the scroll mode to vertical (`true`) or horizontal (`false`) scrolling.
  * @param {object} [options.globalSceneOptions={}] - These options will be passed to every Scene that is added to the controller using the addScene method. For more information on Scene options see {@link ScrollMagic.Scene}.
  * @param {number} [options.loglevel=2] Loglevel for debugging. Note that logging is disabled in the minified version of ScrollMagic.
-										 ** `0` => silent
-										 ** `1` => errors
-										 ** `2` => errors, warnings
-										 ** `3` => errors, warnings, debuginfo
+ ** `0` => silent
+ ** `1` => errors
+ ** `2` => errors, warnings
+ ** `3` => errors, warnings, debuginfo
  * @param {boolean} [options.refreshInterval=100] - Some changes don't call events by default, like changing the container size or moving a scene trigger element.  
- 																										 This interval polls these parameters to fire the necessary events.  
- 																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
+																										 This interval polls these parameters to fire the necessary events.  
+																										 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
  *
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 ScrollMagic.Controller = function(options) {
 	/*
 	 * ----------------------------------------------------------------
@@ -31,7 +49,7 @@ ScrollMagic.Controller = function(options) {
 	 * ----------------------------------------------------------------
 	 */
 	var
-		NAMESPACE = 'ScrollMagic.Controller',
+	NAMESPACE = 'ScrollMagic.Controller',
 		SCROLL_DIRECTION_FORWARD = 'FORWARD',
 		SCROLL_DIRECTION_REVERSE = 'REVERSE',
 		SCROLL_DIRECTION_PAUSED = 'PAUSED',
@@ -43,7 +61,7 @@ ScrollMagic.Controller = function(options) {
 	 * ----------------------------------------------------------------
 	 */
 	var
-		Controller = this,
+	Controller = this,
 		_options = _util.extend({}, DEFAULT_OPTIONS, options),
 		_sceneObjects = [],
 		_updateScenesOnNextCycle = false,		// can be boolean (true => all scenes) or an array of scenes to be updated
@@ -97,9 +115,9 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
-	* Schedule the next execution of the refresh function
-	* @private
-	*/
+	 * Schedule the next execution of the refresh function
+	 * @private
+	 */
 	var scheduleRefresh = function () {
 		if (_options.refreshInterval > 0) {
 			_refreshTimeout = window.setTimeout(refresh, _options.refreshInterval);
@@ -107,26 +125,26 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
-	* Default function to get scroll pos - overwriteable using `Controller.scrollPos(newFunction)`
-	* @private
-	*/
+	 * Default function to get scroll pos - overwriteable using `Controller.scrollPos(newFunction)`
+	 * @private
+	 */
 	var getScrollPos = function () {
 		return _options.vertical ? _util.get.scrollTop(_options.container) : _util.get.scrollLeft(_options.container);
 	};
 
 	/**
-	* Returns the current viewport Size (width vor horizontal, height for vertical)
-	* @private
-	*/
+	 * Returns the current viewport Size (width vor horizontal, height for vertical)
+	 * @private
+	 */
 	var getViewportSize = function () {
 		return _options.vertical ? _util.get.height(_options.container) : _util.get.width(_options.container);
 	};
 
 	/**
-	* Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
-	* Make available publicly for pinned mousewheel workaround.
-	* @private
-	*/
+	 * Default function to set scroll pos - overwriteable using `Controller.scrollTo(newFunction)`
+	 * Make available publicly for pinned mousewheel workaround.
+	 * @private
+	 */
 	var setScrollPos = this._setScrollPos = function (pos) {
 		if (_options.vertical) {
 			if (_isDocument) {
@@ -144,9 +162,9 @@ ScrollMagic.Controller = function(options) {
 	};
 
 	/**
-	* Handle updates in cycles instead of on scroll (performance)
-	* @private
-	*/
+	 * Handle updates in cycles instead of on scroll (performance)
+	 * @private
+	 */
 	var updateScenes = function () {
 		if (_enabled && _updateScenesOnNextCycle) {
 			// determine scenes to update
@@ -176,19 +194,19 @@ ScrollMagic.Controller = function(options) {
 			// (BUILD) - REMOVE IN MINIFY - END
 		}
 	};
-	
+
 	/**
-	* Initializes rAF callback
-	* @private
-	*/
+	 * Initializes rAF callback
+	 * @private
+	 */
 	var debounceUpdate = function () {
 		_updateTimeout = _util.rAF(updateScenes);
 	};
-	
+
 	/**
-	* Handles Container changes
-	* @private
-	*/
+	 * Handles Container changes
+	 * @private
+	 */
 	var onChange = function (e) {
 		log(3, "event fired causing an update:", e.type);
 		if (e.type == "resize") {
@@ -275,10 +293,10 @@ ScrollMagic.Controller = function(options) {
 	 * // with a previously defined scene
 	 * controller.addScene(scene);
 	 *
- 	 * // with a newly created scene.
+	 * // with a newly created scene.
 	 * controller.addScene(new ScrollMagic.Scene({duration : 0}));
 	 *
- 	 * // adding multiple scenes
+	 * // adding multiple scenes
 	 * controller.addScene([scene, scene2, new ScrollMagic.Scene({duration : 0})]);
 	 *
 	 * @param {(ScrollMagic.Scene|array)} newScene - ScrollMagic Scene or Array of Scenes to be added to the controller.
@@ -353,17 +371,17 @@ ScrollMagic.Controller = function(options) {
 	 * @public
 	 * @example
 	 * // update a specific scene on next cycle
- 	 * controller.updateScene(scene);
- 	 *
+	 * controller.updateScene(scene);
+	 *
 	 * // update a specific scene immediately
 	 * controller.updateScene(scene, true);
- 	 *
+	 *
 	 * // update multiple scenes scene on next cycle
 	 * controller.updateScene([scene1, scene2, scene3]);
 	 *
 	 * @param {ScrollMagic.Scene} Scene - ScrollMagic Scene or Array of Scenes that is/are supposed to be updated.
 	 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle.  
-	 										  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
+											  This is useful when changing multiple properties of the scene - this way it will only be updated once all new properties are set (updateScenes).
 	 * @return {Controller} Parent object for chaining.
 	 */
 	this.updateScene = function (Scene, immediately) {
@@ -399,7 +417,7 @@ ScrollMagic.Controller = function(options) {
 	 * // update the controller on next cycle (saves performance due to elimination of redundant updates)
 	 * controller.update();
 	 *
- 	 * // update the controller immediately
+	 * // update the controller immediately
 	 * controller.update(true);
 	 *
 	 * @param {boolean} [immediately=false] - If `true` the update will be instant, if `false` it will wait until next update cycle (better performance)
@@ -430,13 +448,13 @@ ScrollMagic.Controller = function(options) {
 	 * var scene = new ScrollMagic.Scene({offset: 200});
 	 * controller.scrollTo(scene);
 	 *
- 	 * // define a new scroll position modification function (jQuery animate instead of jump)
+	 * // define a new scroll position modification function (jQuery animate instead of jump)
 	 * controller.scrollTo(function (newScrollPos) {
 	 *	$("html, body").animate({scrollTop: newScrollPos});
 	 * });
 	 * controller.scrollTo(100); // call as usual, but the new function will be used instead
 	 *
- 	 * // define a new scroll function with an additional parameter
+	 * // define a new scroll function with an additional parameter
 	 * controller.scrollTo(function (newScrollPos, message) {
 	 *  console.log(message);
 	 *	$(this).animate({scrollTop: newScrollPos});
@@ -444,7 +462,7 @@ ScrollMagic.Controller = function(options) {
 	 * // call as usual, but supply an extra parameter to the defined custom function
 	 * controller.scrollTo(100, "my message");
 	 *
- 	 * // define a new scroll function with an additional parameter containing multiple variables
+	 * // define a new scroll function with an additional parameter containing multiple variables
 	 * controller.scrollTo(function (newScrollPos, options) {
 	 *  someGlobalVar = options.a + options.b;
 	 *	$(this).animate({scrollTop: newScrollPos});
@@ -452,7 +470,7 @@ ScrollMagic.Controller = function(options) {
 	 * // call as usual, but supply an extra parameter containing multiple options
 	 * controller.scrollTo(100, {a: 1, b: 2});
 	 *
- 	 * // define a new scroll function with a callback supplied as an additional parameter
+	 * // define a new scroll function with a callback supplied as an additional parameter
 	 * controller.scrollTo(function (newScrollPos, callback) {
 	 *	$(this).animate({scrollTop: newScrollPos}, 400, "swing", callback);
 	 * });
@@ -494,7 +512,7 @@ ScrollMagic.Controller = function(options) {
 				}
 
 				var
-					param = _options.vertical ? "top" : "left", // which param is of interest ?
+				param = _options.vertical ? "top" : "left", // which param is of interest ?
 					containerOffset = _util.get.offset(_options.container), // container position is needed because element offset is returned in relation to document, not in relation to container.
 					elementOffset = _util.get.offset(elem);
 
@@ -531,7 +549,7 @@ ScrollMagic.Controller = function(options) {
 	 * // get the current scroll Position
 	 * var scrollPos = controller.scrollPos();
 	 *
- 	 * // set a new scroll position calculation method
+	 * // set a new scroll position calculation method
 	 * controller.scrollPos(function () {
 	 *	return this.info("vertical") ? -mychildcontainer.y : -mychildcontainer.x
 	 * });
@@ -563,13 +581,13 @@ ScrollMagic.Controller = function(options) {
 	 * var infos = controller.info();
 	 *
 	 * @param {string} [about] - If passed only this info will be returned instead of an object containing all.  
-	 							 Valid options are:
-	 							 ** `"size"` => the current viewport size of the container
-	 							 ** `"vertical"` => true if vertical scrolling, otherwise false
-	 							 ** `"scrollPos"` => the current scroll position
-	 							 ** `"scrollDirection"` => the last known direction of the scroll
-	 							 ** `"container"` => the container element
-	 							 ** `"isDocument"` => true if container element is the document.
+								 Valid options are:
+	 ** `"size"` => the current viewport size of the container
+	 ** `"vertical"` => true if vertical scrolling, otherwise false
+	 ** `"scrollPos"` => the current scroll position
+	 ** `"scrollDirection"` => the last known direction of the scroll
+	 ** `"container"` => the container element
+	 ** `"isDocument"` => true if container element is the document.
 	 * @returns {(mixed|object)} The requested info(s).
 	 */
 	this.info = function (about) {
@@ -599,7 +617,7 @@ ScrollMagic.Controller = function(options) {
 	 * // get the current value
 	 * var loglevel = controller.loglevel();
 	 *
- 	 * // set a new value
+	 * // set a new value
 	 * controller.loglevel(3);
 	 *
 	 * @param {number} [newLoglevel] - The new loglevel setting of the Controller. `[0-3]`
@@ -625,7 +643,7 @@ ScrollMagic.Controller = function(options) {
 	 * // get the current value
 	 * var enabled = controller.enabled();
 	 *
- 	 * // disable the controller
+	 * // disable the controller
 	 * controller.enabled(false);
 	 *
 	 * @param {boolean} [newState] - The new enabled state of the controller `true` or `false`.
@@ -640,7 +658,7 @@ ScrollMagic.Controller = function(options) {
 		}
 		return Controller;
 	};
-	
+
 	/**
 	 * Destroy the Controller, all Scenes and everything.
 	 * @public
@@ -649,7 +667,7 @@ ScrollMagic.Controller = function(options) {
 	 * // without resetting the scenes
 	 * controller = controller.destroy();
 	 *
- 	 * // with scene reset
+	 * // with scene reset
 	 * controller = controller.destroy(true);
 	 *
 	 * @param {boolean} [resetScenes=false] - If `true` the pins and tweens (if existent) of all scenes will be reset.

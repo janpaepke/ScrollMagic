@@ -1,0 +1,4 @@
+scrollmagic/uncompressed/*
+scrollmagic/minified/*
+
+package-lock.json

@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-29)
+ * ScrollMagic v2.0.5 (2015-04-23)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -25,15 +25,32 @@
  * @requires {@link http://greensock.com/gsap|GSAP ~1.14.x}
  * @mixin animation.GSAP
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function () {},
+		cancelAnimationFrame: function () {},
+		clearTimeout: function () {},
+		console: function () {},
+		getComputedStyle: function () {},
+		innerHeight: function () {},
+		pageXOffset: function () {},
+		pageYOffset: function () {},
+		removeEventListener: function () {},
+		requestAnimationFrame: function () {},
+		scrollTo: function () {},
+		setTimeout: function () {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'TweenMax', 'TimelineMax'], factory);
+		define(['scrollmagic', 'gsap/TweenMax', 'gsap/TimelineMax'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		// Loads whole gsap package onto global scope.
-		require('gsap');
-		factory(require('scrollmagic'), TweenMax, TimelineMax);
+		factory(require('scrollmagic'), require('gsap/TweenMax'), require('gsap/TimelineMax'));
 	} else {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);

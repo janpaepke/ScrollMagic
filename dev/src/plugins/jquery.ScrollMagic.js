@@ -21,6 +21,24 @@
  * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
  * @mixin framework.jQuery
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -38,7 +56,7 @@
 
 	// (BUILD) - REMOVE IN MINIFY - START
 	var
-		console = window.console || {},
+	console = window.console || {},
 		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
