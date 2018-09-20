@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-27)
+ * ScrollMagic v2.0.5 (2015-04-26)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -13,6 +13,24 @@
 /**
  * @namespace ScrollMagic
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function () {},
+		cancelAnimationFrame: function () {},
+		clearTimeout: function () {},
+		console: function () {},
+		getComputedStyle: function () {},
+		innerHeight: function () {},
+		pageXOffset: function () {},
+		pageYOffset: function () {},
+		removeEventListener: function () {},
+		requestAnimationFrame: function () {},
+		scrollTo: function () {},
+		setTimeout: function () {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -23,23 +41,6 @@
 	} else {
 		// Browser global
 		root.ScrollMagic = factory();
-	}
-
-	if (typeof window === 'undefined') {
-		window = {
-			addEventListener: function () {},
-			cancelAnimationFrame: function () {},
-			clearTimeout: function () {},
-			console: function () {},
-			getComputedStyle: function () {},
-			innerHeight: function () {},
-			pageXOffset: function () {},
-			pageYOffset: function () {},
-			removeEventListener: function () {},
-			requestAnimationFrame: function () {},
-			scrollTo: function () {},
-			setTimeout: function () {},
-		};
 	}
 }(this, function () {
 	"use strict";

@@ -21,6 +21,24 @@
  * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
  * @mixin framework.jQuery
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -32,24 +50,6 @@
 		// Browser global
 		factory(root.ScrollMagic, root.jQuery);
 	}
-
-	if (typeof window === 'undefined') {
-		window = {
-			addEventListener: function() {},
-			cancelAnimationFrame: function() {},
-			clearTimeout: function() {},
-			console: function() {},
-			getComputedStyle: function() {},
-			innerHeight: function() {},
-			pageXOffset: function() {},
-			pageYOffset: function() {},
-			removeEventListener: function() {},
-			requestAnimationFrame: function() {},
-			scrollTo: function() {},
-			setTimeout: function() {},
-		};
-	}
-
 }(this, function (ScrollMagic, $) {
 	"use strict";
 	var NAMESPACE = "jquery.ScrollMagic";

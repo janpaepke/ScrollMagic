@@ -16,6 +16,24 @@
  * @requires {@link http://julian.com/research/velocity/|Velocity ~1.2.0}
  * @mixin animation.Velocity
  */
+
+if (typeof window === 'undefined') {
+	window = {
+		addEventListener: function() {},
+		cancelAnimationFrame: function() {},
+		clearTimeout: function() {},
+		console: function() {},
+		getComputedStyle: function() {},
+		innerHeight: function() {},
+		pageXOffset: function() {},
+		pageYOffset: function() {},
+		removeEventListener: function() {},
+		requestAnimationFrame: function() {},
+		scrollTo: function() {},
+		setTimeout: function() {},
+	};
+}
+
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -26,23 +44,6 @@
 	} else {
 		// Browser globals
 		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.Velocity || (root.jQuery && root.jQuery.Velocity));
-	}
-
-	if (typeof window === 'undefined') {
-		window = {
-			addEventListener: function() {},
-			cancelAnimationFrame: function() {},
-			clearTimeout: function() {},
-			console: function() {},
-			getComputedStyle: function() {},
-			innerHeight: function() {},
-			pageXOffset: function() {},
-			pageYOffset: function() {},
-			removeEventListener: function() {},
-			requestAnimationFrame: function() {},
-			scrollTo: function() {},
-			setTimeout: function() {},
-		};
 	}
 }(this, function(ScrollMagic, velocity) {
 	"use strict";
