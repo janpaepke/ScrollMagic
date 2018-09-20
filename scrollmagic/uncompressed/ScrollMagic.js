@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-29)
+ * ScrollMagic v2.0.5 (2015-04-27)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -13,12 +13,6 @@
 /**
  * @namespace ScrollMagic
  */
-
-// server-side rendering
-if (typeof window === 'undefined') {
-	window = {};
-}
-
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
@@ -29,6 +23,23 @@ if (typeof window === 'undefined') {
 	} else {
 		// Browser global
 		root.ScrollMagic = factory();
+	}
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function () {},
+			cancelAnimationFrame: function () {},
+			clearTimeout: function () {},
+			console: function () {},
+			getComputedStyle: function () {},
+			innerHeight: function () {},
+			pageXOffset: function () {},
+			pageYOffset: function () {},
+			removeEventListener: function () {},
+			requestAnimationFrame: function () {},
+			scrollTo: function () {},
+			setTimeout: function () {},
+		};
 	}
 }(this, function () {
 	"use strict";
@@ -71,12 +82,30 @@ if (typeof window === 'undefined') {
 	 If you don't use custom containers, trigger elements or have static layouts, where the positions of the trigger elements don't change, you can set this to 0 disable interval checking and improve performance.
 	 *
 	 */
+
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function () {},
+			cancelAnimationFrame: function () {},
+			clearTimeout: function () {},
+			console: function () {},
+			getComputedStyle: function () {},
+			innerHeight: function () {},
+			pageXOffset: function () {},
+			pageYOffset: function () {},
+			removeEventListener: function () {},
+			requestAnimationFrame: function () {},
+			scrollTo: function () {},
+			setTimeout: function () {},
+		};
+	}
+
 	ScrollMagic.Controller = function (options) {
-		/*
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 		var
 		NAMESPACE = 'ScrollMagic.Controller',
 			SCROLL_DIRECTION_FORWARD = 'FORWARD',
@@ -84,11 +113,11 @@ if (typeof window === 'undefined') {
 			SCROLL_DIRECTION_PAUSED = 'PAUSED',
 			DEFAULT_OPTIONS = CONTROLLER_OPTIONS.defaults;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 		var
 		Controller = this,
 			_options = _util.extend({}, DEFAULT_OPTIONS, options),
@@ -102,11 +131,11 @@ if (typeof window === 'undefined') {
 			_enabled = true,
 			_updateTimeout, _refreshTimeout;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private functions
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private functions
+	 * ----------------------------------------------------------------
+	 */
 
 		/**
 		 * Internal constructor function of the ScrollMagic Controller
@@ -136,7 +165,8 @@ if (typeof window === 'undefined') {
 			_options.container.addEventListener("resize", onChange);
 			_options.container.addEventListener("scroll", onChange);
 
-			_options.refreshInterval = parseInt(_options.refreshInterval) || DEFAULT_OPTIONS.refreshInterval;
+			var ri = parseInt(_options.refreshInterval, 10);
+			_options.refreshInterval = _util.type.Number(ri) ? ri : DEFAULT_OPTIONS.refreshInterval;
 			scheduleRefresh();
 
 			log(3, "added new " + NAMESPACE + " controller (v" + ScrollMagic.version + ")");
@@ -731,9 +761,9 @@ if (typeof window === 'undefined') {
 			refreshInterval: 100
 		}
 	};
-	/*
-	 * method used to add an option to ScrollMagic Scenes.
-	 */
+/*
+ * method used to add an option to ScrollMagic Scenes.
+ */
 	ScrollMagic.Controller.addOption = function (name, defaultValue) {
 		CONTROLLER_OPTIONS.defaults[name] = defaultValue;
 	};
@@ -792,11 +822,11 @@ if (typeof window === 'undefined') {
 	 */
 	ScrollMagic.Scene = function (options) {
 
-		/*
-		 * ----------------------------------------------------------------
-		 * settings
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * settings
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		NAMESPACE = 'ScrollMagic.Scene',
@@ -805,11 +835,11 @@ if (typeof window === 'undefined') {
 			SCENE_STATE_AFTER = 'AFTER',
 			DEFAULT_OPTIONS = SCENE_OPTIONS.defaults;
 
-		/*
-		 * ----------------------------------------------------------------
-		 * private vars
-		 * ----------------------------------------------------------------
-		 */
+/*
+	 * ----------------------------------------------------------------
+	 * private vars
+	 * ----------------------------------------------------------------
+	 */
 
 		var
 		Scene = this,
@@ -844,11 +874,11 @@ if (typeof window === 'undefined') {
 			validateOption();
 		};
 
-		/*
-		 * ----------------------------------------------------------------
-		 * Event Management
-		 * ----------------------------------------------------------------
-		 */
+/*
+ * ----------------------------------------------------------------
+ * Event Management
+ * ----------------------------------------------------------------
+ */
 
 		var _listeners = {};
 		/**
@@ -1584,31 +1614,40 @@ if (typeof window === 'undefined') {
 			var
 			elementPos = 0,
 				telem = _options.triggerElement;
-			if (_controller && telem) {
-				var
-				controllerInfo = _controller.info(),
-					containerOffset = _util.get.offset(controllerInfo.container),
-					// container position is needed because element offset is returned in relation to document, not in relation to container.
-					param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
-				// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
-				while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
-					telem = telem.parentNode;
+			if (_controller && (telem || _triggerPos > 0)) { // either an element exists or was removed and the triggerPos is still > 0
+				if (telem) { // there currently a triggerElement set
+					if (telem.parentNode) { // check if element is still attached to DOM
+						var
+						controllerInfo = _controller.info(),
+							containerOffset = _util.get.offset(controllerInfo.container),
+							// container position is needed because element offset is returned in relation to document, not in relation to container.
+							param = controllerInfo.vertical ? "top" : "left"; // which param is of interest ?
+						// if parent is spacer, use spacer position instead so correct start position is returned for pinned elements.
+						while (telem.parentNode.hasAttribute(PIN_SPACER_ATTRIBUTE)) {
+							telem = telem.parentNode;
+						}
+
+						var elementOffset = _util.get.offset(telem);
+
+						if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
+							containerOffset[param] -= _controller.scrollPos();
+						}
+
+						elementPos = elementOffset[param] - containerOffset[param];
+
+					} else { // there was an element, but it was removed from DOM
+						log(2, "WARNING: triggerElement was removed from DOM and will be reset to", undefined);
+						Scene.triggerElement(undefined); // unset, so a change event is triggered
+					}
 				}
 
-				var elementOffset = _util.get.offset(telem);
-
-				if (!controllerInfo.isDocument) { // container is not the document root, so substract scroll Position to get correct trigger element position relative to scrollcontent
-					containerOffset[param] -= _controller.scrollPos();
+				var changed = elementPos != _triggerPos;
+				_triggerPos = elementPos;
+				if (changed && !suppressEvents) {
+					Scene.trigger("shift", {
+						reason: "triggerElementPosition"
+					});
 				}
-
-				elementPos = elementOffset[param] - containerOffset[param];
-			}
-			var changed = elementPos != _triggerPos;
-			_triggerPos = elementPos;
-			if (changed && !suppressEvents) {
-				Scene.trigger("shift", {
-					reason: "triggerElementPosition"
-				});
 			}
 		};
 
@@ -1623,6 +1662,23 @@ if (typeof window === 'undefined') {
 				});
 			}
 		};
+
+
+		if (typeof window === 'undefined') {
+			window = {
+				addEventListener: function () {},
+				cancelAnimationFrame: function () {},
+				clearTimeout: function () {},
+				console: function () {},
+				getComputedStyle: function () {},
+				innerHeight: function () {},
+				pageXOffset: function () {},
+				pageYOffset: function () {},
+				removeEventListener: function () {},
+				requestAnimationFrame: function () {},
+				setTimeout: function () {},
+			};
+		}
 
 		var _validate = _util.extend(SCENE_OPTIONS.validate, {
 			// validation for duration handled internally for reference to private var _durationMethod
@@ -1919,6 +1975,7 @@ if (typeof window === 'undefined') {
 			return pos;
 		};
 
+
 		var
 		_pin, _pinOptions;
 
@@ -2080,9 +2137,9 @@ if (typeof window === 'undefined') {
 		 */
 		var updateRelativePinSpacer = function () {
 			if (_controller && _pin && // well, duh
-				_state === SCENE_STATE_DURING && // element in pinned state?
-				( // is width or height relatively sized, but not in relation to body? then we need to recalc.
-					((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) || (_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode)))) {
+			_state === SCENE_STATE_DURING && // element in pinned state?
+			( // is width or height relatively sized, but not in relation to body? then we need to recalc.
+			((_pinOptions.relSize.width || _pinOptions.relSize.autoFullWidth) && _util.get.width(window) != _util.get.width(_pinOptions.spacer.parentNode)) || (_pinOptions.relSize.height && _util.get.height(window) != _util.get.height(_pinOptions.spacer.parentNode)))) {
 				updatePinDimensions();
 			}
 		};
@@ -2273,6 +2330,16 @@ if (typeof window === 'undefined') {
 		 * @param {boolean} [reset=false] - If `false` the spacer will not be removed and the element's position will not be reset.
 		 * @returns {Scene} Parent object for chaining.
 		 */
+
+		if (typeof window === 'undefined') {
+			window = {
+				console: function () {},
+				setTimeout: function () {},
+				addEventListener: function () {},
+				removeEventListener: function () {},
+			};
+		}
+
 		this.removePin = function (reset) {
 			if (_pin) {
 				if (_state === SCENE_STATE_DURING) {
@@ -2384,403 +2451,420 @@ if (typeof window === 'undefined') {
 		return Scene;
 	};
 
-// store pagewide scene options
-var SCENE_OPTIONS = {
-	defaults: {
-		duration: 0,
-		offset: 0,
-		triggerElement: undefined,
-		triggerHook: 0.5,
-		reverse: true,
-		loglevel: 2
-	},
-	validate: {
-		offset: function (val) {
-			val = parseFloat(val);
-			if (!_util.type.Number(val)) {
-				throw ["Invalid value for option \"offset\":", val];
-			}
-			return val;
+	// store pagewide scene options
+	var SCENE_OPTIONS = {
+		defaults: {
+			duration: 0,
+			offset: 0,
+			triggerElement: undefined,
+			triggerHook: 0.5,
+			reverse: true,
+			loglevel: 2
 		},
-		triggerElement: function (val) {
-			val = val || undefined;
-			if (val) {
-				var elem = _util.get.elements(val)[0];
-				if (elem) {
-					val = elem;
-				} else {
-					throw ["Element defined in option \"triggerElement\" was not found:", val];
+		validate: {
+			offset: function (val) {
+				val = parseFloat(val);
+				if (!_util.type.Number(val)) {
+					throw ["Invalid value for option \"offset\":", val];
 				}
+				return val;
+			},
+			triggerElement: function (val) {
+				val = val || undefined;
+				if (val) {
+					var elem = _util.get.elements(val)[0];
+					if (elem && elem.parentNode) {
+						val = elem;
+					} else {
+						throw ["Element defined in option \"triggerElement\" was not found:", val];
+					}
+				}
+				return val;
+			},
+			triggerHook: function (val) {
+				var translate = {
+					"onCenter": 0.5,
+					"onEnter": 1,
+					"onLeave": 0
+				};
+				if (_util.type.Number(val)) {
+					val = Math.max(0, Math.min(parseFloat(val), 1)); //  make sure its betweeen 0 and 1
+				} else if (val in translate) {
+					val = translate[val];
+				} else {
+					throw ["Invalid value for option \"triggerHook\": ", val];
+				}
+				return val;
+			},
+			reverse: function (val) {
+				return !!val; // force boolean
+			},
+			loglevel: function (val) {
+				val = parseInt(val);
+				if (!_util.type.Number(val) || val < 0 || val > 3) {
+					throw ["Invalid value for option \"loglevel\":", val];
+				}
+				return val;
 			}
-			return val;
 		},
-		triggerHook: function (val) {
-			var translate = {
-				"onCenter": 0.5,
-				"onEnter": 1,
-				"onLeave": 0
-			};
-			if (_util.type.Number(val)) {
-				val = Math.max(0, Math.min(parseFloat(val), 1)); //  make sure its betweeen 0 and 1
-			} else if (val in translate) {
-				val = translate[val];
-			} else {
-				throw ["Invalid value for option \"triggerHook\": ", val];
-			}
-			return val;
-		},
-		reverse: function (val) {
-			return !!val; // force boolean
-		},
-		loglevel: function (val) {
-			val = parseInt(val);
-			if (!_util.type.Number(val) || val < 0 || val > 3) {
-				throw ["Invalid value for option \"loglevel\":", val];
-			}
-			return val;
-		}
-	},
-	// holder for  validation methods. duration validation is handled in 'getters-setters.js'
-	shifts: ["duration", "offset", "triggerHook"],
-	// list of options that trigger a `shift` event
-};
+		// holder for  validation methods. duration validation is handled in 'getters-setters.js'
+		shifts: ["duration", "offset", "triggerHook"],
+		// list of options that trigger a `shift` event
+	};
 /*
  * method used to add an option to ScrollMagic Scenes.
  * TODO: DOC (private for dev)
  */
-ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
-	if (!(name in SCENE_OPTIONS.defaults)) {
-		SCENE_OPTIONS.defaults[name] = defaultValue;
-		SCENE_OPTIONS.validate[name] = validationCallback;
-		if (shifts) {
-			SCENE_OPTIONS.shifts.push(name);
+	ScrollMagic.Scene.addOption = function (name, defaultValue, validationCallback, shifts) {
+		if (!(name in SCENE_OPTIONS.defaults)) {
+			SCENE_OPTIONS.defaults[name] = defaultValue;
+			SCENE_OPTIONS.validate[name] = validationCallback;
+			if (shifts) {
+				SCENE_OPTIONS.shifts.push(name);
+			}
+		} else {
+			ScrollMagic._util.log(1, "[static] ScrollMagic.Scene -> Cannot add Scene option '" + name + "', because it already exists.");
 		}
-	} else {
-		ScrollMagic._util.log(1, "[static] ScrollMagic.Scene -> Cannot add Scene option '" + name + "', because it already exists.");
-	}
-};
-// instance extension function for plugins
-// TODO: DOC (private for dev)
-ScrollMagic.Scene.extend = function (extension) {
-	var oldClass = this;
-	ScrollMagic.Scene = function () {
-		oldClass.apply(this, arguments);
-		this.$super = _util.extend({}, this); // copy parent state
-		return extension.apply(this, arguments) || this;
 	};
-	_util.extend(ScrollMagic.Scene, oldClass); // copy properties
-	ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
-	ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
-};
+	// instance extension function for plugins
+	// TODO: DOC (private for dev)
+	ScrollMagic.Scene.extend = function (extension) {
+		var oldClass = this;
+		ScrollMagic.Scene = function () {
+			oldClass.apply(this, arguments);
+			this.$super = _util.extend({}, this); // copy parent state
+			return extension.apply(this, arguments) || this;
+		};
+		_util.extend(ScrollMagic.Scene, oldClass); // copy properties
+		ScrollMagic.Scene.prototype = oldClass.prototype; // copy prototype
+		ScrollMagic.Scene.prototype.constructor = ScrollMagic.Scene; // restore constructor
+	};
 
 
-/**
- * TODO: DOCS (private for dev)
- * @class
- * @private
- */
 
-ScrollMagic.Event = function (type, namespace, target, vars) {
-	vars = vars || {};
-	for (var key in vars) {
-		this[key] = vars[key];
-	}
-	this.type = type;
-	this.target = this.currentTarget = target;
-	this.namespace = namespace || '';
-	this.timeStamp = this.timestamp = Date.now();
-	return this;
-};
+	/**
+	 * TODO: DOCS (private for dev)
+	 * @class
+	 * @private
+	 */
+
+	ScrollMagic.Event = function (type, namespace, target, vars) {
+		vars = vars || {};
+		for (var key in vars) {
+			this[key] = vars[key];
+		}
+		this.type = type;
+		this.target = this.currentTarget = target;
+		this.namespace = namespace || '';
+		this.timeStamp = this.timestamp = Date.now();
+		return this;
+	};
 
 /*
  * TODO: DOCS (private for dev)
  */
 
-var _util = ScrollMagic._util = (function (window) {
-	var U = {},
-		i;
+	if (typeof window === 'undefined') {
+		window = {
+			addEventListener: function () {},
+			cancelAnimationFrame: function () {},
+			clearTimeout: function () {},
+			console: function () {},
+			getComputedStyle: function () {},
+			pageXOffset: function () {},
+			pageYOffset: function () {},
+			removeEventListener: function () {},
+			requestAnimationFrame: function () {},
+			setTimeout: function () {},
+		};
+	}
 
-	/**
-	 * ------------------------------
-	 * internal helpers
-	 * ------------------------------
-	 */
+	var _util = ScrollMagic._util = (function (window) {
+		var U = {},
+			i;
 
-	// parse float and fall back to 0.
-	var floatval = function (number) {
-		return parseFloat(number) || 0;
-	};
-	// get current style IE safe (otherwise IE would return calculated values for 'auto')
-	var _getComputedStyle = function (elem) {
-		return elem.currentStyle ? elem.currentStyle : window.getComputedStyle(elem);
-	};
+		/**
+		 * ------------------------------
+		 * internal helpers
+		 * ------------------------------
+		 */
 
-	// get element dimension (width or height)
-	var _dimension = function (which, elem, outer, includeMargin) {
-		elem = (elem === document) ? window : elem;
-		if (elem === window) {
-			includeMargin = false;
-		} else if (!_type.DomElement(elem)) {
-			return 0;
-		}
-		which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
-		var dimension = (outer ? elem['offset' + which] || elem['outer' + which] : elem['client' + which] || elem['inner' + which]) || 0;
-		if (outer && includeMargin) {
-			var style = _getComputedStyle(elem);
-			dimension += which === 'Height' ? floatval(style.marginTop) + floatval(style.marginBottom) : floatval(style.marginLeft) + floatval(style.marginRight);
-		}
-		return dimension;
-	};
-	// converts 'margin-top' into 'marginTop'
-	var _camelCase = function (str) {
-		return str.replace(/^[^a-z]+([a-z])/g, '$1').replace(/-([a-z])/g, function (g) {
-			return g[1].toUpperCase();
-		});
-	};
+		// parse float and fall back to 0.
+		var floatval = function (number) {
+			return parseFloat(number) || 0;
+		};
+		// get current style IE safe (otherwise IE would return calculated values for 'auto')
+		var _getComputedStyle = function (elem) {
+			return elem.currentStyle ? elem.currentStyle : window.getComputedStyle(elem);
+		};
 
-	/**
-	 * ------------------------------
-	 * external helpers
-	 * ------------------------------
-	 */
-
-	// extend obj – same as jQuery.extend({}, objA, objB)
-	U.extend = function (obj) {
-		obj = obj || {};
-		for (i = 1; i < arguments.length; i++) {
-			if (!arguments[i]) {
-				continue;
+		// get element dimension (width or height)
+		var _dimension = function (which, elem, outer, includeMargin) {
+			elem = (elem === document) ? window : elem;
+			if (elem === window) {
+				includeMargin = false;
+			} else if (!_type.DomElement(elem)) {
+				return 0;
 			}
-			for (var key in arguments[i]) {
-				if (arguments[i].hasOwnProperty(key)) {
-					obj[key] = arguments[i][key];
+			which = which.charAt(0).toUpperCase() + which.substr(1).toLowerCase();
+			var dimension = (outer ? elem['offset' + which] || elem['outer' + which] : elem['client' + which] || elem['inner' + which]) || 0;
+			if (outer && includeMargin) {
+				var style = _getComputedStyle(elem);
+				dimension += which === 'Height' ? floatval(style.marginTop) + floatval(style.marginBottom) : floatval(style.marginLeft) + floatval(style.marginRight);
+			}
+			return dimension;
+		};
+		// converts 'margin-top' into 'marginTop'
+		var _camelCase = function (str) {
+			return str.replace(/^[^a-z]+([a-z])/g, '$1').replace(/-([a-z])/g, function (g) {
+				return g[1].toUpperCase();
+			});
+		};
+
+		/**
+		 * ------------------------------
+		 * external helpers
+		 * ------------------------------
+		 */
+
+		// extend obj – same as jQuery.extend({}, objA, objB)
+		U.extend = function (obj) {
+			obj = obj || {};
+			for (i = 1; i < arguments.length; i++) {
+				if (!arguments[i]) {
+					continue;
+				}
+				for (var key in arguments[i]) {
+					if (arguments[i].hasOwnProperty(key)) {
+						obj[key] = arguments[i][key];
+					}
 				}
 			}
+			return obj;
+		};
+
+		// check if a css display type results in margin-collapse or not
+		U.isMarginCollapseType = function (str) {
+			return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
+		};
+
+		// implementation of requestAnimationFrame
+		// based on https://gist.github.com/paulirish/1579671
+		var
+		lastTime = 0,
+			vendors = ['ms', 'moz', 'webkit', 'o'];
+		var _requestAnimationFrame = window.requestAnimationFrame;
+		var _cancelAnimationFrame = window.cancelAnimationFrame;
+		// try vendor prefixes if the above doesn't work
+		for (i = 0; !_requestAnimationFrame && i < vendors.length; ++i) {
+			_requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
+			_cancelAnimationFrame = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
 		}
-		return obj;
-	};
 
-	// check if a css display type results in margin-collapse or not
-	U.isMarginCollapseType = function (str) {
-		return ["block", "flex", "list-item", "table", "-webkit-box"].indexOf(str) > -1;
-	};
+		// fallbacks
+		if (!_requestAnimationFrame) {
+			_requestAnimationFrame = function (callback) {
+				var
+				currTime = new Date().getTime(),
+					timeToCall = Math.max(0, 16 - (currTime - lastTime)),
+					id = window.setTimeout(function () {
+						callback(currTime + timeToCall);
+					}, timeToCall);
+				lastTime = currTime + timeToCall;
+				return id;
+			};
+		}
+		if (!_cancelAnimationFrame) {
+			_cancelAnimationFrame = function (id) {
+				window.clearTimeout(id);
+			};
+		}
+		U.rAF = _requestAnimationFrame.bind(window);
+		U.cAF = _cancelAnimationFrame.bind(window);
 
-	// implementation of requestAnimationFrame
-	// based on https://gist.github.com/paulirish/1579671
-	var
-	lastTime = 0,
-		vendors = ['ms', 'moz', 'webkit', 'o'];
-	var _requestAnimationFrame = window.requestAnimationFrame;
-	var _cancelAnimationFrame = window.cancelAnimationFrame;
-	// try vendor prefixes if the above doesn't work
-	for (i = 0; !_requestAnimationFrame && i < vendors.length; ++i) {
-		_requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
-		_cancelAnimationFrame = window[vendors[i] + 'CancelAnimationFrame'] || window[vendors[i] + 'CancelRequestAnimationFrame'];
-	}
+		var
+		loglevels = ["error", "warn", "log"],
+			console = window.console || {};
 
-	// fallbacks
-	if (!_requestAnimationFrame) {
-		_requestAnimationFrame = function (callback) {
-			var
-			currTime = new Date().getTime(),
-				timeToCall = Math.max(0, 16 - (currTime - lastTime)),
-				id = window.setTimeout(function () {
-					callback(currTime + timeToCall);
-				}, timeToCall);
-			lastTime = currTime + timeToCall;
-			return id;
-		};
-	}
-	if (!_cancelAnimationFrame) {
-		_cancelAnimationFrame = function (id) {
-			window.clearTimeout(id);
-		};
-	}
-	U.rAF = _requestAnimationFrame.bind(window);
-	U.cAF = _cancelAnimationFrame.bind(window);
-
-	var
-	loglevels = ["error", "warn", "log"],
-		console = window.console || {};
-
-	console.log = console.log ||
+		console.log = console.log ||
 		function () {}; // no console log, well - do nothing then...
-	// make sure methods for all levels exist.
-	for (i = 0; i < loglevels.length; i++) {
-		var method = loglevels[i];
-		if (!console[method]) {
-			console[method] = console.log; // prefer .log over nothing
+		// make sure methods for all levels exist.
+		for (i = 0; i < loglevels.length; i++) {
+			var method = loglevels[i];
+			if (!console[method]) {
+				console[method] = console.log; // prefer .log over nothing
+			}
 		}
-	}
-	U.log = function (loglevel) {
-		if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
-		var now = new Date(),
-			time = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2) + ":" + ("00" + now.getMilliseconds()).slice(-3),
-			method = loglevels[loglevel - 1],
-			args = Array.prototype.splice.call(arguments, 1),
-			func = Function.prototype.bind.call(console[method], console);
-		args.unshift(time);
-		func.apply(console, args);
-	};
+		U.log = function (loglevel) {
+			if (loglevel > loglevels.length || loglevel <= 0) loglevel = loglevels.length;
+			var now = new Date(),
+				time = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2) + ":" + ("00" + now.getMilliseconds()).slice(-3),
+				method = loglevels[loglevel - 1],
+				args = Array.prototype.splice.call(arguments, 1),
+				func = Function.prototype.bind.call(console[method], console);
+			args.unshift(time);
+			func.apply(console, args);
+		};
 
-	/**
-	 * ------------------------------
-	 * type testing
-	 * ------------------------------
-	 */
+		/**
+		 * ------------------------------
+		 * type testing
+		 * ------------------------------
+		 */
 
-	var _type = U.type = function (v) {
-		return Object.prototype.toString.call(v).replace(/^\[object (.+)\]$/, "$1").toLowerCase();
-	};
-	_type.String = function (v) {
-		return _type(v) === 'string';
-	};
-	_type.Function = function (v) {
-		return _type(v) === 'function';
-	};
-	_type.Array = function (v) {
-		return Array.isArray(v);
-	};
-	_type.Number = function (v) {
-		return !_type.Array(v) && (v - parseFloat(v) + 1) >= 0;
-	};
-	_type.DomElement = function (o) {
-		return (
+		var _type = U.type = function (v) {
+			return Object.prototype.toString.call(v).replace(/^\[object (.+)\]$/, "$1").toLowerCase();
+		};
+		_type.String = function (v) {
+			return _type(v) === 'string';
+		};
+		_type.Function = function (v) {
+			return _type(v) === 'function';
+		};
+		_type.Array = function (v) {
+			return Array.isArray(v);
+		};
+		_type.Number = function (v) {
+			return !_type.Array(v) && (v - parseFloat(v) + 1) >= 0;
+		};
+		_type.DomElement = function (o) {
+			return (
 			typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
 			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
-	};
-
-	/**
-	 * ------------------------------
-	 * DOM Element info
-	 * ------------------------------
-	 */
-	// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements or even an array of selectors
-	var _get = U.get = {};
-	_get.elements = function (selector) {
-		var arr = [];
-		if (_type.String(selector)) {
-			try {
-				selector = document.querySelectorAll(selector);
-			} catch (e) { // invalid selector
-				return arr;
-			}
-		}
-		if (_type(selector) === 'nodelist' || _type.Array(selector)) {
-			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
-				var elem = selector[i];
-				arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
-			}
-		} else if (_type.DomElement(selector) || selector === document || selector === window) {
-			arr = [selector]; // only the element
-		}
-		return arr;
-	};
-	// get scroll top value
-	_get.scrollTop = function (elem) {
-		return (elem && typeof elem.scrollTop === 'number') ? elem.scrollTop : window.pageYOffset || 0;
-	};
-	// get scroll left value
-	_get.scrollLeft = function (elem) {
-		return (elem && typeof elem.scrollLeft === 'number') ? elem.scrollLeft : window.pageXOffset || 0;
-	};
-	// get element height
-	_get.width = function (elem, outer, includeMargin) {
-		return _dimension('width', elem, outer, includeMargin);
-	};
-	// get element width
-	_get.height = function (elem, outer, includeMargin) {
-		return _dimension('height', elem, outer, includeMargin);
-	};
-
-	// get element position (optionally relative to viewport)
-	_get.offset = function (elem, relativeToViewport) {
-		var offset = {
-			top: 0,
-			left: 0
 		};
-		if (elem && elem.getBoundingClientRect) { // check if available
-			var rect = elem.getBoundingClientRect();
-			offset.top = rect.top;
-			offset.left = rect.left;
-			if (!relativeToViewport) { // clientRect is by default relative to viewport...
-				offset.top += _get.scrollTop();
-				offset.left += _get.scrollLeft();
-			}
-		}
-		return offset;
-	};
 
-	/**
-	 * ------------------------------
-	 * DOM Element manipulation
-	 * ------------------------------
-	 */
-
-	U.addClass = function (elem, classname) {
-		if (classname) {
-			if (elem.classList) elem.classList.add(classname);
-			else elem.className += ' ' + classname;
-		}
-	};
-	U.removeClass = function (elem, classname) {
-		if (classname) {
-			if (elem.classList) elem.classList.remove(classname);
-			else elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-		}
-	};
-	// if options is string -> returns css value
-	// if options is array -> returns object with css value pairs
-	// if options is object -> set new css values
-	U.css = function (elem, options) {
-		if (_type.String(options)) {
-			return _getComputedStyle(elem)[_camelCase(options)];
-		} else if (_type.Array(options)) {
-			var
-			obj = {},
-				style = _getComputedStyle(elem);
-			options.forEach(function (option, key) {
-				obj[option] = style[_camelCase(option)];
-			});
-			return obj;
-		} else {
-			for (var option in options) {
-				var val = options[option];
-				if (val == parseFloat(val)) { // assume pixel for seemingly numerical values
-					val += 'px';
+		/**
+		 * ------------------------------
+		 * DOM Element info
+		 * ------------------------------
+		 */
+		// always returns a list of matching DOM elements, from a selector, a DOM element or an list of elements or even an array of selectors
+		var _get = U.get = {};
+		_get.elements = function (selector) {
+			var arr = [];
+			if (_type.String(selector)) {
+				try {
+					selector = document.querySelectorAll(selector);
+				} catch (e) { // invalid selector
+					return arr;
 				}
-				elem.style[_camelCase(option)] = val;
 			}
-		}
-	};
+			if (_type(selector) === 'nodelist' || _type.Array(selector)) {
+				for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
+					var elem = selector[i];
+					arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively
+				}
+			} else if (_type.DomElement(selector) || selector === document || selector === window) {
+				arr = [selector]; // only the element
+			}
+			return arr;
+		};
+		// get scroll top value
+		_get.scrollTop = function (elem) {
+			return (elem && typeof elem.scrollTop === 'number') ? elem.scrollTop : window.pageYOffset || 0;
+		};
+		// get scroll left value
+		_get.scrollLeft = function (elem) {
+			return (elem && typeof elem.scrollLeft === 'number') ? elem.scrollLeft : window.pageXOffset || 0;
+		};
+		// get element height
+		_get.width = function (elem, outer, includeMargin) {
+			return _dimension('width', elem, outer, includeMargin);
+		};
+		// get element width
+		_get.height = function (elem, outer, includeMargin) {
+			return _dimension('height', elem, outer, includeMargin);
+		};
 
-	return U;
-}(window || {}));
+		// get element position (optionally relative to viewport)
+		_get.offset = function (elem, relativeToViewport) {
+			var offset = {
+				top: 0,
+				left: 0
+			};
+			if (elem && elem.getBoundingClientRect) { // check if available
+				var rect = elem.getBoundingClientRect();
+				offset.top = rect.top;
+				offset.left = rect.left;
+				if (!relativeToViewport) { // clientRect is by default relative to viewport...
+					offset.top += _get.scrollTop();
+					offset.left += _get.scrollLeft();
+				}
+			}
+			return offset;
+		};
 
-ScrollMagic.Scene.prototype.addIndicators = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling addIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
-	return this;
-}
-ScrollMagic.Scene.prototype.removeIndicators = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
-	return this;
-}
-ScrollMagic.Scene.prototype.setTween = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
-	return this;
-}
-ScrollMagic.Scene.prototype.removeTween = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
-	return this;
-}
-ScrollMagic.Scene.prototype.setVelocity = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
-	return this;
-}
-ScrollMagic.Scene.prototype.removeVelocity = function () {
-	ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
-	return this;
-}
+		/**
+		 * ------------------------------
+		 * DOM Element manipulation
+		 * ------------------------------
+		 */
 
-return ScrollMagic;
+		U.addClass = function (elem, classname) {
+			if (classname) {
+				if (elem.classList) elem.classList.add(classname);
+				else elem.className += ' ' + classname;
+			}
+		};
+		U.removeClass = function (elem, classname) {
+			if (classname) {
+				if (elem.classList) elem.classList.remove(classname);
+				else elem.className = elem.className.replace(new RegExp('(^|\\b)' + classname.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+			}
+		};
+		// if options is string -> returns css value
+		// if options is array -> returns object with css value pairs
+		// if options is object -> set new css values
+		U.css = function (elem, options) {
+			if (_type.String(options)) {
+				return _getComputedStyle(elem)[_camelCase(options)];
+			} else if (_type.Array(options)) {
+				var
+				obj = {},
+					style = _getComputedStyle(elem);
+				options.forEach(function (option, key) {
+					obj[option] = style[_camelCase(option)];
+				});
+				return obj;
+			} else {
+				for (var option in options) {
+					var val = options[option];
+					if (val == parseFloat(val)) { // assume pixel for seemingly numerical values
+						val += 'px';
+					}
+					elem.style[_camelCase(option)] = val;
+				}
+			}
+		};
+
+		return U;
+	}(window || {}));
+
+
+	ScrollMagic.Scene.prototype.addIndicators = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling addIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeIndicators = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeIndicators() due to missing Plugin \'debug.addIndicators\'. Please make sure to include plugins/debug.addIndicators.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.setTween = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeTween = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeTween() due to missing Plugin \'animation.gsap\'. Please make sure to include plugins/animation.gsap.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.setVelocity = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling setVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
+		return this;
+	}
+	ScrollMagic.Scene.prototype.removeVelocity = function () {
+		ScrollMagic._util.log(1, '(ScrollMagic.Scene) -> ERROR calling removeVelocity() due to missing Plugin \'animation.velocity\'. Please make sure to include plugins/animation.velocity.js');
+		return this;
+	}
+
+	return ScrollMagic;
 }));
