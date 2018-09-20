@@ -9,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/janpaepke/ScrollMagic.git"
+    "url": "git://github.com/ByteGain/ScrollMagic.git"
   },
   "licenses": [{
     "type": "MIT",
-    "url": "https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md"
+    "url": "https://github.com/ByteGain/ScrollMagic/blob/master/LICENSE.md"
   }, {
     "type": "GPL-3.0+",
     "url": "http://www.gnu.org/licenses/gpl-3.0.html"
@@ -61,7 +61,7 @@
     "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://ScrollMagic.io",
-  "keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
+  "keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
   "files": ["scrollmagic", "LICENSE.md", "README.md"]
 }
