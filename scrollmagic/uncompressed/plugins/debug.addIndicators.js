@@ -1,5 +1,5 @@
 /*!
- * ScrollMagic v2.0.5 (2015-04-25)
+ * ScrollMagic v2.0.5 (2015-04-23)
  * The javascript library for magical scroll interactions.
  * (c) 2015 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
@@ -39,7 +39,7 @@ if (typeof window === 'undefined') {
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic'], factory);
+		define(['scrollmagic'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		factory(require('scrollmagic'));
