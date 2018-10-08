@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.7 (2018-10-08)
+ * ScrollMagic v2.0.6 (2018-10-08)
  * The javascript library for magical scroll interactions.
  * (c) 2018 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.7
+ * @version 2.0.6
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -31,7 +31,7 @@
 		_util.log(2, '(COMPATIBILITY NOTICE) -> As of ScrollMagic 2.0.0 you need to use \'new ScrollMagic.Controller()\' to create a new controller instance. Use \'new ScrollMagic.Scene()\' to instance a scene.');
 	};
 
-	ScrollMagic.version = "2.0.7";
+	ScrollMagic.version = "2.0.6";
 
 	// TODO: temporary workaround for chrome's scroll jitter bug
 	window.addEventListener("mousewheel", function () {});
