@@ -205,12 +205,12 @@ They will only be included with a new release and an updated version number.
 
 ---
 
-#Library Support
+# Library Support
 
 There are many ways in which you can support ScrollMagic and contribute to its advancement:
 
  - You can consider making [a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL) so more time can be dedicated to maintaining the source code and helping the users. No donation is too small and every little helps!
- - You can write tutorials, make CodePens and examples to help other users to learn how to use ScrollMagic. If you're interested in contributing to the [ScrollMagic Wiki](https://github.com/janpaepke/ScrollMagic/wiki), please [reach out](mailto:e-mail@janpaepke.de?subject=ScrollMagic Wiki)!
+ - You can write tutorials, make CodePens and examples to help other users to learn how to use ScrollMagic. If you're interested in contributing to the [ScrollMagic Wiki](https://github.com/janpaepke/ScrollMagic/wiki), please [reach out](mailto:e-mail@janpaepke.de?subject=ScrollMagic-Wiki)!
  - You can have a closer look at the at the bottom banner of the [demo page](http://scrollmagic.io) - maybe click it from time to time? :)
  - You can spread the word about ScrollMagic on twitter or Facebook. Hashtag followerpower!
  - And last, but not least: Make awesome websites with ScrollMagic and show the world that this is not a tool meant to be overused and provoke an epileptic shock in the visitor, but engage him/her through content structuring and experience-enhancing storytelling.

@@ -1,4 +1,25 @@
-# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.5</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
+# Development update
+
+### It's aliiiive!
+
+After quite some time of neglect, development on ScrollMagic will finally resume this year. (hurray!)
+The goal is to make it stable and put enough security checks in to open it up more to public contribution.
+
+Here's the rough milestone outline:
+
+1. Release new version including previously finished fixes.
+2. Update all dependencies.
+3. Fix compilation errors (travis + unit tests).
+4. Update Website (Examples + other outdated info)
+5. Build / Finalize proper Unit Tests (with support from @joewanko).
+6. Screen all pull requests and merge if approved and pass all tests.
+7. Open project to a wider group of contributors.
+
+If you want to contribute please [get in touch](http://www.janpaepke.de) and let me know about your specialty and experience.
+
+---
+
+# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.7</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
 
 ### The javascript library for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
 
@@ -75,15 +96,15 @@ __Option 4: CDN__
 If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/ScrollMagic):
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.min.js
 ```
 
 All plugins and uncompressed files are also available on cdnjs.  
 For example:
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.js
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js
 ```
 
 ## Installation
