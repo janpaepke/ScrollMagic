@@ -148,11 +148,11 @@ example: gulp -b=patch
 
 -o=DIR       | alias: --out=DIR
 Define output directory. If not supplied the default directory '/scrollmagic' will be used.
-example: node build -o=tmp
+example: gulp -o=tmp
 
 -d=[DIR]     | alias: --doc=[DIR]
 Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
-example: node build -d
+example: gulp -d
 
 -h           | alias: -?
 display available command line options
