@@ -1,4 +1,4 @@
-# Development update
+# Status Update
 
 ### It's aliiiive!
 
@@ -11,7 +11,7 @@ Here's the rough milestone outline:
 2. Update all dependencies.
 3. Fix compilation errors (travis + unit tests).
 4. Update Website (Examples + other outdated info)
-5. Build / Finalize proper Unit Tests (with support from @joewanko).
+5. Build / Finalize proper Unit Tests (with support from [joewanko](https://github.com/joewanko)).
 6. Screen all pull requests and merge if approved and pass all tests.
 7. Open project to a wider group of contributors.
 
