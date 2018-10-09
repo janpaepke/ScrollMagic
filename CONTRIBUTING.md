@@ -100,9 +100,10 @@ Wanna dig into the source code of ScrollMagic or even contribute? Awesome!
 In order to compile ScrollMagic, you'll need [Node](http://nodejs.org/) and [Gulp](http://gulpjs.com/).
 
 If you don't already have them installed, here's how to get them:  
-First, download and install [Node](http://nodejs.org/download/).  
-Now use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager, that comes installed with Node.  
-To install gulp globally open your console (i.e.MacOS X Terminal) and type: `npm install gulp -g`
+1. Download and install [Node](http://nodejs.org/download/).  
+ Now you can use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager, that comes installed with Node.  
+2. Use it to install the Gulp CLI globally!  
+ In your console (i.e.MacOS X Terminal) type: `npm install gulp-cli -g`
 
 That's it! Now you're set to start developing!
 
