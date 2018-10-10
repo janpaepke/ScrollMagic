@@ -1,15 +1,15 @@
 // based on https://github.com/sindresorhus/gulp-size
 'use strict';
-var gutil = require('gulp-util');
+var colors = require('ansi-colors');
 var through = require('through2');
 var prettyBytes = require('pretty-bytes');
 var gzipSize = require('gzip-size');
 var logger = require('./logger');
 
 function log(title, what, size, gzip) {
-	title = title ? (gutil.colors.cyan(title) + ' ') : '';
-	logger.info(title + what + ' ' + gutil.colors.magenta(prettyBytes(size)) +
-		(gzip ? gutil.colors.gray(' (gzipped ' + prettyBytes(gzip) + ')') : ''));
+	title = title ? (colors.cyan(title) + ' ') : '';
+	logger.info(title + what + ' ' + colors.magenta(prettyBytes(size)) +
+		(gzip ? colors.gray(' (gzipped ' + prettyBytes(gzip) + ')') : ''));
 }
 
 module.exports = function (options) {
@@ -26,7 +26,7 @@ module.exports = function (options) {
 		}
 
 		if (file.isStream()) {
-			cb(new gutil.PluginError('gulp-size', 'Streaming not supported'));
+			logger.error('Streaming not supported');
 			return;
 		}
 
@@ -36,7 +36,7 @@ module.exports = function (options) {
 		totalSizeGzip += gzipsize;
 
 		if (options.showFiles === true && size > 0) {
-			log(options.title, gutil.colors.blue(file.relative), size, gzipsize);
+			log(options.title, colors.blue(file.relative), size, gzipsize);
 		}
 
 		fileCount++;
@@ -48,7 +48,7 @@ module.exports = function (options) {
 			return;
 		}
 
-		log(options.title, gutil.colors.green('(combined)'), totalSize, totalSizeGzip);
+		log(options.title, colors.green('(combined)'), totalSize, totalSizeGzip);
 		cb();
 	});
 };
