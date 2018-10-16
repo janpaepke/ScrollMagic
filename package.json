@@ -11,16 +11,7 @@
     "type": "git",
     "url": "git://github.com/janpaepke/ScrollMagic.git"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/janpaepke/ScrollMagic/blob/master/LICENSE.md"
-    },
-    {
-      "type": "GPL-3.0+",
-      "url": "http://www.gnu.org/licenses/gpl-3.0.html"
-    }
-  ],
+  "license": "(MIT OR GPL-3.0+)",
   "main": "scrollmagic/uncompressed/ScrollMagic.js",
   "engines": {
     "node": "0.10.x"
