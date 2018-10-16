@@ -7,30 +7,29 @@
 /* ########################################## */
 
 var
-// node modules
+// node internal
 	fs = 					require('fs'),
-	del = 				require('del'),
+// node modules
+	// del = 				require('del'),
 	semver =			require('semver'),
-	path = 				require('path'),
-	exec =				require('child_process').exec,
-// gulp & plugins
+	// path = 				require('path'),
+	// exec =				require('child_process').exec,
 	gulp =				require('gulp'),
-	open =				require("gulp-open"),
-	plumber =			require('gulp-plumber'),
-	jshint =			require('gulp-jshint'),
-	include =			require('gulp-file-include'),
-	rename =			require('gulp-rename'),
+	// plumber =			require('gulp-plumber'),
+	// jshint =			require('gulp-jshint'),
+	// include =			require('gulp-file-include'),
+	// rename =			require('gulp-rename'),
 	replace =			require('gulp-replace-task'),
-	concat =			require('gulp-concat-util'),
-	uglify =			require('gulp-uglify'),
-	gutil = 			require('gulp-util'),
+	remove =			require('gulp-rm'),
+	// concat =			require('gulp-concat-util'),
+	// uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
-	beautify =		require('gulp-beautify'),
-	karma =				require('gulp-karma'),
+	// beautify =		require('gulp-beautify'),
+	// karma =				require('gulp-karma'),
 // custom
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
-	jsdoc = 			require('./dev/build/jsdoc-generator'),
+	// jsdoc = 			require('./dev/build/jsdoc-generator'),
 // json
 	pluginInfo =	require('./dev/src/plugins.json'),
 	config = require('./dev/build/config.json'); // config
@@ -125,51 +124,106 @@ if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
 /* ########################################## */
 
 // default build all
-var defaultDeps = ['sync:json-files', 'sync:readme', 'build:uncompressed', 'build:minified'];
+var defaultDeps = ['sync-version', 'build:uncompressed', 'build:minified'];
 if (options.dodocs) {
+	// TODO: clean docs before generation
 	defaultDeps.push('generate:docs');
 }
-gulp.task('default', defaultDeps, function () {
+
+gulp.task('sync-version', function(done) {
+	var beautifyOptions = {
+		"keep_array_indentation": true,
+		"end_with_newline": true
+	}
+	gulp.src(["./package.json", "./bower.json"])
+			.pipe(jeditor(config.info, beautifyOptions))
+			.pipe(jeditor({version: options.version}, beautifyOptions))
+			.pipe(gulp.dest("./"));
+	gulp.src("./dev/build/config.json")
+			.pipe(jeditor(
+				{
+					version: options.version,
+					lastupdate: options.date.getFullYear() + "-" + ("0"+(options.date.getMonth() + 1)).slice(-2) + "-" + ("0"+options.date.getDate()).slice(-2)
+				},
+				beautifyOptions
+			))
+			.pipe(gulp.dest("./dev/build"));
+	gulp.src("./README.md")
+			.pipe(replace({
+				patterns: [
+					{
+						// link to changelog
+						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi,
+						replacement: "$1" + options.version + "$3"
+					},
+					{
+						// cdnjs url
+						match: /(cdnjs.cloudflare.com\/ajax\/libs\/ScrollMagic\/)\d+\.\d+\.\d+(\-\w+)?(\/)/gi,
+						replacement: "$1" + options.version + "$3"
+					}
+				]
+			}))
+			.pipe(gulp.dest("./"));
+	done();
+});
+
+
+function summary () {
 	log.info("Generated new build to", options.folderOut);
 	// gulp.src(options.folderOut + "/*.js")
-	gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
-			.pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}));
-	gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
-			.pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}));
-	gulp.src(options.folderOut + "/" + options.subfolder.minified + "/*.js")
-			.pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}));
-	gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
-			.pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
 	if (args.bump) {
 		log.info("Bumped version number from v" + config.version + " to v" + options.version);
 	}
 	if (options.dodocs) {
 		log.info("Generated new docs to", options.folderDocsOut);
 	}
+
+	// todo: fix to run in series properly
+	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
+						 .pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
+				 .pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/*.js")
+				 .pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
+				 .pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
+}
+
+
+// Default task for compilation. This will be run with "gulp" and no options
+gulp.task('default', gulp.series(['sync-version'], summary));
+
+// clear the uncompressed folder.
+gulp.task('clean:uncompressed', function() {
+	return gulp.src([
+				options.folderOut + "/" + options.subfolder.uncompressed + '/**/*',
+				options.folderOut + "/" + options.subfolder.uncompressed + '/**/.*' // match also hidden files
+			], { read: false })
+ 		.pipe(remove({ async: false }) );
 });
 
-gulp.task('open-demo', function() { // just open the index file
-  gulp.src("./index.html")
-  		.pipe(open("<%file.path%>"));
+// clear the minified folder.
+gulp.task('clean:minified', function() {
+	return gulp.src([
+				options.folderOut + "/" + options.subfolder.minified + '/**/*',
+				options.folderOut + "/" + options.subfolder.minified + '/**/.*' // match also hidden files
+			], { read: false })
+ 		.pipe(remove({ async: false }) );
 });
 
-gulp.task('clean:uncompressed', ['lint:source'], function(callback) {
-	del(options.folderOut + "/" + options.subfolder.uncompressed + "/*", callback);
-});
-gulp.task('clean:minified', ['lint:source'], function(callback) {
-	del(options.folderOut + "/" + options.subfolder.minified + "/*", callback);
-});
-gulp.task('clean:docs', ['lint:source'], function(callback) {
-	if (options.dodocs) {
-		del(options.folderDocsOut + "/*", callback);
-	} else {
-		callback();
-	}
+// clear the minified folder.
+gulp.task('clean:docs', function() {
+	return gulp.src([
+				options.folderDocsOut + '/**/*',
+				options.folderDocsOut + '/**/.*' // match also hidden files
+			], { read: false })
+ 		.pipe(remove({ async: false }) );
 });
 
+/*
 gulp.task('lint:source', function() {
 	var dev = args._[0] === 'development';
-	return gulp.src(config.dirs.source + "/**/*.js")
+	return gulp.src(config.dirs.source + "/**.js")
 		.pipe(jshint({lookup: false, debug: dev}))
 		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe(jshint.reporter('fail'));
@@ -250,55 +304,18 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 
 gulp.task('copy:static-docs', ['clean:docs'], function(callback) {
 		// copy static doc files
-		return gulp.src("dev/docs/static/**/*.*", { base: process.cwd() + "/dev/docs/static" })
+		return gulp.src("dev/docs/static/** /*.*", { base: process.cwd() + "/dev/docs/static" })
       .pipe(gulp.dest(options.folderDocsOut));
 });
 gulp.task('generate:docs', ['clean:docs', 'copy:static-docs'], function(callback) {
 		// use uncompiled source files
-		return gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
+		return gulp.src("dev/src/** /*.js", { base: process.cwd() + "/dev/src" })
       .pipe(jsdoc({
       	conf: './dev/docs/jsdoc.conf.json',
       	destination: options.folderDocsOut,
       	template: './dev/docs/template',
       	readme: './README.md',
       }));
-});
-
-gulp.task('sync:json-files', function() {
-	gulp.src(["./package.json", "./bower.json"])
-			.pipe(jeditor(config.info, {keep_array_indentation: true}))
-			.pipe(jeditor({version: options.version}, {keep_array_indentation: true}))
-			.pipe(gulp.dest("./"));
-	gulp.src("./dev/build/config.json")
-			.pipe(jeditor(
-				{
-					version: options.version,
-					lastupdate: options.date.getFullYear() + "-" + ("0"+(options.date.getMonth() + 1)).slice(-2) + "-" + ("0"+options.date.getDate()).slice(-2)
-				},
-				{
-					keep_array_indentation: true
-				}
-			))
-			.pipe(gulp.dest("./dev/build"));
-});
-
-gulp.task('sync:readme', function() {
-	gulp.src("./README.md")
-			.pipe(replace({
-				patterns: [
-					{
-						// link to changelog
-						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi,
-						replacement: "$1" + options.version + "$3"
-					},
-					{
-						// cdnjs url
-						match: /(cdnjs.cloudflare.com\/ajax\/libs\/ScrollMagic\/)\d+\.\d+\.\d+(\-\w+)?(\/)/gi,
-						replacement: "$1" + options.version + "$3"
-					}
-				]
-			}))
-			.pipe(gulp.dest("./"));
 });
 
 gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
@@ -311,6 +328,8 @@ gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 			throw err;
 		});
 });
+
+
 
 // Currently not  used.
 /*
@@ -338,6 +357,6 @@ gulp.task("npm:postpublish", [], function (callback) {
 });
 */
 
-gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
+// gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
 
-gulp.task('development', ['build:uncompressed']);
+// gulp.task('development', ['build:uncompressed']);
