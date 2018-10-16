@@ -16,7 +16,7 @@ var
 	// exec =				require('child_process').exec,
 	gulp =				require('gulp'),
 	// plumber =			require('gulp-plumber'),
-	// jshint =			require('gulp-jshint'),
+	jshint =			require('gulp-jshint'),
 	// include =			require('gulp-file-include'),
 	// rename =			require('gulp-rename'),
 	replace =			require('gulp-replace-task'),
@@ -45,11 +45,14 @@ var args = require('yargs')
 							.default('d', false)
 						.describe('b', 'Bumps ScrollMagic version number. Accepts \'patch\', \'minor\' and \'major\'.')
 							.alias('b', 'bump')
+						.describe('debug', 'Enters debug mode: Allows \'debugger\' statements to remain in the code during compilation.')
+							.default('debug', false)
 						.help('h')
 							.alias('h', '?')
 						// examples
 						.example("$0 -o=mybuild", 		'build and output to folder "mybuild"')
 						.example("$0 -d", 						'build and generate new docs')
+						.example("$0 --debug", 				'build while allowing for \'debugger\' statements')
 						.example("$0 --doc=newdocs", 	'build and generate new docs into folder "newdocs"')
 						.example("$0 --bump=patch", 	'build and update version number from to 2.1.1 to 2.1.2')
 						.argv;
@@ -75,7 +78,7 @@ if (args.bump) {
 
 var options = {
 	version: args.bump ? semver.inc(config.version, args.bump) : config.version,
-	dodocs: !!args.doc || args._[0] === 'generate:docs',
+	dodocs: !!args.doc || args._[0] === 'generate:docs', // TODO: better!
 	folderOut: args.out,
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
 	date: args.bump ? new Date() : new Date(config.lastupdate),
@@ -220,15 +223,15 @@ gulp.task('clean:docs', function() {
  		.pipe(remove({ async: false }) );
 });
 
-/*
-gulp.task('lint:source', function() {
-	var dev = args._[0] === 'development';
+// Check sourcefiles for errors
+gulp.task('check:source', function() {
 	return gulp.src(config.dirs.source + "/**.js")
-		.pipe(jshint({lookup: false, debug: dev}))
+		.pipe(jshint({lookup: false, debug: args.debug}))
 		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe(jshint.reporter('fail'));
 });
 
+/*
 gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function() {
 	// prepare plugin warnings
 	var pluginWarnings = [];

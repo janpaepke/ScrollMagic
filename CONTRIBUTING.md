@@ -155,6 +155,10 @@ example: gulp -o=tmp
 Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
 example: gulp -d
 
+--debug
+Enter debug mode: This will allow for 'debugger' statements to pass the source-check during compilation
+example: gulp --debug
+
 -h           | alias: -?
 display available command line options
 ```
