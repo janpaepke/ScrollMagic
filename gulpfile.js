@@ -181,7 +181,7 @@ var summary = function() {
 		log.info("Generated new docs to", options.folderDocsOut);
 	}
 
-	// todo: fix to run in series properly
+	// TODO: fix to run in series properly - maybe remove gulp here?
 	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
 						 .pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}))
 	&& gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
@@ -191,11 +191,6 @@ var summary = function() {
 	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
 				 .pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
 }
-
-
-// Default task for compilation. This will be run with "gulp" and no options
-gulp.task('default', gulp.series(['sync-version'], summary));
-
 
 var clearFolder = function(path) {
 	return del ([
@@ -259,13 +254,10 @@ var compileUncompressed = function() {
 		}))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
 };
-
 compileUncompressed.displayName = "compile:uncompressed";
 
-gulp.task('build:uncompressed', gulp.series('check:source', 'clean:uncompressed', compileUncompressed));
-
 var compileMinified = function() {
-	// minified files
+	// minify files
 	return gulp.src(config.files, { base: config.dirs.source })
 		// .pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
@@ -299,12 +291,19 @@ var compileMinified = function() {
 		.pipe(header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
-};
 
+};
 compileMinified.displayName = "compile:minified";
 
-gulp.task('build:minified', gulp.series('check:source', 'clean:minified', compileMinified));
 
+// TODO: consider exposing only relevant tasks
+// define tasks
+gulp.task('build:uncompressed', gulp.series('clean:uncompressed', compileUncompressed));
+
+gulp.task('build:minified', gulp.series('clean:minified', compileMinified));
+
+// Default task for compilation. This will be run with "gulp" and no options
+gulp.task('default', gulp.series('sync-version', 'check:source', gulp.parallel('build:uncompressed', 'build:minified'), summary));
 
 /*
 
