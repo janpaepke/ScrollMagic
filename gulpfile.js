@@ -18,10 +18,10 @@ var
 	// plumber =			require('gulp-plumber'),
 	jshint =			require('gulp-jshint'),
 	include =			require('gulp-file-include'),
-	// rename =			require('gulp-rename'),
+	rename =			require('gulp-rename'),
 	replace =			require('gulp-replace-task'),
 	header =			require('gulp-header'),
-	// uglify =			require('gulp-uglify'),
+	uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
 	// karma =				require('gulp-karma'),
@@ -171,7 +171,7 @@ gulp.task('sync-version', function(done) {
 });
 
 
-function summary () {
+var summary = function() {
 	log.info("Generated new build to", options.folderOut);
 	// gulp.src(options.folderOut + "/*.js")
 	if (args.bump) {
@@ -197,7 +197,7 @@ function summary () {
 gulp.task('default', gulp.series(['sync-version'], summary));
 
 
-var clearFolder = function (path) {
+var clearFolder = function(path) {
 	return del ([
 		path + '/**/*',
 		path + '/**/.*' // match also hidden files
@@ -227,7 +227,7 @@ gulp.task('check:source', function() {
 		.pipe(jshint.reporter('fail'));
 });
 
-function compileUncompressed () {
+var compileUncompressed = function() {
 	// prepare plugin warnings
 	var pluginWarnings = [];
 	for (var classname in pluginInfo.plugins) {
@@ -258,16 +258,16 @@ function compileUncompressed () {
 			"jslint_happy": true
 		}))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
-}
-compileUncompressed.displayName = "compile:uncompressed";		
+};
+
+compileUncompressed.displayName = "compile:uncompressed";
 
 gulp.task('build:uncompressed', gulp.series('check:source', 'clean:uncompressed', compileUncompressed));
 
-/*
-gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
+var compileMinified = function() {
 	// minified files
 	return gulp.src(config.files, { base: config.dirs.source })
-		.pipe(plumber())
+		// .pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 		.pipe(rename({suffix: ".min"}))
 		.pipe(replace({
@@ -287,22 +287,26 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 			]
 		}))
 		.pipe(uglify({
+			ie8 : false,
 			output: {
-				screw_ie8 : true
+				ie8 : false
 			},
 			compress: {
 				unsafe: true,
-				screw_ie8 : true,
 				hoist_vars: false // default is false - true would make code technically more correct, but increases gzip size
-			},
-			mangle: {
-				screw_ie8 : true
-			},
+			}
 		}))
 		.pipe(header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
-});
+};
+
+compileMinified.displayName = "compile:minified";
+
+gulp.task('build:minified', gulp.series('check:source', 'clean:minified', compileMinified));
+
+
+/*
 
 gulp.task('copy:static-docs', ['clean:docs'], function(callback) {
 		// copy static doc files
