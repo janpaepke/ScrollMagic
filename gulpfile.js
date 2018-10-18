@@ -7,32 +7,32 @@
 /* ########################################## */
 
 var
-// node internal
-	fs = 					require('fs'),
 // node modules
-	// del = 				require('del'),
+	fs = 					require('fs'),
+	del = 				require('del'),
 	semver =			require('semver'),
 	// path = 				require('path'),
 	// exec =				require('child_process').exec,
+	// gulp modules
 	gulp =				require('gulp'),
 	// plumber =			require('gulp-plumber'),
 	jshint =			require('gulp-jshint'),
-	// include =			require('gulp-file-include'),
+	include =			require('gulp-file-include'),
 	// rename =			require('gulp-rename'),
 	replace =			require('gulp-replace-task'),
-	remove =			require('gulp-rm'),
-	// concat =			require('gulp-concat-util'),
+	header =			require('gulp-header'),
 	// uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
-	// beautify =		require('gulp-beautify'),
+	beautify =		require('gulp-jsbeautifier'),
 	// karma =				require('gulp-karma'),
 // custom
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
 	// jsdoc = 			require('./dev/build/jsdoc-generator'),
-// json
+	
+	// config files
 	pluginInfo =	require('./dev/src/plugins.json'),
-	config = require('./dev/build/config.json'); // config
+	config = 			require('./dev/build/config.json'); // config
 
 // command line options (use gulp -h to for details)
 var args = require('yargs')
@@ -196,31 +196,27 @@ function summary () {
 // Default task for compilation. This will be run with "gulp" and no options
 gulp.task('default', gulp.series(['sync-version'], summary));
 
+
+var clearFolder = function (path) {
+	return del ([
+		path + '/**/*',
+		path + '/**/.*' // match also hidden files
+	])
+};
+
 // clear the uncompressed folder.
 gulp.task('clean:uncompressed', function() {
-	return gulp.src([
-				options.folderOut + "/" + options.subfolder.uncompressed + '/**/*',
-				options.folderOut + "/" + options.subfolder.uncompressed + '/**/.*' // match also hidden files
-			], { read: false })
- 		.pipe(remove({ async: false }) );
+	return clearFolder(options.folderOut + "/" + options.subfolder.uncompressed);
 });
 
 // clear the minified folder.
 gulp.task('clean:minified', function() {
-	return gulp.src([
-				options.folderOut + "/" + options.subfolder.minified + '/**/*',
-				options.folderOut + "/" + options.subfolder.minified + '/**/.*' // match also hidden files
-			], { read: false })
- 		.pipe(remove({ async: false }) );
+	return clearFolder(options.folderOut + "/" + options.subfolder.minified);
 });
 
 // clear the minified folder.
 gulp.task('clean:docs', function() {
-	return gulp.src([
-				options.folderDocsOut + '/**/*',
-				options.folderDocsOut + '/**/.*' // match also hidden files
-			], { read: false })
- 		.pipe(remove({ async: false }) );
+	return clearFolder(options.folderDocsOut);
 });
 
 // Check sourcefiles for errors
@@ -231,8 +227,7 @@ gulp.task('check:source', function() {
 		.pipe(jshint.reporter('fail'));
 });
 
-/*
-gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function() {
+function compileUncompressed () {
 	// prepare plugin warnings
 	var pluginWarnings = [];
 	for (var classname in pluginInfo.plugins) {
@@ -242,29 +237,33 @@ gulp.task('build:uncompressed', ['lint:source', 'clean:uncompressed'], function(
 		}
 	}
 	return gulp.src(config.files, { base: config.dirs.source })
-		.pipe(plumber())
+		// .pipe(plumber())
 		.pipe(include("// @")) // do file inclusions
 			.pipe(replace({
-			patterns: [
-				{ // add plugin warnings
-					match: /\/\/ \@generate PlugInWarnings/gm,
-					replacement: pluginWarnings.join("\n")
-				},
-				{ // remove build notes
-					match: /[\t ]*\/\/ \(BUILD\).*$\r?\n?/gm,
-					replacement: ''
-				}
-			]
+				patterns: [
+					{ // add plugin warnings
+						match: /\/\/ \@generate PlugInWarnings/gm,
+						replacement: pluginWarnings.join("\n")
+					},
+					{ // remove build notes
+						match: /[\t ]*\/\/ \(BUILD\).*$\r?\n?/gm,
+						replacement: ''
+					}
+				]
 		}))
-		.pipe(concat.header(options.banner.uncompressed))
+		.pipe(header(options.banner.uncompressed))
 		.pipe(replace(options.replaceVars))
 		.pipe(beautify({
-			indentSize: 1,
-			indentChar: '\t'
+			"indent_with_tabs": true,
+			"jslint_happy": true
 		}))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.uncompressed));
-});
+}
+compileUncompressed.displayName = "compile:uncompressed";		
 
+gulp.task('build:uncompressed', gulp.series('check:source', 'clean:uncompressed', compileUncompressed));
+
+/*
 gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 	// minified files
 	return gulp.src(config.files, { base: config.dirs.source })
@@ -300,7 +299,7 @@ gulp.task('build:minified', ['lint:source', 'clean:minified'], function() {
 				screw_ie8 : true
 			},
 		}))
-		.pipe(concat.header(options.banner.minified))
+		.pipe(header(options.banner.minified))
 		.pipe(replace(options.replaceVars))
 		.pipe(gulp.dest(options.folderOut + "/" + options.subfolder.minified));
 });
