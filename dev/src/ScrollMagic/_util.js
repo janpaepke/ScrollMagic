@@ -148,7 +148,7 @@ var _util = ScrollMagic._util = (function (window) {
 	};
 	_type.DomElement = function (o){
 		return (
-			typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+			typeof HTMLElement === "object" || typeof HTMLElement === "function"? o instanceof HTMLElement || o instanceof SVGElement : //DOM2
 			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
 		);
 	};
