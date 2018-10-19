@@ -117,18 +117,6 @@ $ npm install
 
 Sit back and watch the magic happen – once it's done, so are you. Now you're ready to start building and testing.
 
-### Directory Structure
-Here's how the ScrollMagic source files are organized:
-
-* `/dev` base folder for ScrollMagic development
-  * `/dev/build` contains files relevant to the build, like configuration files or the masthead
-  * `/dev/docs` contains configuration and template files for the docs generation
-  * `/dev/src` all the ScrollMagic source files, including plugins
-  * `/dev/tests` unit testing environment
-    * `/dev/tests/fixtures` html files for usage in tests
-    * `/dev/tests/karma` additional js files needed for the tests
-    * `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
-
 ### Build ScrollMagic
 For clarity reasons the ScrollMagic source files are split up and can be found in `/dev/src`.
 When building ScrollMagic these files are combined and saved to the appropriate locations. The build process also automatically checks for javascript errors and minifies the main file.
@@ -207,6 +195,18 @@ When you've added a new feature to ScrollMagic please be sure to write a new tes
 
 Please __do not__ include dist files in your pull request (everything in `/scrollmagic`).
 They will only be included with a new release and an updated version number.
+
+### Directory Structure
+Here's how the ScrollMagic source files are organized:
+
+* `/dev` base folder for ScrollMagic development
+  * `/dev/build` contains files relevant to the build, like configuration files or the masthead
+  * `/dev/docs` contains configuration and template files for the docs generation
+  * `/dev/src` all the ScrollMagic source files, including plugins
+  * `/dev/tests` unit testing environment
+    * `/dev/tests/fixtures` html files for usage in tests
+    * `/dev/tests/karma` additional js files needed for the tests
+    * `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
 
 ---
 
