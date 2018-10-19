@@ -8,8 +8,8 @@ The goal is to make it stable and put enough security checks in to open it up mo
 Here's the rough milestone outline:
 
 1. ~~Release new version including previously finished fixes.~~
-2. Update all dependencies.
-3. Fix compilation errors (travis + unit tests).
+2. ~~Update all development dependencies.~~
+3. ~~Fix compilation errors (travis + unit tests).~~
 4. Update Website (Examples + other outdated info)
 5. Build / Finalize proper Unit Tests (with support from [joewanko](https://github.com/joewanko)).
 6. Screen all pull requests and merge if approved and pass all tests.
