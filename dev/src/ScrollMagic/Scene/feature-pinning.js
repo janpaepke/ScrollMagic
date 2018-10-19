@@ -178,7 +178,7 @@ var onMousewheelOverPin = function (e) {
 };
 
 /**
- * Pin an element for the duration of the tween.  
+ * Pin an element for the duration of the scene.
  * If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.  
  * Make sure only one pin is applied to an element at the same time.
  * An element can be pinned multiple times, but only successively.
