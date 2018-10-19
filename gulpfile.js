@@ -3,19 +3,18 @@
 "use strict";
 
 /* ########################################## */
-/* ########### load requirements ############ */
+/* ########### load dependencies ############ */
 /* ########################################## */
 
 var
-// node modules
+	// node modules
 	fs = 					require('fs'),
 	del = 				require('del'),
 	semver =			require('semver'),
-	// path = 				require('path'),
-	// exec =				require('child_process').exec,
-	// gulp modules
+	yargs = 			require('yargs'),
+
+	// gulp & modules
 	gulp =				require('gulp'),
-	// plumber =			require('gulp-plumber'),
 	jshint =			require('gulp-jshint'),
 	include =			require('gulp-file-include'),
 	rename =			require('gulp-rename'),
@@ -25,7 +24,8 @@ var
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
 	// karma =				require('gulp-karma'),
-// custom
+
+	// custom built
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
 	jsdoc = 			require('./dev/build/jsdoc-generator'),
@@ -34,35 +34,34 @@ var
 	pluginInfo =	require('./dev/src/plugins.json'),
 	config = 			require('./dev/build/config.json'); // config
 
-// command line options (use gulp -h to for details)
-var args = require('yargs')
-						.usage('Usage: gulp [options]')
-						.describe('o', 'Specify output folder for dist files ')
-							.alias('o', 'out')
-							.default('o', './' + config.dirs.defaultOutput)
-						.describe('d', 'Generate new docs, optionally supplying output folder [default folder: ./"' + config.dirs.defaultDocsOutput + '"]')
-							.alias('d', 'doc')
-							.default('d', false)
-						.describe('b', 'Bumps ScrollMagic version number. Accepts \'patch\', \'minor\' and \'major\'.')
-							.alias('b', 'bump')
-						.describe('debug', 'Enters debug mode: Allows \'debugger\' statements to remain in the code during compilation.')
-							.default('debug', false)
-						.help('h')
-							.alias('h', '?')
-						// examples
-						.example("$0 -o=mybuild", 		'build and output to folder "mybuild"')
-						.example("$0 -d", 						'build and generate new docs')
-						.example("$0 --debug", 				'build while allowing for \'debugger\' statements')
-						.example("$0 --doc=newdocs", 	'build and generate new docs into folder "newdocs"')
-						.example("$0 --bump=patch", 	'build and update version number from to 2.1.1 to 2.1.2')
-						.argv;
-
-
 /* ########################################## */
-/* ########### validate parameters ########## */
+/* ############# get parameters ############# */
 /* ########################################## */
 
-// bump
+// command line options (use gulp -? to for help)
+var args = yargs
+	.usage('Usage: gulp [task] [options]')
+	.describe('o', 'Specify output folder for dist files ')
+		.alias('o', 'out')
+		.default('o', './' + config.dirs.defaultOutput)
+	.describe('d', 'Generate new docs, optionally supplying output folder [default folder: ./"' + config.dirs.defaultDocsOutput + '"]')
+		.alias('d', 'doc')
+		.default('d', false)
+	.describe('b', 'Bumps ScrollMagic version number.')
+		.choices('b', ['patch', 'minor', 'major'])
+		.alias('b', 'bump')
+	.describe('debug', 'Enters debug mode: Allows \'debugger\' statements to remain in the code during compilation.')
+		.default('debug', false)
+	.help('?')
+	// examples
+	.example("$0 -o=mybuild", 		'build and output to folder "mybuild"')
+	.example("$0 -d", 						'build and generate new docs')
+	.example("$0 --debug", 				'build while allowing for \'debugger\' statements')
+	.example("$0 --doc=newdocs", 	'build and generate new docs into folder "newdocs"')
+	.example("$0 --bump=patch", 	'build and update version number from to 2.1.1 to 2.1.2')
+	.argv;
+
+// validate parameters
 if (args.bump) {
 	var validBumps = ["patch", "minor", "major"];
 	if (args.bump === true) {
@@ -122,10 +121,6 @@ if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
 	log.exit("Supplied output path for docs not found: " + options.folderDocsOut);
 }
 
-/* ########################################## */
-/* ############### MAIN TASKS ############### */
-/* ########################################## */
-
 // default build all
 var defaultDeps = ['sync-version', 'build:uncompressed', 'build:minified'];
 if (options.dodocs) {
@@ -133,7 +128,45 @@ if (options.dodocs) {
 	defaultDeps.push('generate:docs');
 }
 
-gulp.task('sync-version', function(done) {
+/* ########################################## */
+/* ################ helpers ################# */
+/* ########################################## */
+
+function clearFolder (path) {
+	return del ([
+		path + '/**/*',
+		path + '/**/.*' // match also hidden files
+	])
+};
+
+/* ########################################## */
+/* ############# internal tasks ############# */
+/* ########################################## */
+
+// summary for default
+var summary = function() {
+	log.info("Generated new build to", options.folderOut);
+	// gulp.src(options.folderOut + "/*.js")
+	if (args.bump) {
+		log.info("Bumped version number from v" + config.version + " to v" + options.version);
+	}
+	if (options.dodocs) {
+		log.info("Generated new docs to", options.folderDocsOut);
+	}
+
+	// TODO: fix to run in series properly - maybe remove gulp here?
+	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
+						 .pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
+				 .pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/*.js")
+				 .pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}))
+	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
+				 .pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
+}
+
+// syncs the version accross all relevant files
+var syncVersion = function(done) {
 	var beautifyOptions = {
 		"keep_array_indentation": true,
 		"end_with_newline": true
@@ -168,60 +201,37 @@ gulp.task('sync-version', function(done) {
 			}))
 			.pipe(gulp.dest("./"));
 	done();
-});
-
-
-var summary = function() {
-	log.info("Generated new build to", options.folderOut);
-	// gulp.src(options.folderOut + "/*.js")
-	if (args.bump) {
-		log.info("Bumped version number from v" + config.version + " to v" + options.version);
-	}
-	if (options.dodocs) {
-		log.info("Generated new docs to", options.folderDocsOut);
-	}
-
-	// TODO: fix to run in series properly - maybe remove gulp here?
-	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/*.js")
-						 .pipe(size({showFiles: true, gzip: true, title: "Main Lib uncompressed"}))
-	&& gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/plugins/*.js")
-				 .pipe(size({showFiles: false, gzip: true, title: "Plugins uncompressed"}))
-	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/*.js")
-				 .pipe(size({showFiles: true, gzip: true, title: "Main Lib minified"}))
-	&& gulp.src(options.folderOut + "/" + options.subfolder.minified + "/plugins/*.js")
-				 .pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
-}
-
-var clearFolder = function(path) {
-	return del ([
-		path + '/**/*',
-		path + '/**/.*' // match also hidden files
-	])
 };
+syncVersion.displayName = "sync-version";
 
 // clear the uncompressed folder.
-gulp.task('clean:uncompressed', function() {
+var cleanUncompressed = function() {
 	return clearFolder(options.folderOut + "/" + options.subfolder.uncompressed);
-});
+};
+cleanUncompressed.displayName = 'clean:uncompressed';
 
 // clear the minified folder.
-gulp.task('clean:minified', function() {
+var cleanMinified = function() {
 	return clearFolder(options.folderOut + "/" + options.subfolder.minified);
-});
+};
+cleanMinified.displayName = 'clean:minified';
 
 // clear the minified folder.
-gulp.task('clean:docs', function() {
+var cleanDocs = function() {
 	return clearFolder(options.folderDocsOut);
-});
+};
+cleanDocs.displayName = 'clean:docs';
 
 // Check sourcefiles for errors
-gulp.task('check:source', function() {
+var sourceErrorcheck = function() {
 	return gulp.src(config.dirs.source + "/**.js")
 		.pipe(jshint({lookup: false, debug: args.debug}))
 		.pipe(jshint.reporter('jshint-stylish'))
 		.pipe(jshint.reporter('fail'));
-});
+};
+sourceErrorcheck.displayName = 'check:source';
 
+// generate uncompressed js output files
 var compileUncompressed = function() {
 	// prepare plugin warnings
 	var pluginWarnings = [];
@@ -256,6 +266,7 @@ var compileUncompressed = function() {
 };
 compileUncompressed.displayName = "compile:uncompressed";
 
+// generate minified js output files
 var compileMinified = function() {
 	// minify files
 	return gulp.src(config.files, { base: config.dirs.source })
@@ -295,26 +306,15 @@ var compileMinified = function() {
 };
 compileMinified.displayName = "compile:minified";
 
-
-// TODO: consider exposing only relevant tasks
-// define tasks
-gulp.task('build:uncompressed', gulp.series('clean:uncompressed', compileUncompressed));
-
-gulp.task('build:minified', gulp.series('clean:minified', compileMinified));
-
-// Default task for compilation. This will be run with "gulp" and no options
-gulp.task('default', gulp.series('sync-version', 'check:source', gulp.parallel('build:uncompressed', 'build:minified'), summary));
-
-
+// copy static doc files, kept for compatiblity purposes
 var copyStaticDocfiles = function() {
-		// copy static doc files, kept for compatiblity purposes
 		return gulp.src("dev/docs/static/**/*.*", { base: process.cwd() + "/dev/docs/static" })
       .pipe(gulp.dest(options.folderDocsOut));
 };
 copyStaticDocfiles.displayName = "copy:static-docfiles";
 
+// use uncompiled source files to generate docs
 var compileDocs = function() {
-		// use uncompiled source files to generate docs
 		return gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
       .pipe(jsdoc({
       	conf: './dev/docs/jsdoc.conf.json',
@@ -325,9 +325,26 @@ var compileDocs = function() {
 };
 compileDocs.displayName = "compile:docs";
 
-gulp.task('generate:docs', gulp.series('clean:docs', copyStaticDocfiles, compileDocs));
+/* ########################################## */
+/* ############# exposed tasks ############## */
+/* ########################################## */
 
-/*
+var buildUncompressed = gulp.series(cleanUncompressed, compileUncompressed);
+gulp.task('build:uncompressed', buildUncompressed);
+
+var buildMinified = gulp.series(cleanMinified, compileMinified)
+gulp.task('build:minified', buildMinified);
+
+//TODO: Fix doc generation using options
+gulp.task('generate:docs', gulp.series(cleanDocs, copyStaticDocfiles, compileDocs));
+
+// 
+// gulp.task('travis-ci', gulp.series(sourceErrorcheck, gulp.parallel('build:uncompressed', 'build:minified'), runKarmaTests));
+
+// Default task for compilation. This is run with `gulp` and no defined task
+gulp.task('default', gulp.series(syncVersion, sourceErrorcheck, gulp.parallel(buildUncompressed, buildMinified), summary));
+
+/*	
 
 gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 	return gulp.src([]) // file list supplied in karma conf file
@@ -339,8 +356,6 @@ gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 			throw err;
 		});
 });
-
-
 
 // Currently not  used.
 /*
@@ -368,6 +383,3 @@ gulp.task("npm:postpublish", [], function (callback) {
 });
 */
 
-// gulp.task('travis-ci', ['build:uncompressed', 'build:minified', 'test']);
-
-// gulp.task('development', ['build:uncompressed']);
