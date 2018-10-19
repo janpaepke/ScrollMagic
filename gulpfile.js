@@ -77,7 +77,7 @@ if (args.bump) {
 
 var options = {
 	version: args.bump ? semver.inc(config.version, args.bump) : config.version,
-	dodocs: !!args.doc || args._[0] === 'generate:docs', // TODO: better!
+	dodocs: !!args.doc,
 	folderOut: args.out,
 	folderDocsOut: args.doc.split ? args.doc : './' + config.dirs.defaultDocsOutput,
 	date: args.bump ? new Date() : new Date(config.lastupdate),
@@ -119,13 +119,6 @@ if (!fs.existsSync(options.folderOut)) {
 // docs output
 if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
 	log.exit("Supplied output path for docs not found: " + options.folderDocsOut);
-}
-
-// default build all
-var defaultDeps = ['sync-version', 'build:uncompressed', 'build:minified'];
-if (options.dodocs) {
-	// TODO: clean docs before generation
-	defaultDeps.push('generate:docs');
 }
 
 /* ########################################## */
@@ -344,7 +337,12 @@ var runKarmaTests = function (cb) {
 var buildUncompressed = gulp.series(cleanUncompressed, compileUncompressed);
 var buildMinified = gulp.series(cleanMinified, compileMinified);
 var buildAll = gulp.parallel(buildUncompressed, buildMinified);
+var generateDocs = gulp.series(cleanDocs, copyStaticDocfiles, compileDocs);
 var runTests = gulp.series(buildAll, runKarmaTests);
+
+// add doc compilation to default sequence, if -d parameter is present
+var defaultSequence = [syncVersion, sourceErrorcheck, buildAll];
+if (options.dodocs) defaultSequence.push(generateDocs);
 
 // expose tasks
 gulp.task('build:uncompressed', buildUncompressed);
@@ -353,10 +351,9 @@ gulp.task('build:minified', buildMinified);
 
 gulp.task('test', runTests);
 
-//TODO: Fix doc generation using options
-gulp.task('generate:docs', gulp.series(cleanDocs, copyStaticDocfiles, compileDocs));
+gulp.task('generate:docs', generateDocs);
 
 gulp.task('travis-ci', gulp.series(sourceErrorcheck, buildAll, runKarmaTests));
 
 // Default task for compilation. This is run with `gulp` and no defined task
-gulp.task('default', gulp.series(syncVersion, sourceErrorcheck, buildAll, summary));
+gulp.task('default', gulp.series(defaultSequence, summary));
