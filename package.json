@@ -30,6 +30,7 @@
     "gulp-replace-task": "^0.11.0",
     "gulp-uglify": "^3.0.1",
     "gzip-size": "^5.0.0",
+    "jsdoc": "^3.5.5",
     "jshint": "^2.9.6",
     "jshint-stylish": "^2.2.1",
     "pretty-bytes": "^5.1.0",

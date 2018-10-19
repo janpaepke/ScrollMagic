@@ -28,7 +28,7 @@ var
 // custom
 	log = 				require('./dev/build/logger'),
 	size = 				require('./dev/build/filesize'),
-	// jsdoc = 			require('./dev/build/jsdoc-generator'),
+	jsdoc = 			require('./dev/build/jsdoc-generator'),
 	
 	// config files
 	pluginInfo =	require('./dev/src/plugins.json'),
@@ -305,23 +305,29 @@ gulp.task('build:minified', gulp.series('clean:minified', compileMinified));
 // Default task for compilation. This will be run with "gulp" and no options
 gulp.task('default', gulp.series('sync-version', 'check:source', gulp.parallel('build:uncompressed', 'build:minified'), summary));
 
-/*
 
-gulp.task('copy:static-docs', ['clean:docs'], function(callback) {
-		// copy static doc files
-		return gulp.src("dev/docs/static/** /*.*", { base: process.cwd() + "/dev/docs/static" })
+var copyStaticDocfiles = function() {
+		// copy static doc files, kept for compatiblity purposes
+		return gulp.src("dev/docs/static/**/*.*", { base: process.cwd() + "/dev/docs/static" })
       .pipe(gulp.dest(options.folderDocsOut));
-});
-gulp.task('generate:docs', ['clean:docs', 'copy:static-docs'], function(callback) {
-		// use uncompiled source files
-		return gulp.src("dev/src/** /*.js", { base: process.cwd() + "/dev/src" })
+};
+copyStaticDocfiles.displayName = "copy:static-docfiles";
+
+var compileDocs = function() {
+		// use uncompiled source files to generate docs
+		return gulp.src("dev/src/**/*.js", { base: process.cwd() + "/dev/src" })
       .pipe(jsdoc({
       	conf: './dev/docs/jsdoc.conf.json',
       	destination: options.folderDocsOut,
       	template: './dev/docs/template',
       	readme: './README.md',
       }));
-});
+};
+compileDocs.displayName = "compile:docs";
+
+gulp.task('generate:docs', gulp.series('clean:docs', copyStaticDocfiles, compileDocs));
+
+/*
 
 gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
 	return gulp.src([]) // file list supplied in karma conf file
