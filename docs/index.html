@@ -161,21 +161,20 @@
 
 
     <section>
-        <article><h1>Development update</h1><h3>It's aliiiive!</h3><p>After quite some time of neglect, development on ScrollMagic will finally resume this year. (hurray!)
-The goal is to make it stable and put enough security checks in to open it up more to public contribution.</p>
+        <article><h1>Status Update</h1><h3>It's aliiiive!</h3><p>After quite some time of neglect, development on ScrollMagic will finally resume this year. (hurray!)<br>The goal is to make it stable and put enough security checks in to open it up more to public contribution.</p>
 <p>Here's the rough milestone outline:</p>
 <ol>
-<li>Release new version including previously finished fixes.</li>
-<li>Update all dependencies.</li>
-<li>Fix compilation errors (travis + unit tests).</li>
+<li><del>Release new version including previously finished fixes.</del></li>
+<li><del>Update all development dependencies.</del></li>
+<li><del>Fix compilation errors (travis + unit tests).</del></li>
 <li>Update Website (Examples + other outdated info)</li>
-<li>Build / Finalize proper Unit Tests (with support from @joewanko).</li>
+<li>Build / Finalize proper Unit Tests (with support from <a href="https://github.com/joewanko">joewanko</a>).</li>
 <li>Screen all pull requests and merge if approved and pass all tests.</li>
 <li>Open project to a wider group of contributors.</li>
 </ol>
 <p>If you want to contribute please <a href="http://www.janpaepke.de">get in touch</a> and let me know about your specialty and experience.</p>
 <hr>
-<h1>ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.7</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1><h3>The javascript library for magical scroll interactions. <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h3><p>ScrollMagic helps you to easily react to the user's current scroll position.<br>It's the perfect library for you, if you want to ...</p>
+<h1>ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.6</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1><h3>The javascript library for magical scroll interactions. <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="Donate" title="Shut up and take my money!"></a></h3><p>ScrollMagic helps you to easily react to the user's current scroll position.<br>It's the perfect library for you, if you want to ...</p>
 <ul>
 <li>animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).</li>
 <li>pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).</li>
@@ -187,8 +186,7 @@ The goal is to make it stable and put enough security checks in to open it up mo
 <p>Check out <a href="http://scrollmagic.io">the demo page</a>, browse <a href="http://scrollmagic.io/examples/index.html">the examples</a> or read <a href="http://scrollmagic.io/docs/index.html">the documentation</a> to get started.</p>
 <h2>About the Library</h2><p>ScrollMagic is a scroll interaction library.</p>
 <p>It's a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>A plugin-based architecture offers easy customizability and extendability.</p>
-<p>To implement animations, ScrollMagic can work with multiple frameworks.
-The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> due to its stability and feature richness. For a more lightweight approach the <a href="http://VelocityJS.org">VelocityJS</a> framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply  using CSS and class toggles.</p>
+<p>To implement animations, ScrollMagic can work with multiple frameworks.<br>The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> due to its stability and feature richness. For a more lightweight approach the <a href="http://VelocityJS.org">VelocityJS</a> framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply  using CSS and class toggles.</p>
 <p>ScrollMagic was developed with these principles in mind:</p>
 <ul>
 <li>optimized performance</li>
@@ -211,9 +209,9 @@ The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Gree
 <pre class="prettyprint source lang-bash"><code>git clone git://github.com/janpaepke/ScrollMagic.git</code></pre><p><strong>Option 2: Bower</strong><br>ScrollMagic is also <a href="http://bower.io/search/?q=scrollmagic">available on bower</a> and will only install the necessary source code, ignoring all example and documentation files.<br>Please mind that since they are not core dependencies, you will have to add frameworks like GSAP, jQuery or Velocity manually, should you choose to use them.</p>
 <pre class="prettyprint source lang-bash"><code>bower install scrollmagic</code></pre><p><strong>Option 3: npm</strong><br>If you prefer the <a href="https://www.npmjs.com/package/scrollmagic">node package manager</a>, feel free to use it.<br>Keep in mind that like with bower non-crucial files will be ignored (see above).</p>
 <pre class="prettyprint source lang-bash"><code>npm install scrollmagic</code></pre><p><strong>Option 4: CDN</strong><br>If you don't want to host ScrollMagic yourself, you can include it from <a href="https://cdnjs.com/libraries/ScrollMagic">cdnjs</a>:</p>
-<pre class="prettyprint source"><code>http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.min.js</code></pre><p>All plugins and uncompressed files are also available on cdnjs.<br>For example:</p>
-<pre class="prettyprint source"><code>http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.js
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js</code></pre><h2>Installation</h2><p>Include the <strong>core</strong> library in your HTML file:</p>
+<pre class="prettyprint source"><code>http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/ScrollMagic.min.js</code></pre><p>All plugins and uncompressed files are also available on cdnjs.<br>For example:</p>
+<pre class="prettyprint source"><code>http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.min.js</code></pre><h2>Installation</h2><p>Include the <strong>core</strong> library in your HTML file:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/uncompressed/ScrollMagic.js&quot;>&lt;/script></code></pre><p>And you're ready to go!<br>For deployment use the minified version <strong>instead</strong>:</p>
 <pre class="prettyprint source lang-html"><code>&lt;script src=&quot;js/scrollmagic/minified/ScrollMagic.min.js&quot;>&lt;/script></code></pre><p><em><strong>NOTE:</strong> The logging feature is removed in the minified version due to file size considerations.</em></p>
 <p>To use <strong>plugins</strong> like the indicators visualization, simply include them additionally to the main library:</p>
@@ -226,7 +224,7 @@ var controller = new ScrollMagic.Controller();
 // create a scene
 new ScrollMagic.Scene({
         duration: 100,    // the scene should last for a scroll distance of 100px
-        offset: 50        // start this scene after scrolling for 50px
+        offset: 50    // start this scene after scrolling for 50px
     })
     .setPin(&quot;#my-sticky-element&quot;) // pins the element for the the scene's duration
     .addTo(controller); // assign the scene to the controller</code></pre><p>To learn more about the ScrollMagic code structure, please <a href="https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic">read here</a>.</p>
@@ -268,7 +266,7 @@ new ScrollMagic.Scene({
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-beta1</a>
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.5.5</a>
 		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
 		</span>
 				</footer>
