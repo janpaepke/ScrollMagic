@@ -12,6 +12,7 @@ var
 	del = 				require('del'),
 	semver =			require('semver'),
 	yargs = 			require('yargs'),
+	karma =				require('karma'),
 
 	// gulp & modules
 	gulp =				require('gulp'),
@@ -23,7 +24,6 @@ var
 	uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
-	// karma =				require('gulp-karma'),
 
 	// custom built
 	log = 				require('./dev/build/logger'),
@@ -325,61 +325,38 @@ var compileDocs = function() {
 };
 compileDocs.displayName = "compile:docs";
 
+var runKarmaTests = function (cb) {
+	new karma.Server({
+	    configFile: __dirname + config.karma.config,
+	    singleRun: true
+	  }, cb)
+		.on('error', function(err) {
+			throw err;
+		})
+  	.start();
+}
+
 /* ########################################## */
 /* ############# exposed tasks ############## */
 /* ########################################## */
 
+// define sequences
 var buildUncompressed = gulp.series(cleanUncompressed, compileUncompressed);
+var buildMinified = gulp.series(cleanMinified, compileMinified);
+var buildAll = gulp.parallel(buildUncompressed, buildMinified);
+var runTests = gulp.series(buildAll, runKarmaTests);
+
+// expose tasks
 gulp.task('build:uncompressed', buildUncompressed);
 
-var buildMinified = gulp.series(cleanMinified, compileMinified)
 gulp.task('build:minified', buildMinified);
+
+gulp.task('test', runTests);
 
 //TODO: Fix doc generation using options
 gulp.task('generate:docs', gulp.series(cleanDocs, copyStaticDocfiles, compileDocs));
 
-// 
-// gulp.task('travis-ci', gulp.series(sourceErrorcheck, gulp.parallel('build:uncompressed', 'build:minified'), runKarmaTests));
+gulp.task('travis-ci', gulp.series(sourceErrorcheck, buildAll, runKarmaTests));
 
 // Default task for compilation. This is run with `gulp` and no defined task
-gulp.task('default', gulp.series(syncVersion, sourceErrorcheck, gulp.parallel(buildUncompressed, buildMinified), summary));
-
-/*	
-
-gulp.task('test', ['build:uncompressed', 'build:minified'], function () {
-	return gulp.src([]) // file list supplied in karma conf file
-		.pipe(karma({
-			configFile: "./" + config.karma.config,
-			action: 'run'
-		}))
-		.on('error', function(err) {
-			throw err;
-		});
-});
-
-// Currently not  used.
-/*
-gulp.task("npm:prepublish", [], function () {
-	// update package.json
-	gulp.src("./package.json")
-			.pipe(jeditor({main: "ScrollMagic.js"}, {keep_array_indentation: true}))
-			.pipe(gulp.dest("./"));
-	// copy dist files to root.
-	return gulp.src(options.folderOut + "/" + options.subfolder.uncompressed + "/** /*.js")
-			.pipe(gulp.src(options.folderOut + "/" + options.subfolder.minified + "/** /*.js"))
-			.pipe(gulp.dest("./"));
-});
-*/
-
-// Currently not  used.
-/*
-gulp.task("npm:postpublish", [], function (callback) {
-	// update package.json
-	gulp.src("./package.json")
-			.pipe(jeditor({main: path.relative("./", options.folderOut + "/" + options.subfolder.uncompressed + "/ScrollMagic.js")}, {keep_array_indentation: true}))
-			.pipe(gulp.dest("./"));
-	// remove root dist files and plugin folder
-	del(["./ScrollMagic*.js", "./plugins"], callback);
-});
-*/
-
+gulp.task('default', gulp.series(syncVersion, sourceErrorcheck, buildAll, summary));
