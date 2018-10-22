@@ -33,7 +33,7 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'jquery'], factory);
+		define(['scrollmagic', 'jquery'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		factory(require('scrollmagic'), require('jquery'));
@@ -46,9 +46,8 @@
 	var NAMESPACE = "jquery.ScrollMagic";
 
 	var
-	console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
