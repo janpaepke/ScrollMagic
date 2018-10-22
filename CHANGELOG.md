@@ -5,6 +5,7 @@ CHANGELOG
 
 #### bugfixes:
  - errors occurred, when removing a triggerElement [see here](https://github.com/janpaepke/ScrollMagic/issues/307)
+ - semantic error in removePin()
 
 
 ## 2.0.5 (2015-04-29)

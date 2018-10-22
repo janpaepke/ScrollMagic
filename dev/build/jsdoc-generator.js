@@ -6,8 +6,7 @@
 var 
 
 	fs = require("fs"),
-	exec =				require('child_process').exec,
-	gutil = require('gulp-util'),
+	exec = require('child_process').exec,
 	through = require('through2'),
 	logger = require('./logger');
 
@@ -51,7 +50,8 @@ var
 	CLI = ["node", wrap(jsdocCli + "/jsdoc")];
 
 if (!jsdocCli) {
-	throw new gutil.PluginError('jsdoc-generator', 'jsdoc module not installed');
+	logger.error('jsdoc module not installed');
+	return;
 }
 
 module.exports = function (options) {
@@ -67,7 +67,7 @@ module.exports = function (options) {
 	// add files to processing array
 	var processFile = function (file, enc, cb) {
 		if (file.isStream()) {
-			cb(new gutil.PluginError('jsdoc-generator', 'Streaming not supported'));
+			logger.error('Streaming not supported');
 			return;
 		}
 		files.push(wrap(file.path));

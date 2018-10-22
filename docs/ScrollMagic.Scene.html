@@ -284,8 +284,7 @@
                 </td>
             
 
-            <td class="description last"><p>The duration of the scene. 
-                                           If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.<br>                                           A function retuning the duration value is also supported. Please see <code>Scene.duration()</code> for details.</p></td>
+            <td class="description last"><p>The duration of the scene.<br>                                           If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.<br>                                           A function returning the duration value is also supported. Please see <code>Scene.duration()</code> for details.</p></td>
         </tr>
 
 	
@@ -1177,10 +1176,8 @@ scene.progress(0.3);</pre>
     
     
     <div class="description">
-        <p>Updates dynamic scene variables like the trigger element position or the duration.
-This method is automatically called in regular intervals from the controller. See <a href="ScrollMagic.Controller.html"><code>ScrollMagic.Controller</code></a> option <code>refreshInterval</code>.</p>
-<p>You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.
-If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.</p>
+        <p>Updates dynamic scene variables like the trigger element position or the duration.<br>This method is automatically called in regular intervals from the controller. See <a href="ScrollMagic.Controller.html"><code>ScrollMagic.Controller</code></a> option <code>refreshInterval</code>.</p>
+<p>You can call it to minimize lag, for example when you intentionally change the position of the triggerElement.<br>If you don't it will simply be updated in the next refresh interval of the container, which is usually sufficient.</p>
     </div>
     
 
@@ -1285,9 +1282,7 @@ scene.refresh();</pre>
     
     
     <div class="description">
-        <p>Remove the scene from the controller.<br>This is the equivalent to <code>Controller.removeScene(scene)</code>.
-The scene will not be updated anymore until you readd it to a controller.
-To remove the pin or the tween you need to call removeTween() or removePin() respectively.</p>
+        <p>Remove the scene from the controller.<br>This is the equivalent to <code>Controller.removeScene(scene)</code>.<br>The scene will not be updated anymore until you readd it to a controller.<br>To remove the pin or the tween you need to call removeTween() or removePin() respectively.</p>
     </div>
     
 
@@ -1704,8 +1699,7 @@ scene.removePin(true);</pre>
     
     
     <div class="description">
-        <p>Define a css class modification while the scene is active.<br>When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.
-If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.</p>
+        <p>Define a css class modification while the scene is active.<br>When the scene triggers the classes will be added to the supplied element and removed, when the scene is over.<br>If the scene duration is 0 the classes will only be removed if the user scrolls back past the start position.</p>
     </div>
     
 
@@ -1874,9 +1868,7 @@ scene.setClassToggle(".classChange", "class1 class2 class3");</pre>
     
     
     <div class="description">
-        <p>Pin an element for the duration of the tween.<br>If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.<br>Make sure only one pin is applied to an element at the same time.
-An element can be pinned multiple times, but only successively.
-<em><strong>NOTE:</strong> The option <code>pushFollowers</code> has no effect, when the scene duration is 0.</em></p>
+        <p>Pin an element for the duration of the tween.<br>If the scene duration is 0 the element will only be unpinned, if the user scrolls back past the start position.<br>Make sure only one pin is applied to an element at the same time.<br>An element can be pinned multiple times, but only successively.<br><em><strong>NOTE:</strong> The option <code>pushFollowers</code> has no effect, when the scene duration is 0.</em></p>
     </div>
     
 
@@ -2173,8 +2165,7 @@ scene.setPin("#pin", {pushFollowers: false});</pre>
     
     
     <div class="description">
-        <p>Updates the Scene to reflect the current state.<br>This is the equivalent to <code>Controller.updateScene(scene, immediately)</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.
-This means an update doesn't necessarily result in a progress change. The <code>progress</code> event will be fired if the progress has indeed changed between this update and the last.<br><em><strong>NOTE:</strong> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</em></p>
+        <p>Updates the Scene to reflect the current state.<br>This is the equivalent to <code>Controller.updateScene(scene, immediately)</code>.<br>The update method calculates the scene's start and end position (based on the trigger element, trigger hook, duration and offset) and checks it against the current scroll position of the container.<br>It then updates the current scene state accordingly (or does nothing, if the state is already correct) – Pins will be set to their correct position and tweens will be updated to their correct progress.<br>This means an update doesn't necessarily result in a progress change. The <code>progress</code> event will be fired if the progress has indeed changed between this update and the last.<br><em><strong>NOTE:</strong> This method gets called constantly whenever ScrollMagic detects a change. The only application for you is if you change something outside of the realm of ScrollMagic, like moving the trigger or changing tween parameters.</em></p>
     </div>
     
 
@@ -2346,8 +2337,7 @@ scene.update(true);</pre>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.
-As a setter it also accepts a function returning a numeric value.<br>This is particularly useful for responsive setups.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.<br>As a setter it also accepts a function returning a numeric value.<br>This is particularly useful for responsive setups.</p>
 <p>The duration is updated using the supplied function every time <code>Scene.refresh()</code> is called, which happens periodically from the controller (see ScrollMagic.Controller option <code>refreshInterval</code>).<br><em><strong>NOTE:</strong> Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.<br>Even for size and position calculations it is recommended to use a variable to cache the value. (see example)<br>This counts double if you use the same function for multiple scenes.</em></p>
     </div>
     
@@ -3217,8 +3207,7 @@ scene.reverse(false);</pre>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the triggerElement option value.
-Does <strong>not</strong> fire <code>Scene.shift</code>, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in <code>Scene.refresh()</code>, which is automatically triggered.</p>
+        <p><strong>Get</strong> or <strong>Set</strong> the triggerElement option value.<br>Does <strong>not</strong> fire <code>Scene.shift</code>, because changing the trigger Element doesn't necessarily mean the start position changes. This will be determined in <code>Scene.refresh()</code>, which is automatically triggered.</p>
     </div>
     
 
@@ -4389,10 +4378,6 @@ scene.on("change update progress start end enter leave", callback);</pre>
 
         </dl>
     
-        <h3 class="subsection-title">Debuging</h3>
-
-        <dl></dl>
-    
 
     
 
@@ -4410,8 +4395,7 @@ scene.on("change update progress start end enter leave", callback);</pre>
     
     
     <div class="description">
-        <p>Scene add event.<br>Fires when the scene is added to a controller.
-This is mostly used by plugins to know that change might be due.</p>
+        <p>Scene add event.<br>Fires when the scene is added to a controller.<br>This is mostly used by plugins to know that change might be due.</p>
     </div>
     
 
@@ -4883,8 +4867,7 @@ This is mostly used by plugins to know that change might be due.</p>
     
     
     <div class="description">
-        <p>Scene destroy event.<br>Fires whenvever the scene is destroyed.
-This can be used to tidy up custom behaviour used in events.</p>
+        <p>Scene destroy event.<br>Fires whenvever the scene is destroyed.<br>This can be used to tidy up custom behaviour used in events.</p>
     </div>
     
 
@@ -6197,8 +6180,7 @@ This can be used to tidy up custom behaviour used in events.</p>
     
     
     <div class="description">
-        <p>Scene remove event.<br>Fires when the scene is removed from a controller.
-This is mostly used by plugins to know that change might be due.</p>
+        <p>Scene remove event.<br>Fires when the scene is removed from a controller.<br>This is mostly used by plugins to know that change might be due.</p>
     </div>
     
 
@@ -6401,10 +6383,7 @@ This is mostly used by plugins to know that change might be due.</p>
     
     
     <div class="description">
-        <p>Scene shift event.<br>Fires whenvever the start or end <strong>scroll offset</strong> of the scene change.
-This happens explicitely, when one of these values change: <code>offset</code>, <code>duration</code> or <code>triggerHook</code>.
-It will fire implicitly when the <code>triggerElement</code> changes, if the new element has a different position (most cases).
-It will also fire implicitly when the size of the container changes and the triggerHook is anything other than <code>onLeave</code>.</p>
+        <p>Scene shift event.<br>Fires whenvever the start or end <strong>scroll offset</strong> of the scene change.<br>This happens explicitely, when one of these values change: <code>offset</code>, <code>duration</code> or <code>triggerHook</code>.<br>It will fire implicitly when the <code>triggerElement</code> changes, if the new element has a different position (most cases).<br>It will also fire implicitly when the size of the container changes and the triggerHook is anything other than <code>onLeave</code>.</p>
     </div>
     
 
@@ -7179,7 +7158,7 @@ It will also fire implicitly when the size of the container changes and the trig
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-beta1</a>
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.5.5</a>
 		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
 		</span>
 				</footer>

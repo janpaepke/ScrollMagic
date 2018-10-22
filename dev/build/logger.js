@@ -1,23 +1,25 @@
 // my personal logging methods
-var gutil = require('gulp-util');
+var colors = require('ansi-colors');
+var log = require('fancy-log');
 
-function log (pre, out) {
-	Array.prototype.unshift.call(out, pre);
-	gutil.log.apply(gutil, out);
+// internal helper
+function output (method, prefix, output) {
+	Array.prototype.unshift.call(output, prefix);
+	method.apply(log, output);
 }
 
 module.exports = {
 	error : function () {
-		log(gutil.colors.red("ERROR:"), arguments);
+		output(log.error, colors.red("ERROR:"), arguments);
 	},
 	exit : function () {
-		log(gutil.colors.red("ERROR:"), arguments);
+		output(log.error, colors.red("FATAL ERROR:"), arguments);
 		process.exit(1);
 	},
 	warn : function () {
-		log(gutil.colors.yellow("WARNING:"), arguments);
+		output(log.warn, colors.yellow("WARNING:"), arguments);
 	},
 	info : function () {
-		log(gutil.colors.blue("INFO:"), arguments);
+		output(log.info, colors.blue("INFO:"), arguments);
 	},
 };

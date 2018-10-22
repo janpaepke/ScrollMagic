@@ -1,6 +1,6 @@
 {
-	"version": "2.0.5",
-	"lastupdate": "2015-04-29",
+	"version": "2.0.6",
+	"lastupdate": "2018-10-08",
 	"info": {
 		"description": "The javascript library for magical scroll interactions.",
 		"homepage": "http://ScrollMagic.io",
