@@ -1,7 +1,7 @@
 /*!
  * @file ScrollMagic jQuery plugin.
  *
- * requires: jQuery ~1.11 or ~2.1
+ * requires: jQuery >=1.11
  */
 /**
  * This plugin is meant to be used in conjunction with jQuery.  
@@ -18,7 +18,7 @@
  * var scene = new $.ScrollMagic.Scene({
  *   triggerElement: "#parent div.trigger[attr='thisone']:not(.notthisone)"
  * });
- * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
+ * @requires {@link http://jquery.com/|jQuery >=1.11}
  * @mixin framework.jQuery
  */
 (function (root, factory) {
