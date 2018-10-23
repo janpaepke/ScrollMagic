@@ -1,4 +1,5 @@
 # Source
+ - update: update velocity - best wait for v2 release. https://github.com/julianshapiro/velocity/releases
  - feature: new plugin: mobile scrolling
  - feature: new plugin: AngularJS
  - bug: find better solution for chrome parrallax workaround (dev/src/ScrollMagic.js:28)
