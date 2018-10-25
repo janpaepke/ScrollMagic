@@ -28,7 +28,7 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['scrollmagic', 'velocity'], factory);
+		define(['ScrollMagic', 'velocity'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		factory(require('scrollmagic'), require('velocity'));
@@ -41,8 +41,9 @@
 	var NAMESPACE = "animation.velocity";
 
 	var
-		console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
+	console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log ||
+		function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
@@ -54,14 +55,10 @@
 
 	ScrollMagic.Scene.extend(function () {
 		var
-			Scene = this,
+		Scene = this,
 			_util = ScrollMagic._util,
 			_currentProgress = 0,
-			_elems,
-			_properties,
-			_options,
-			_dataID; // used to identify element data related to this scene, will be defined everytime a new velocity animation is added
-
+			_elems, _properties, _options, _dataID; // used to identify element data related to this scene, will be defined everytime a new velocity animation is added
 		var log = function () {
 			if (Scene._log) { // not available, when main source minified
 				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");
