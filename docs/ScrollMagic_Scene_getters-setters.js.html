@@ -12,7 +12,7 @@
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
 	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
 
 	
 	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
@@ -155,7 +155,7 @@
 			// function
 			_durationUpdateMethod = val;
 			try {
-				val = parseFloat(_durationUpdateMethod());
+				val = parseFloat(_durationUpdateMethod.call(Scene));
 			} catch (e) {
 				val = -1; // will cause error below
 			}
@@ -543,6 +543,6 @@ this.triggerPosition = function () {
 	</script>
 	
 
-	<script type="text/javascript" src="../js/tracking.js"></script>
+	<script type="text/javascript" src="../assets/js/tracking.js"></script>
 </body>
 </html>
