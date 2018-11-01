@@ -12,7 +12,7 @@
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
 	<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-	<link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="../assets/img/favicon.ico" type="image/x-icon">
 
 	
 	<link type="text/css" rel="stylesheet" href="styles/site.cosmo.css">
@@ -630,7 +630,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-275">line 275</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-287">line 287</a>
     </li></ul></dd>
     
 
@@ -789,7 +789,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-610">line 610</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-658">line 658</a>
     </li></ul></dd>
     
 
@@ -931,7 +931,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-318">line 318</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-330">line 330</a>
     </li></ul></dd>
     
 
@@ -980,7 +980,7 @@
         
             
 <dt>
-    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(<span class="optional">scrollTarget</span>)</span><span class="type-signature"> &rarr; {Controller}</span></h4>
+    <h4 class="name" id="scrollTo"><span class="type-signature"></span>scrollTo<span class="signature">(scrollTarget, <span class="optional">additionalParameter</span>)</span><span class="type-signature"> &rarr; {Controller}</span></h4>
     
     
 </dt>
@@ -1039,8 +1039,6 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
@@ -1055,8 +1053,41 @@
 <li><code>number</code> -&gt; The container will scroll to this new scroll offset.</li>
 <li><code>string</code> or <code>object</code> -&gt; Can be a selector or a DOM object.<br>The container will scroll to the position of this element.</li>
 <li><code>ScrollMagic Scene</code> -&gt; The container will scroll to the start of this scene.</li>
-<li><code>function</code> -&gt; This function will be used as a callback for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The callback receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.<br><em><strong>NOTE:</strong> All other options will still work as expected, using the new function to scroll.</em></li>
+<li><code>function</code> -&gt; This function will be used for future scroll position modifications.<br>This provides a way for you to change the behaviour of scrolling and adding new behaviour like animation. The function receives the new scroll position as a parameter and a reference to the container element using <code>this</code>.<br>It may also optionally receive an optional additional parameter (see below)<br><em><strong>NOTE:</strong><br>All other options will still work as expected, using the new function to scroll.</em></li>
 </ol></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>additionalParameter</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">mixed</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>If a custom scroll function was defined (see above 4.), you may want to supply additional parameters to it, when calling it. You can do this using this parameter – see examples for details. Please note, that this parameter will have no effect, if you use the default scrolling function.</p></td>
         </tr>
 
 	
@@ -1091,7 +1122,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-436">line 436</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-477">line 477</a>
     </li></ul></dd>
     
 
@@ -1131,7 +1162,7 @@
     
         <h5>Example</h5>
         
-    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollMagic.Scene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (jQuery animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("body").animate({scrollTop: newScrollPos});});</pre>
+    <pre class="sunlight-highlight-javascript">// scroll to an offset of 100controller.scrollTo(100);// scroll to a DOM elementcontroller.scrollTo("#anchor");// scroll to the beginning of a scenevar scene = new ScrollMagic.Scene({offset: 200});controller.scrollTo(scene);// define a new scroll position modification function (jQuery animate instead of jump)controller.scrollTo(function (newScrollPos) {	$("html, body").animate({scrollTop: newScrollPos});});controller.scrollTo(100); // call as usual, but the new function will be used instead// define a new scroll function with an additional parametercontroller.scrollTo(function (newScrollPos, message) { console.log(message);	$(this).animate({scrollTop: newScrollPos});});// call as usual, but supply an extra parameter to the defined custom functioncontroller.scrollTo(100, "my message");// define a new scroll function with an additional parameter containing multiple variablescontroller.scrollTo(function (newScrollPos, options) { someGlobalVar = options.a + options.b;	$(this).animate({scrollTop: newScrollPos});});// call as usual, but supply an extra parameter containing multiple optionscontroller.scrollTo(100, {a: 1, b: 2});// define a new scroll function with a callback supplied as an additional parametercontroller.scrollTo(function (newScrollPos, callback) {	$(this).animate({scrollTop: newScrollPos}, 400, "swing", callback);});// call as usual, but supply an extra parameter, which is used as a callback in the previously defined custom scroll functioncontroller.scrollTo(100, function() {	console.log("scroll has finished.");});</pre>
 
 
     
@@ -1148,8 +1179,7 @@
     
     
     <div class="description">
-        <p>Updates the controller params and calls updateScene on every scene, that is attached to the controller.<br>See <code>Controller.updateScene()</code> for more information about what this means.<br>In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.<br>The only application for this method is when ScrollMagic fails to detect these events.<br>One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.
-For this case there will also be the need to provide a custom function to calculate the correct scroll position. See <code>Controller.scrollPos()</code> for details.</p>
+        <p>Updates the controller params and calls updateScene on every scene, that is attached to the controller.<br>See <code>Controller.updateScene()</code> for more information about what this means.<br>In most cases you will not need this function, as it is called constantly, whenever ScrollMagic detects a state change event, like resize or scroll.<br>The only application for this method is when ScrollMagic fails to detect these events.<br>One application is with some external scroll libraries (like iScroll) that move an internal container to a negative offset instead of actually scrolling. In this case the update on the controller needs to be called whenever the child container's position changes.<br>For this case there will also be the need to provide a custom function to calculate the correct scroll position. See <code>Controller.scrollPos()</code> for details.</p>
     </div>
     
 
@@ -1251,7 +1281,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-396">line 396</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-408">line 408</a>
     </li></ul></dd>
     
 
@@ -1445,7 +1475,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-357">line 357</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-369">line 369</a>
     </li></ul></dd>
     
 
@@ -1600,7 +1630,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-586">line 586</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-634">line 634</a>
     </li></ul></dd>
     
 
@@ -1754,7 +1784,7 @@ For this case there will also be the need to provide a custom function to calcul
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-562">line 562</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-608">line 608</a>
     </li></ul></dd>
     
 
@@ -1814,10 +1844,8 @@ For this case there will also be the need to provide a custom function to calcul
     
     
     <div class="description">
-        <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:
-When used as a getter this function will return the current scroll position.<br>To get a cached value use Controller.info(&quot;scrollPos&quot;), which will be updated in the update cycle.<br>For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
-<p>-&gt; <strong>SET</strong>:
-When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
+        <p><strong>Get</strong> the current scrollPosition or <strong>Set</strong> a new method to calculate it.<br>-&gt; <strong>GET</strong>:<br>When used as a getter this function will return the current scroll position.<br>To get a cached value use Controller.info(&quot;scrollPos&quot;), which will be updated in the update cycle.<br>For vertical controllers it will return the top scroll offset and for horizontal applications it will return the left offset.</p>
+<p>-&gt; <strong>SET</strong>:<br>When used as a setter this method prodes a way to permanently overwrite the controller's scroll position calculation.<br>A typical usecase is when the scroll position is not reflected by the containers scrollTop or scrollLeft values, but for example by the inner offset of a child container.<br>Moving a child container inside a parent is a commonly used method for several scrolling frameworks, including iScroll.<br>By providing an alternate calculation function you can make sure ScrollMagic receives the correct scroll position.<br>Please also bear in mind that your function should return y values for vertical scrolls an x for horizontals.</p>
 <p>To change the current scroll position please use <code>Controller.scrollTo()</code>.</p>
     </div>
     
@@ -1912,7 +1940,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-496">line 496</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-542">line 542</a>
     </li></ul></dd>
     
 
@@ -2078,7 +2106,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-529">line 529</a>
+        <a href="ScrollMagic_Controller.js.html">ScrollMagic/Controller.js</a>, <a href="ScrollMagic_Controller.js.html#sunlight-1-line-575">line 575</a>
     </li></ul></dd>
     
 
@@ -2152,7 +2180,7 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 					<br />
 					
 		<span class="jsdoc-message">
-		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.3.0-beta1</a>
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc" target="_blank">JSDoc 3.5.5</a>
 		using a customized version of the <a href="https://github.com/terryweiss/docstrap" target="_blank">DocStrap template</a>.
 		</span>
 				</footer>
@@ -2183,7 +2211,11 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 
 	<script>
 		function openDeeplinkedElement (skipAni) {
-			$("dt h4.member-collapsed[id='" + window.location.hash.substring(1).replace(":", "\\:") +"']").trigger("click", skipAni);
+			try {
+				$("dt h4.member-collapsed").filter(window.location.hash.substring(1).replace(":", "\\:")).trigger("click", skipAni);
+			} catch (e) {
+				console.warn("ah ah ah! :p");
+			}
 		}
 		$( function () {
 			$( "#toc" ).toc( {
@@ -2244,6 +2276,6 @@ When used as a setter this method prodes a way to permanently overwrite the cont
 	</script>
 	
 
-	<script type="text/javascript" src="../js/tracking.js"></script>
+	<script type="text/javascript" src="../assets/js/tracking.js"></script>
 </body>
 </html>

@@ -9,15 +9,15 @@
 	<title>Removing & Destroying - Examples - ScrollMagic</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Josefin+Slab:400,700italic' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="../../css/normalize.css" type="text/css">
-	<link rel="stylesheet" href="../../css/style.css" type="text/css">
-	<link rel="stylesheet" href="../../css/examples.css" type="text/css">
-	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="../../assets/css/normalize.css" type="text/css">
+	<link rel="stylesheet" href="../../assets/css/style.css" type="text/css">
+	<link rel="stylesheet" href="../../assets/css/examples.css" type="text/css">
+	<link rel="shortcut icon" href="../../assets/img/favicon.ico" type="image/x-icon">
 
-	<script type="text/javascript" src="../../js/lib/jquery.min.js"></script>
-	<script type="text/javascript" src="../../js/lib/highlight.pack.js"></script>
-	<script type="text/javascript" src="../../js/lib/modernizr.custom.min.js"></script>
-	<script type="text/javascript" src="../../js/examples.js"></script>
+	<script type="text/javascript" src="../../assets/js/lib/jquery.min.js"></script>
+	<script type="text/javascript" src="../../assets/js/lib/highlight.pack.js"></script>
+	<script type="text/javascript" src="../../assets/js/lib/modernizr.custom.min.js"></script>
+	<script type="text/javascript" src="../../assets/js/examples.js"></script>
 	
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
@@ -66,31 +66,33 @@
 					</div>
 					<div class="spacer s2"></div>
 					<script>
-						// init controller
-						var controller = new ScrollMagic.Controller({loglevel: 3});
+						$(function () { // wait for document ready
+							// init controller
+							var controller = new ScrollMagic.Controller({loglevel: 3});
 
-						// build scene
-						var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300, loglevel: 3})
-										.setPin("#destroybox")
-										.addIndicators() // add indicators (requires plugin)
-										.addTo(controller);
+							// build scene
+							var scene = new ScrollMagic.Scene({triggerElement: "#trigger", duration: 300, loglevel: 3})
+											.setPin("#destroybox")
+											.addIndicators() // add indicators (requires plugin)
+											.addTo(controller);
 
 						$("a#destroy").on("click", function (e) {
 							e.preventDefault();
 							if ($(this).hasClass("disabled")) {
 								alert("Already removed. Please reload page to try again.");
-							} else {
-								$(this).addClass("disabled");
-								var reset = $("#reset").prop("checked");
-								if ($("#destroyController").prop("checked")) {
-									controller.destroy(reset);
-									controller = null;
 								} else {
-									scene.destroy(reset);
+									$(this).addClass("disabled");
+									var reset = $("#reset").prop("checked");
+									if ($("#destroyController").prop("checked")) {
+										controller.destroy(reset);
+										controller = null;
+									} else {
+										scene.destroy(reset);
+									}
+									scene = null;
+									tween = null;
 								}
-								scene = null;
-								tween = null;
-							}
+							});
 						});
 					</script>
 				</section>
@@ -98,6 +100,6 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="../../js/tracking.js"></script>
+	<script type="text/javascript" src="../../assets/js/tracking.js"></script>
 </body>
 </html>

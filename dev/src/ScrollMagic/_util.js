@@ -148,7 +148,7 @@ var _util = ScrollMagic._util = (function (window) {
 	};
 	_type.DomElement = function (o){
 		return (
-			typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+			typeof HTMLElement === "object" || typeof HTMLElement === "function"? o instanceof HTMLElement || o instanceof SVGElement : //DOM2
 			o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
 		);
 	};
@@ -169,7 +169,7 @@ var _util = ScrollMagic._util = (function (window) {
 				return arr;
 			}
 		}
-		if (_type(selector) === 'nodelist' || _type.Array(selector)) {
+		if (_type(selector) === 'nodelist' || _type.Array(selector) || selector instanceof NodeList) {
 			for (var i = 0, ref = arr.length = selector.length; i < ref; i++) { // list of elements
 				var elem = selector[i];
 				arr[i] = _type.DomElement(elem) ? elem : _get.elements(elem); // if not an element, try to resolve recursively

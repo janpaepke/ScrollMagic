@@ -19,7 +19,7 @@ So make sure to check it first when inspecting the problem.
 In Chrome the console is opened by clicking "View → Developer → JavaScript console".
 
 If no errors are appear, make use of ScrollMagic's debugging capabilities.
-Both the [controller class](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#constructor) as well as the [scene class](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#constructor) offer the `loglevel` option, and when set to 3 it will output even more useful information.
+Both the [controller class](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor) as well as the [scene class](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor) offer the `loglevel` option, and when set to 3 it will output even more useful information.
 
 - Does the controller update, when you scroll?
 - Is your scene object behaving correctly?
@@ -75,7 +75,8 @@ In order for us to be able to do that efficiently, and also for future users to 
 
 When posting a bug or a question, we request that you keep these guidelines in mind to make it easier for us to get you the best help we can and for everybody else to learn from the answer.
 
- - **Focus**: Only one issue per post, please.
+ - **Focus**: Only one issue per post, please.  
+ Don't hijack someone else's post: If you have a new question, please post a new issue.
  - **Caption**: Try to find a title that helps other people see what the post is about and makes it easy to find later. Avoid generic titles like "Problem with Scrolling".
  - **Description**: Try to describe your problem as simple as possible and always keep in mind that the people reading it have no idea about your project and its parameters. How would you explain it to someone who doesn't even know ScrollMagic?
  - **Configuration**: Please include OS, browser name and other information that might be necessary to reproduce your issue.
@@ -99,9 +100,10 @@ Wanna dig into the source code of ScrollMagic or even contribute? Awesome!
 In order to compile ScrollMagic, you'll need [Node](http://nodejs.org/) and [Gulp](http://gulpjs.com/).
 
 If you don't already have them installed, here's how to get them:  
-First, download and install [Node](http://nodejs.org/download/).  
-Now use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager, that comes installed with Node.  
-To install gulp globally open your console (i.e.MacOS X Terminal) and type: `npm install gulp -g`
+1. Download and install [Node](http://nodejs.org/download/).  
+ Now you can use the <b>n</b>ode <b>p</b>ackage <b>m</b>anager, that comes installed with Node.  
+2. Use it to install the Gulp CLI globally!  
+ In your console (i.e.MacOS X Terminal) type: `npm install gulp-cli -g`
 
 That's it! Now you're set to start developing!
 
@@ -114,18 +116,6 @@ $ npm install
 ```
 
 Sit back and watch the magic happen – once it's done, so are you. Now you're ready to start building and testing.
-
-### Directory Structure
-Here's how the ScrollMagic source files are organized:
-
-* `/dev` base folder for ScrollMagic development
-  * `/dev/build` contains files relevant to the build, like configuration files or the masthead
-  * `/dev/docs` contains configuration and template files for the docs generation
-  * `/dev/src` all the ScrollMagic source files, including plugins
-  * `/dev/tests` unit testing environment
-    * `/dev/tests/fixtures` html files for usage in tests
-    * `/dev/tests/karma` additional js files needed for the tests
-    * `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
 
 ### Build ScrollMagic
 For clarity reasons the ScrollMagic source files are split up and can be found in `/dev/src`.
@@ -140,29 +130,34 @@ $ gulp
 You can pass in various command line arguments to influence the build:
 
 ```
---ver=VERSION
-Updates the ScrollMagic version number
-example: gulp -v=1.0.4
+-b=[RELEASE] | alias: --bump=[RELEASE]
+If supplied, this flag will update the ScrollMagic major, minor or patch version.
+Can be 'major', 'minor' or 'patch' and will default to 'patch', if undefined.
+example: gulp -b=patch
 
--o=DIR      | alias: --out=DIR
+-o=DIR       | alias: --out=DIR
 Define output directory. If not supplied the default directory '/scrollmagic' will be used.
-example: node build -o=tmp
+example: gulp -o=tmp
 
--d=[DIR]    | alias: --doc=[DIR]
+-d=[DIR]     | alias: --doc=[DIR]
 Flag to also update the docs. If no directory is provided the default output directory '/docs' will be used.
-example: node build -d
+example: gulp -d
 
--h          | alias: -?
+--debug
+Enter debug mode: This will allow for 'debugger' statements to pass the source-check during compilation
+example: gulp --debug
+
+-h           | alias: -?
 display available command line options
 ```
 
 For new releases the build command would be:
 
 ```bash
-$ gulp -v=2.1.1 -d
+$ gulp -b -d
 ```
 
-This will update the version to 2.1.1 and also generate new docs.  
+This will update the version from X.X.1 to X.X.2 and also generate new docs.  
 In most cases you won't need these parameters, though.
 
 The build supports another relevant option: During the development phase you won't need to generate minified files or update docs. In order to save time and make the build finish much faster run this:
@@ -201,14 +196,26 @@ When you've added a new feature to ScrollMagic please be sure to write a new tes
 Please __do not__ include dist files in your pull request (everything in `/scrollmagic`).
 They will only be included with a new release and an updated version number.
 
+### Directory Structure
+Here's how the ScrollMagic source files are organized:
+
+* `/dev` base folder for ScrollMagic development
+  * `/dev/build` contains files relevant to the build, like configuration files or the masthead
+  * `/dev/docs` contains configuration and template files for the docs generation
+  * `/dev/src` all the ScrollMagic source files, including plugins
+  * `/dev/tests` unit testing environment
+    * `/dev/tests/fixtures` html files for usage in tests
+    * `/dev/tests/karma` additional js files needed for the tests
+    * `/dev/tests/spec` contains all the spec files written in [jasmine](http://jasmine.github.io)
+
 ---
 
-#Library Support
+# Library Support
 
 There are many ways in which you can support ScrollMagic and contribute to its advancement:
 
  - You can consider making [a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL) so more time can be dedicated to maintaining the source code and helping the users. No donation is too small and every little helps!
- - You can write tutorials, make CodePens and examples to help other users to learn how to use ScrollMagic. If you're interested in contributing to the [ScrollMagic Wiki](https://github.com/janpaepke/ScrollMagic/wiki), please [reach out](mailto:e-mail@janpaepke.de?subject=ScrollMagic Wiki)!
- - You can have a closer look at the at the bottom banner of the [demo page](http://janpaepke.github.io/ScrollMagic) - maybe click it from time to time? :)
+ - You can write tutorials, make CodePens and examples to help other users to learn how to use ScrollMagic. If you're interested in contributing to the [ScrollMagic Wiki](https://github.com/janpaepke/ScrollMagic/wiki), please [reach out](mailto:e-mail@janpaepke.de?subject=ScrollMagic-Wiki)!
+ - You can have a closer look at the at the bottom banner of the [demo page](http://scrollmagic.io) - maybe click it from time to time? :)
  - You can spread the word about ScrollMagic on twitter or Facebook. Hashtag followerpower!
  - And last, but not least: Make awesome websites with ScrollMagic and show the world that this is not a tool meant to be overused and provoke an epileptic shock in the visitor, but engage him/her through content structuring and experience-enhancing storytelling.

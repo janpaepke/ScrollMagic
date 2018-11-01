@@ -1,10 +1,49 @@
 CHANGELOG
 =========
 
-## 2.0.2 (2015-03-23)
+## 2.0.6 (unreleased)
 
-#### changes (potentially breaking):
- - changed file structure for package published via NPM
+#### bugfixes:
+ - errors occurred, when removing a triggerElement [see here](https://github.com/janpaepke/ScrollMagic/issues/307)
+ - semantic error in removePin()
+
+
+## 2.0.5 (2015-04-29)
+
+#### bugfixes:
+ - a JS error occurred in IE9 [see here](https://github.com/janpaepke/ScrollMagic/issues/289)
+ - cascading pins of absolutely positioned elements didn't work [see here](https://github.com/janpaepke/ScrollMagic/issues/291)
+ - scene state wasn't correct at start position [see here](https://github.com/janpaepke/ScrollMagic/issues/299)
+ - updatePinState was called before scrollOffset update [see here](https://github.com/janpaepke/ScrollMagic/pull/303)
+
+
+## 2.0.3 (2015-04-07)
+
+#### changes (non-breaking)
+ - moved to new jQuery plugin definition via npm [see here](http://blog.npmjs.org/post/111475741445/publishing-your-jquery-plugin-to-npm-the-quick)
+ - updated and improved several examples
+ - optimized minification
+ - changed command line options for build (version bumping)
+
+#### bugfixes:
+ - height calculation for pinned elements when using `pushFollowers: false` was faulty
+ - parallax jitter fix for chrome
+ - when using responsive duration and `pushFollowers = true`, an invalid console warning message was triggered
+ - the sourcecode viewer in the examples code was showing modified code
+ - fixed a problem when using the mousewheel to scroll over fixed elements after replacing the default scroll method of the controller
+ - using pinned elements as `Controller.scrollTo()` targets didn't work properly
+ - mousewheel over pinned elements inside of div scroll containers didn't work in IE
+
+#### features
+ - it's now possible to supply additional parameters to custom scrollTo functions [see here](http://scrollmagic.io/docs/ScrollMagic.Controller.html#scrollTo)
+
+#### new examples:
+ - basic: [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html)
+ - advanced: [Section Wipes (manual)](http://scrollmagic.io/examples/advanced/section_wipes_manual.html)
+ - advanced: [Section Slides (manual)](http://scrollmagic.io/examples/advanced/section_slides_manual.html)
+
+
+## 2.0.2 (2015-03-23)
 
 #### bugfixes:
  - Size calculations for pinned elements were off in certain conditions [see here](https://github.com/janpaepke/ScrollMagic/issues/252)
@@ -28,8 +67,8 @@ CHANGELOG
  - new file structure:
    - main module: 'ScrollMagic.js'
    - all available plugins in folder '/plugins'
- - new scene event: [add](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:add) fires when scene is added to a controller
- - new scene event: [remove](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:remove) fires when scene is removed from a controller
+ - new scene event: [add](http://scrollmagic.io/docs/ScrollMagic.Scene.html#event:add) fires when scene is added to a controller
+ - new scene event: [remove](http://scrollmagic.io/docs/ScrollMagic.Scene.html#event:remove) fires when scene is removed from a controller
  - option changes in `Scene.addIndicators()`:
    - indicators are now always on top (option `zindex` removed)
    - option `suffix` is renamed to `name`
@@ -99,8 +138,8 @@ CHANGELOG
 
 #### changes (non-breaking):
  - better code for mobile clicks (See issue [169](https://github.com/janpaepke/ScrollMagic/issues/169))
- - updated [draw example](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html) to camel case to support Firefox
- - updated [parralax sections example](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html) to moving divs instead of background position
+ - updated [draw example](http://scrollmagic.io/examples/advanced/svg_drawing.html) to camel case to support Firefox
+ - updated [parralax sections example](http://scrollmagic.io/examples/advanced/parallax_sections.html) to moving divs instead of background position
  - added new references
  - added favicon
 
@@ -117,7 +156,7 @@ CHANGELOG
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
    Furthemore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
-   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#progress).
+   To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://scrollmagic.io/docs/ScrollMagic.Scene.html#progress).
  - **removed method `startPosition()`**  
    Method was marked deprecated since v1.0.7 and has now been replaced by `triggerPosition()`.  
    The terms "_offset_" and "_position_" were used too randomly.  
@@ -139,13 +178,13 @@ CHANGELOG
    All debug logging functionality was removed when using the minified version to save on filesize.
 
 #### features:
- - new controller method: [scrollTo](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollTo)
- - new controller method: [scrollPos](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Controller.html#scrollPos)
- - new scene method: [refresh](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#refresh)
- - new scene method: [setClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#setClassToggle), [removeClassToggle](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#removeClassToggle) respectively
- - new scene event: [shift](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:shift) fires when scene position changes
- - new scene event: [destroy](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#event:destroy) fires when scene is destroyed
- - extended scene option [duration](http://janpaepke.github.io/ScrollMagic/docs/ScrollMagic.Scene.html#duration) to support dynamic updates in responsive layouts
+ - new controller method: [scrollTo](http://scrollmagic.io/docs/ScrollMagic.Controller.html#scrollTo)
+ - new controller method: [scrollPos](http://scrollmagic.io/docs/ScrollMagic.Controller.html#scrollPos)
+ - new scene method: [refresh](http://scrollmagic.io/docs/ScrollMagic.Scene.html#refresh)
+ - new scene method: [setClassToggle](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setClassToggle), [removeClassToggle](http://scrollmagic.io/docs/ScrollMagic.Scene.html#removeClassToggle) respectively
+ - new scene event: [shift](http://scrollmagic.io/docs/ScrollMagic.Scene.html#event:shift) fires when scene position changes
+ - new scene event: [destroy](http://scrollmagic.io/docs/ScrollMagic.Scene.html#event:destroy) fires when scene is destroyed
+ - extended scene option [duration](http://scrollmagic.io/docs/ScrollMagic.Scene.html#duration) to support dynamic updates in responsive layouts
  - docs: grouped methods for more clear arrangement
  - docs: various additions and clarifications
 
@@ -158,9 +197,9 @@ CHANGELOG
  - event namespace issues
  - docs: fixed highlight & deeplink issues
 
-#### examples:
- - basic: [CSS Class Toggles](http://janpaepke.github.io/ScrollMagic/examples/basic/class_toggles.html)
- - advanced: [SVG Line Drawing](http://janpaepke.github.io/ScrollMagic/examples/advanced/svg_drawing.html)
- - advanced: [Parallax Sections](http://janpaepke.github.io/ScrollMagic/examples/advanced/parallax_sections.html)
- - expert: [Image Sequences](http://janpaepke.github.io/ScrollMagic/examples/expert/image_sequence.html)
- - expert: [Bezier Path Animations](http://janpaepke.github.io/ScrollMagic/examples/expert/bezier_path_animation.html)
+#### new examples:
+ - basic: [CSS Class Toggles](http://scrollmagic.io/examples/basic/class_toggles.html)
+ - advanced: [SVG Line Drawing](http://scrollmagic.io/examples/advanced/svg_drawing.html)
+ - advanced: [Parallax Sections](http://scrollmagic.io/examples/advanced/parallax_sections.html)
+ - expert: [Image Sequences](http://scrollmagic.io/examples/expert/image_sequence.html)
+ - expert: [Bezier Path Animations](http://scrollmagic.io/examples/expert/bezier_path_animation.html)

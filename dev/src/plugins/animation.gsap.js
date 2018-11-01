@@ -34,7 +34,9 @@
 	var NAMESPACE = "animation.gsap";
 
 	// (BUILD) - REMOVE IN MINIFY - START
-	var err = Function.prototype.bind.call((console && (console.error || console.log)) || function() {}, console);
+	var
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
@@ -120,9 +122,9 @@
 					state = Scene.state();
 				if (_tween.repeat && _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
-					if (state === "DURING" && _tween.paused()) {
+					if (state === 'DURING' && _tween.paused()) {
 						_tween.play();
-					} else if (state !== "DURING" && !_tween.paused()) {
+					} else if (state !== 'DURING' && !_tween.paused()) {
 						_tween.pause();
 					}
 				} else if (progress != _tween.progress()) { // do we even need to update the progress?

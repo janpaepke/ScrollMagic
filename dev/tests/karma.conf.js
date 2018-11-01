@@ -7,7 +7,7 @@ module.exports = function(config) {
     // needed files
     files: [
       // libs
-      {included: false, pattern: 'js/lib/**/*.js'},
+      {included: false, pattern: 'assets/js/lib/**/*.js'},
       // additional libs & settings
       {included: false, pattern: 'dev/tests/karma/**/*.js'},
       // fixtures

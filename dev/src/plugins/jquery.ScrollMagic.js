@@ -1,7 +1,7 @@
 /*!
  * @file ScrollMagic jQuery plugin.
  *
- * requires: jQuery ~1.11 or ~2.1
+ * requires: jQuery >=1.11
  */
 /**
  * This plugin is meant to be used in conjunction with jQuery.  
@@ -18,7 +18,7 @@
  * var scene = new $.ScrollMagic.Scene({
  *   triggerElement: "#parent div.trigger[attr='thisone']:not(.notthisone)"
  * });
- * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
+ * @requires {@link http://jquery.com/|jQuery >=1.11}
  * @mixin framework.jQuery
  */
 (function (root, factory) {
@@ -37,7 +37,9 @@
 	var NAMESPACE = "jquery.ScrollMagic";
 
 	// (BUILD) - REMOVE IN MINIFY - START
-	var err = Function.prototype.bind.call((console && (console.error || console.log)) || function() {}, console);
+	var
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function() {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}

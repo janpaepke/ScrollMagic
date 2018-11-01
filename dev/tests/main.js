@@ -53,12 +53,12 @@ function loadTests() {
 				// specs
 				"spec": "dev/tests/spec",
 				// libs
-				"velocity": "js/lib/velocity.min",
-				"TweenLite": "js/lib/greensock/TweenLite.min",
-				"TweenMax": "js/lib/greensock/TweenMax.min",
-				"TimelineLite": "js/lib/greensock/TimelineLite.min",
-				"TimelineMax": "js/lib/greensock/TimelineMax.min",
-				"jquery": "js/lib/jquery.min",
+				"velocity": "assets/js/lib/velocity.min",
+				"TweenLite": "assets/js/lib/greensock/TweenLite.min",
+				"TweenMax": "assets/js/lib/greensock/TweenMax.min",
+				"TimelineLite": "assets/js/lib/greensock/TimelineLite.min",
+				"TimelineMax": "assets/js/lib/greensock/TimelineMax.min",
+				"jquery": "assets/js/lib/jquery.min",
 				"jasmine-jquery": "dev/tests/karma/vendor/jasmine-jquery"
 			},
 			shim: {

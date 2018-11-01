@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.2 (2015-03-23)
+ * ScrollMagic v2.0.6 (2018-10-08)
  * The javascript library for magical scroll interactions.
- * (c) 2015 Jan Paepke (@janpaepke)
- * Project Website: http://janpaepke.github.io/ScrollMagic
+ * (c) 2018 Jan Paepke (@janpaepke)
+ * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.2
+ * @version 2.0.6
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -40,8 +40,10 @@
 	"use strict";
 	var NAMESPACE = "animation.velocity";
 
-	var err = Function.prototype.bind.call((console && (console.error || console.log)) ||
-	function () {}, console);
+	var
+	console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log ||
+		function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}

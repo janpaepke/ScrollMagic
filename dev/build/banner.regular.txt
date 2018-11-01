@@ -2,7 +2,7 @@
  * ScrollMagic v%VERSION% (%YEAR%-%MONTH%-%DAY%)
  * %DESCRIPTION%
  * (c) %YEAR% Jan Paepke (@janpaepke)
- * Project Website: http://janpaepke.github.io/ScrollMagic
+ * Project Website: http://scrollmagic.io
  * 
  * @version %VERSION%
  * @license Dual licensed under MIT license and GPL.

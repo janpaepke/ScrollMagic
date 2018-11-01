@@ -54,29 +54,29 @@
     <meta name="designer"           content="Jan Paepke (www.janpaepke.de)">
     <meta property="fb:admins"      content="595418934">
     <meta property="og:type"        content="website">
-    <meta property="og:url"         content="http://janpaepke.github.io/ScrollMagic/">
-    <meta property="og:image"       content="http://janpaepke.github.io/ScrollMagic/img/demo_fb_preview.jpg">
+    <meta property="og:url"         content="http://scrollmagic.io/">
+    <meta property="og:image"       content="http://scrollmagic.io/assets/img/demo_fb_preview.jpg">
     <meta property="og:title"       content="ScrollMagic">
     <meta property="og:description" content="The javascript library for magical scroll interactions. ScrollMagic helps you to easily react to the user's current scroll position.">
 
-    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="img/apple-touch-icon-precomposed.png">
+    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon-precomposed.png">
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic|Roboto+Condensed:400,300,700">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/demo.css">
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/demo.css">
 
-    <script src="js/lib/greensock/TweenMax.min.js"></script>
-    <script src="js/lib/greensock/plugins/ScrollToPlugin.min.js"></script>
-    <script src="js/lib/jquery.min.js"></script>
-    <script src="js/lib/modernizr.custom.min.js"></script>
-    <script src="js/lib/iscroll-probe.js"></script>
+    <script src="assets/js/lib/greensock/TweenMax.min.js"></script>
+    <script src="assets/js/lib/greensock/plugins/ScrollToPlugin.min.js"></script>
+    <script src="assets/js/lib/jquery.min.js"></script>
+    <script src="assets/js/lib/modernizr.custom.min.js"></script>
+    <script src="assets/js/lib/iscroll-probe.js"></script>
     <script src="scrollmagic/minified/ScrollMagic.min.js"></script>
     <script src="scrollmagic/minified/plugins/animation.gsap.min.js"></script>
     <script src="scrollmagic/minified/plugins/debug.addIndicators.min.js"></script>
-    <script src="js/demo.js"></script>
+    <script src="assets/js/demo.js"></script>
 
 </head>
 <body>
@@ -144,12 +144,11 @@
                 // set current version in cdn link(s)
                 var cdnLinks = [
                     "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/ScrollMagic.min.js",
-                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/addIndicators.min.js",
+                    "cdnjs.cloudflare.com/ajax/libs/ScrollMagic/%version%/plugins/debug.addIndicators.min.js",
                 ];
                 var cdnCode = cdnLinks.map(function(link) {
                     return '<script src="//' + link.replace(/%version%/gim, ScrollMagic.version) + '"></script' + '>';
                 }).join("\n");
-                console.log(cdnCode);
 
                 $("<pre>").text(cdnCode).appendTo("#get-it-now code.cdn");
             });
@@ -168,18 +167,18 @@
                     <code class="cdn active item">
                     </code>
                     <code class="bower item">
-                        bower install ScrollMagic
+                        bower install scrollmagic
                     </code>
                     <code class="npm item">
-                        npm install ScrollMagic
+                        npm install scrollmagic
                     </code>
                     <div class="item download">
                         <a href="https://github.com/janpaepke/ScrollMagic/zipball/master"><i class="fa fa-download"></i> Download (zip)</a>
                         <a href="https://github.com/janpaepke/ScrollMagic/tarball/master"><i class="fa fa-download"></i> Download (tar)</a>
                     </div>
                 </div>
-                <img class="tophat" src="img/demo_tophat.png">
-                <img class="wand" src="img/demo_wand.png">
+                <img class="tophat" src="assets/img/demo_tophat.png">
+                <img class="wand" src="assets/img/demo_wand.png">
                 <div class="sparkpoint"></div>
                 <script>
                 $('#toggle.buttons a.has-code').click(function() {
@@ -194,8 +193,15 @@
                     return false;
                 });
                 </script>
-
-
+                <script async src="http://pagead2.googlesyndication.com/pagead/assets/js/adsbygoogle.js"></script>
+                <!-- ScrollMagic2 -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:728px;height:90px;position:absolute;bottom:-120px;left:-39px;"
+                     data-ad-client="ca-pub-8391065704522728"
+                     data-ad-slot="5081761290"></ins>
+                <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
             </div>
             <script>
                 // wrap each title letter
@@ -298,12 +304,12 @@
                             <p>check out the</p>
                             <p>examples</p>
                         </div>
-                        <img class="hat" src="img/demo_hat.png">
+                        <img class="hat" src="assets/img/demo_hat.png">
                         <div id="bunny">
-                            <img src="img/demo_bunny.png">
-                            <img class="eye" src="img/demo_bunny_wink.png">
+                            <img src="assets/img/demo_bunny.png">
+                            <img class="eye" src="assets/img/demo_bunny_wink.png">
                         </div>
-                        <img class="hat" src="img/demo_hat_front.png">
+                        <img class="hat" src="assets/img/demo_hat_front.png">
                     </a>
                 </div>
                 <p>
@@ -353,32 +359,35 @@
                     Check out these amazing websites that were created using ScrollMagic.
                 </p>
                 <div id="madewith" class="clearfix">
+                    <a href="http://alfredservice.com" target="_blank" title="alfred">
+                        <img src="assets/img/madewith_alfred.jpg" alt="">
+                    </a>
                     <a href="https://digital.scotch.io" target="_blank" title="Scotch Digital">
-                        <img src="img/madewith_scotchdigital.jpg" alt="">
+                        <img src="assets/img/madewith_scotchdigital.jpg" alt="">
                     </a>
                     <a href="http://www.viko.net" target="_blank" title="viko">
-                        <img src="img/madewith_viko.jpg" alt="">
+                        <img src="assets/img/madewith_viko.jpg" alt="">
                     </a>
                     <a href="https://www.tinkapp.com/en/" target="_blank" title="tink">
-                        <img src="img/madewith_tink.jpg" alt="">
+                        <img src="assets/img/madewith_tink.jpg" alt="">
                     </a>
                     <a href="http://buntspenden.bleech.de/" target="_blank" title="Bunt Spenden">
-                        <img src="img/madewith_buntspenden.jpg" alt="">
+                        <img src="assets/img/madewith_buntspenden.jpg" alt="">
                     </a>
                     <a href="http://www.flyacts.com/multi-channel-app/" target="_blank" title="Multi Channel App">
-                        <img src="img/madewith_flyacts.jpg" alt="">
+                        <img src="assets/img/madewith_flyacts.jpg" alt="">
                     </a>
                     <a href="http://www.lempens-design.com/" target="_blank" title="Sébastien Lempens Design">
-                        <img src="img/madewith_sebastienlempens.jpg" alt="">
+                        <img src="assets/img/madewith_sebastienlempens.jpg" alt="">
                     </a>
                     <a href="https://developers.google.com/cardboard/" target="_blank" title="The Google Cardboard Project">
-                        <img src="img/madewith_googlecardboard.jpg" alt="">
+                        <img src="assets/img/madewith_googlecardboard.jpg" alt="">
                     </a>
                     <a href="http://www.appliancetecltd.com" target="_blank" title="Appliance Tec Limited">
-                        <img src="img/madewith_appliancetec.jpg" alt="">
+                        <img src="assets/img/madewith_appliancetec.jpg" alt="">
                     </a>
                     <a href="http://www.framescollection.com/tunnelrats.html" target="_blank" title="Frames Collection Edition 2: Tunnel Rats">
-                        <img src="img/madewith_framescollection.jpg" alt="">
+                        <img src="assets/img/madewith_framescollection.jpg" alt="">
                     </a>
                 </div>
                 <h3>Credits</h3>
@@ -454,6 +463,6 @@
             </script>
         </section>
     </div>
-    <script src="js/tracking.js"></script>
+    <script src="assets/js/tracking.js"></script>
 </body>
 </html>
