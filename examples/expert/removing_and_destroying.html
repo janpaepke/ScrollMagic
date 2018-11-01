@@ -78,7 +78,7 @@
 						$("a#destroy").on("click", function (e) {
 							e.preventDefault();
 							if ($(this).hasClass("disabled")) {
-								alert("Already removed. Please relead page to try again.");
+								alert("Already removed. Please reload page to try again.");
 							} else {
 								$(this).addClass("disabled");
 								var reset = $("#reset").prop("checked");
