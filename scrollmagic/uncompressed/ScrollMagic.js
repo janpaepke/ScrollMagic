@@ -1317,6 +1317,8 @@
 				reset: reset
 			});
 			Scene.remove();
+			//need to clear triggerElement reference avoid memory leaks and detached dom nodes
+			Scene.triggerElement(null);
 			Scene.off("*.*");
 			log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 			return null;
@@ -2309,6 +2311,8 @@
 				_pin.removeEventListener("mousewheel", onMousewheelOverPin);
 				_pin.removeEventListener("DOMMouseScroll", onMousewheelOverPin);
 				_pin = undefined;
+				//remove reference to spacer elements to avoid memory leaks and avoid detached dom nodes
+				_pinOptions.spacer = null;
 				log(3, "removed pin (reset: " + (reset ? "true" : "false") + ")");
 			}
 			return Scene;

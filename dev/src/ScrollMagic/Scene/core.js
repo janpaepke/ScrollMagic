@@ -130,6 +130,8 @@ this.remove = function () {
 this.destroy = function (reset) {
 	Scene.trigger("destroy", {reset: reset});
 	Scene.remove();
+	//need to clear triggerElement reference avoid memory leaks and detached dom nodes
+        Scene.triggerElement(null);
 	Scene.off("*.*");
 	log(3, "destroyed " + NAMESPACE + " (reset: " + (reset ? "true" : "false") + ")");
 	return null;
