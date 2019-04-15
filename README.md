@@ -4,6 +4,9 @@
 
 [![Donate](./assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](./assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io/?utm_source=github&utm_medium=btn "Get expert help!")
 
+__Quicklinks:__ [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
+
+---
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
 
@@ -140,7 +143,7 @@ Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic
 
 If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
 
-*Please do not post support requests in the github issue section*, as it's reserverd for issue and bug reporting.
+__Please do not post support requests in the github issue section__, as it's reserverd for issue and bug reporting.
 If all above options for self-help fail, please use the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link) or [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic).
 
 ## Browser Support
