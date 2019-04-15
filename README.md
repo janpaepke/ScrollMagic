@@ -2,7 +2,7 @@
 
 ### The javascript library for magical scroll interactions.
 
-[![Donate](./assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](./assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io "Get expert help!")
+[![Donate](./assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](./assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io/?utm_source=github&utm_medium=btn "Get expert help!")
 
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
@@ -37,7 +37,7 @@ ScrollMagic was developed with these principles in mind:
 * support for responsive web design
 * object oriented programming and object chaining
 * readable, centralized code and intuitive development
-* support for both scroll directions (even different on one page)
+* support for both x and y direction scorlling (even both on one page)
 * support for scrolling inside div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 * detailed documentation
@@ -139,19 +139,20 @@ To get started, check out the available learning resources [in the wiki section]
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 
 If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
-Should you still be unable to figure it out, feel free to post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
+
+*Please do not post support requests in the github issue section*, as it's reserverd for issue and bug reporting.
+If all above options for self-help fail, please use the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link) or [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic).
 
 ## Browser Support
 
-ScrollMagic aims to support all major browsers in recent versions:  
+ScrollMagic aims to support all major browsers even in older versions:  
 Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+
 
 ## About the Author
 
-I am a digital creative based in Lausanne, Switzerland.  
-I started this project to extend my understanding of javascript (which it has).
+I am a creative coder based in Vienna, Austria.
 
-[Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
+[Learn more on my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
 
 ## License
 
