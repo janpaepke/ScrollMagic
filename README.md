@@ -1,27 +1,8 @@
-# Status Update
-
-### It's aliiiive!
-
-After quite some time of neglect, development on ScrollMagic will finally resume this year. (hurray!)
-The goal is to make it stable and put enough security checks in to open it up more to public contribution.
-
-Here's the rough milestone outline:
-
-1. ~~Release new version including previously finished fixes.~~
-2. ~~Update all development dependencies.~~
-3. ~~Fix compilation errors (travis + unit tests).~~
-4. Update Website (Examples + other outdated info)
-5. Build / Finalize proper Unit Tests (with support from [joewanko](https://github.com/joewanko)).
-6. Screen all pull requests and merge if approved and pass all tests.
-7. Open project to a wider group of contributors.
-
-If you want to contribute please [get in touch](http://www.janpaepke.de) and let me know about your specialty and experience.
-
----
-
 # ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.6</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
 
-### The javascript library for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
+### The javascript library for magical scroll interactions.
+
+[![Donate](./assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](./assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io "Get expert help!")
 
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
@@ -33,7 +14,8 @@ It's the perfect library for you, if you want to ...
 * create an infinitely scrolling page (ajax load of additional content).
 * add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.
 
-Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.
+Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.  
+If you want to contribute please [get in touch](mailto:e-mail@janpaepke.de) and let me know about your specialty and experience.
 
 ## About the Library
 
