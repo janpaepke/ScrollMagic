@@ -1,17 +1,27 @@
 # Source
+ - change: make toogle class default behaviour: https://github.com/janpaepke/ScrollMagic/pull/421
  - update: update velocity - best wait for v2 release. https://github.com/julianshapiro/velocity/releases
  - feature: new plugin: mobile scrolling
- - feature: new plugin: AngularJS
- - bug: find better solution for chrome parrallax workaround (dev/src/ScrollMagic.js:28)
+ - change: swap bower for yarn/webpack?
+ - bug: find better solution for chrome parallax workaround (dev/src/ScrollMagic.js:28)
+ - fix: don't show pushFollowers warning if duration 0 and pushFollowers is not actively set.
 
 # Build
- - autoupdate npm on new git version
+ - fix docs template for anchor links
+ - autoupdate npm on new git version (still needed?)
 
 # Testing
  - add missing tests (core methods, _utils)
 
 # Project
+ - rework contributing.md
+ - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
+ - update CONTRIBUTING.md with all gulp build options	
+ - add scroll reveal example
+ - replace bower example with webpack in readme.md
+ - fix google analytics
  - add missing private docs (global search TODO)
+
 
 # Release Guide
 - add release date and changes to CHANGELOG.md
