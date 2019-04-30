@@ -1,7 +1,29 @@
 CHANGELOG
 =========
 
-## 2.0.6 (unreleased)
+## 2.X.X (unreleased)
+
+#### features:
+- pass Scene as `this` to duration callback [PR 419](https://github.com/janpaepke/ScrollMagic/pull/419)
+- Increase fps limit for mobile support(advance) example. [PR 753](https://github.com/janpaepke/ScrollMagic/pull/753)
+
+#### bugfixes:
+- Error in Safari when using setPin [PR 382](https://github.com/janpaepke/ScrollMagic/pull/382)
+- Fixed SVG element detection as Dom Element and related Error on Safari [PR 447](https://github.com/janpaepke/ScrollMagic/pull/447)
+- Added missing semi-colon to isMobile regex [PR 617](https://github.com/janpaepke/ScrollMagic/pull/617)
+
+#### changes (non-breaking):
+ - updated: [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html) to work for large number of sections.
+ - some speelling stuff
+
+#### project management:
+ - New Build routine for gulp 4
+ - Updated all Dependencies
+ - Fixed Unit Tests
+ - Added Buttons for [ScrollMagic Premium Support](http://support.scrollmagic.io).
+ - changed folder structure for a tidier root
+
+## 2.0.6 (2018-10-08)
 
 #### bugfixes:
  - errors occurred, when removing a triggerElement [see here](https://github.com/janpaepke/ScrollMagic/issues/307)
