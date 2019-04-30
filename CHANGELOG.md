@@ -6,6 +6,7 @@ CHANGELOG
 #### features:
 - pass Scene as `this` to duration callback [PR 419](https://github.com/janpaepke/ScrollMagic/pull/419)
 - Increase fps limit for mobile support(advance) example. [PR 753](https://github.com/janpaepke/ScrollMagic/pull/753)
+- added documentation for responsive duration (e.g. "100%")
 
 #### bugfixes:
 - Error in Safari when using setPin [PR 382](https://github.com/janpaepke/ScrollMagic/pull/382)
@@ -14,7 +15,7 @@ CHANGELOG
 
 #### changes (non-breaking):
  - updated: [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html) to work for large number of sections.
- - some speelling stuff
+ - fixed some spelling stuff
 
 #### project management:
  - New Build routine for gulp 4
