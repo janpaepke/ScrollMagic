@@ -43,11 +43,11 @@ html.touch .touchonly {
 	-o-user-select: none;
 }
 .doselect * {
-	user-select: auto;
-	-webkit-user-select: auto;
-	-khtml-user-select: auto;
-	-moz-user-select: auto;
-	-o-user-select: auto;
+	user-select: text;
+	-webkit-user-select: text;
+	-khtml-user-select: text;
+	-moz-user-select: text;
+	-o-user-select: text;
 }
 
 .clearfix:after {

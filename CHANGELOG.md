@@ -12,6 +12,7 @@ CHANGELOG
 - Error in Safari when using setPin [PR 382](https://github.com/janpaepke/ScrollMagic/pull/382)
 - Fixed SVG element detection as Dom Element and related Error on Safari [PR 447](https://github.com/janpaepke/ScrollMagic/pull/447)
 - Added missing semi-colon to isMobile regex [PR 617](https://github.com/janpaepke/ScrollMagic/pull/617)
+ - fixed code selection in examples
 
 #### changes (non-breaking):
  - updated: [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html) to work for large number of sections.
