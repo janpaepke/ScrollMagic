@@ -1,15 +1,14 @@
 # Source
  - change: make toogle class default behaviour: https://github.com/janpaepke/ScrollMagic/pull/421
+  - update Reveal on Scroll example to work with above bevhaviour (maybe remove a class instead of adding)
  - update: update velocity - best wait for v2 release. https://github.com/julianshapiro/velocity/releases
- - feature: new plugin: mobile scrolling
- - change: swap bower for yarn/webpack?
  - bug: find better solution for chrome parallax workaround (dev/src/ScrollMagic.js:28)
- - fix: don't show pushFollowers warning if duration 0 and pushFollowers is not actively set.
  - feature: allow duration to be something like "100% + 20" to have a fixed value added to a relative one. 
+ - feature: new plugin: mobile scrolling
 
 # Build
  - fix docs template for anchor links
- - autoupdate npm on new git version (still needed?)
+ - autoupdate npm (publish) on new git version (still needed?)
 
 # Testing
  - add missing tests (core methods, _utils)
@@ -18,10 +17,11 @@
  - rework contributing.md
  - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
  - update CONTRIBUTING.md with all gulp build options
- - replace bower example with webpack in readme.md
+ - fix npm start (gulp open-demo) and add npm build
  - fix google analytics
  - add missing private docs (global search TODO)
  - fix example sourcecode display to show unmodified code (i.e. when SM adds classes it will be shown)
+ - replace bower with yarn/webpack? concerns examples in readme.md, website and potentially sourcecode
 
 
 # Release Guide
