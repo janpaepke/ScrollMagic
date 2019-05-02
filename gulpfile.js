@@ -24,6 +24,7 @@ var
 	uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
+	open =				require('open'),
 
 	// custom built
 	log = 				require('./dev/build/logger'),
@@ -329,6 +330,10 @@ var runKarmaTests = function (cb) {
   	.start();
 }
 
+var openDemo = function () {
+	return open("./index.html");
+}
+
 /* ########################################## */
 /* ############# exposed tasks ############## */
 /* ########################################## */
@@ -352,6 +357,8 @@ gulp.task('build:minified', buildMinified);
 gulp.task('test', runTests);
 
 gulp.task('generate:docs', generateDocs);
+
+gulp.task('open-demo', openDemo);
 
 gulp.task('travis-ci', gulp.series(sourceErrorcheck, buildAll, runKarmaTests));
 

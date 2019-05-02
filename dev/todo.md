@@ -1,3 +1,10 @@
+# TODO BEFORE PUBLISH
+ - rework contributing.md
+ - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
+ - update CONTRIBUTING.md with all gulp build options - change to use npx?
+ - fix google analytics
+
+
 # Source
  - change: make toogle class default behaviour: https://github.com/janpaepke/ScrollMagic/pull/421
   - update Reveal on Scroll example to work with above bevhaviour (maybe remove a class instead of adding)
@@ -14,11 +21,6 @@
  - add missing tests (core methods, _utils)
 
 # Project
- - rework contributing.md
- - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
- - update CONTRIBUTING.md with all gulp build options
- - fix npm start (gulp open-demo) and add npm build
- - fix google analytics
  - add missing private docs (global search TODO)
  - fix example sourcecode display to show unmodified code (i.e. when SM adds classes it will be shown)
  - replace bower with yarn/webpack? concerns examples in readme.md, website and potentially sourcecode

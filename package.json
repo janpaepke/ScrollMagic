@@ -38,6 +38,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
     "karma-requirejs": "^1.1.0",
+    "open": "^6.2.0",
     "pretty-bytes": "^5.1.0",
     "requirejs": "^2.3.6",
     "semver": "^5.5.1",
