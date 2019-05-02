@@ -5,6 +5,7 @@
  - change: swap bower for yarn/webpack?
  - bug: find better solution for chrome parallax workaround (dev/src/ScrollMagic.js:28)
  - fix: don't show pushFollowers warning if duration 0 and pushFollowers is not actively set.
+ - feature: allow duration to be something like "100% + 20" to have a fixed value added to a relative one. 
 
 # Build
  - fix docs template for anchor links
@@ -16,11 +17,11 @@
 # Project
  - rework contributing.md
  - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
- - update CONTRIBUTING.md with all gulp build options	
- - add scroll reveal example
+ - update CONTRIBUTING.md with all gulp build options
  - replace bower example with webpack in readme.md
  - fix google analytics
  - add missing private docs (global search TODO)
+ - fix example sourcecode display to show unmodified code (i.e. when SM adds classes it will be shown)
 
 
 # Release Guide

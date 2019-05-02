@@ -11,6 +11,7 @@ var
 				"scene_manipulation.html" :			"Scene Manipulation",
 				"going_horizontal.html" :				"Going Horizontal",
 				"class_toggles.html" :					"CSS Class Toggles",
+				"reveal_on_scroll.html" :				"Reveal on Scroll",
 				"responsive_duration.html" :		"Responsive Duration",
 				"custom_actions.html" :					"Custom Actions",
 				"debugging.html" :							"Debugging",

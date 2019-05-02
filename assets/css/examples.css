@@ -290,6 +290,13 @@ h1.badge.velocity:after {
 	font-weight: lighter;
 	color: white;
 }
+#reveal-elements .digit {
+	vertical-align: top;
+}
+#reveal-elements .digit p {
+	font-size: 35px;
+	font-weight: bold;
+}
 .box1 p:first-child {
 	margin-top: 27px;
 }
