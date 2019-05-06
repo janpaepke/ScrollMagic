@@ -1,4 +1,4 @@
-#License
+# License
 
 ScrollMagic is dual licensed under the terms of the MIT license (below) and the [GPL](http://www.gnu.org/licenses/gpl-3.0.html).
 
@@ -11,7 +11,7 @@ For some cases the extended ["Business Green" license](http://greensock.com/lice
 
 ---
 
-##MIT License
+## MIT License
 
 Copyright (c) 2015 Jan Paepke
 

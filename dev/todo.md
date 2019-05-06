@@ -1,7 +1,4 @@
-# TODO BEFORE PUBLISH
- - rework contributing.md
- - update CONTRIBUTING.md with a better instructon for PRs (what files to commit etc.)
- - update CONTRIBUTING.md with all gulp build options - change to use npx?
+# TODO BEFORE NEXT RELEASE
  - fix google analytics
 
 
