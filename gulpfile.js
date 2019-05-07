@@ -24,6 +24,7 @@ var
 	uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
+	open =				require('open'),
 
 	// custom built
 	log = 				require('./dev/build/logger'),
@@ -49,6 +50,7 @@ var args = yargs
 		.default('d', false)
 	.describe('b', 'Bumps ScrollMagic version number.')
 		.choices('b', ['patch', 'minor', 'major'])
+		.coerce('b', (val) => (val === true) ? "patch" : val) // use 'patch' if only -b is used
 		.alias('b', 'bump')
 	.describe('debug', 'Enters debug mode: Allows \'debugger\' statements to remain in the code during compilation.')
 		.default('debug', false)
@@ -60,16 +62,6 @@ var args = yargs
 	.example("$0 --doc=newdocs", 	'build and generate new docs into folder "newdocs"')
 	.example("$0 --bump=patch", 	'build and update version number from to 2.1.1 to 2.1.2')
 	.argv;
-
-// validate parameters
-if (args.bump) {
-	var validBumps = ["patch", "minor", "major"];
-	if (args.bump === true) {
-		args.b = args.bump = validBumps[0];
-	} else if (validBumps.indexOf(args.bump) === -1) {
-		log.exit("Supplied option for bump ('" + args.bump + "') is invalid. Allowed values are: '" + validBumps.join("', '") + "'");
-	}
-}
 
 /* ########################################## */
 /* ################ settings ################ */
@@ -329,6 +321,10 @@ var runKarmaTests = function (cb) {
   	.start();
 }
 
+var openDemo = function () {
+	return open("./index.html");
+}
+
 /* ########################################## */
 /* ############# exposed tasks ############## */
 /* ########################################## */
@@ -352,6 +348,8 @@ gulp.task('build:minified', buildMinified);
 gulp.task('test', runTests);
 
 gulp.task('generate:docs', generateDocs);
+
+gulp.task('open-demo', openDemo);
 
 gulp.task('travis-ci', gulp.series(sourceErrorcheck, buildAll, runKarmaTests));
 

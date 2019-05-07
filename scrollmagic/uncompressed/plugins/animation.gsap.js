@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.6 (2018-10-08)
+ * ScrollMagic v2.0.7 (2019-05-07)
  * The javascript library for magical scroll interactions.
- * (c) 2018 Jan Paepke (@janpaepke)
+ * (c) 2019 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.6
+ * @version 2.0.7
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -43,9 +43,8 @@
 	var NAMESPACE = "animation.gsap";
 
 	var
-	console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
@@ -53,7 +52,7 @@
 		err("(" + NAMESPACE + ") -> ERROR: TweenLite or TweenMax could not be found. Please make sure GSAP is loaded before ScrollMagic or use an asynchronous loader like requirejs.");
 	}
 
-/*
+	/*
 	 * ----------------------------------------------------------------
 	 * Extensions for Scene
 	 * ----------------------------------------------------------------
@@ -68,7 +67,7 @@
 	 *
 	 * @param {object} [options] - Options for the Scene. The options can be updated at any time.
 	 * @param {boolean} [options.tweenChanges=false] - Tweens Animation to the progress target instead of setting it.  
-	 Does not affect animations where duration is `0`.
+	 												  Does not affect animations where duration is `0`.
 	 */
 	/**
 	 * **Get** or **Set** the tweenChanges option value.  
@@ -90,13 +89,13 @@
 	 * @returns {Scene} `set` -  Parent object for chaining.
 	 */
 	// add option (TODO: DOC (private for dev))
-	ScrollMagic.Scene.addOption("tweenChanges", // name
-	false, // default
-
-
-	function (val) { // validation callback
-		return !!val;
-	});
+	ScrollMagic.Scene.addOption(
+		"tweenChanges", // name
+		false, // default
+		function (val) { // validation callback
+			return !!val;
+		}
+	);
 	// extend scene
 	ScrollMagic.Scene.extend(function () {
 		var Scene = this,
@@ -124,7 +123,7 @@
 		var updateTweenProgress = function () {
 			if (_tween) {
 				var
-				progress = Scene.progress(),
+					progress = Scene.progress(),
 					state = Scene.state();
 				if (_tween.repeat && _tween.repeat() === -1) {
 					// infinite loop, so not in relation to progress
@@ -209,8 +208,9 @@
 				// wrap Tween into a Timeline Object if available to include delay and repeats in the duration and standardize methods.
 				if (Timeline) {
 					newTween = new Timeline({
-						smoothChildTiming: true
-					}).add(TweenObject);
+							smoothChildTiming: true
+						})
+						.add(TweenObject);
 				} else {
 					newTween = TweenObject;
 				}
@@ -230,6 +230,7 @@
 				_tween.yoyo(TweenObject.yoyo());
 			}
 			// Some tween validations and debugging helpers
+
 			if (Scene.tweenChanges() && !_tween.tweenTo) {
 				log(2, "WARNING: tweenChanges will only work if the TimelineMax object is available for ScrollMagic.");
 			}
@@ -237,11 +238,11 @@
 			// check if there are position tweens defined for the trigger and warn about it :)
 			if (_tween && Scene.controller() && Scene.triggerElement() && Scene.loglevel() >= 2) { // controller is needed to know scroll direction.
 				var
-				triggerTweens = Tween.getTweensOf(Scene.triggerElement()),
+					triggerTweens = Tween.getTweensOf(Scene.triggerElement()),
 					vertical = Scene.controller().info("vertical");
 				triggerTweens.forEach(function (value, index) {
 					var
-					tweenvars = value.vars.css || value.vars,
+						tweenvars = value.vars.css || value.vars,
 						condition = vertical ? (tweenvars.top !== undefined || tweenvars.bottom !== undefined) : (tweenvars.left !== undefined || tweenvars.right !== undefined);
 					if (condition) {
 						log(2, "WARNING: Tweening the position of the trigger element affects the scene timing and should be avoided!");
@@ -253,12 +254,12 @@
 			// warn about tween overwrites, when an element is tweened multiple times
 			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
 				var
-				list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween],
-					// get all nested tween objects
+					list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
 					newCallback = function () {
 						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
 					};
-				for (var i = 0, thisTween, oldCallback; i < list.length; i++) { /*jshint loopfunc: true */
+				for (var i = 0, thisTween, oldCallback; i < list.length; i++) {
+					/*jshint loopfunc: true */
 					thisTween = list[i];
 					if (oldCallback !== newCallback) { // if tweens is added more than once
 						oldCallback = thisTween.vars.onOverwrite;

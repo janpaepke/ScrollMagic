@@ -258,6 +258,9 @@
 <span class="param-type">number</span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">function</span>
 
 
@@ -284,7 +287,7 @@
                 </td>
             
 
-            <td class="description last"><p>The duration of the scene.<br>                                           If <code>0</code> tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.<br>                                           A function returning the duration value is also supported. Please see <code>Scene.duration()</code> for details.</p></td>
+            <td class="description last"><p>The duration of the scene.<br>                     Please see <code>Scene.duration()</code> for details.</p></td>
         </tr>
 
 	
@@ -535,7 +538,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene.js.html">ScrollMagic/Scene.js</a>, <a href="ScrollMagic_Scene.js.html#sunlight-1-line-40">line 40</a>
+        <a href="ScrollMagic_Scene.js.html">ScrollMagic/Scene.js</a>, <a href="ScrollMagic_Scene.js.html#sunlight-1-line-39">line 39</a>
     </li></ul></dd>
     
 
@@ -768,7 +771,7 @@ scene.addTo(controller);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-226">line 226</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-235">line 235</a>
     </li></ul></dd>
     
 
@@ -1638,7 +1641,7 @@ scene.removeClassToggle(true);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_feature-pinning.js.html">ScrollMagic/Scene/feature-pinning.js</a>, <a href="ScrollMagic_Scene_feature-pinning.js.html#sunlight-1-line-339">line 339</a>
+        <a href="ScrollMagic_Scene_feature-pinning.js.html">ScrollMagic/Scene/feature-pinning.js</a>, <a href="ScrollMagic_Scene_feature-pinning.js.html#sunlight-1-line-342">line 342</a>
     </li></ul></dd>
     
 
@@ -2337,8 +2340,13 @@ scene.update(true);</pre>
     
     
     <div class="description">
-        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.<br>As a setter it also accepts a function returning a numeric value.<br>This is particularly useful for responsive setups.</p>
-<p>The duration is updated using the supplied function every time <code>Scene.refresh()</code> is called, which happens periodically from the controller (see ScrollMagic.Controller option <code>refreshInterval</code>).<br><em><strong>NOTE:</strong> Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.<br>Even for size and position calculations it is recommended to use a variable to cache the value. (see example)<br>This counts double if you use the same function for multiple scenes.</em></p>
+        <p><strong>Get</strong> or <strong>Set</strong> the duration option value.</p>
+<p>As a <strong>setter</strong> it accepts three types of parameters:</p>
+<ol>
+<li><code>number</code>: Sets the duration of the scene to exactly this amount of pixels.<br>This means the scene will last for exactly this amount of pixels scrolled. Sub-Pixels are also valid.<br>A value of <code>0</code> means that the scene is 'open end' and no end will be triggered. Pins will never unpin and animations will play independently of scroll progress.</li>
+<li><code>string</code>: Always updates the duration relative to parent scroll container.<br>For example <code>&quot;100%&quot;</code> will keep the duration always exactly at the inner height of the scroll container.<br>When scrolling vertically the width is used for reference respectively.</li>
+<li><code>function</code>: The supplied function will be called to return the scene duration.<br>This is useful in setups where the duration depends on other elements who might change size. By supplying a function you can return a value instead of updating potentially multiple scene durations.<br>The scene can be referenced inside the callback using <code>this</code>.<br><em><strong>WARNING:</strong> This is an easy way to kill performance, as the callback will be executed every time <code>Scene.refresh()</code> is called, which happens a lot. The interval is defined by the controller (see ScrollMagic.Controller option <code>refreshInterval</code>).<br>It's recomended to avoid calculations within the function and use cached variables as return values.<br>This counts double if you use the same function for multiple scenes.</em></li>
+</ol>
     </div>
     
 
@@ -2383,6 +2391,9 @@ scene.update(true);</pre>
 <span class="param-type">number</span>
 |
 
+<span class="param-type">string</span>
+|
+
 <span class="param-type">function</span>
 
 
@@ -2403,7 +2414,7 @@ scene.update(true);</pre>
 
             
 
-            <td class="description last"><p>The new duration of the scene.</p></td>
+            <td class="description last"><p>The new duration setting for the scene.</p></td>
         </tr>
 
 	
@@ -2501,17 +2512,19 @@ var duration = scene.duration();
 // set a new duration
 scene.duration(300);
 
-// use a function to automatically adjust the duration to the window height.
+// set duration responsively to container size
+scene.duration("100%");
+
+// use a function to randomize the duration for some reason.
 var durationValueCache;
-function getDuration () {
+function durationCallback () {
   return durationValueCache;
 }
-function updateDuration (e) {
-  durationValueCache = window.innerHeight;
+function updateDuration () {
+  durationValueCache = Math.random() * 100;
 }
-$(window).on("resize", updateDuration); // update the duration when the window size changes
-$(window).triggerHandler("resize"); // set to initial value
-scene.duration(getDuration); // supply duration method</pre>
+updateDuration(); // set to initial value
+scene.duration(durationCallback); // set duration callback</pre>
 
 
     
@@ -2780,7 +2793,7 @@ scene.enabled(false);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-210">line 210</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-219">line 219</a>
     </li></ul></dd>
     
 
@@ -2953,7 +2966,7 @@ scene.loglevel(3);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-139">line 139</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-148">line 148</a>
     </li></ul></dd>
     
 
@@ -3128,7 +3141,7 @@ scene.offset(100);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-194">line 194</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-203">line 203</a>
     </li></ul></dd>
     
 
@@ -3304,7 +3317,7 @@ scene.reverse(false);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-156">line 156</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-165">line 165</a>
     </li></ul></dd>
     
 
@@ -3485,7 +3498,7 @@ scene.triggerElement(document.getElementById("trigger"));</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-175">line 175</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-184">line 184</a>
     </li></ul></dd>
     
 
@@ -3605,7 +3618,7 @@ scene.triggerHook(0.7);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-252">line 252</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-261">line 261</a>
     </li></ul></dd>
     
 
@@ -3698,7 +3711,7 @@ console.log("the scene starts at", start, "and ends at", end);</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-239">line 239</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-248">line 248</a>
     </li></ul></dd>
     
 
@@ -3789,7 +3802,7 @@ var state = scene.state();</pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-269">line 269</a>
+        <a href="ScrollMagic_Scene_getters-setters.js.html">ScrollMagic/Scene/getters-setters.js</a>, <a href="ScrollMagic_Scene_getters-setters.js.html#sunlight-1-line-278">line 278</a>
     </li></ul></dd>
     
 

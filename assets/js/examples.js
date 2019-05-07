@@ -11,6 +11,7 @@ var
 				"scene_manipulation.html" :			"Scene Manipulation",
 				"going_horizontal.html" :				"Going Horizontal",
 				"class_toggles.html" :					"CSS Class Toggles",
+				"reveal_on_scroll.html" :				"Reveal on Scroll",
 				"responsive_duration.html" :		"Responsive Duration",
 				"custom_actions.html" :					"Custom Actions",
 				"debugging.html" :							"Debugging",
@@ -168,14 +169,16 @@ function hideCode() {
 function selectCode() {
 	var $code = $("body > div#codecontainer .code");
 	if ($code[0]) {
-		if (document.selection) {
-			var range = document.body.createTextRange();
+		if (document.body.createTextRange) { // IE
+			range = document.body.createTextRange();
 			range.moveToElementText($code[0]);
 			range.select();
-		} else if (window.getSelection) {
-			var range = document.createRange();
-			range.selectNode($code[0]);
-			window.getSelection().addRange(range);
+		} else if (window.getSelection) { // all others
+			selection = window.getSelection();
+			range = document.createRange();
+			range.selectNodeContents($code[0]);
+			selection.removeAllRanges();
+			selection.addRange(range);
 		}
 	}
 }

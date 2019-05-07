@@ -47,6 +47,7 @@
 	},
 	"markdown"  : {
 		"parser"   : "gfm",
-		"hardwrap" : true
+		"hardwrap" : true,
+		"idInHeadings" : true
 	}
 }
