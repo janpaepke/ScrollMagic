@@ -244,37 +244,46 @@ var addSceneOption = function (optionName) {
 
 /**
  * **Get** or **Set** the duration option value.
- * As a setter it also accepts a function returning a numeric value.  
- * This is particularly useful for responsive setups.
  *
- * The duration is updated using the supplied function every time `Scene.refresh()` is called, which happens periodically from the controller (see ScrollMagic.Controller option `refreshInterval`).  
- * _**NOTE:** Be aware that it's an easy way to kill performance, if you supply a function that has high CPU demand.  
- * Even for size and position calculations it is recommended to use a variable to cache the value. (see example)  
- * This counts double if you use the same function for multiple scenes._
+ * As a **setter** it accepts three types of parameters:
+ * 1. `number`: Sets the duration of the scene to exactly this amount of pixels.  
+ *   This means the scene will last for exactly this amount of pixels scrolled. Sub-Pixels are also valid.
+ *   A value of `0` means that the scene is 'open end' and no end will be triggered. Pins will never unpin and animations will play independently of scroll progress.
+ * 2. `string`: Always updates the duration relative to parent scroll container.  
+ *   For example `"100%"` will keep the duration always exactly at the inner height of the scroll container.
+ *   When scrolling vertically the width is used for reference respectively.
+ * 3. `function`: The supplied function will be called to return the scene duration.
+ *   This is useful in setups where the duration depends on other elements who might change size. By supplying a function you can return a value instead of updating potentially multiple scene durations.  
+ *   The scene can be referenced inside the callback using `this`.
+ *   _**WARNING:** This is an easy way to kill performance, as the callback will be executed every time `Scene.refresh()` is called, which happens a lot. The interval is defined by the controller (see ScrollMagic.Controller option `refreshInterval`).  
+ *   It's recomended to avoid calculations within the function and use cached variables as return values.  
+ *   This counts double if you use the same function for multiple scenes._
  *
  * @method ScrollMagic.Scene#duration
  * @example
  * // get the current duration value
  * var duration = scene.duration();
  *
-	 * // set a new duration
+ * // set a new duration
  * scene.duration(300);
  *
- * // use a function to automatically adjust the duration to the window height.
+ * // set duration responsively to container size
+ * scene.duration("100%");
+ *
+ * // use a function to randomize the duration for some reason.
  * var durationValueCache;
- * function getDuration () {
+ * function durationCallback () {
  *   return durationValueCache;
  * }
- * function updateDuration (e) {
- *   durationValueCache = window.innerHeight;
+ * function updateDuration () {
+ *   durationValueCache = Math.random() * 100;
  * }
- * $(window).on("resize", updateDuration); // update the duration when the window size changes
- * $(window).triggerHandler("resize"); // set to initial value
- * scene.duration(getDuration); // supply duration method
+ * updateDuration(); // set to initial value
+ * scene.duration(durationCallback); // set duration callback
  *
  * @fires {@link Scene.change}, when used as setter
  * @fires {@link Scene.shift}, when used as setter
- * @param {(number|function)} [newDuration] - The new duration of the scene.
+ * @param {(number|string|function)} [newDuration] - The new duration setting for the scene.
  * @returns {number} `get` -  Current scene duration.
  * @returns {Scene} `set` -  Parent object for chaining.
  */
@@ -431,7 +440,8 @@ this.triggerPosition = function () {
 		}
 	}
 	return pos;
-};</pre>
+};
+</pre>
         </article>
     </section>
 

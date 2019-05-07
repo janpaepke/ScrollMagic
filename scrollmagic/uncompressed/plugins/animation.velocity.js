@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.6 (2018-10-08)
+ * ScrollMagic v2.0.7 (2019-05-07)
  * The javascript library for magical scroll interactions.
- * (c) 2018 Jan Paepke (@janpaepke)
+ * (c) 2019 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.6
+ * @version 2.0.7
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -41,9 +41,8 @@
 	var NAMESPACE = "animation.velocity";
 
 	var
-	console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
@@ -55,10 +54,14 @@
 
 	ScrollMagic.Scene.extend(function () {
 		var
-		Scene = this,
+			Scene = this,
 			_util = ScrollMagic._util,
 			_currentProgress = 0,
-			_elems, _properties, _options, _dataID; // used to identify element data related to this scene, will be defined everytime a new velocity animation is added
+			_elems,
+			_properties,
+			_options,
+			_dataID; // used to identify element data related to this scene, will be defined everytime a new velocity animation is added
+
 		var log = function () {
 			if (Scene._log) { // not available, when main source minified
 				Array.prototype.splice.call(arguments, 1, 0, "(" + NAMESPACE + ")", "->");

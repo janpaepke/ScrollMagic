@@ -1,54 +1,18 @@
 {
 	"name": "scrollmagic",
-	"version": "2.0.6",
+	"version": "2.0.7",
 	"description": "The javascript library for magical scroll interactions.",
 	"homepage": "http://ScrollMagic.io",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/janpaepke/ScrollMagic.git"
 	},
-	"authors": [
-		{
-			"name": "Jan Paepke",
-			"homepage": "http://www.janpaepke.de"
-		}
-	],
+	"authors": [{
+		"name": "Jan Paepke",
+		"homepage": "http://www.janpaepke.de"
+	}],
 	"main": "scrollmagic/uncompressed/ScrollMagic.js",
-	"keywords": [
-		"scroll",
-		"scrolling",
-		"animation",
-		"sticky",
-		"pin",
-		"fixed",
-		"scrollbar",
-		"scrub",
-		"sync",
-		"position",
-		"progress",
-		"parallax",
-		"events",
-		"classes",
-		"jquery-plugin",
-		"ecosystem:jquery"
-	],
-	"ignore": [
-		"**/.*",
-		"css",
-		"dev",
-		"docs",
-		"examples",
-		"img",
-		"js",
-		"index.html",
-		"gulpfile.js",
-		"CONTRIBUTING.md",
-		"CHANGELOG.md",
-		"package.json",
-		"ScrollMagic.jquery.json"
-	],
-	"license": [
-		"MIT",
-		"GPL-3.0+"
-	]
+	"keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
+	"ignore": ["**/.*", "css", "dev", "docs", "examples", "img", "js", "index.html", "gulpfile.js", "CONTRIBUTING.md", "CHANGELOG.md", "package.json", "ScrollMagic.jquery.json"],
+	"license": ["MIT", "GPL-3.0+"]
 }

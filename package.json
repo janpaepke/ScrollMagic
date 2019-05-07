@@ -1,7 +1,7 @@
 {
   "name": "scrollmagic",
   "title": "ScrollMagic",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "The javascript library for magical scroll interactions.",
   "author": {
     "name": "Jan Paepke",
@@ -55,28 +55,7 @@
     "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://ScrollMagic.io",
-  "keywords": [
-    "scroll",
-    "scrolling",
-    "animation",
-    "sticky",
-    "pin",
-    "fixed",
-    "scrollbar",
-    "scrub",
-    "sync",
-    "position",
-    "progress",
-    "parallax",
-    "events",
-    "classes",
-    "jquery-plugin",
-    "ecosystem:jquery"
-  ],
+  "keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
-  "files": [
-    "scrollmagic",
-    "LICENSE.md",
-    "README.md"
-  ]
+  "files": ["scrollmagic", "LICENSE.md", "README.md"]
 }

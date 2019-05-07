@@ -1,7 +1,3 @@
-# TODO BEFORE NEXT RELEASE
- - fix google analytics
-
-
 # Source
  - change: make toogle class default behaviour: https://github.com/janpaepke/ScrollMagic/pull/421
   - update Reveal on Scroll example to work with above bevhaviour (maybe remove a class instead of adding)

@@ -162,9 +162,8 @@
  * @param {object} [options] - Options for the Scene. The options can be updated at any time.  
  							   Instead of setting the options for each scene individually you can also set them globally in the controller as the controllers `globalSceneOptions` option. The object accepts the same properties as the ones below.  
  							   When a scene is added to the controller the options defined using the Scene constructor will be overwritten by those set in `globalSceneOptions`.
- * @param {(number|function)} [options.duration=0] - The duration of the scene. 
- 										  If `0` tweens will auto-play when reaching the scene start point, pins will be pinned indefinetly starting at the start position.  
- 										  A function returning the duration value is also supported. Please see `Scene.duration()` for details.
+ * @param {(number|string|function)} [options.duration=0] - The duration of the scene. 
+ 					Please see `Scene.duration()` for details.
  * @param {number} [options.offset=0] - Offset Value for the Trigger Position. If no triggerElement is defined this will be the scroll distance from the start of the page, after which the scene will start.
  * @param {(string|object)} [options.triggerElement=null] - Selector or DOM object that defines the start of the scene. If undefined the scene will start right at the start of the page (unless an offset is set).
  * @param {(number|string)} [options.triggerHook="onCenter"] - Can be a number between 0 and 1 defining the position of the trigger Hook in relation to the viewport.  

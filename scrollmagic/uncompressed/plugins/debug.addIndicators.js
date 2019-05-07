@@ -1,10 +1,10 @@
 /*!
- * ScrollMagic v2.0.6 (2018-10-08)
+ * ScrollMagic v2.0.7 (2019-05-07)
  * The javascript library for magical scroll interactions.
- * (c) 2018 Jan Paepke (@janpaepke)
+ * (c) 2019 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.6
+ * @version 2.0.7
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
@@ -34,29 +34,28 @@
 	var NAMESPACE = "debug.addIndicators";
 
 	var
-	console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
 
 	// plugin settings
 	var
-	FONT_SIZE = "0.85em",
+		FONT_SIZE = "0.85em",
 		ZINDEX = "9999",
 		EDGE_OFFSET = 15; // minimum edge distance, added to indentation
 
 	// overall vars
 	var
-	_util = ScrollMagic._util,
+		_util = ScrollMagic._util,
 		_autoindex = 0;
 
 
 
 	ScrollMagic.Scene.extend(function () {
 		var
-		Scene = this,
+			Scene = this,
 			_indicator;
 
 		var log = function () {
@@ -78,8 +77,8 @@
 		 * scene.addIndicators({name: "pin scene", colorEnd: "#FFFFFF"});
 		 *
 		 * @param {object} [options] - An object containing one or more options for the indicators.
-		 * @param {(string|object)} [options.parent=undefined] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
-		 If undefined, the controller's container will be used.
+		 * @param {(string|object)} [options.parent] - A selector, DOM Object or a jQuery object that the indicators should be added to.  
+		 														 														 If undefined, the controller's container will be used.
 		 * @param {number} [options.name=""] - This string will be displayed at the start and end indicators of the scene for identification purposes. If no name is supplied an automatic index will be used.
 		 * @param {number} [options.indent=0] - Additional position offset for the indicators (useful, when having multiple scenes starting at the same position).
 		 * @param {string} [options.colorStart=green] - CSS color definition for the start indicator.
@@ -89,14 +88,14 @@
 		Scene.addIndicators = function (options) {
 			if (!_indicator) {
 				var
-				DEFAULT_OPTIONS = {
-					name: "",
-					indent: 0,
-					parent: undefined,
-					colorStart: "green",
-					colorEnd: "red",
-					colorTrigger: "blue",
-				};
+					DEFAULT_OPTIONS = {
+						name: "",
+						indent: 0,
+						parent: undefined,
+						colorStart: "green",
+						colorEnd: "red",
+						colorTrigger: "blue",
+					};
 
 				options = _util.extend({}, DEFAULT_OPTIONS, options);
 
@@ -136,7 +135,7 @@
 	});
 
 
-/*
+	/*
 	 * ----------------------------------------------------------------
 	 * Extension for controller to store and update related indicators
 	 * ----------------------------------------------------------------
@@ -161,7 +160,7 @@
 	// extend Controller
 	ScrollMagic.Controller.extend(function () {
 		var
-		Controller = this,
+			Controller = this,
 			_info = Controller.info(),
 			_container = _info.container,
 			_isDocument = _info.isDocument,
@@ -182,7 +181,7 @@
 
 		// add indicators container
 		this._indicators = _indicators;
-/*
+		/*
 			needed updates:
 			+++++++++++++++
 			start/end position on scene shift (handled in Indicator class)
@@ -214,16 +213,17 @@
 		// updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
 		this._indicators.updateBoundsPositions = function (specificIndicator) {
 			var // constant for all bounds
-			groups = specificIndicator ? [_util.extend({}, specificIndicator.triggerGroup, {
-				members: [specificIndicator]
-			})] : // create a group with only one element
-			_indicators.groups,
-				// use all
+				groups = specificIndicator ? [_util.extend({}, specificIndicator.triggerGroup, {
+					members: [specificIndicator]
+				})] : // create a group with only one element
+				_indicators.groups, // use all
 				g = groups.length,
 				css = {},
 				paramPos = _vertical ? "left" : "top",
 				paramDimension = _vertical ? "width" : "height",
-				edge = _vertical ? _util.get.scrollLeft(_container) + _util.get.width(_container) - EDGE_OFFSET : _util.get.scrollTop(_container) + _util.get.height(_container) - EDGE_OFFSET,
+				edge = _vertical ?
+				_util.get.scrollLeft(_container) + _util.get.width(_container) - EDGE_OFFSET :
+				_util.get.scrollTop(_container) + _util.get.height(_container) - EDGE_OFFSET,
 				b, triggerSize, group;
 			while (g--) { // group loop
 				group = groups[g];
@@ -239,18 +239,24 @@
 		// updates the positions of all trigger groups attached to a controller or a specific one, if provided
 		this._indicators.updateTriggerGroupPositions = function (specificGroup) {
 			var // constant vars
-			groups = specificGroup ? [specificGroup] : _indicators.groups,
+				groups = specificGroup ? [specificGroup] : _indicators.groups,
 				i = groups.length,
 				container = _isDocument ? document.body : _container,
 				containerOffset = _isDocument ? {
 					top: 0,
 					left: 0
 				} : _util.get.offset(container, true),
-				edge = _vertical ? _util.get.width(_container) - EDGE_OFFSET : _util.get.height(_container) - EDGE_OFFSET,
+				edge = _vertical ?
+				_util.get.width(_container) - EDGE_OFFSET :
+				_util.get.height(_container) - EDGE_OFFSET,
 				paramDimension = _vertical ? "width" : "height",
 				paramTransform = _vertical ? "Y" : "X";
 			var // changing vars
-			group, elem, pos, elemSize, transform;
+				group,
+				elem,
+				pos,
+				elemSize,
+				transform;
 			while (i--) {
 				group = groups[i];
 				elem = group.element;
@@ -273,7 +279,7 @@
 		// updates the label for the group to contain the name, if it only has one member
 		this._indicators.updateTriggerGroupLabel = function (group) {
 			var
-			text = "trigger" + (group.members.length > 1 ? "" : " " + group.members[0].options.name),
+				text = "trigger" + (group.members.length > 1 ? "" : " " + group.members[0].options.name),
 				elem = group.element.firstChild.firstChild,
 				doUpdate = elem.textContent !== text;
 			if (doUpdate) {
@@ -310,19 +316,20 @@
 
 	});
 
-/*
+	/*
 	 * ----------------------------------------------------------------
 	 * Internal class for the construction of Indicators
 	 * ----------------------------------------------------------------
 	 */
 	var Indicator = function (Scene, options) {
 		var
-		Indicator = this,
+			Indicator = this,
 			_elemBounds = TPL.bounds(),
 			_elemStart = TPL.start(options.colorStart),
 			_elemEnd = TPL.end(options.colorEnd),
 			_boundsContainer = options.parent && _util.get.elements(options.parent)[0],
-			_vertical, _ctrl;
+			_vertical,
+			_ctrl;
 
 		var log = function () {
 			if (Scene._log) { // not available, when main source minified
@@ -401,7 +408,7 @@
 			}
 		};
 
-/*
+		/*
 		 * ----------------------------------------------------------------
 		 * internal Event Handlers
 		 * ----------------------------------------------------------------
@@ -419,7 +426,7 @@
 			}
 		};
 
-/*
+		/*
 		 * ----------------------------------------------------------------
 		 * Bounds (start / stop) management
 		 * ----------------------------------------------------------------
@@ -468,7 +475,7 @@
 			});
 		};
 
-/*
+		/*
 		 * ----------------------------------------------------------------
 		 * trigger and trigger group management
 		 * ----------------------------------------------------------------
@@ -504,7 +511,7 @@
 		};
 
 		// updates the trigger group -> either join existing or add new one
-/*	
+		/*	
 		 * Logic:
 		 * 1 if a trigger group exist, check if it's in sync with Scene settings – if so, nothing else needs to happen
 		 * 2 try to find an existing one that matches Scene parameters
@@ -520,7 +527,7 @@
 		 */
 		var updateTriggerGroup = function () {
 			var
-			triggerHook = Scene.triggerHook(),
+				triggerHook = Scene.triggerHook(),
 				closeEnough = 0.0001;
 
 			// Have a group, check if it still matches
@@ -533,8 +540,9 @@
 			// Don't have a group, check if a matching one exists
 			// _util.log(0, "trigger", options.name, "->", "out of sync!");
 			var
-			groups = _ctrl._indicators.groups,
-				group, i = groups.length;
+				groups = _ctrl._indicators.groups,
+				group,
+				i = groups.length;
 			while (i--) {
 				group = groups[i];
 				if (Math.abs(group.triggerHook - triggerHook) < closeEnough) {
@@ -582,7 +590,7 @@
 		};
 	};
 
-/*
+	/*
 	 * ----------------------------------------------------------------
 	 * Templates for the indicators
 	 * ----------------------------------------------------------------

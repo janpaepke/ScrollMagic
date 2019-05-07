@@ -1,29 +1,31 @@
 CHANGELOG
 =========
 
-## 2.X.X (unreleased)
-
-#### features:
-- pass Scene as `this` to duration callback [PR 419](https://github.com/janpaepke/ScrollMagic/pull/419)
-- Increase fps limit for mobile support(advance) example. [PR 753](https://github.com/janpaepke/ScrollMagic/pull/753)
-- added documentation for responsive duration (e.g. "100%")
+## 2.0.7 (2019-05-07)
 
 #### bugfixes:
-- Error in Safari when using setPin [PR 382](https://github.com/janpaepke/ScrollMagic/pull/382)
-- Fixed SVG element detection as Dom Element and related Error on Safari [PR 447](https://github.com/janpaepke/ScrollMagic/pull/447)
-- Added missing semi-colon to isMobile regex [PR 617](https://github.com/janpaepke/ScrollMagic/pull/617)
+ - error in Safari when using setPin [PR 382](https://github.com/janpaepke/ScrollMagic/pull/382)
+ - added missing semi-colon to isMobile regex [PR 617](https://github.com/janpaepke/ScrollMagic/pull/617)
+ - fixed SVG element detection as Dom Element and related Error on Safari [PR 447](https://github.com/janpaepke/ScrollMagic/pull/447)
  - fixed code selection in examples
 
 #### changes (non-breaking):
- - updated: [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html) to work for large number of sections.
+ - pass Scene as `this` to duration callback [PR 419](https://github.com/janpaepke/ScrollMagic/pull/419)
+ - increase fps limit for mobile support(advance) example. [PR 753](https://github.com/janpaepke/ScrollMagic/pull/753)
+ - added documentation for responsive duration (e.g. "100%")
+ - updated [Section Wipes (natural)](http://scrollmagic.io/examples/basic/section_wipes_natural.html) to work for large number of sections.
+ - removed warning for pushFollowers in pins with duration 0, unless actively set to true
  - fixed some spelling stuff
 
+#### new examples:
+ - basic: [Reveal on Scroll](http://scrollmagic.io/examples/basic/reveal_on_scroll.html)
+
 #### project management:
- - New Build routine for gulp 4
- - Updated all Dependencies
- - Fixed Unit Tests
- - Added Buttons for [ScrollMagic Premium Support](http://support.scrollmagic.io).
- - changed folder structure for a tidier root
+ - updated: build routine for gulp 4
+ - updated: all Dependencies
+ - changed: folder structure for a tidier root
+ - fixed: unit test errors
+ - added: Buttons for [ScrollMagic Premium Support](http://support.scrollmagic.io).
 
 ## 2.0.6 (2018-10-08)
 

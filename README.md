@@ -1,8 +1,8 @@
-# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.6</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
+# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.7</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
 
 ### The javascript library for magical scroll interactions.
 
-[![Donate](./assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](./assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io/?utm_source=github&utm_medium=btn "Get expert help!")
+[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](https://scrollmagic.io/assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io/?utm_source=github&utm_medium=btn "Get expert help!")
 
 __Quicklinks:__ [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
 
@@ -81,15 +81,15 @@ __Option 4: CDN__
 If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/ScrollMagic):
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/ScrollMagic.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.min.js
 ```
 
 All plugins and uncompressed files are also available on cdnjs.  
 For example:
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.js
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js
 ```
 
 ## Installation
@@ -141,10 +141,10 @@ To learn more about the ScrollMagic code structure, please [read here](https://g
 To get started, check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 
-If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
+If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide).  
 
 __Please do not post support requests in the github issue section__, as it's reserverd for issue and bug reporting.
-If all above options for self-help fail, please use the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link) or [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic).
+If all above options for self-help fail, please use [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic) or the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link).
 
 ## Browser Support
 
