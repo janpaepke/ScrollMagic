@@ -1,7 +1,7 @@
 {
   "name": "scrollmagic",
   "title": "ScrollMagic",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "The javascript library for magical scroll interactions.",
   "author": {
     "name": "Jan Paepke",
@@ -25,7 +25,7 @@
     "gulp-header": "^2.0.5",
     "gulp-jsbeautifier": "^2.1.2",
     "gulp-jshint": "^2.1.0",
-    "gulp-json-editor": "2.2.1",
+    "gulp-json-editor": "^2.5.2",
     "gulp-rename": "^1.4.0",
     "gulp-replace-task": "^0.11.0",
     "gulp-uglify": "^3.0.1",
@@ -38,6 +38,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
     "karma-requirejs": "^1.1.0",
+    "open": "^6.2.0",
     "pretty-bytes": "^5.1.0",
     "requirejs": "^2.3.6",
     "semver": "^5.5.1",
@@ -54,28 +55,7 @@
     "start": "node ./node_modules/gulp/bin/gulp open-demo"
   },
   "homepage": "http://ScrollMagic.io",
-  "keywords": [
-    "scroll",
-    "scrolling",
-    "animation",
-    "sticky",
-    "pin",
-    "fixed",
-    "scrollbar",
-    "scrub",
-    "sync",
-    "position",
-    "progress",
-    "parallax",
-    "events",
-    "classes",
-    "jquery-plugin",
-    "ecosystem:jquery"
-  ],
+  "keywords": ["scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery", "scroll", "scrolling", "animation", "sticky", "pin", "fixed", "scrollbar", "scrub", "sync", "position", "progress", "parallax", "events", "classes", "jquery-plugin", "ecosystem:jquery"],
   "bugs": "https://github.com/janpaepke/ScrollMagic/issues",
-  "files": [
-    "scrollmagic",
-    "LICENSE.md",
-    "README.md"
-  ]
+  "files": ["scrollmagic", "LICENSE.md", "README.md"]
 }

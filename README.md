@@ -1,28 +1,12 @@
-# Status Update
+# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.7</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
 
-### It's aliiiive!
+### The javascript library for magical scroll interactions.
 
-After quite some time of neglect, development on ScrollMagic will finally resume this year. (hurray!)
-The goal is to make it stable and put enough security checks in to open it up more to public contribution.
+[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!") [![Premium Support](https://scrollmagic.io/assets/img/btn_support.svg "Get expert help!")](https://support.scrollmagic.io/?utm_source=github&utm_medium=btn "Get expert help!")
 
-Here's the rough milestone outline:
-
-1. ~~Release new version including previously finished fixes.~~
-2. ~~Update all development dependencies.~~
-3. ~~Fix compilation errors (travis + unit tests).~~
-4. Update Website (Examples + other outdated info)
-5. Build / Finalize proper Unit Tests (with support from [joewanko](https://github.com/joewanko)).
-6. Screen all pull requests and merge if approved and pass all tests.
-7. Open project to a wider group of contributors.
-
-If you want to contribute please [get in touch](http://www.janpaepke.de) and let me know about your specialty and experience.
+__Quicklinks:__ [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
 
 ---
-
-# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.6</a> [![Build Status](https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master)](https://travis-ci.org/janpaepke/ScrollMagic) 
-
-### The javascript library for magical scroll interactions. [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif "Shut up and take my money!")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL "Shut up and take my money!")
-
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
 
@@ -33,7 +17,8 @@ It's the perfect library for you, if you want to ...
 * create an infinitely scrolling page (ajax load of additional content).
 * add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.
 
-Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.
+Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.  
+If you want to contribute please [get in touch](mailto:e-mail@janpaepke.de) and let me know about your specialty and experience.
 
 ## About the Library
 
@@ -55,7 +40,7 @@ ScrollMagic was developed with these principles in mind:
 * support for responsive web design
 * object oriented programming and object chaining
 * readable, centralized code and intuitive development
-* support for both scroll directions (even different on one page)
+* support for both x and y direction scorlling (even both on one page)
 * support for scrolling inside div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 * detailed documentation
@@ -96,15 +81,15 @@ __Option 4: CDN__
 If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/ScrollMagic):
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/ScrollMagic.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/ScrollMagic.min.js
 ```
 
 All plugins and uncompressed files are also available on cdnjs.  
 For example:
 
 ```
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.js
-http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.6/plugins/debug.addIndicators.min.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.js
+http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.7/plugins/debug.addIndicators.min.js
 ```
 
 ## Installation
@@ -156,20 +141,21 @@ To learn more about the ScrollMagic code structure, please [read here](https://g
 To get started, check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
 Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
 
-If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/blob/master/CONTRIBUTING.md).  
-Should you still be unable to figure it out, feel free to post your questions in the [project's issues section](https://github.com/janpaepke/ScrollMagic/issues).
+If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide).  
+
+__Please do not post support requests in the github issue section__, as it's reserverd for issue and bug reporting.
+If all above options for self-help fail, please use [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic) or the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link).
 
 ## Browser Support
 
-ScrollMagic aims to support all major browsers in recent versions:  
+ScrollMagic aims to support all major browsers even in older versions:  
 Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+
 
 ## About the Author
 
-I am a digital creative based in Lausanne, Switzerland.  
-I started this project to extend my understanding of javascript (which it has).
+I am a creative coder based in Vienna, Austria.
 
-[Check out my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
+[Learn more on my website](http://www.janpaepke.de) or [Follow me on Twitter](http://twitter.com/janpaepke)
 
 ## License
 

@@ -1,16 +1,16 @@
 /*!
- * ScrollMagic v2.0.6 (2018-10-08)
+ * ScrollMagic v2.0.7 (2019-05-07)
  * The javascript library for magical scroll interactions.
- * (c) 2018 Jan Paepke (@janpaepke)
+ * (c) 2019 Jan Paepke (@janpaepke)
  * Project Website: http://scrollmagic.io
  * 
- * @version 2.0.6
+ * @version 2.0.7
  * @license Dual licensed under MIT license and GPL.
  * @author Jan Paepke - e-mail@janpaepke.de
  *
  * @file ScrollMagic jQuery plugin.
  *
- * requires: jQuery ~1.11 or ~2.1
+ * requires: jQuery >=1.11
  */
 /**
  * This plugin is meant to be used in conjunction with jQuery.  
@@ -27,7 +27,7 @@
  * var scene = new $.ScrollMagic.Scene({
  *   triggerElement: "#parent div.trigger[attr='thisone']:not(.notthisone)"
  * });
- * @requires {@link http://jquery.com/|jQuery ~1.11 or ~2.1}
+ * @requires {@link http://jquery.com/|jQuery >=1.11}
  * @mixin framework.jQuery
  */
 (function (root, factory) {
@@ -46,9 +46,8 @@
 	var NAMESPACE = "jquery.ScrollMagic";
 
 	var
-	console = window.console || {},
-		err = Function.prototype.bind.call(console.error || console.log ||
-		function () {}, console);
+		console = window.console || {},
+		err = Function.prototype.bind.call(console.error || console.log || function () {}, console);
 	if (!ScrollMagic) {
 		err("(" + NAMESPACE + ") -> ERROR: The ScrollMagic main module could not be found. Please make sure it's loaded before this plugin or use an asynchronous loader like requirejs.");
 	}
