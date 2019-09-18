@@ -40,7 +40,7 @@ ScrollMagic was developed with these principles in mind:
 * support for responsive web design
 * object oriented programming and object chaining
 * readable, centralized code and intuitive development
-* support for both x and y direction scorlling (even both on one page)
+* support for both x and y direction scrolling (even both on one page)
 * support for scrolling inside div containers (even multiple on one page)
 * extensive debugging and logging capabilities
 * detailed documentation
