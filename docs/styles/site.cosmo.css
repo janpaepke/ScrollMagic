@@ -90,7 +90,7 @@ img {
   max-width: 100%;
   /* Part 1: Set a maxium relative to the parent */
 
-  width: auto\9;
+  width: auto;
   /* IE7-8 need help adjusting responsive images */
 
   height: auto;
