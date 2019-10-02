@@ -2,7 +2,7 @@
 
 ### The javascript library for magical scroll interactions.
 
-[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg 'Shut up and take my money!')](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL 'Shut up and take my money!') <a href="https://nerdpool.io/support/scrollmagic?utm_source=github&utm_medium=btn" title="Get personal live support"><img src="https://cdn.nerdpool.io/np-btn-support-blue.png" style="max-height: 40px" alt="Request personal live support"></a>
+[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg 'Shut up and take my money!')](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL 'Shut up and take my money!') <a href="https://nerdpool.io/support/scrollmagic?utm_source=github&utm_medium=btn" title="Get personal live support"><img src="https://cdn.nerdpool.io/np-btn-support-blue.png" style="height: 40px" height="40" alt="Request personal live support"></a>
 
 **Quicklinks:** [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
 
