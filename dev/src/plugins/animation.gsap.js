@@ -268,6 +268,8 @@
 			// warn about tween overwrites, when an element is tweened multiple times
 			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
 				var
+					// However, onInterrupt deprecated onOverwrite in GSAP v3
+					methodUsed = GSAP3_OR_GREATER ? 'onInterrupt' : 'onOverwrite',
 					list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
 					newCallback = function () {
 						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
@@ -276,8 +278,8 @@
 					/*jshint loopfunc: true */
 					thisTween = list[i];
 					if (oldCallback !== newCallback) { // if tweens is added more than once
-						oldCallback = thisTween.vars.onOverwrite;
-						thisTween.vars.onOverwrite = function () {
+						oldCallback = thisTween.vars[methodUsed];
+						thisTween.vars[methodUsed] = function () {
 							if (oldCallback) {
 								oldCallback.apply(this, arguments);
 							}
