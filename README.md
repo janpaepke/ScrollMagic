@@ -33,19 +33,19 @@ The recommended solution is the [Greensock Animation Platform (GSAP)](http://www
 
 ScrollMagic was developed with these principles in mind:
 
--   optimized performance
--   lightweight (6KB gzipped)
--   flexibility and extendibility
--   mobile compatibility
--   event management
--   support for responsive web design
--   object oriented programming and object chaining
--   readable, centralized code and intuitive development
--   support for both x and y direction scorlling (even both on one page)
--   support for scrolling inside div containers (even multiple on one page)
--   extensive debugging and logging capabilities
--   detailed documentation
--   many application examples
+* optimized performance
+* lightweight (6KB gzipped)
+* flexibility and extendibility
+* mobile compatibility
+* event management
+* support for responsive web design
+* object oriented programming and object chaining
+* readable, centralized code and intuitive development
+* support for both x and y direction scrolling (even both on one page)
+* support for scrolling inside div containers (even multiple on one page)
+* extensive debugging and logging capabilities
+* detailed documentation
+* many application examples
 
 **Is ScrollMagic the right library for you?**  
 ScrollMagic takes an object oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.  
