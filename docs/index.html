@@ -163,7 +163,7 @@
     <section>
         <article><h1 id="scrollmagic-a-href-https-github-com-janpaepke-scrollmagic-blob-master-changelog-md-class-version-title-whats-new-v2-0-7-a-build-status">ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.7</a> <a href="https://travis-ci.org/janpaepke/ScrollMagic"><img src="https://api.travis-ci.org/janpaepke/ScrollMagic.svg?branch=master" alt="Build Status"></a></h1>
 <h3 id="the-javascript-library-for-magical-scroll-interactions-">The javascript library for magical scroll interactions.</h3>
-<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://scrollmagic.io/assets/img/btn_donate.svg" alt="Donate" title="Shut up and take my money!"></a> <a href="https://support.scrollmagic.io/?utm_source=github&amp;utm_medium=btn" title="Get expert help!"><img src="https://scrollmagic.io/assets/img/btn_support.svg" alt="Premium Support" title="Get expert help!"></a></p>
+<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=8BJC8B58XHKLL" title="Shut up and take my money!"><img src="https://scrollmagic.io/assets/img/btn_donate.svg" alt="Donate" title="Shut up and take my money!"></a> <a href="https://nerdpool.io/support/scrollmagic?utm_source=github&utm_medium=btn" title="Get personal live support"><img src="https://cdn.nerdpool.io/np-btn-support-blue.png" style="height: 40px" height="40" alt="Request personal live support"></a></p>
 <p><strong>Quicklinks:</strong> <a href="#about-the-library">About</a> | <a href="#availability">Download</a> | <a href="#installation">Installation</a> | <a href="#usage">Usage</a> | <a href="#help">Help</a> | <a href="#browser-support">Compatibility</a> | <a href="#about-the-author">Author</a> | <a href="#license">License</a> | <a href="#thanks">Thanks</a></p>
 <hr>
 <p>ScrollMagic helps you to easily react to the user's current scroll position.<br>It's the perfect library for you, if you want to ...</p>
@@ -179,7 +179,7 @@
 <h2 id="about-the-library">About the Library</h2>
 <p>ScrollMagic is a scroll interaction library.</p>
 <p>It's a complete rewrite of its predecessor <a href="https://github.com/johnpolacek/superscrollorama">Superscrollorama</a> by <a href="http://johnpolacek.com">John Polacek</a>.<br>A plugin-based architecture offers easy customizability and extendability.</p>
-<p>To implement animations, ScrollMagic can work with multiple frameworks.<br>The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> due to its stability and feature richness. For a more lightweight approach the <a href="http://VelocityJS.org">VelocityJS</a> framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply  using CSS and class toggles.</p>
+<p>To implement animations, ScrollMagic can work with multiple frameworks.<br>The recommended solution is the <a href="http://www.greensock.com/gsap-js/">Greensock Animation Platform (GSAP)</a> due to its stability and feature richness. For a more lightweight approach the <a href="http://VelocityJS.org">VelocityJS</a> framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply using CSS and class toggles.</p>
 <p>ScrollMagic was developed with these principles in mind:</p>
 <ul>
 <li>optimized performance</li>
@@ -219,14 +219,14 @@ var controller = new ScrollMagic.Controller();
 
 // create a scene
 new ScrollMagic.Scene({
-        duration: 100,    // the scene should last for a scroll distance of 100px
-        offset: 50    // start this scene after scrolling for 50px
-    })
-    .setPin(&quot;#my-sticky-element&quot;) // pins the element for the the scene's duration
+    duration: 100, // the scene should last for a scroll distance of 100px
+    offset: 50 // start this scene after scrolling for 50px
+})
+    .setPin('#my-sticky-element') // pins the element for the the scene's duration
     .addTo(controller); // assign the scene to the controller</code></pre><p>To learn more about the ScrollMagic code structure, please <a href="https://github.com/janpaepke/ScrollMagic/wiki/Getting-Started-:-How-to-use-ScrollMagic">read here</a>.</p>
 <h2 id="help">Help</h2>
 <p>To get started, check out the available learning resources <a href="https://github.com/janpaepke/ScrollMagic/wiki">in the wiki section</a>.<br>Be sure to have a look at the <a href="http://janpaepke.github.com/ScrollMagic/examples/index.html">examples</a> to get source code pointers and make use of the <a href="http://janpaepke.github.com/ScrollMagic/docs/index.html">documentation</a> for a complete reference.</p>
-<p>If you run into trouble using ScrollMagic please follow the <a href="https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide">Troubleshooting guide</a>.  </p>
+<p>If you run into trouble using ScrollMagic please follow the <a href="https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide">Troubleshooting guide</a>.</p>
 <p><strong>Please do not post support requests in the github issue section</strong>, as it's reserverd for issue and bug reporting.<br>If all above options for self-help fail, please use <a href="https://stackoverflow.com/questions/tagged/scrollmagic">Stack Overflow</a> or the <a href="https://support.scrollmagic.io/?utm_source=github&amp;utm_medium=link">ScrollMagic Premium Support</a>.</p>
 <h2 id="browser-support">Browser Support</h2>
 <p>ScrollMagic aims to support all major browsers even in older versions:<br>Firefox 26+, Chrome 30+, Safari 5.1+, Opera 10+, IE 9+</p>
