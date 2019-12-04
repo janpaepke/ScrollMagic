@@ -28,19 +28,22 @@
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define(['ScrollMagic', 'TweenMax', 'TimelineMax'], factory);
+		define(['ScrollMagic', 'gsap', 'TweenMax', 'TimelineMax'], factory);
 	} else if (typeof exports === 'object') {
 		// CommonJS
 		// Loads whole gsap package onto global scope.
-		require('gsap');
-		factory(require('scrollmagic'), TweenMax, TimelineMax);
+		var gsap = require("gsap/dist/gsap") || require("gsap");
+
+		// TweenMax/TimelineMax will be global in v2. In v3, they will be on the gsap object
+		factory(require('scrollmagic'), gsap, TweenMax || gsap, TimelineMax || gsap);
 	} else {
 		// Browser globals
-		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.TweenMax || root.TweenLite, root.TimelineMax || root.TimelineLite);
+		factory(root.ScrollMagic || (root.jQuery && root.jQuery.ScrollMagic), root.gsap, root.gsap || root.TweenMax || root.TweenLite, root.gsap || root.TimelineMax || root.TimelineLite);
 	}
-}(this, function (ScrollMagic, Tween, Timeline) {
+}(this, function (ScrollMagic, Gsap, Tween, Timeline) {
 	"use strict";
 	var NAMESPACE = "animation.gsap";
+	var GSAP3_OR_GREATER = Gsap && parseFloat(Gsap.version) >= 3;
 
 	var
 		console = window.console || {},
@@ -197,16 +200,33 @@
 		 */
 		Scene.setTween = function (TweenObject, duration, params) {
 			var newTween;
+
 			if (arguments.length > 1) {
-				if (arguments.length < 3) {
-					params = duration;
-					duration = 1;
+				var durationIsSet = typeof arguments['1'] === 'number';
+
+				if (GSAP3_OR_GREATER) {
+					// If we're using gsap 3 with proper gsap 3 syntax of 2 arguments
+					if (!durationIsSet) {
+						params = duration;
+					}
+					// Add a duration is there isn't one
+					if (!params.hasOwnProperty('duration')) {
+						params.duration = durationIsSet ? duration : 1;
+					}
+				} else {
+					// If we're using gsap 2 or earlier syntax
+					if (arguments.length < 3) {
+						params = duration;
+						duration = 1;
+					}
 				}
-				TweenObject = Tween.to(TweenObject, duration, params);
+
+				// 2 arguments should be gsap 3 syntax, and 3 arguments for 
+				TweenObject = GSAP3_OR_GREATER ? Tween.to(TweenObject, params) : Tween.to(TweenObject, duration, params);
 			}
 			try {
-				// wrap Tween into a Timeline Object if available to include delay and repeats in the duration and standardize methods.
-				if (Timeline) {
+				// wrap Tween into a Timeline Object if not gsap 3 or greater and available to include delay and repeats in the duration and standardize methods.
+				if (Timeline && !GSAP3_OR_GREATER) {
 					newTween = new Timeline({
 							smoothChildTiming: true
 						})
@@ -254,6 +274,8 @@
 			// warn about tween overwrites, when an element is tweened multiple times
 			if (parseFloat(TweenLite.version) >= 1.14) { // onOverwrite only present since GSAP v1.14.0
 				var
+					// However, onInterrupt deprecated onOverwrite in GSAP v3
+					methodUsed = GSAP3_OR_GREATER ? 'onInterrupt' : 'onOverwrite',
 					list = _tween.getChildren ? _tween.getChildren(true, true, false) : [_tween], // get all nested tween objects
 					newCallback = function () {
 						log(2, "WARNING: tween was overwritten by another. To learn how to avoid this issue see here: https://github.com/janpaepke/ScrollMagic/wiki/WARNING:-tween-was-overwritten-by-another");
@@ -262,8 +284,8 @@
 					/*jshint loopfunc: true */
 					thisTween = list[i];
 					if (oldCallback !== newCallback) { // if tweens is added more than once
-						oldCallback = thisTween.vars.onOverwrite;
-						thisTween.vars.onOverwrite = function () {
+						oldCallback = thisTween.vars[methodUsed];
+						thisTween.vars[methodUsed] = function () {
 							if (oldCallback) {
 								oldCallback.apply(this, arguments);
 							}
