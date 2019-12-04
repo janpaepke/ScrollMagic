@@ -19,7 +19,7 @@
 	<script type="text/javascript" src="../../assets/js/lib/modernizr.custom.min.js"></script>
 	<script type="text/javascript" src="../../assets/js/examples.js"></script>
 	
-	<script type="text/javascript" src="../../assets/js/lib/greensock/TweenMax.min.js"></script>
+	<script type="text/javascript" src="../../assets/js/lib/gsap3/gsap.min.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/ScrollMagic.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/animation.gsap.js"></script>
 	<script type="text/javascript" src="../../scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
@@ -61,7 +61,7 @@
 							var scene = new ScrollMagic.Scene({
 												triggerElement: "#trigger1"
 											})
-											.setTween("#animate1", 0.5, {backgroundColor: "green", scale: 2.5}) // trigger a TweenMax.to tween
+											.setTween("#animate1", 0.2, {backgroundColor: "green", scale: 2.5}) // trigger a TweenMax.to tween
 											.addIndicators({name: "1 (duration: 0)"}) // add indicators (requires plugin)
 											.addTo(controller);
 					</script>
