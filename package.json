@@ -3,10 +3,16 @@
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha",
 	"description": "The javascript library for magical scroll interactions.",
-	"main": "",
+	"main": "dist/scrollmagic.js",
 	"dependencies": {},
-	"devDependencies": {},
+	"devDependencies": {
+		"rollup": "^2.25.0",
+		"rollup-plugin-terser": "^7.0.0",
+		"rollup-plugin-typescript2": "^0.27.2",
+		"typescript": "^3.9.7"
+	},
 	"scripts": {
+		"build": "rollup -c",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
