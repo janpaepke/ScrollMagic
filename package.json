@@ -3,17 +3,26 @@
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha",
 	"description": "The javascript library for magical scroll interactions.",
-	"main": "dist/scrollmagic.js",
+	"main": "dist/scrollmagic.min.js",
+	"module": "dist/scrollmagic.module.min.js",
 	"dependencies": {},
 	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^3.9.0",
+		"@typescript-eslint/parser": "^3.9.0",
+		"eslint": "^7.6.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"prettier": "^2.0.5",
 		"rollup": "^2.25.0",
 		"rollup-plugin-terser": "^7.0.0",
 		"rollup-plugin-typescript2": "^0.27.2",
 		"typescript": "^3.9.7"
 	},
 	"scripts": {
-		"build": "rollup -c",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "rollup --config",
+		"dev": "rollup --config --watch",
+		"test": "eslint ./src --ext .ts",
+		"fix": "prettier --write ./src && eslint --fix ./src --ext .ts"
 	},
 	"repository": {
 		"type": "git",
@@ -24,5 +33,41 @@
 	"bugs": {
 		"url": "https://github.com/janpaepke/ScrollMagic/issues"
 	},
-	"homepage": "http://ScrollMagic.io"
+	"homepage": "http://ScrollMagic.io",
+	"eslintConfig": {
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"ecmaVersion": 9,
+			"sourceType": "module",
+			"ecmaFeatures": {
+				"impliedStrict": true
+			}
+		},
+		"env": {
+			"es6": true,
+			"node": true,
+			"browser": true
+		},
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/recommended",
+			"plugin:prettier/recommended"
+		],
+		"plugins": [
+			"@typescript-eslint",
+			"prettier"
+		]
+	},
+	"prettier": {
+		"semi": true,
+		"useTabs": true,
+		"tabWidth": 4,
+		"printWidth": 120,
+		"bracketSpacing": true,
+		"arrowParens": "avoid",
+		"htmlWhitespaceSensitivity": "css",
+		"endOfLine": "lf",
+		"singleQuote": true,
+		"trailingComma": "es5"
+	}
 }

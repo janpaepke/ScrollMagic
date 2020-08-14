@@ -6,12 +6,12 @@ export default {
 	output: [
 		{
 			file: pkg.main,
-			format: 'cjs',
+			format: 'umd',
+			name: pkg.title, // the global which can be used in a browser
 		},
 		{
-			file: 'dist/scrollmagic.browser.js',
-			format: 'iife',
-			name: pkg.title, // the global which can be used in a browser
+			file: pkg.module,
+			format: 'esm',
 		},
 	],
 	external: [...Object.keys(pkg.dependencies || {})],
