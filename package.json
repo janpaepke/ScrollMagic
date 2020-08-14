@@ -1,0 +1,22 @@
+{
+	"name": "scrollmagic",
+	"title": "ScrollMagic",
+	"version": "3.0.0-alpha",
+	"description": "The javascript library for magical scroll interactions.",
+	"main": "",
+	"dependencies": {},
+	"devDependencies": {},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/janpaepke/ScrollMagic.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/janpaepke/ScrollMagic/issues"
+	},
+	"homepage": "http://ScrollMagic.io"
+}
