@@ -3,7 +3,8 @@
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha",
 	"description": "The javascript library for magical scroll interactions.",
-	"main": "dist/scrollmagic.js",
+	"main": "dist/scrollmagic.min.js",
+	"module": "dist/scrollmagic.module.min.js",
 	"dependencies": {},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^3.9.0",
@@ -19,6 +20,7 @@
 	},
 	"scripts": {
 		"build": "rollup --config",
+		"dev": "rollup --config --watch",
 		"test": "eslint ./src --ext .ts",
 		"fix": "prettier --write ./src && eslint --fix ./src --ext .ts"
 	},
@@ -35,11 +37,16 @@
 	"eslintConfig": {
 		"parser": "@typescript-eslint/parser",
 		"parserOptions": {
-			"ecmaVersion": 6,
+			"ecmaVersion": 9,
 			"sourceType": "module",
 			"ecmaFeatures": {
 				"impliedStrict": true
 			}
+		},
+		"env": {
+			"es6": true,
+			"node": true,
+			"browser": true
 		},
 		"extends": [
 			"eslint:recommended",
