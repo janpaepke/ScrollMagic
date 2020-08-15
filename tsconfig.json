@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"baseUrl": "src",
+		"strict": true,
+		"sourceMap": true,
+		"forceConsistentCasingInFileNames": true
+	},
+	"include": ["src/**/*"]
+}

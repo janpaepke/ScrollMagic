@@ -3,8 +3,9 @@
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha",
 	"description": "The javascript library for magical scroll interactions.",
-	"main": "dist/umd/scrollmagic.js",
-	"module": "dist/esm/scrollmagic.esm.js",
+	"main": "./dist/umd/scrollmagic.js",
+	"module": "./dist/esm/scrollmagic.esm.js",
+	"types": "./dist/types/scrollmagic.d.ts",
 	"dependencies": {},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^3.9.0",
