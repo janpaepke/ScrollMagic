@@ -1,0 +1,6 @@
+<%= pkg.title %> v<%= pkg.version %>
+Author: <%= pkg.author.name %> (<%= pkg.author.url %>)
+Contributors: <%= pkg.contributors.map(({ name }) => name).join(',') %>
+Generated: <%= moment().format('YYYY-MM-DD') %>
+License: <%= pkg.license %>
+Docs & Demos: <%= pkg.homepage %>

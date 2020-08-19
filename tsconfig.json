@@ -1,8 +1,10 @@
 {
 	"compilerOptions": {
-		"baseUrl": "src",
+		"baseUrl": "./src",
+		"outDir": "./dist",
 		"strict": true,
 		"sourceMap": true,
+		"noImplicitAny": true,
 		"forceConsistentCasingInFileNames": true
 	},
 	"include": ["src/**/*"]

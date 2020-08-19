@@ -5,7 +5,10 @@
 	"description": "The javascript library for magical scroll interactions.",
 	"main": "./dist/umd/scrollmagic.js",
 	"module": "./dist/esm/scrollmagic.esm.js",
-	"types": "./dist/types/scrollmagic.d.ts",
+	"types": "./dist/types/index.d.ts",
+	"files": [
+		"dist"
+	],
 	"dependencies": {},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^3.9.0",
@@ -15,6 +18,7 @@
 		"eslint-plugin-prettier": "^3.1.4",
 		"prettier": "^2.0.5",
 		"rollup": "^2.25.0",
+		"rollup-plugin-license": "^2.2.0",
 		"rollup-plugin-terser": "^7.0.0",
 		"rollup-plugin-typescript2": "^0.27.2",
 		"typescript": "^3.9.7"
@@ -29,12 +33,21 @@
 		"type": "git",
 		"url": "git+https://github.com/janpaepke/ScrollMagic.git"
 	},
-	"author": "",
-	"license": "ISC",
+	"author": {
+		"name": "Jan Paepke",
+		"url": "https://janpaepke.de",
+		"email": "e-mail@janpaepke.de"
+	},
+	"contributors": [
+		{
+			"name": "Stefan Knop"
+		}
+	],
+	"license": "(MIT OR GPL-3.0+)",
 	"bugs": {
 		"url": "https://github.com/janpaepke/ScrollMagic/issues"
 	},
-	"homepage": "http://ScrollMagic.io",
+	"homepage": "https://scrollmagic.io",
 	"eslintConfig": {
 		"parser": "@typescript-eslint/parser",
 		"parserOptions": {

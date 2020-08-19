@@ -2,9 +2,11 @@ import pkg from './package.json';
 
 import path from 'path';
 import typescript from 'rollup-plugin-typescript2';
+import license from 'rollup-plugin-license';
 import { terser } from 'rollup-plugin-terser';
 
-const inputFile = 'src/scrollmagic.ts';
+const inputFile = 'src/scrollmagic/scrollmagic.ts';
+const bannerFile = 'src/config/banner.txt';
 const devMode = process.env.ROLLUP_WATCH;
 
 const umdOutput = {
@@ -31,8 +33,18 @@ const tsPluginConfig = {
 	},
 };
 
+const licenseConfig = {
+	banner: {
+		commentStyle: 'ignored',
+		content: {
+			file: path.join(__dirname, bannerFile),
+			encoding: 'utf-8',
+		},
+	},
+};
+
 export default {
 	input: inputFile,
 	output: [umdOutput, esmOutput],
-	plugins: [typescript(tsPluginConfig), !devMode && terser()],
+	plugins: [typescript(tsPluginConfig), license(licenseConfig), !devMode && terser()],
 };
