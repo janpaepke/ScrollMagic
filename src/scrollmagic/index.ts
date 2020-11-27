@@ -1,1 +1,2 @@
-export * from './scrollmagic';
+export * from './Controller';
+export * from './Scene';

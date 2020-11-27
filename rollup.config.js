@@ -5,9 +5,8 @@ import typescript from 'rollup-plugin-typescript2';
 import license from 'rollup-plugin-license';
 import { terser } from 'rollup-plugin-terser';
 
-const inputFile = 'src/scrollmagic/scrollmagic.ts';
-const bannerFile = 'src/config/banner.txt';
-const devMode = process.env.ROLLUP_WATCH;
+const inputFile = './src/scrollmagic/index.ts';
+const bannerFile = './src/config/banner.txt';
 
 const umdOutput = {
 	format: 'umd',
@@ -28,7 +27,7 @@ const tsPluginConfig = {
 		compilerOptions: {
 			declaration: true,
 			declarationMap: true,
-			declarationDir: path.dirname(pkg.types),
+			declarationDir: path.join(__dirname, path.dirname(pkg.types)),
 		},
 	},
 };
@@ -46,5 +45,5 @@ const licenseConfig = {
 export default {
 	input: inputFile,
 	output: [umdOutput, esmOutput],
-	plugins: [typescript(tsPluginConfig), license(licenseConfig), !devMode && terser()],
+	plugins: [typescript(tsPluginConfig), license(licenseConfig), terser()],
 };
