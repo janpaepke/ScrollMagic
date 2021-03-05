@@ -6,6 +6,7 @@
 		"sourceMap": true,
 		"noImplicitAny": true,
 		"forceConsistentCasingInFileNames": true,
+		"downlevelIteration": true,
 		"target": "ES5"
 	},
 	"include": ["src/**/*"]

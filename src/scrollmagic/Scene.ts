@@ -1,17 +1,19 @@
-import { Controller } from './Controller';
-import { ControllerCache } from './ControllerCache';
-import { getScrollParent } from './util/getScrollParent';
+import { ContainerManager } from './ContainerManager';
+import { getScrollContainerElement } from './util/getScrollContainerElement';
 
-export interface SceneOptions {
-	container?: HTMLElement | string;
+export interface ScrollMagicOptions {
+	container?: Window | Document | HTMLElement | string;
 }
 
-// a cache shared among all scenes
-const controllerCache = new ControllerCache();
 export class Scene {
-	private controller: Controller;
-	constructor({ container }: SceneOptions = {}) {
-		const scrollParent = getScrollParent(container);
-		this.controller = controllerCache.add(scrollParent);
+	public name = 'ScrollMagic';
+	constructor({ container: containerElement }: ScrollMagicOptions = {}) {
+		const container = ContainerManager.attach(this, getScrollContainerElement(containerElement));
+		container.onUpdate(({ top }) => {
+			console.log(top);
+		});
+	}
+	public destroy(): void {
+		ContainerManager.detach(this);
 	}
 }

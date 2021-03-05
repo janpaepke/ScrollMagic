@@ -6,5 +6,7 @@ const scrollTop = (container: Window | HTMLElement): number =>
 const scrollLeft = (container: Window | HTMLElement): number =>
 	isWindow(container) ? window.pageXOffset : container.scrollLeft;
 
-export const getScrollPos = (container: Window | HTMLElement, horizontal: boolean): number =>
-	horizontal ? scrollLeft(container) : scrollTop(container);
+export const getScrollPos = (container: Window | HTMLElement): { left: number; top: number } => ({
+	left: scrollLeft(container),
+	top: scrollTop(container),
+});
