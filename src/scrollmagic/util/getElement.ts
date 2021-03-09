@@ -5,10 +5,11 @@ const isHTMLElement = (o: Node): o is HTMLElement =>
 
 const firstMatch = (selector: string) => document.querySelectorAll(selector)[0];
 
-export const getElement = (reference: Node | string): HTMLElement => {
+const getElement = (reference: Node | string): HTMLElement => {
 	const elem = typeof reference === 'string' ? firstMatch(reference) : reference;
 	if (!isHTMLElement(elem)) {
 		throw 'invalid element'; // TODO
 	}
 	return elem;
 };
+export default getElement;

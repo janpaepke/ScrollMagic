@@ -10,14 +10,19 @@ interface Options {
 	margin?: Margin;
 }
 
+type ObserverCallback = (isIntersecting: boolean) => void;
+
 const numberToPx = (val: number | string) => ('string' === typeof val ? val : `${val}px`);
+const marginObjToString = ({ top, right, bottom, left }: Margin) =>
+	[top, right, bottom, left].map(numberToPx).join(' ');
 
 export default class ViewportObserver {
-	private observer?: IntersectionObserver;
+	private observerEnter?: IntersectionObserver;
+	private observerLeave?: IntersectionObserver;
 	private options: Required<Options>;
-	private observedElements = new Array<Element>();
+	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
 	constructor(
-		private callback: IntersectionObserverCallback,
+		private callback: ObserverCallback,
 		{ root = null, margin = { top: 0, right: 0, bottom: 0, left: 0 } }: Options = {}
 	) {
 		this.options = {
@@ -26,15 +31,39 @@ export default class ViewportObserver {
 		};
 		this.rebuildObserver();
 	}
-	private rebuildObserver() {
-		if (undefined !== this.observer) {
-			this.observer.disconnect();
-		}
+	private observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
+		entries.forEach(({ target, isIntersecting }) => {
+			let [hitEnter, hitLeave] = this.observedElements.get(target) ?? [];
+			const prevState = hitEnter && hitLeave;
+			if (observer === this.observerEnter) {
+				hitEnter = isIntersecting;
+			} else {
+				hitLeave = isIntersecting;
+			}
+			this.observedElements.set(target, [hitEnter, hitLeave]);
+			const newState = hitEnter && hitLeave;
+			if (undefined === newState || prevState === newState) {
+				return;
+			}
+			this.callback.call(target, newState);
+		});
+	}
+	private createObserver(rootMargin: string) {
 		const root = this.options.root;
-		const rootMargin = Object.values(this.options.margin).map(numberToPx).join(' ');
-		const newObserver = new IntersectionObserver(this.callback, { root, rootMargin });
-		this.observedElements.forEach(elem => newObserver.observe(elem));
-		this.observer = newObserver;
+		const observer = new IntersectionObserver(this.observerCallback.bind(this), { root, rootMargin });
+		[...this.observedElements.keys()].forEach(elem => observer.observe(elem));
+		return observer;
+	}
+	private rebuildObserver() {
+		this.observerEnter?.disconnect();
+		this.observerLeave?.disconnect();
+
+		// todo: check what happens, if the opposite value still overlaps (due to offset / height ?)
+		const marginEnter = { ...this.options.margin, top: 0 };
+		const marginLeave = { ...this.options.margin, bottom: 0 };
+
+		this.observerEnter = this.createObserver(marginObjToString(marginEnter));
+		this.observerLeave = this.createObserver(marginObjToString(marginLeave));
 	}
 	private optionsChanged({ root, margin }: Options) {
 		if (undefined !== root && root !== this.options.root) {
@@ -58,21 +87,23 @@ export default class ViewportObserver {
 		return this;
 	}
 	public observe(elem: Element): ViewportObserver {
-		if (!this.observedElements.includes(elem)) {
-			this.observedElements.push(elem);
-			this.observer!.observe(elem);
+		if (!this.observedElements.has(elem)) {
+			this.observedElements.set(elem, [undefined, undefined]);
+			this.observerEnter!.observe(elem);
+			this.observerLeave!.observe(elem);
 		}
 		return this;
 	}
 	public unobserve(elem: Element): ViewportObserver {
-		const index = this.observedElements.indexOf(elem);
-		if (-1 < index) {
-			this.observedElements.splice(index, 1);
-			this.observer!.unobserve(elem);
+		if (this.observedElements.has(elem)) {
+			this.observedElements.delete(elem);
+			this.observerEnter!.unobserve(elem);
+			this.observerLeave!.unobserve(elem);
 		}
 		return this;
 	}
 	public disconnect(): void {
-		this.observer?.disconnect();
+		this.observerEnter?.disconnect();
+		this.observerLeave?.disconnect();
 	}
 }

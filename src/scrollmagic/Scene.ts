@@ -1,16 +1,17 @@
 import { ContainerManager } from './ContainerManager';
 import EventDispatcher, { ScrollMagicEvent, ScrollMagicEventType } from './EventDispatcher';
-import { getElement } from './util/getElement';
-import { getScrollContainerElement } from './util/getScrollContainerElement';
+import getElement from './util/getElement';
+import getScrollContainerElement from './util/getScrollContainerElement';
 import { isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
 
 export interface ScrollMagicOptions {
 	element: HTMLElement | string; // TODO: can we make it optional?
-	container?: Window | Document | HTMLElement | string;
+	scrollParent?: Window | Document | HTMLElement | string;
 	vertical?: boolean;
 	trackStart?: number;
 	trackEnd?: number;
+	offset?: number | string;
 }
 
 export class Scene {
@@ -18,15 +19,23 @@ export class Scene {
 	private dispatcher = new EventDispatcher();
 	private viewportObserver?: ViewportObserver;
 	private options!: Required<ScrollMagicOptions>;
-	constructor({ element, container = window, vertical = true, trackEnd = 0, trackStart = 1 }: ScrollMagicOptions) {
+	constructor({
+		element,
+		scrollParent = window,
+		vertical = true,
+		trackEnd = 0,
+		trackStart = 1,
+		offset = 0,
+	}: ScrollMagicOptions) {
 		const options: Required<ScrollMagicOptions> = {
 			element,
-			container,
+			scrollParent,
 			vertical,
 			trackEnd,
 			trackStart,
+			offset,
 		};
-		this.changeOptions(options);
+		this.modify(options);
 
 		// observer.setMargin({ top: '0px', bottom: '-100%' });
 		// container.onUpdate(({ top }) => {
@@ -41,9 +50,9 @@ export class Scene {
 		 * - add trackStart and trackEnd options ✅
 		 *   - validate (start > end) ✅
 		 * - recreate IC when trackStart or trackEnd is set (setter) ✅
-		 * - introduce offset (getter, setter)
+		 * - introduce offset (getter, setter) ✅
 		 * - when offset changes:
-		 * 	 - recreate IC
+		 * 	 - recreate IC ✅
 		 *   - if (offset !== 0):
 		 *      - use calculated px rootMargin based on trackStart, offset & current viewport height/width
 		 * 		- listen for container resizes -> recreate IC
@@ -63,11 +72,17 @@ export class Scene {
 	}
 
 	private refreshViewportObserver(): void {
-		const { container, element, vertical, trackEnd, trackStart } = this.options;
-		const containerElement = getScrollContainerElement(container);
-		ContainerManager.attach(this, containerElement);
+		const { scrollParent, element, vertical, trackEnd, trackStart, offset } = this.options;
+		// todo: memoize this?
 		const triggerElement = getElement(element);
-		const start = `${trackStart * 100 - 100}%`;
+		const containerElement = getScrollContainerElement(scrollParent);
+		const container = ContainerManager.attach(this, containerElement);
+		console.log(container.info.size.height);
+		// todo: allow offset to be relative to element size
+		const start =
+			offset === 0
+				? `${trackStart * 100 - 100}%`
+				: trackStart * container.info.size.height - container.info.size.height - (offset as number);
 		const end = `${-trackEnd * 100}%`;
 		const margin = {
 			top: vertical ? end : 0,
@@ -75,13 +90,15 @@ export class Scene {
 			bottom: vertical ? start : 0,
 			right: vertical ? 0 : start,
 		};
+		console.log(margin);
 		const observerOptions = {
 			margin,
 			root: isWindow(containerElement) ? null : containerElement,
 		};
 		if (undefined === this.viewportObserver) {
-			this.viewportObserver = new ViewportObserver(([entry]) => {
-				this.trigger(entry.isIntersecting ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave);
+			this.viewportObserver = new ViewportObserver(intersecting => {
+				// only ever observing one element, so we can fairly assume it's this one
+				console.log(intersecting ? 'enter' : 'leave');
 			}, observerOptions);
 		} else {
 			this.viewportObserver.updateOptions(observerOptions);
@@ -93,11 +110,14 @@ export class Scene {
 			...this.options,
 			...options,
 		};
-		if (trackEnd > trackStart) {
-			throw "ViewportObserver doesn't work with this"; // TODO: figure out workaround?
+		if (Math.abs(trackEnd) > 1) {
+			throw `Invalid value provided for 'trackEnd': ${trackEnd} (must be between 0 and 1)`; // todo better errors (duh)
+		}
+		if (Math.abs(trackStart) > 1) {
+			throw `Invalid value provided for 'trackStart': ${trackStart} (must be between 0 and 1)`; // todo better errors (duh)
 		}
 	}
-	public changeOptions(options: Partial<ScrollMagicOptions>): Scene {
+	public modify(options: Partial<ScrollMagicOptions>): Scene {
 		this.validateOptions(options);
 		this.options = {
 			...this.options,
@@ -109,34 +129,40 @@ export class Scene {
 
 	// getter / setter
 	public set element(element: Required<ScrollMagicOptions>['element']) {
-		this.changeOptions({ element });
+		this.modify({ element });
 	}
 	public get element(): Required<ScrollMagicOptions>['element'] {
 		return this.options.element;
 	}
-	public set container(container: Required<ScrollMagicOptions>['container']) {
-		this.changeOptions({ container });
+	public set scrollParent(scrollParent: Required<ScrollMagicOptions>['scrollParent']) {
+		this.modify({ scrollParent });
 	}
-	public get container(): Required<ScrollMagicOptions>['container'] {
-		return this.options.container;
+	public get scrollParent(): Required<ScrollMagicOptions>['scrollParent'] {
+		return this.options.scrollParent;
 	}
 	public set vertical(vertical: Required<ScrollMagicOptions>['vertical']) {
-		this.changeOptions({ vertical });
+		this.modify({ vertical });
 	}
 	public get vertical(): Required<ScrollMagicOptions>['vertical'] {
 		return this.options.vertical;
 	}
 	public set trackStart(trackStart: Required<ScrollMagicOptions>['trackStart']) {
-		this.changeOptions({ trackStart });
+		this.modify({ trackStart });
 	}
 	public get trackStart(): Required<ScrollMagicOptions>['trackStart'] {
 		return this.options.trackStart;
 	}
 	public set trackEnd(trackEnd: Required<ScrollMagicOptions>['trackEnd']) {
-		this.changeOptions({ trackEnd });
+		this.modify({ trackEnd });
 	}
 	public get trackEnd(): Required<ScrollMagicOptions>['trackEnd'] {
 		return this.options.trackEnd;
+	}
+	public set offset(offset: Required<ScrollMagicOptions>['offset']) {
+		this.modify({ offset });
+	}
+	public get offset(): Required<ScrollMagicOptions>['offset'] {
+		return this.options.offset;
 	}
 
 	// event listener
