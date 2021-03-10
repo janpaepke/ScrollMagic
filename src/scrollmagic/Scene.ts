@@ -6,8 +6,8 @@ import EventDispatcher, {
 	ScrollMagicEventType,
 	ScrollMagicProgressEvent,
 } from './EventDispatcher';
-import getElement from './util/getElement';
-import getScrollContainerElement from './util/getScrollContainerElement';
+import OptionsValidator from './OptionsValidator';
+import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
 
@@ -18,41 +18,54 @@ export interface ScrollMagicOptions {
 	trackStart?: number;
 	trackEnd?: number;
 	offset?: number | string;
+	height?: number | string;
+}
+
+// basically a normalized version of the options
+export interface ScrollMagicOptionsInternal extends ScrollMagicOptions {
+	element: HTMLElement; // TODO: can we make it optional?
+	scrollParent: Window | HTMLElement;
+	vertical: boolean;
+	trackStart: number;
+	trackEnd: number;
+	offset: number;
+	height: number;
 }
 
 export class Scene {
-	public name = 'ScrollMagic';
+	private static defaultOptionsExternal: Required<ScrollMagicOptions> = {
+		element: 'body', // TODO: crap? remove!
+		scrollParent: window,
+		vertical: true,
+		trackEnd: 0,
+		trackStart: 1,
+		offset: 0,
+		height: '100%',
+	};
+
+	public readonly name = 'ScrollMagic';
 	private dispatcher = new EventDispatcher();
 	private viewportObserver?: ViewportObserver;
-	private options!: Required<ScrollMagicOptions>;
-	private active?: boolean;
-	constructor({
-		element,
-		scrollParent = window,
-		vertical = true,
-		trackEnd = 0,
-		trackStart = 1,
-		offset = 0,
-	}: ScrollMagicOptions) {
-		const options: Required<ScrollMagicOptions> = {
-			element,
-			scrollParent,
-			vertical,
-			trackEnd,
-			trackStart,
-			offset,
-		};
-		this.modify(options);
 
-		const triggerElement = getElement(element);
-		const containerElement = getScrollContainerElement(scrollParent);
-		const container = ContainerManager.attach(this, containerElement);
+	private optionsExternal: Required<ScrollMagicOptions> = Scene.defaultOptionsExternal;
+	private optionsInternal!: ScrollMagicOptionsInternal; // set in modify
+	private active?: boolean;
+
+	constructor(options: ScrollMagicOptions) {
+		const initOptions: Required<ScrollMagicOptions> = {
+			...Scene.defaultOptionsExternal,
+			...options,
+		};
+		this.modify(initOptions);
+
+		const container = ContainerManager.attach(this, this.optionsInternal.scrollParent);
 		container.onUpdate(({ width: containerWidth, height: containerHeight }) => {
 			if (!this.active) {
 				return;
 			}
 			// todo not good. this is only temporary. we should not accss local vars, but options, as they might change.
-			const { left, top, width, height } = triggerElement.getBoundingClientRect();
+			const { vertical, trackEnd, trackStart, element } = this.optionsInternal;
+			const { left, top, width, height } = element.getBoundingClientRect();
 			const positionStart = vertical ? top / containerHeight : left / containerWidth;
 			const positionEnd = vertical ? (top + height) / containerHeight : (left + width) / containerWidth;
 			const trackSize = trackStart - trackEnd;
@@ -92,11 +105,9 @@ export class Scene {
 	}
 
 	private refreshViewportObserver(): void {
-		const { scrollParent, element, vertical, trackEnd, trackStart, offset } = this.options;
+		const { scrollParent, element, vertical, trackEnd, trackStart, offset } = this.optionsInternal;
 		// todo: memoize this?
-		const triggerElement = getElement(element);
-		const containerElement = getScrollContainerElement(scrollParent);
-		const container = ContainerManager.attach(this, containerElement);
+		const container = ContainerManager.attach(this, scrollParent);
 		// console.log(container.info.size.height);
 		// todo: allow offset to be relative to element size
 		const start =
@@ -113,7 +124,7 @@ export class Scene {
 		// console.log(margin);
 		const observerOptions = {
 			margin,
-			root: isWindow(containerElement) ? null : containerElement,
+			root: isWindow(scrollParent) ? null : scrollParent,
 		};
 		if (undefined === this.viewportObserver) {
 			this.viewportObserver = new ViewportObserver(intersecting => {
@@ -132,25 +143,22 @@ export class Scene {
 		} else {
 			this.viewportObserver.updateOptions(observerOptions);
 		}
-		this.viewportObserver.observe(triggerElement);
-	}
-	private validateOptions(options: Partial<ScrollMagicOptions>): void {
-		const { trackEnd, trackStart } = {
-			...this.options,
-			...options,
-		};
-		if (Math.abs(trackEnd) > 1) {
-			throw `Invalid value provided for 'trackEnd': ${trackEnd} (must be between 0 and 1)`; // todo better errors (duh)
-		}
-		if (Math.abs(trackStart) > 1) {
-			throw `Invalid value provided for 'trackStart': ${trackStart} (must be between 0 and 1)`; // todo better errors (duh)
-		}
+		this.viewportObserver.observe(element);
 	}
 	public modify(options: Partial<ScrollMagicOptions>): Scene {
-		this.validateOptions(options);
-		this.options = {
-			...this.options,
+		const normalized = OptionsValidator.checkOptions(options);
+		const changed =
+			undefined === this.optionsInternal // internal options not set on first run...
+				? normalized
+				: pickDifferencesFlat(normalized, this.optionsInternal);
+
+		this.optionsExternal = {
+			...this.optionsExternal,
 			...options,
+		};
+		this.optionsInternal = {
+			...this.optionsInternal,
+			...changed,
 		};
 		this.refreshViewportObserver();
 		return this;
@@ -161,37 +169,45 @@ export class Scene {
 		this.modify({ element });
 	}
 	public get element(): Required<ScrollMagicOptions>['element'] {
-		return this.options.element;
+		return this.optionsExternal.element;
 	}
 	public set scrollParent(scrollParent: Required<ScrollMagicOptions>['scrollParent']) {
 		this.modify({ scrollParent });
 	}
 	public get scrollParent(): Required<ScrollMagicOptions>['scrollParent'] {
-		return this.options.scrollParent;
+		return this.optionsExternal.scrollParent;
 	}
 	public set vertical(vertical: Required<ScrollMagicOptions>['vertical']) {
 		this.modify({ vertical });
 	}
 	public get vertical(): Required<ScrollMagicOptions>['vertical'] {
-		return this.options.vertical;
+		return this.optionsExternal.vertical;
 	}
 	public set trackStart(trackStart: Required<ScrollMagicOptions>['trackStart']) {
 		this.modify({ trackStart });
 	}
 	public get trackStart(): Required<ScrollMagicOptions>['trackStart'] {
-		return this.options.trackStart;
+		return this.optionsExternal.trackStart;
 	}
 	public set trackEnd(trackEnd: Required<ScrollMagicOptions>['trackEnd']) {
 		this.modify({ trackEnd });
 	}
 	public get trackEnd(): Required<ScrollMagicOptions>['trackEnd'] {
-		return this.options.trackEnd;
+		return this.optionsExternal.trackEnd;
 	}
 	public set offset(offset: Required<ScrollMagicOptions>['offset']) {
 		this.modify({ offset });
 	}
 	public get offset(): Required<ScrollMagicOptions>['offset'] {
-		return this.options.offset;
+		return this.optionsExternal.offset;
+	}
+	public static default(options: Partial<ScrollMagicOptions> = {}): Required<ScrollMagicOptions> {
+		OptionsValidator.checkOptions(options);
+		this.defaultOptionsExternal = {
+			...this.defaultOptionsExternal,
+			...options,
+		};
+		return this.defaultOptionsExternal;
 	}
 
 	// event listener

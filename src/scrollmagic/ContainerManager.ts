@@ -14,7 +14,7 @@ export class ContainerManager {
 			if (container === attachment) {
 				return container; // all good.
 			}
-			this.detach(scene);
+			throw new Error('Scene already attached to a different container. Detach first.');
 		}
 		if (undefined === container) {
 			container = new Container(containerElement);
