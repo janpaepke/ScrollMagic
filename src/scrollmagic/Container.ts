@@ -6,7 +6,7 @@ import throttleRaf from './util/throttleRaf';
 
 export type ContainerElement = HTMLElement | Window;
 
-type UpdateCallback = (scrollInfo: { top: number; left: number }) => void;
+type UpdateCallback = (dimensions: { width: number; height: number }) => void;
 type CleanUpFunction = () => void;
 
 export class Container {
@@ -30,11 +30,11 @@ export class Container {
 
 	private updateScrollPos() {
 		this.scrollPos = getScrollPos(this.scrollElement);
-		this.callbacks.forEach(cb => cb(this.scrollPos));
+		this.callbacks.forEach(cb => cb(this.dimensions));
 	}
 	private updateDimensions() {
 		this.dimensions = getInnerDimensions(this.scrollElement);
-		this.callbacks.forEach(cb => cb(this.scrollPos));
+		this.callbacks.forEach(cb => cb(this.dimensions));
 	}
 
 	public onUpdate(cb: UpdateCallback): void {

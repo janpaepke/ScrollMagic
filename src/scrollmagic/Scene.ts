@@ -1,5 +1,11 @@
 import { ContainerManager } from './ContainerManager';
-import EventDispatcher, { ScrollMagicEvent, ScrollMagicEventType } from './EventDispatcher';
+import EventDispatcher, {
+	Callback,
+	NarrowDownEvent,
+	ScrollMagicEvent,
+	ScrollMagicEventType,
+	ScrollMagicProgressEvent,
+} from './EventDispatcher';
 import getElement from './util/getElement';
 import getScrollContainerElement from './util/getScrollContainerElement';
 import { isWindow } from './util/typeguards';
@@ -19,6 +25,7 @@ export class Scene {
 	private dispatcher = new EventDispatcher();
 	private viewportObserver?: ViewportObserver;
 	private options!: Required<ScrollMagicOptions>;
+	private active?: boolean;
 	constructor({
 		element,
 		scrollParent = window,
@@ -37,10 +44,23 @@ export class Scene {
 		};
 		this.modify(options);
 
-		// observer.setMargin({ top: '0px', bottom: '-100%' });
-		// container.onUpdate(({ top }) => {
-		// 	console.log(top);
-		// });
+		const triggerElement = getElement(element);
+		const containerElement = getScrollContainerElement(scrollParent);
+		const container = ContainerManager.attach(this, containerElement);
+		container.onUpdate(({ width: containerWidth, height: containerHeight }) => {
+			if (!this.active) {
+				return;
+			}
+			// todo not good. this is only temporary. we should not accss local vars, but options, as they might change.
+			const { left, top, width, height } = triggerElement.getBoundingClientRect();
+			const positionStart = vertical ? top / containerHeight : left / containerWidth;
+			const positionEnd = vertical ? (top + height) / containerHeight : (left + width) / containerWidth;
+			const trackSize = trackStart - trackEnd;
+			const total = positionEnd - positionStart + trackSize;
+			const passed = trackStart - positionStart;
+			const progress = Math.min(Math.max(passed / total, 0), 1);
+			this.dispatcher.dispatchEvent(new ScrollMagicProgressEvent(this, progress));
+		});
 		/**
 		 * 
 		 * for below setters: for changes always check if they actually do change
@@ -77,7 +97,7 @@ export class Scene {
 		const triggerElement = getElement(element);
 		const containerElement = getScrollContainerElement(scrollParent);
 		const container = ContainerManager.attach(this, containerElement);
-		console.log(container.info.size.height);
+		// console.log(container.info.size.height);
 		// todo: allow offset to be relative to element size
 		const start =
 			offset === 0
@@ -90,7 +110,7 @@ export class Scene {
 			bottom: vertical ? start : 0,
 			right: vertical ? 0 : start,
 		};
-		console.log(margin);
+		// console.log(margin);
 		const observerOptions = {
 			margin,
 			root: isWindow(containerElement) ? null : containerElement,
@@ -98,7 +118,16 @@ export class Scene {
 		if (undefined === this.viewportObserver) {
 			this.viewportObserver = new ViewportObserver(intersecting => {
 				// only ever observing one element, so we can fairly assume it's this one
-				console.log(intersecting ? 'enter' : 'leave');
+				// TODO: this should maybe not be done here? Also maybe this logic may be wrong - Should 'enter' be triggered if active on page load?
+				if (undefined !== this.active) {
+					this.dispatcher.dispatchEvent(
+						new ScrollMagicEvent(
+							this,
+							intersecting ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave
+						)
+					);
+				}
+				this.active = intersecting;
 			}, observerOptions);
 		} else {
 			this.viewportObserver.updateOptions(observerOptions);
@@ -166,16 +195,12 @@ export class Scene {
 	}
 
 	// event listener
-	public on(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): Scene {
+	public on<T extends ScrollMagicEventType>(type: T, cb: Callback<NarrowDownEvent<T>>): Scene {
 		this.dispatcher.addEventListener(type, cb);
 		return this;
 	}
 	public off(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): Scene {
 		this.dispatcher.removeEventListener(type, cb);
 		return this;
-	}
-	private trigger(type: ScrollMagicEventType) {
-		// public?
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type));
 	}
 }

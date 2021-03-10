@@ -7,13 +7,18 @@ export class ContainerManager {
 
 	// attaches a scene to a container, creates a new one, if none exists for this scroll element.
 	static attach(scene: Scene, containerElement: ContainerElement): Container {
-		if (this.attachments.has(scene)) {
+		let container = this.containers.get(containerElement);
+		const attachment = this.attachments.get(scene);
+		if (undefined !== attachment) {
+			// known scene
+			if (container === attachment) {
+				return container; // all good.
+			}
 			this.detach(scene);
 		}
-		let container = ContainerManager.containers.get(containerElement);
 		if (undefined === container) {
 			container = new Container(containerElement);
-			ContainerManager.containers.set(containerElement, container);
+			this.containers.set(containerElement, container);
 		}
 		this.attachments.set(scene, container);
 		return container;
