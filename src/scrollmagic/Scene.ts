@@ -23,7 +23,7 @@ export class Scene {
 	private currentProgress = 0;
 
 	// TODO: currently options.element isn't optional. Can we make it?
-	constructor(options: Partial<Options.Public>) {
+	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...Scene.defaultOptionsPublic,
 			...options,
@@ -202,12 +202,12 @@ export class Scene {
 	}
 
 	// event listener
-	public on(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): Scene {
-		this.dispatcher.addEventListener(type, cb);
+	public on(type: ScrollMagicEventType | `${ScrollMagicEventType}`, cb: (e: ScrollMagicEvent) => void): Scene {
+		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
-	public off(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): Scene {
-		this.dispatcher.removeEventListener(type, cb);
+	public off(type: ScrollMagicEventType | `${ScrollMagicEventType}`, cb: (e: ScrollMagicEvent) => void): Scene {
+		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
 

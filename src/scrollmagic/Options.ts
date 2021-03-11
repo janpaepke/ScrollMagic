@@ -2,13 +2,17 @@ import getElement from './util/getElement';
 import getScrollContainerElement from './util/getScrollContainerElement';
 import { ValidationRules } from './util/validateObject';
 
-type TrackShorthand = 'enter' | 'leave' | 'center';
+export enum TrackShorthand {
+	Enter = 'enter',
+	Center = 'center',
+	Leave = 'leave',
+}
 export interface Public {
 	element: HTMLElement | string;
 	scrollParent: Window | Document | HTMLElement | string;
 	vertical: boolean;
-	trackStart: number | TrackShorthand;
-	trackEnd: number | TrackShorthand;
+	trackStart: number | TrackShorthand | `${TrackShorthand}`;
+	trackEnd: number | TrackShorthand | `${TrackShorthand}`;
 	offset: number | string;
 	height: number | string;
 }
@@ -28,8 +32,8 @@ export const defaults: Public = {
 	element: 'body', // TODO: crap? remove!
 	scrollParent: window,
 	vertical: true,
-	trackEnd: 0,
-	trackStart: 1,
+	trackEnd: 'leave',
+	trackStart: 'enter',
 	offset: 0,
 	height: '100%',
 };
@@ -40,14 +44,14 @@ const assert = (condition: boolean, message?: string) => {
 	}
 };
 const betweenZeroAndOne = (val: number) => assert(Math.abs(val) <= 1, 'Value must be a number between 0 and 1.');
-const normalizeTrack = (val: number | TrackShorthand) => {
+const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
 	if (typeof val === 'number') {
 		return val;
 	}
 	const numericEquivalents: Record<TrackShorthand, number> = {
-		enter: 1,
-		center: 0.5,
-		leave: 0,
+		[TrackShorthand.Enter]: 1,
+		[TrackShorthand.Center]: 0.5,
+		[TrackShorthand.Leave]: 0,
 	};
 	const valid = Object.keys(numericEquivalents);
 	assert(valid.includes(val), `Value must be numeric or one of: ${valid.join(' / ')}`);
