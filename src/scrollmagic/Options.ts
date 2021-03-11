@@ -1,6 +1,9 @@
 import getElement from './util/getElement';
 import getScrollContainerElement from './util/getScrollContainerElement';
+import { isNumber } from './util/typeguards';
 import { ValidationRules } from './util/validateObject';
+
+type Modify<T extends { [K in keyof T]: any }, R extends { [K in keyof T]: any }> = Omit<T, keyof R> & R;
 
 export enum TrackShorthand {
 	Enter = 'enter',
@@ -18,15 +21,18 @@ export interface Public {
 }
 
 // basically a normalized version of the options
-export interface Private extends Public {
-	element: HTMLElement;
-	scrollParent: Window | HTMLElement;
-	vertical: boolean;
-	trackStart: number;
-	trackEnd: number;
-	offset: number;
-	height: number;
-}
+export type Private = Modify<
+	Public,
+	{
+		element: HTMLElement;
+		scrollParent: Window | HTMLElement;
+		vertical: boolean;
+		trackStart: number;
+		trackEnd: number;
+		offset: [value: number, unit: string];
+		height: [value: number, unit: string];
+	}
+>;
 
 export const defaults: Public = {
 	element: 'body', // TODO: crap? remove!
@@ -45,7 +51,7 @@ const assert = (condition: boolean, message?: string) => {
 };
 const betweenZeroAndOne = (val: number) => assert(Math.abs(val) <= 1, 'Value must be a number between 0 and 1.');
 const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
-	if (typeof val === 'number') {
+	if (isNumber(val)) {
 		return val;
 	}
 	const numericEquivalents: Record<TrackShorthand, number> = {
@@ -57,6 +63,31 @@ const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
 	assert(valid.includes(val), `Value must be numeric or one of: ${valid.join(' / ')}`);
 	return numericEquivalents[val];
 };
+const toUnitTuple = (val: number | string): [number, string] => {
+	if (isNumber(val)) {
+		return [val, 'px'];
+	}
+	const match = val.match(/^(?:\d+|\d*[.]\d+)(%|px)$/);
+	assert(match !== null, 'Value must be number or string with unit, i.e. 20px or 80%');
+	return [parseFloat(match![1]), match![2]];
+};
+
+// TODO: make type safe and then use
+/**
+ * -> first function expects parameters of any type
+ * -> Each function expets return type of previous function
+ * -> the result of the last function is returned as the batch result
+ * https://stackoverflow.com/questions/53173203/typescript-recursive-function-composition
+ */
+const batch = (...fnList: Array<(...args: any) => any>) => (...args: any) => {
+	let res = args;
+	fnList.forEach(fn => {
+		res = fn.apply(args);
+	});
+	return res;
+};
+
+const x = batch(val => val + 1);
 
 export const validationRules: ValidationRules<Public, Private> = {
 	element: {
@@ -72,5 +103,11 @@ export const validationRules: ValidationRules<Public, Private> = {
 	trackEnd: {
 		normalize: normalizeTrack,
 		check: betweenZeroAndOne,
+	},
+	offset: {
+		normalize: toUnitTuple,
+	},
+	height: {
+		normalize: toUnitTuple,
 	},
 };

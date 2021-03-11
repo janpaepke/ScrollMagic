@@ -1,10 +1,10 @@
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 
 type Margin = {
-	top: number | string;
-	right: number | string;
-	bottom: number | string;
-	left: number | string;
+	top: string;
+	right: string;
+	bottom: string;
+	left: string;
 };
 
 interface Options {
@@ -14,10 +14,9 @@ interface Options {
 
 type ObserverCallback = (isIntersecting: boolean, target: Element) => void;
 
-const numberToPx = (val: number | string) => ('string' === typeof val ? val : `${val}px`);
-const marginObjToString = ({ top, right, bottom, left }: Margin) =>
-	[top, right, bottom, left].map(numberToPx).join(' ');
+const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right, bottom, left].join(' ');
 
+const none = '0px';
 export default class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
@@ -25,7 +24,7 @@ export default class ViewportObserver {
 	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
 	constructor(
 		private callback: ObserverCallback,
-		{ root = null, margin = { top: 0, right: 0, bottom: 0, left: 0 } }: Options = {}
+		{ root = null, margin = { top: none, right: none, bottom: none, left: none } }: Options = {}
 	) {
 		this.options = {
 			root,
@@ -61,8 +60,8 @@ export default class ViewportObserver {
 		this.observerLeave?.disconnect();
 
 		// todo: check what happens, if the opposite value still overlaps (due to offset / height ?)
-		const marginEnter = { ...this.options.margin, top: 0 };
-		const marginLeave = { ...this.options.margin, bottom: 0 };
+		const marginEnter = { ...this.options.margin, top: none };
+		const marginLeave = { ...this.options.margin, bottom: none };
 
 		this.observerEnter = this.createObserver(marginObjToString(marginEnter));
 		this.observerLeave = this.createObserver(marginObjToString(marginLeave));

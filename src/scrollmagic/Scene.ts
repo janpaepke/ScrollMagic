@@ -105,6 +105,7 @@ export class Scene {
 		const { width: containerWidth, height: containerHeight } = this.containerCache.container.info.size;
 		const { vertical, trackEnd, trackStart, element } = this.optionsPrivate;
 		const { left, top, width, height } = element.getBoundingClientRect();
+		// todo: remember element resizes...
 		const positionStart = vertical ? top / containerHeight : left / containerWidth;
 		const positionEnd = vertical ? (top + height) / containerHeight : (left + width) / containerWidth;
 		const trackSize = trackStart - trackEnd;
@@ -117,19 +118,30 @@ export class Scene {
 		}
 	}
 
-	private calculateMargin() {
+	private calculateMargin(): { top: string; right: string; bottom: string; left: string } {
 		// todo: memoize this?
 		// todo: allow offset to be relative to element size
 		const { vertical, trackEnd, trackStart, offset } = this.optionsPrivate;
 		const { width, height } = this.containerCache.container.info.size;
 
-		const start = offset === 0 ? `${trackStart * 100 - 100}%` : trackStart * height - height - (offset as number);
-		const end = `${-trackEnd * 100}%`;
+		const perc = (val: number) => `${val * 100}%`;
+		const px = (val: number) => `${val}px`;
+
+		// const start = offset === 0 ? `${trackStart * 100 - 100}%` : trackStart * height - height - (offset as number);
+		const start = perc(trackStart - 1);
+		const end = perc(0 - trackEnd);
+
+		const startKey = vertical ? 'bottom' : 'right';
+		const endKey = vertical ? 'top' : 'left';
+
+		const none = px(0);
 		return {
-			top: vertical ? end : 0,
-			left: vertical ? 0 : end,
-			bottom: vertical ? start : 0,
-			right: vertical ? 0 : start,
+			top: none,
+			left: none,
+			bottom: none,
+			right: none,
+			[startKey]: start,
+			[endKey]: end,
 		};
 	}
 
