@@ -1,12 +1,7 @@
 import { ContainerManager } from './ContainerManager';
-import EventDispatcher, {
-	Callback,
-	NarrowDownEvent,
-	ScrollMagicEvent,
-	ScrollMagicEventType,
-	ScrollMagicProgressEvent,
-} from './EventDispatcher';
+import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
+import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { isWindow } from './util/typeguards';
 import validateObject from './util/validateObject';
@@ -99,7 +94,7 @@ export class Scene {
 			return;
 		}
 		const type = this.active ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave;
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type));
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, this));
 		this.update();
 	}
 
@@ -118,7 +113,7 @@ export class Scene {
 		const progress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		if (progress !== this.currentProgress) {
 			this.currentProgress = progress;
-			this.dispatcher.dispatchEvent(new ScrollMagicProgressEvent(this, progress));
+			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, this));
 		}
 	}
 
@@ -207,7 +202,7 @@ export class Scene {
 	}
 
 	// event listener
-	public on<T extends ScrollMagicEventType>(type: T, cb: Callback<NarrowDownEvent<T>>): Scene {
+	public on(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): Scene {
 		this.dispatcher.addEventListener(type, cb);
 		return this;
 	}

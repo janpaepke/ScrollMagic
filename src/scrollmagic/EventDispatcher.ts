@@ -1,41 +1,26 @@
-import { Scene } from './Scene';
-
-export enum ScrollMagicEventType {
-	Enter = 'enter',
-	Leave = 'leave',
-	Progress = 'progress',
-}
-export class ScrollMagicEvent {
-	constructor(public readonly target: Scene, public readonly type: ScrollMagicEventType) {}
+type EventType = string;
+export interface DispatchableEvent<T> {
+	readonly type: T;
+	readonly target: any;
 }
 
-export class ScrollMagicProgressEvent extends ScrollMagicEvent {
-	public readonly type = ScrollMagicEventType.Progress;
-	constructor(public readonly target: Scene, public readonly progress: number) {
-		super(target, ScrollMagicEventType.Progress);
-	}
-}
-
-type Event = ScrollMagicEvent | ScrollMagicProgressEvent;
-
-type SpecificEvent<T extends ScrollMagicEventType> = Extract<Event, { type: T }>;
-export type NarrowDownEvent<T extends ScrollMagicEventType> = SpecificEvent<T> extends never
-	? ScrollMagicEvent
-	: SpecificEvent<T>;
-
-export type Callback<E extends ScrollMagicEvent = ScrollMagicEvent> = (event: E) => void;
+export type Callback<T extends EventType> = (event: DispatchableEvent<T>) => void;
 export default class EventDispatcher {
-	private callbacks = new Map<ScrollMagicEventType, Callback[]>();
-	public addEventListener<T extends ScrollMagicEventType>(type: T, cb: Callback<NarrowDownEvent<T>>): void {
+	private callbacks = new Map<string, Callback<any>[]>();
+
+	// adds a listener to the dispatcher. returns a function to reverse the effect.
+	public addEventListener<T extends EventType>(type: T, cb: Callback<T>): () => void {
 		let list = this.callbacks.get(type);
 		if (undefined === list) {
 			list = [];
 			this.callbacks.set(type, list);
 		}
-		list.push(cb as Callback);
+		list.push(cb);
+		return () => this.removeEventListener(type, cb);
 	}
 
-	public removeEventListener(type: ScrollMagicEventType, cb: Callback): void {
+	// removes a listner from the dispatcher
+	public removeEventListener<T extends EventType>(type: T, cb: Callback<T>): void {
 		const list = this.callbacks.get(type);
 		if (undefined === list) {
 			return;
@@ -44,7 +29,8 @@ export default class EventDispatcher {
 		this.callbacks.set(type, remaining);
 	}
 
-	public dispatchEvent(event: ScrollMagicEvent): void {
+	// dispatches an event... DUH!
+	public dispatchEvent(event: DispatchableEvent<EventType>): void {
 		const list = this.callbacks.get(event.type);
 		if (undefined === list) {
 			return;

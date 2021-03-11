@@ -6,6 +6,7 @@ export class ContainerManager {
 
 	private element?: ContainerElement;
 	constructor(private readonly scene: Scene) {}
+
 	public attach(containerElement: ContainerElement): Container {
 		if (undefined !== this.element) {
 			this.detach(); // TODO: should we auto detach or throw?
@@ -20,6 +21,7 @@ export class ContainerManager {
 		scenes.add(this.scene);
 		return container;
 	}
+
 	public detach(): void {
 		if (undefined === this.element) {
 			return;
