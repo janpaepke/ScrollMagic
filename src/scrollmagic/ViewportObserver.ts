@@ -1,3 +1,5 @@
+import pickDifferencesFlat from './util/pickDifferencesFlat';
+
 type Margin = {
 	top: number | string;
 	right: number | string;
@@ -10,7 +12,7 @@ interface Options {
 	margin?: Margin;
 }
 
-type ObserverCallback = (isIntersecting: boolean) => void;
+type ObserverCallback = (isIntersecting: boolean, target: Element) => void;
 
 const numberToPx = (val: number | string) => ('string' === typeof val ? val : `${val}px`);
 const marginObjToString = ({ top, right, bottom, left }: Margin) =>
@@ -45,7 +47,7 @@ export default class ViewportObserver {
 			if (undefined === newState || prevState === newState) {
 				return;
 			}
-			this.callback.call(target, newState);
+			this.callback(newState, target);
 		});
 	}
 	private createObserver(rootMargin: string) {
@@ -70,7 +72,7 @@ export default class ViewportObserver {
 			return true;
 		}
 		if (undefined !== margin) {
-			return Object.entries(this.options.margin).some(([key, value]) => value !== margin[key as keyof Margin]);
+			return Object.keys(pickDifferencesFlat(margin, this.options.margin)).length === 0;
 		}
 		return false;
 	}
