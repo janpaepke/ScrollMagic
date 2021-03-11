@@ -2,44 +2,48 @@ import { Container, ContainerElement } from './Container';
 import { Scene } from './Scene';
 
 export class ContainerManager {
-	private static containers = new Map<ContainerElement, Container>(); // TODO: this is a 1:1 relationship. does a map make sense?
-	private static attachments = new Map<Scene, Container>();
+	private static cache = new Map<ContainerElement, [Container, Set<Scene>]>();
 
-	// attaches a scene to a container, creates a new one, if none exists for this scroll element.
-	static attach(scene: Scene, containerElement: ContainerElement): Container {
-		let container = this.containers.get(containerElement);
-		const attachment = this.attachments.get(scene);
-		if (undefined !== attachment) {
-			// known scene
-			if (container === attachment) {
-				return container; // all good.
-			}
-			throw new Error('Scene already attached to a different container. Detach first.');
+	private element?: ContainerElement;
+	constructor(private readonly scene: Scene) {}
+	public attach(containerElement: ContainerElement): Container {
+		if (undefined !== this.element) {
+			this.detach(); // TODO: should we auto detach or throw?
 		}
-		if (undefined === container) {
-			container = new Container(containerElement);
-			this.containers.set(containerElement, container);
+		this.element = containerElement;
+		let cache = ContainerManager.cache.get(containerElement);
+		if (undefined === cache) {
+			cache = [new Container(containerElement), new Set()];
+			ContainerManager.cache.set(containerElement, cache);
 		}
-		this.attachments.set(scene, container);
+		const [container, scenes] = cache;
+		scenes.add(this.scene);
 		return container;
 	}
+	public detach(): void {
+		if (undefined === this.element) {
+			return;
+		}
+		const cache = ContainerManager.cache.get(this.element);
+		if (undefined === cache) {
+			return;
+		}
+		const [container, scenes] = cache;
+		scenes.delete(this.scene);
+		if (scenes.size === 0) {
+			// no more attached scenes
+			container.destroy();
+			ContainerManager.cache.delete(this.element);
+		}
+		this.element = undefined;
+	}
 
-	// detaches a scene from its container, destroys the container if no more scenes are attached to it.
-	static detach(scene: Scene): void {
-		const attachedContainer = this.attachments.get(scene);
-		if (undefined === attachedContainer) {
-			throw new Error('detach called on unknown scene');
+	public get container(): Container {
+		// TODO: there should be no need to get, we should add listeners directly
+		if (undefined === this.element) {
+			throw new Error('scene is not yet attached to a container...');
 		}
-		this.attachments.delete(scene);
-		const noMoreSiblings = false === [...this.attachments.values()].includes(attachedContainer);
-		if (noMoreSiblings) {
-			this.containers.forEach((container, key) => {
-				// TODO: there should only be one element per container, so does this make sense?
-				if (container === attachedContainer) {
-					container.destroy();
-					this.containers.delete(key);
-				}
-			});
-		}
+		const [container] = ContainerManager.cache.get(this.element)!;
+		return container;
 	}
 }
