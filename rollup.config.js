@@ -1,9 +1,10 @@
-import pkg from './package.json';
-
 import path from 'path';
-import typescript from 'rollup-plugin-typescript2';
+
 import license from 'rollup-plugin-license';
 import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+
+import pkg from './package.json';
 
 const inputFile = './src/scrollmagic/index.ts';
 const bannerFile = './src/config/banner.txt';
@@ -42,8 +43,17 @@ const licenseConfig = {
 	},
 };
 
+const minificationConfig = {
+	compress: {
+		unsafe: true,
+	},
+	format: {
+		comments: false,
+	},
+};
+
 export default {
 	input: inputFile,
 	output: [umdOutput, esmOutput],
-	plugins: [typescript(tsPluginConfig), license(licenseConfig), terser()],
+	plugins: [typescript(tsPluginConfig), terser(minificationConfig), license(licenseConfig)],
 };
