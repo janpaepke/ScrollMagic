@@ -47,16 +47,16 @@ export class Scene {
 		 * - introduce offset (getter, setter) ✅
 		 * - when offset changes:
 		 * 	 - recreate IC ✅
-		 *   - if (offset !== 0):
-		 *      - use calculated px rootMargin based on trackStart, offset & current viewport height/width
+		 *   - if (offset !== 0): ✅
+		 *      - use calculated px rootMargin based on trackStart, offset & current viewport height/width ✅
 		 * 		- listen for container resizes -> recreate IC
-		 * - introduce height (getter, setter)
-		 * - when height changes:
-		 *   - recreate IC
-		 * 	 - if (height !== 100% aber relativ (%)):
+		 * - introduce height (getter, setter) ✅
+		 * - when height changes: ✅
+		 *   - recreate IC ✅
+		 * 	// - if (height !== 100% aber relativ (%)):
 		 * 		- add ResizeObserver for element, recreate IC on height/width change
 		 * - test all
-		 * - next big thing: calclate progress during scene
+		 * - next big thing: calclate progress during scene ✅
 		 */
 	}
 
@@ -78,14 +78,26 @@ export class Scene {
 			...normalized,
 		};
 
+		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
+
 		if (changedOptions.includes('scrollParent')) {
 			this.containerCache.attach(this.optionsPrivate.scrollParent).onUpdate(() => {
 				// todo: listen to something on cache instead? and also don't forget to unsubscribe. maybe the manager even does that?
+				// todo: refresh IC but only on resize
 				this.update();
 			});
 		}
 
-		// if the options change we always have to refresh the viewport observer
+		if (changedOptions.includes('element')) {
+			// todo: add listeners to resize Observer
+			// - throttle update (rAF)
+			// - cache dimensions (get getBoundingClientRect)
+			// - refresh IC
+			// - call scene update. I'm not sure if it will be called by IC callback, while active, but I guess so...
+			//	 Test and if not, so check if state is active before refresh and after, and if active and unchanged, call update to make sure to have the correct progress
+		}
+
+		// if the options change we always have to refresh the viewport observer, regardless which one it is...
 		this.refreshViewportObserver();
 		return this;
 	}
@@ -108,27 +120,28 @@ export class Scene {
 		if (!this.active) {
 			return;
 		}
-		const { vertical, trackEnd, trackStart, element } = this.optionsPrivate;
-		// todo: remember element resizes...
-
+		const { vertical, trackEnd, trackStart, element, offset, height } = this.optionsPrivate;
 		const { size: elemSize, start: elemStart } = pickRelevantValues(element.getBoundingClientRect(), vertical);
 		const { size: containerSize } = pickRelevantValues(this.containerCache.container.info.size, vertical);
 
-		const positionStart = elemStart / containerSize;
-		const positionEnd = (elemStart + elemSize) / containerSize;
-		const trackSize = trackStart - trackEnd;
-		const total = positionEnd - positionStart + trackSize;
-		const passed = trackStart - positionStart;
+		const startOffset = getPixelValue(offset, elemSize) / containerSize;
+		const relativeHeight = getPixelValue(height, elemSize) / containerSize;
+		const relativeStart = startOffset + elemStart / containerSize;
+		const trackDistance = trackStart - trackEnd;
+
+		const passed = trackStart - relativeStart;
+		const total = relativeHeight + trackDistance;
+
 		const progress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		if (progress !== this.currentProgress) {
+			console.log(progress);
 			this.currentProgress = progress;
 			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, this));
 		}
 	}
 
 	private calculateMargin() {
-		// todo: memoize all this? Might not be worth it...
-		// TODO: cache getBoundingClientRect on resize with resize observer!!!
+		// todo: memoize all or part of this? Might not be worth it...
 		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
 		const { start, end } = pickRelevantProps(vertical);
 		const { size: elemSize } = pickRelevantValues(element.getBoundingClientRect(), vertical);
@@ -136,15 +149,16 @@ export class Scene {
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
-		const relativeOffset = getPixelValue(offset, elemSize) / containerSize;
-		// TODO: fix height
-		const relativeHeight = 0; //getPixelValue(height, elementSize) / containerSize;
+
+		const startOffset = getPixelValue(offset, elemSize) / containerSize;
+		const relativeHeight = getPixelValue(height, elemSize) / containerSize; // if startOffset is 0 and height is 100% we COULD take a little shortcut (endoffset = 0), but I doubt it's worth the code.
+		const endOffset = relativeHeight - elemSize / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
 
 		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 		return {
 			...defaultViewportObserverMargin,
-			[end]: numberToPercString(trackStartMargin - relativeOffset),
-			[start]: numberToPercString(trackEndMargin + relativeHeight),
+			[end]: numberToPercString(trackStartMargin - startOffset),
+			[start]: numberToPercString(trackEndMargin + startOffset + endOffset),
 		};
 	}
 
