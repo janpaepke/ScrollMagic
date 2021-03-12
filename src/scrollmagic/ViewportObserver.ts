@@ -17,6 +17,7 @@ type ObserverCallback = (isIntersecting: boolean, target: Element) => void;
 const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right, bottom, left].join(' ');
 
 const none = '0px';
+export const defaultViewportObserverMargin = { top: none, right: none, bottom: none, left: none };
 export default class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
@@ -24,7 +25,7 @@ export default class ViewportObserver {
 	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
 	constructor(
 		private callback: ObserverCallback,
-		{ root = null, margin = { top: none, right: none, bottom: none, left: none } }: Options = {}
+		{ root = null, margin = defaultViewportObserverMargin }: Options = {}
 	) {
 		this.options = {
 			root,

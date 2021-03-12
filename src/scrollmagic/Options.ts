@@ -1,5 +1,6 @@
 import getElement from './util/getElement';
 import getScrollContainerElement from './util/getScrollContainerElement';
+import { stringToUnitTuple } from './util/transformers';
 import { isNumber } from './util/typeguards';
 import { ValidationRules } from './util/validateObject';
 
@@ -29,8 +30,8 @@ export type Private = Modify<
 		vertical: boolean;
 		trackStart: number;
 		trackEnd: number;
-		offset: [value: number, unit: string];
-		height: [value: number, unit: string];
+		offset: [value: number, unit: string]; // if unit is %, value will be 1 for 100%
+		height: [value: number, unit: string]; // if unit is %, value will be 1 for 100%
 	}
 >;
 
@@ -44,11 +45,16 @@ export const defaults: Public = {
 	height: '100%',
 };
 
+const throwError = (message?: string): never => {
+	throw new Error(message);
+};
+
 const assert = (condition: boolean, message?: string) => {
 	if (!condition) {
-		throw new Error(message);
+		throwError(message);
 	}
 };
+
 const betweenZeroAndOne = (val: number) => assert(Math.abs(val) <= 1, 'Value must be a number between 0 and 1.');
 const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
 	if (isNumber(val)) {
@@ -63,13 +69,15 @@ const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
 	assert(valid.includes(val), `Value must be numeric or one of: ${valid.join(' / ')}`);
 	return numericEquivalents[val];
 };
-const toUnitTuple = (val: number | string): [number, string] => {
+const toUnitTuple = (val: number | string): [value: number, unit: string] => {
 	if (isNumber(val)) {
 		return [val, 'px'];
 	}
-	const match = val.match(/^(?:\d+|\d*[.]\d+)(%|px)$/);
-	assert(match !== null, 'Value must be number or string with unit, i.e. 20px or 80%');
-	return [parseFloat(match![1]), match![2]];
+	try {
+		return stringToUnitTuple(val);
+	} catch (e) {
+		return throwError('Value must be number or string with unit, i.e. 20px or 80%');
+	}
 };
 
 // TODO: make type safe and then use

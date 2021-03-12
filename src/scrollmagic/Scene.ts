@@ -2,12 +2,18 @@ import { ContainerManager } from './ContainerManager';
 import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
+import { getPixelDistance as getPixelValue } from './util/getRelativeDistance';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
+import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import { numberToPercString } from './util/transformers';
 import { isWindow } from './util/typeguards';
 import validateObject from './util/validateObject';
-import ViewportObserver from './ViewportObserver';
+import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
 
 export { Public as ScrollMagicOptions } from './Options';
+
+// used for listeners to allow the value to be passed in either from the enum or as a string literal
+type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
 export class Scene {
 	public readonly name = 'ScrollMagic';
 
@@ -102,12 +108,14 @@ export class Scene {
 		if (!this.active) {
 			return;
 		}
-		const { width: containerWidth, height: containerHeight } = this.containerCache.container.info.size;
 		const { vertical, trackEnd, trackStart, element } = this.optionsPrivate;
-		const { left, top, width, height } = element.getBoundingClientRect();
 		// todo: remember element resizes...
-		const positionStart = vertical ? top / containerHeight : left / containerWidth;
-		const positionEnd = vertical ? (top + height) / containerHeight : (left + width) / containerWidth;
+
+		const { size: elemSize, start: elemStart } = pickRelevantValues(element.getBoundingClientRect(), vertical);
+		const { size: containerSize } = pickRelevantValues(this.containerCache.container.info.size, vertical);
+
+		const positionStart = elemStart / containerSize;
+		const positionEnd = (elemStart + elemSize) / containerSize;
 		const trackSize = trackStart - trackEnd;
 		const total = positionEnd - positionStart + trackSize;
 		const passed = trackStart - positionStart;
@@ -118,30 +126,25 @@ export class Scene {
 		}
 	}
 
-	private calculateMargin(): { top: string; right: string; bottom: string; left: string } {
-		// todo: memoize this?
-		// todo: allow offset to be relative to element size
-		const { vertical, trackEnd, trackStart, offset } = this.optionsPrivate;
-		const { width, height } = this.containerCache.container.info.size;
+	private calculateMargin() {
+		// todo: memoize all this? Might not be worth it...
+		// TODO: cache getBoundingClientRect on resize with resize observer!!!
+		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
+		const { start, end } = pickRelevantProps(vertical);
+		const { size: elemSize } = pickRelevantValues(element.getBoundingClientRect(), vertical);
+		const { size: containerSize } = pickRelevantValues(this.containerCache.container.info.size, vertical);
 
-		const perc = (val: number) => `${val * 100}%`;
-		const px = (val: number) => `${val}px`;
+		const trackStartMargin = trackStart - 1; // distance from bottom
+		const trackEndMargin = -trackEnd; // distance from top
+		const relativeOffset = getPixelValue(offset, elemSize) / containerSize;
+		// TODO: fix height
+		const relativeHeight = 0; //getPixelValue(height, elementSize) / containerSize;
 
-		// const start = offset === 0 ? `${trackStart * 100 - 100}%` : trackStart * height - height - (offset as number);
-		const start = perc(trackStart - 1);
-		const end = perc(0 - trackEnd);
-
-		const startKey = vertical ? 'bottom' : 'right';
-		const endKey = vertical ? 'top' : 'left';
-
-		const none = px(0);
+		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 		return {
-			top: none,
-			left: none,
-			bottom: none,
-			right: none,
-			[startKey]: start,
-			[endKey]: end,
+			...defaultViewportObserverMargin,
+			[end]: numberToPercString(trackStartMargin - relativeOffset),
+			[start]: numberToPercString(trackEndMargin + relativeHeight),
 		};
 	}
 
@@ -214,13 +217,17 @@ export class Scene {
 	}
 
 	// event listener
-	public on(type: ScrollMagicEventType | `${ScrollMagicEventType}`, cb: (e: ScrollMagicEvent) => void): Scene {
+	public on(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): Scene {
 		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
-	public off(type: ScrollMagicEventType | `${ScrollMagicEventType}`, cb: (e: ScrollMagicEvent) => void): Scene {
+	public off(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): Scene {
 		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
 		return this;
+	}
+	// same as on, but returns a function to reverse the effect (remove the listener).
+	public subscribe(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): () => void {
+		return this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 	}
 
 	public destroy(): void {
