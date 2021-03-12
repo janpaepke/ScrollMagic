@@ -4,7 +4,7 @@ import { stringToUnitTuple } from './util/transformers';
 import { isNumber } from './util/typeguards';
 import { ValidationRules } from './util/validateObject';
 
-type Modify<T extends { [K in keyof T]: any }, R extends { [K in keyof T]: any }> = Omit<T, keyof R> & R;
+type Modify<T extends Record<keyof T, any>, R extends Record<keyof T, any>> = Omit<T, keyof R> & R;
 
 export enum TrackShorthand {
 	Enter = 'enter',
@@ -49,18 +49,21 @@ const throwError = (message?: string): never => {
 	throw new Error(message);
 };
 
-const assert = (condition: boolean, message?: string) => {
+const assert = (condition: boolean, message?: string): never | true => {
 	if (!condition) {
 		throwError(message);
 	}
+	return true;
 };
 
-const betweenZeroAndOne = (val: number) => assert(Math.abs(val) <= 1, 'Value must be a number between 0 and 1.');
-const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`) => {
+const betweenZeroAndOne = (val: number): number =>
+	assert(Math.abs(val) <= 1, 'Value must be a number between 0 and 1.') && val;
+
+const normalizeTrack = (val: number | TrackShorthand | `${TrackShorthand}`): number => {
 	if (isNumber(val)) {
 		return val;
 	}
-	const numericEquivalents: Record<TrackShorthand, number> = {
+	const numericEquivalents = {
 		[TrackShorthand.Enter]: 1,
 		[TrackShorthand.Center]: 0.5,
 		[TrackShorthand.Leave]: 0,

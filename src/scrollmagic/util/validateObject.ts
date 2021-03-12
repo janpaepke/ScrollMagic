@@ -1,10 +1,13 @@
 export type ValidationRule<I, O> = {
 	normalize?: (value: I) => O; // if there's no normalize, we'll assume the input type is compatible with the output
-	check?: (value: O) => void | ((value: O) => void)[];
+	check?: (value: O) => void | O | ((value: O) => void | O)[];
 };
 
-export type ValidationRules<I extends { [K in keyof I]: any }, O extends { [K in keyof I]: any }> = {
-	[K in keyof I]?: ValidationRule<I[K], O[K]>;
+export type ValidationRules<
+	I extends { [X in keyof I & keyof O]: any },
+	O extends { [X in keyof I & keyof O]: any }
+> = {
+	[X in keyof I & keyof O]?: ValidationRule<I[X], O[X]>;
 };
 /**
  * A function that can be used to validate the properties of an object based on predefined rules.
@@ -13,7 +16,7 @@ export type ValidationRules<I extends { [K in keyof I]: any }, O extends { [K in
  * @param fail A function that returns the format for the error message, should normalize or check fail.
  * @returns the normalized and checked object
  */
-const validateObject = <I extends { [K in keyof I]: any }, O extends { [K in keyof I]: any }, K extends keyof I>(
+const validateObject = <I extends { [X in K]: any }, O extends { [X in K]: any }, K extends keyof I & keyof O>(
 	options: Partial<I>,
 	rules: ValidationRules<I, O>,
 	fail: (value: any, prop: K, reason?: string) => string = (value, prop, reason) =>
@@ -25,7 +28,8 @@ const validateObject = <I extends { [K in keyof I]: any }, O extends { [K in key
 		const value = options[prop] as I[K];
 		let clean: O[K];
 		try {
-			clean = normalize?.(value) ?? value; // no normalizer? let's assume input type matches output
+			//TODO: reeeaaally forcing it. should be better with planned batch structure.
+			clean = ((normalize?.(value) ?? value) as unknown) as O[K];
 			if (Array.isArray(check)) {
 				check.forEach(val => val(clean));
 			}

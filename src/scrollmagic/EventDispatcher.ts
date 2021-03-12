@@ -1,15 +1,15 @@
 type EventType = string;
-export interface DispatchableEvent<T> {
-	readonly type: T;
+export interface DispatchableEvent {
+	readonly type: EventType;
 	readonly target: any;
 }
 
-export type Callback<T extends EventType> = (event: DispatchableEvent<T>) => void;
+type Callback<E extends DispatchableEvent> = (event: E) => void;
 export default class EventDispatcher {
 	private callbacks = new Map<string, Callback<any>[]>();
 
 	// adds a listener to the dispatcher. returns a function to reverse the effect.
-	public addEventListener<T extends EventType>(type: T, cb: Callback<T>): () => void {
+	public addEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): () => void {
 		let list = this.callbacks.get(type);
 		if (undefined === list) {
 			list = [];
@@ -20,7 +20,7 @@ export default class EventDispatcher {
 	}
 
 	// removes a listner from the dispatcher
-	public removeEventListener<T extends EventType>(type: T, cb: Callback<T>): void {
+	public removeEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): void {
 		const list = this.callbacks.get(type);
 		if (undefined === list) {
 			return;
@@ -30,7 +30,7 @@ export default class EventDispatcher {
 	}
 
 	// dispatches an event... DUH!
-	public dispatchEvent(event: DispatchableEvent<EventType>): void {
+	public dispatchEvent(event: DispatchableEvent): void {
 		const list = this.callbacks.get(event.type);
 		if (undefined === list) {
 			return;

@@ -1,4 +1,4 @@
-import { ContainerManager } from './ContainerManager';
+import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
@@ -20,7 +20,7 @@ export class Scene {
 	private static defaultOptionsPublic = Options.defaults;
 
 	private dispatcher = new EventDispatcher();
-	private containerCache = new ContainerManager(this);
+	private container = new ContainerProxy(this);
 	private viewportObserver?: ViewportObserver;
 
 	private optionsPublic: Options.Public = Scene.defaultOptionsPublic;
@@ -35,33 +35,16 @@ export class Scene {
 			...options,
 		};
 		this.modify(initOptions);
-		/**
-		 * 
-		 * for below setters: for changes always check if they actually do change
-		 // TODO: Basicaly add IC and keep the rootMargin up to date.
-		 * - add IntersectionController (IC), listening to elem ✅
-		 * - trigger callbacks on enter & leave ✅
-		 * - add trackStart and trackEnd options ✅
-		 *   - validate (start > end) ✅
-		 * - recreate IC when trackStart or trackEnd is set (setter) ✅
-		 * - introduce offset (getter, setter) ✅
-		 * - when offset changes:
-		 * 	 - recreate IC ✅
-		 *   - if (offset !== 0): ✅
-		 *      - use calculated px rootMargin based on trackStart, offset & current viewport height/width ✅
-		 * 		- listen for container resizes -> recreate IC
-		 * - introduce height (getter, setter) ✅
-		 * - when height changes: ✅
-		 *   - recreate IC ✅
-		 * 	// - if (height !== 100% aber relativ (%)):
-		 * 		- add ResizeObserver for element, recreate IC on height/width change
-		 * - test all
-		 * - next big thing: calclate progress during scene ✅
-		 */
+		// TODO: resize observer for element and container
 	}
 
 	public modify(options: Partial<Options.Public>): Scene {
 		const normalized = validateObject(options, Options.validationRules);
+
+		this.optionsPublic = {
+			...this.optionsPublic,
+			...options,
+		};
 
 		const changed =
 			undefined === this.optionsPrivate // internal options not set on first run, so all changed
@@ -69,10 +52,10 @@ export class Scene {
 				: pickDifferencesFlat(normalized, this.optionsPrivate);
 		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
 
-		this.optionsPublic = {
-			...this.optionsPublic,
-			...options,
-		};
+		if (changedOptions.length === 0) {
+			return this;
+		}
+
 		this.optionsPrivate = {
 			...this.optionsPrivate,
 			...normalized,
@@ -81,10 +64,11 @@ export class Scene {
 		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 
 		if (changedOptions.includes('scrollParent')) {
-			this.containerCache.attach(this.optionsPrivate.scrollParent).onUpdate(() => {
-				// todo: listen to something on cache instead? and also don't forget to unsubscribe. maybe the manager even does that?
-				// todo: refresh IC but only on resize
-				this.update();
+			this.container.attach(this.optionsPrivate.scrollParent, e => {
+				if ('resize' === e.type) {
+					this.refreshViewportObserver();
+				}
+				this.update(true);
 			});
 		}
 
@@ -112,17 +96,18 @@ export class Scene {
 			return;
 		}
 		const type = this.active ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave;
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, this));
+		const forward = (this.progress !== 1 && this.active) || (this.progress !== 0 && !this.active);
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
 		this.update();
 	}
 
-	private update() {
-		if (!this.active) {
+	private update(force = false) {
+		if (!force && !this.active) {
 			return;
 		}
 		const { vertical, trackEnd, trackStart, element, offset, height } = this.optionsPrivate;
-		const { size: elemSize, start: elemStart } = pickRelevantValues(element.getBoundingClientRect(), vertical);
-		const { size: containerSize } = pickRelevantValues(this.containerCache.container.info.size, vertical);
+		const { size: elemSize, start: elemStart } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
 		const startOffset = getPixelValue(offset, elemSize) / containerSize;
 		const relativeHeight = getPixelValue(height, elemSize) / containerSize;
@@ -134,9 +119,9 @@ export class Scene {
 
 		const progress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		if (progress !== this.currentProgress) {
-			console.log(progress);
+			const forward = progress > this.progress;
 			this.currentProgress = progress;
-			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, this));
+			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, forward, this));
 		}
 	}
 
@@ -144,8 +129,8 @@ export class Scene {
 		// todo: memoize all or part of this? Might not be worth it...
 		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
 		const { start, end } = pickRelevantProps(vertical);
-		const { size: elemSize } = pickRelevantValues(element.getBoundingClientRect(), vertical);
-		const { size: containerSize } = pickRelevantValues(this.containerCache.container.info.size, vertical);
+		const { size: elemSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
@@ -246,6 +231,6 @@ export class Scene {
 
 	public destroy(): void {
 		this.viewportObserver?.disconnect();
-		this.containerCache.detach();
+		this.container.detach();
 	}
 }

@@ -27,7 +27,7 @@ export const pickRelevantProps = (vertical: boolean): RelevantProps => ({
  * @param obj Object to tretrieve the values from
  * @param vertical scrolldirection (true = vertical)
  */
-export const pickRelevantValues = <T extends Partial<RectInfo>>(obj: T, vertical: boolean) => {
+export const pickRelevantValues = <T extends Partial<RectInfo>>(vertical: boolean, obj: T) => {
 	const props = pickRelevantProps(vertical);
 	// all of the type assertions are there to make sure the property has the correct type based on the object that is passed.
 	// i.e. if both top and left exist -> number, if only top exists -> number | undefined, if neither exist -> undefined.
