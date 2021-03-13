@@ -5,6 +5,7 @@ import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { getPixelDistance as getPixelValue } from './util/getRelativeDistance';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import throttleRaf from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
 import { isWindow } from './util/typeguards';
 import validateObject from './util/validateObject';
@@ -21,12 +22,16 @@ export class Scene {
 
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
+	private resizeObserver = new ResizeObserver(throttleRaf(() => this.updateElementSizeCache()));
 	private viewportObserver?: ViewportObserver;
 
 	private optionsPublic: Options.Public = Scene.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private active?: boolean;
+	// TODO: only cache size
+	private elementSize?: number; // cached element height
+	private active?: boolean; // scene active state
 	private currentProgress = 0;
+	private isNaturalIntersection = true;
 
 	// TODO: currently options.element isn't optional. Can we make it?
 	constructor(options: Partial<Options.Public> = {}) {
@@ -63,50 +68,82 @@ export class Scene {
 
 		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 
-		if (changedOptions.includes('scrollParent')) {
+		// todo: make this a private method.
+		const isChanged = changedOptions.includes;
+		const heightChanged = isChanged('height');
+		const offsetChanged = isChanged('offset');
+		const elementChanged = isChanged('element');
+		const scrollParentChanged = isChanged('scrollParent');
+		if (heightChanged || offsetChanged) {
+			// if there is no offset from the top and bottom of the element (default)
+			// this allows for simpler calculations and less refreshes.
+			const { offset, height } = this.optionsPrivate;
+			const [offsetValue] = offset;
+			const [heightValue, heightUnit] = height;
+			this.isNaturalIntersection = offsetValue === 0 && heightValue === 1 && heightUnit === '%';
+			if (heightChanged) {
+				this.updateElementSizeCache();
+			}
+		}
+		if (elementChanged) {
+			this.resizeObserver.disconnect();
+			this.updateElementSizeCache();
+			this.resizeObserver.observe(this.optionsPrivate.element);
+		}
+		if (scrollParentChanged) {
 			this.container.attach(this.optionsPrivate.scrollParent, e => {
 				if ('resize' === e.type) {
-					this.refreshViewportObserver();
+					this.updateViewportObserver();
 				}
-				this.update(true);
+				this.updateProgress(true);
 			});
 		}
 
-		if (changedOptions.includes('element')) {
-			// todo: add listeners to resize Observer
-			// - throttle update (rAF)
-			// - cache dimensions (get getBoundingClientRect)
-			// - refresh IC
-			// - call scene update. I'm not sure if it will be called by IC callback, while active, but I guess so...
-			//	 Test and if not, so check if state is active before refresh and after, and if active and unchanged, call update to make sure to have the correct progress
-		}
-
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
-		this.refreshViewportObserver();
+		this.updateViewportObserver();
 		return this;
 	}
 
-	private setActive(newActiveState: boolean) {
-		if (newActiveState === this.active) {
+	private setActive(nextActiveState: boolean) {
+		if (nextActiveState === this.active) {
 			return; // boring.
 		}
-		const isInitialLeave = undefined === this.active && !newActiveState; // for the initial set to false there's no need to do anything
-		this.active = newActiveState;
+		const isInitialLeave = undefined === this.active && !nextActiveState; // for the initial set to false there's no need to do anything
+		this.active = nextActiveState;
 		if (isInitialLeave) {
 			return;
 		}
 		const type = this.active ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave;
 		const forward = (this.progress !== 1 && this.active) || (this.progress !== 0 && !this.active);
 		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
-		this.update();
+		this.updateProgress();
 	}
 
-	private update(force = false) {
+	private updateElementSizeCache(force = true) {
+		if (!force && this.isNaturalIntersection) {
+			return;
+		}
+		const { vertical, element } = this.optionsPrivate;
+		const currentRect = element.getBoundingClientRect();
+		const { size: nextSize } = pickRelevantValues(vertical, currentRect);
+		const sizeChanged = this.elementSize === nextSize;
+		this.elementSize = nextSize;
+		const currentActive = this.active;
+		if (sizeChanged && !this.isNaturalIntersection) {
+			this.updateViewportObserver();
+		}
+		if (this.active && currentActive === this.active) {
+			// if we were in the scene before and are now, we need to update the progress
+			this.updateProgress();
+		}
+	}
+
+	private updateProgress(force = false) {
 		if (!force && !this.active) {
 			return;
 		}
-		const { vertical, trackEnd, trackStart, element, offset, height } = this.optionsPrivate;
-		const { size: elemSize, start: elemStart } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
+		const { size: elemSize, start: elemStart } = pickRelevantValues(vertical, element.getBoundingClientRect()); //don't use cached value here, we need the current position
 		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
 		const startOffset = getPixelValue(offset, elemSize) / containerSize;
@@ -127,9 +164,13 @@ export class Scene {
 
 	private calculateMargin() {
 		// todo: memoize all or part of this? Might not be worth it...
-		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
+		const { vertical, trackEnd, trackStart, offset, height, element } = this.optionsPrivate;
 		const { start, end } = pickRelevantProps(vertical);
-		const { size: elemSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		if (undefined === this.elementSize) {
+			const { size: freshElementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+			this.elementSize = freshElementSize;
+		}
+		const elemSize = this.elementSize;
 		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
@@ -147,7 +188,7 @@ export class Scene {
 		};
 	}
 
-	private refreshViewportObserver(): void {
+	private updateViewportObserver(): void {
 		const { scrollParent } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.calculateMargin(),
@@ -166,7 +207,7 @@ export class Scene {
 		}
 	}
 
-	// getter / setter
+	// getter/setter public
 	public set element(element: Options.Public['element']) {
 		this.modify({ element });
 	}
@@ -230,6 +271,7 @@ export class Scene {
 	}
 
 	public destroy(): void {
+		this.resizeObserver.disconnect();
 		this.viewportObserver?.disconnect();
 		this.container.detach();
 	}
