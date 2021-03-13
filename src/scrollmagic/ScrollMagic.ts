@@ -19,8 +19,6 @@ type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
-	private static defaultOptionsPublic = Options.defaults;
-
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
@@ -87,7 +85,7 @@ export class ScrollMagic {
 				return [0, 0];
 			}
 			if (undefined === this.elementSize) {
-				// shouldn't be the case, but you never know...
+				// should never be the case, but why not...
 				this.updateElementSize();
 			}
 			const startOffset = getPixelValue(offset, this.elementSize!) / containerSize;
@@ -271,16 +269,6 @@ export class ScrollMagic {
 		return this.currentProgress;
 	}
 
-	// get or change default options
-	public static default(options: Partial<Options.Public> = {}): Options.Public {
-		validateObject(options, Options.validationRules);
-		this.defaultOptionsPublic = {
-			...this.defaultOptionsPublic,
-			...options,
-		};
-		return this.defaultOptionsPublic;
-	}
-
 	// event listener
 	public on(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
@@ -299,5 +287,18 @@ export class ScrollMagic {
 		this.resizeObserver.disconnect();
 		this.viewportObserver?.disconnect();
 		this.container.detach();
+	}
+
+	// static options/methods
+
+	private static defaultOptionsPublic = Options.defaults;
+	// get or change default options
+	public static default(options: Partial<Options.Public> = {}): Options.Public {
+		validateObject(options, Options.validationRules);
+		this.defaultOptionsPublic = {
+			...this.defaultOptionsPublic,
+			...options,
+		};
+		return this.defaultOptionsPublic;
 	}
 }
