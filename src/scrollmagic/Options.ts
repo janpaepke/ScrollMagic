@@ -21,6 +21,7 @@ export interface Public {
 	height: number | string;
 }
 
+export type UnitTuple = [value: number, unit: string];
 // basically a normalized version of the options
 export type Private = Modify<
 	Public,
@@ -30,8 +31,8 @@ export type Private = Modify<
 		vertical: boolean;
 		trackStart: number;
 		trackEnd: number;
-		offset: [value: number, unit: string]; // if unit is %, value will be 1 for 100%
-		height: [value: number, unit: string]; // if unit is %, value will be 1 for 100%
+		offset: UnitTuple; // if unit is %, value will be 1 for 100%
+		height: UnitTuple; // if unit is %, value will be 1 for 100%
 	}
 >;
 
