@@ -77,7 +77,7 @@ export default class ViewportObserver {
 		return false;
 	}
 
-	public updateOptions(options: Options): ViewportObserver {
+	public modify(options: Options): ViewportObserver {
 		if (!this.optionsChanged(options)) {
 			return this;
 		}

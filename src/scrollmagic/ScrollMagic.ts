@@ -24,17 +24,18 @@ export class ScrollMagic {
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
-	private viewportObserver?: ViewportObserver;
 
+	// all below options should only ever be changed by a dedicated method
+	// update function MUST NOT call any other functions, with the exceptions of modify
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	// TODO: only cache size
-	private elementSize?: number; // cached element height
+	private viewportObserver?: ViewportObserver;
+	private elementSize?: number; // cached element height (only updated if height != 100%)
 	private active?: boolean; // scene active state
 	private currentProgress = 0;
 	private isNaturalIntersection = true;
 
-	// TODO: currently options.element isn't optional. Can we make it?
+	// TODO: currently options.element isn't really optional. Can we make it?
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -66,34 +67,14 @@ export class ScrollMagic {
 			...normalized,
 		};
 
-		this.handleOptionChanges(changedOptions);
+		this.onOptionChanges(changedOptions);
 		return this;
-	}
-
-	private updateActiveState(nextActiveState: boolean) {
-		if (nextActiveState === this.active) {
-			return; // boring.
-		}
-		const isInitialLeave = undefined === this.active && !nextActiveState; // for the initial set to false there's no need to do anything
-		this.active = nextActiveState;
-		if (isInitialLeave) {
-			return;
-		}
-		const type = this.active ? ScrollMagicEventType.Enter : ScrollMagicEventType.Leave;
-		// TODO: this does not work reliably during scroll parent resize. make better.
-		const forward = (this.progress !== 1 && this.active) || (this.progress !== 0 && !this.active);
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
 	}
 
 	private getViewportMargin() {
 		// todo: memoize all or part of this? Might not be worth it...
-		const { vertical, trackEnd, trackStart, offset, height, element } = this.optionsPrivate;
+		const { vertical, trackEnd, trackStart, offset, height } = this.optionsPrivate;
 		const { start, end } = pickRelevantProps(vertical);
-		if (undefined === this.elementSize) {
-			const { size: freshElementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
-			this.elementSize = freshElementSize;
-		}
-		const elemSize = this.elementSize;
 		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
@@ -105,9 +86,13 @@ export class ScrollMagic {
 				// if startOffset is 0 and height is 100% we can take a little shortcut here.
 				return [0, 0];
 			}
-			const startOffset = getPixelValue(offset, elemSize) / containerSize;
-			const relativeHeight = getPixelValue(height, elemSize) / containerSize;
-			const endOffset = relativeHeight - elemSize / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
+			if (undefined === this.elementSize) {
+				// shouldn't be the case, but you never know...
+				this.updateElementSize();
+			}
+			const startOffset = getPixelValue(offset, this.elementSize!) / containerSize;
+			const relativeHeight = getPixelValue(height, this.elementSize!) / containerSize;
+			const endOffset = relativeHeight - this.elementSize! / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
 			return [startOffset, endOffset];
 		})();
 
@@ -119,31 +104,9 @@ export class ScrollMagic {
 		};
 	}
 
-	private handleOptionChanges(changes: Array<keyof Options.Private>) {
-		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
-
-		const isChanged = changes.includes.bind(changes);
-		const heightChanged = isChanged('height');
-		const offsetChanged = isChanged('offset');
-		const elementChanged = isChanged('element');
-		const scrollParentChanged = isChanged('scrollParent');
-
-		// TODO: can this be written better?
-		if (heightChanged || offsetChanged || elementChanged) {
-			this.updateNaturalIntersection();
-			if (heightChanged || elementChanged) {
-				this.updateElementSize();
-			}
-			if (elementChanged) {
-				this.resizeObserver.disconnect();
-				this.resizeObserver.observe(this.optionsPrivate.element);
-			}
-		}
-		if (scrollParentChanged) {
-			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerResize.bind(this));
-		}
-		// if the options change we always have to refresh the viewport observer, regardless which one it is...
-		this.updateViewportObserver();
+	private updateActive(nextActive: boolean | undefined) {
+		// doesn't have to be a method, but I want to keep modifications obvious (only called from update... methods)
+		this.active = nextActive;
 	}
 
 	private updateNaturalIntersection() {
@@ -164,8 +127,8 @@ export class ScrollMagic {
 		this.elementSize = nextSize;
 	}
 
-	private updateProgress() {
-		if (!this.active) {
+	private updateProgress(force = false) {
+		if (!force && !this.active) {
 			return;
 		}
 		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
@@ -180,11 +143,20 @@ export class ScrollMagic {
 		const passed = trackStart - relativeStart;
 		const total = relativeHeight + trackDistance;
 
-		const progress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
-		if (progress !== this.currentProgress) {
-			const forward = progress > this.progress;
-			this.currentProgress = progress;
+		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
+		if (nextProgress !== this.currentProgress) {
+			const forward = nextProgress > this.progress;
+
+			if ((nextProgress > 0 && this.currentProgress === 0) || (nextProgress < 1 && this.currentProgress === 1)) {
+				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Enter, forward, this));
+			}
+
+			this.currentProgress = nextProgress;
 			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, forward, this));
+
+			if (nextProgress === 0 || nextProgress === 1) {
+				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Leave, forward, this));
+			}
 		}
 	}
 
@@ -198,8 +170,36 @@ export class ScrollMagic {
 		if (undefined === this.viewportObserver) {
 			this.viewportObserver = new ViewportObserver(this.onIntersect.bind(this), observerOptions).observe(element);
 		} else {
-			this.viewportObserver.updateOptions(observerOptions);
+			this.viewportObserver.modify(observerOptions);
 		}
+	}
+
+	private onOptionChanges(changes: Array<keyof Options.Private>) {
+		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
+
+		const isChanged = changes.includes.bind(changes);
+		const heightChanged = isChanged('height');
+		const offsetChanged = isChanged('offset');
+		const elementChanged = isChanged('element');
+		const scrollParentChanged = isChanged('scrollParent');
+
+		// TODO: can this be written better?
+		if (heightChanged || offsetChanged || elementChanged) {
+			this.updateNaturalIntersection();
+			if (heightChanged || elementChanged) {
+				this.updateElementSize();
+			}
+			if (elementChanged) {
+				this.resizeObserver.disconnect();
+				this.resizeObserver.observe(this.optionsPrivate.element);
+			}
+		}
+		if (scrollParentChanged) {
+			this.updateActive(undefined);
+			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerResize.bind(this));
+		}
+		// if the options change we always have to refresh the viewport observer, regardless which one it is...
+		this.updateViewportObserver();
 	}
 
 	private onElementResize() {
@@ -220,10 +220,13 @@ export class ScrollMagic {
 	}
 
 	private onIntersect(intersecting: boolean, target: Element) {
+		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
-			// this should always be the case, as we only ever observe one element, but you can never be too sure, I guess...
-			this.updateActiveState(intersecting);
-			this.updateProgress();
+			// for the first call (active === undefined) we need to update the progress,
+			// regardless if scene is now active or not (i.e. if the page loads when the scene was passed)
+			const initialCall = undefined === this.active;
+			this.updateActive(intersecting);
+			this.updateProgress(initialCall);
 		}
 	}
 
@@ -267,6 +270,8 @@ export class ScrollMagic {
 	public get progress(): number {
 		return this.currentProgress;
 	}
+
+	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
 		validateObject(options, Options.validationRules);
 		this.defaultOptionsPublic = {
