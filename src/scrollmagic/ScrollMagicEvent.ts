@@ -1,5 +1,5 @@
 import { DispatchableEvent } from './EventDispatcher';
-import { Scene } from './Scene';
+import { ScrollMagic } from './ScrollMagic';
 
 export enum ScrollMagicEventType {
 	Enter = 'enter',
@@ -21,7 +21,11 @@ function getDirection(vertical: boolean, forward: boolean) {
 }
 class ScrollMagicEvent implements DispatchableEvent {
 	public readonly direction: ScrollMagicEventScrollDirection;
-	constructor(public readonly type: ScrollMagicEventType, movingForward: boolean, public readonly target: Scene) {
+	constructor(
+		public readonly type: ScrollMagicEventType,
+		movingForward: boolean,
+		public readonly target: ScrollMagic
+	) {
 		this.direction = getDirection(target.vertical, movingForward);
 	}
 }

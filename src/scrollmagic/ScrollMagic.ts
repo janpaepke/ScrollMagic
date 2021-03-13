@@ -16,7 +16,7 @@ export { Public as ScrollMagicOptions } from './Options';
 
 // used for listeners to allow the value to be passed in either from the enum or as a string literal
 type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
-export class Scene {
+export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
 	private static defaultOptionsPublic = Options.defaults;
@@ -26,7 +26,7 @@ export class Scene {
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
 	private viewportObserver?: ViewportObserver;
 
-	private optionsPublic: Options.Public = Scene.defaultOptionsPublic;
+	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
 	// TODO: only cache size
 	private elementSize?: number; // cached element height
@@ -37,13 +37,13 @@ export class Scene {
 	// TODO: currently options.element isn't optional. Can we make it?
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
-			...Scene.defaultOptionsPublic,
+			...ScrollMagic.defaultOptionsPublic,
 			...options,
 		};
 		this.modify(initOptions);
 	}
 
-	public modify(options: Partial<Options.Public>): Scene {
+	public modify(options: Partial<Options.Public>): ScrollMagic {
 		const normalized = validateObject(options, Options.validationRules);
 
 		this.optionsPublic = {
@@ -277,11 +277,11 @@ export class Scene {
 	}
 
 	// event listener
-	public on(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): Scene {
+	public on(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
-	public off(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): Scene {
+	public off(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}

@@ -1,14 +1,14 @@
 import { Container, ContainerEvent, ScrollParent } from './Container';
-import { Scene } from './Scene';
+import { ScrollMagic } from './ScrollMagic';
 
 type EventCallback = (e: ContainerEvent) => void;
 type CleanUpFunction = () => void;
 
 export class ContainerProxy {
-	private static cache = new Map<ScrollParent, [Container, Set<Scene>]>();
+	private static cache = new Map<ScrollParent, [Container, Set<ScrollMagic>]>();
 
 	private container?: Container;
-	constructor(private readonly scene: Scene) {}
+	constructor(private readonly scene: ScrollMagic) {}
 	private unsubscribers = new Array<CleanUpFunction>();
 
 	public attach(scrollParent: ScrollParent, onUpdate: EventCallback): void {
