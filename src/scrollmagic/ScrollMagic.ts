@@ -3,13 +3,16 @@ import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
+import { batch } from './util/batch';
+import getElement from './util/getElement';
 import { getPixelDistance as getPixelValue } from './util/getRelativeDistance';
+import getScrollContainerElement from './util/getScrollContainerElement';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import processProperties, { PropertyProcessors } from './util/processProperties';
 import throttleRaf from './util/throttleRaf';
-import { numberToPercString } from './util/transformers';
+import { betweenZeroAndOne, normalizeTrack, numberToPercString, toUnitTuple } from './util/transformers';
 import { isWindow } from './util/typeguards';
-import validateObject from './util/validateObject';
 import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
 
 export { Public as ScrollMagicOptions } from './Options';
@@ -43,7 +46,7 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const normalized = validateObject(options, Options.validationRules);
+		const normalized = processProperties(options, ScrollMagic.propertyProcessors);
 
 		this.optionsPublic = {
 			...this.optionsPublic,
@@ -294,11 +297,19 @@ export class ScrollMagic {
 	private static defaultOptionsPublic = Options.defaults;
 	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
-		validateObject(options, Options.validationRules);
+		processProperties(options, ScrollMagic.propertyProcessors);
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
 			...options,
 		};
 		return this.defaultOptionsPublic;
 	}
+	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
+		element: getElement,
+		scrollParent: getScrollContainerElement,
+		trackStart: batch(normalizeTrack, betweenZeroAndOne),
+		trackEnd: batch(normalizeTrack, betweenZeroAndOne),
+		offset: toUnitTuple,
+		height: toUnitTuple,
+	};
 }
