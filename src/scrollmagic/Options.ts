@@ -43,7 +43,3 @@ export const defaults: Public = {
 	offset: 0,
 	height: '100%',
 };
-
-// todo function to 'check consistency' to check for value combinations  that may not make sense:
-// - offset/height values puts end before start
-// - track values -> no overlap of track and element (warn)

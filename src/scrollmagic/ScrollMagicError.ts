@@ -1,5 +1,6 @@
+const SM = 'ScrollMagic';
 export class ScrollMagicError extends Error {
-	public readonly name = 'ScrollMagicError';
+	public readonly name = `${SM}Error`;
 	constructor(message: string) {
 		super(message);
 	}
@@ -14,4 +15,7 @@ export const failWith = (message: string): ScrollMagicError => {
 };
 export const failWithInternal = (message: string): ScrollMagicErrorInternal => {
 	return new ScrollMagicErrorInternal(message);
+};
+export const warn = (message: string): void => {
+	console?.warn(`${SM} Warning: ${message}`);
 };

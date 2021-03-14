@@ -18,6 +18,8 @@ const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right,
 
 const none = '0px';
 export const defaultViewportObserverMargin = { top: none, right: none, bottom: none, left: none };
+
+// TODO: only set up IntersectionObservers, once .observe is called
 export default class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
@@ -73,7 +75,7 @@ export default class ViewportObserver {
 			return true;
 		}
 		if (undefined !== margin) {
-			return Object.keys(pickDifferencesFlat(margin, this.options.margin)).length === 0;
+			return Object.keys(pickDifferencesFlat(margin, this.options.margin)).length > 0;
 		}
 		return false;
 	}

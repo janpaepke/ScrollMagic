@@ -2,6 +2,7 @@ import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
+import { warn } from './ScrollMagicError';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { batch } from './util/batch';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
@@ -15,6 +16,7 @@ import {
 	numberToPercString,
 	scrollParentOptionToScrollParent,
 	selectorOrElementToHtmlElement,
+	stringPropertiesToNumber,
 	trackValueToNumber,
 } from './util/transformers';
 import { isWindow } from './util/typeguards';
@@ -30,7 +32,7 @@ export class ScrollMagic {
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
-	private viewportObserver = new ViewportObserver(this.onIntersect.bind(this));
+	private viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
@@ -75,6 +77,27 @@ export class ScrollMagic {
 
 		this.onOptionChanges(changedOptions);
 		return this;
+	}
+
+	private checkOptionsConsistency() {
+		// this currently only tests if the margin for ViewportObserver would result in positive values,
+		// which would put the triggerpoint outside of the viewport.
+		// This breaks, because IntersectionObserver only works within the viewport.
+		const margin = stringPropertiesToNumber(this.getViewportMargin());
+		const { start, end } = pickRelevantValues(this.optionsPrivate.vertical, margin);
+		const invalid = (what: string) =>
+			warn(
+				`The effective ${what} position is outside of the viewport. Unless something changes, the ${what} progress can never reach ${
+					what === 'start' ? 0 : 1
+				} for Element ${this.optionsPublic.element}.`
+			);
+		// check `getViewportMargin`, if you're wondering why this appears to be flipped.
+		if (start > 0) {
+			invalid('end');
+		}
+		if (end > 0) {
+			invalid('start');
+		}
 	}
 
 	private getViewportMargin() {
@@ -137,12 +160,16 @@ export class ScrollMagic {
 			return;
 		}
 		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
-		const { size: elemSize, start: elemStart } = pickRelevantValues(vertical, element.getBoundingClientRect()); //don't use cached value here, we need the current position
+		const { size: elementSize, start: elementStart } = pickRelevantValues(
+			vertical,
+			element.getBoundingClientRect()
+		); //don't use cached value here, we need the current position
 		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
-		const startOffset = offset(elemSize) / containerSize;
-		const relativeHeight = height(elemSize) / containerSize;
-		const relativeStart = startOffset + elemStart / containerSize;
+		const pxHeight = height(elementSize);
+		const startOffset = offset(elementSize) / containerSize;
+		const relativeHeight = pxHeight / containerSize;
+		const relativeStart = startOffset + elementStart / containerSize;
 		const trackDistance = trackStart - trackEnd;
 
 		const passed = trackStart - relativeStart;
@@ -151,7 +178,11 @@ export class ScrollMagic {
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		const { currentProgress } = this;
 		if (nextProgress !== currentProgress) {
-			const forward = nextProgress > this.progress;
+			let forward = nextProgress > this.progress;
+			if (pxHeight < 0) {
+				// Houston, we have an inverse scene on our hands...
+				forward = !forward;
+			}
 
 			// TODO: enter and leave don't dispatch when leaving scene on resize -> fix
 			if ((nextProgress > 0 && currentProgress === 0) || (nextProgress < 1 && currentProgress === 1)) {
@@ -203,6 +234,8 @@ export class ScrollMagic {
 			this.updateActive(undefined);
 			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerResize.bind(this));
 		}
+		// one last check, before we go.
+		this.checkOptionsConsistency();
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
 		this.updateViewportObserver();
 	}
@@ -224,7 +257,8 @@ export class ScrollMagic {
 		this.updateProgress();
 	}
 
-	private onIntersect(intersecting: boolean, target: Element) {
+	private onIntersectionChange(intersecting: boolean, target: Element) {
+		console.log(intersecting);
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
 			// for the first call (active === undefined) we need to update the progress,

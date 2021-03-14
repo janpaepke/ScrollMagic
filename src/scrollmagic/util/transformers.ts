@@ -85,3 +85,9 @@ export const scrollParentOptionToScrollParent = (
 	}
 	return selectorOrElementToHtmlElement(container);
 };
+
+export const stringPropertiesToNumber = <T extends Record<string, string>>(obj: T): Record<keyof T, number> =>
+	Object.entries(obj).reduce(
+		(res, [key, value]) => ({ ...res, [key]: parseFloat(value) }),
+		{} as Record<keyof T, number>
+	);
