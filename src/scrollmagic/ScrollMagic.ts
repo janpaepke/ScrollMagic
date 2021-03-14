@@ -4,9 +4,7 @@ import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { batch } from './util/batch';
-import getElement from './util/getElement';
 import { getPixelDistance as getPixelValue } from './util/getRelativeDistance';
-import getScrollContainerElement from './util/getScrollContainerElement';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import processProperties, { PropertyProcessors } from './util/processProperties';
@@ -15,6 +13,8 @@ import {
 	isBetweenZeroAndOne,
 	numberOrStringToUnitTuple,
 	numberToPercString,
+	scrollParentOptionToScrollParent,
+	selectorOrElementToHtmlElement,
 	trackValueToNumber,
 } from './util/transformers';
 import { isWindow } from './util/typeguards';
@@ -311,8 +311,8 @@ export class ScrollMagic {
 		return this.defaultOptionsPublic;
 	}
 	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
-		element: getElement,
-		scrollParent: getScrollContainerElement,
+		element: selectorOrElementToHtmlElement,
+		scrollParent: scrollParentOptionToScrollParent,
 		trackStart: batch(trackValueToNumber, isBetweenZeroAndOne),
 		trackEnd: batch(trackValueToNumber, isBetweenZeroAndOne),
 		offset: numberOrStringToUnitTuple,

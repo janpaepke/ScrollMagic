@@ -1,3 +1,5 @@
+import { failWith } from 'scrollmagic/ScrollMagicError';
+
 // TODO: this will also allow missing rules, if input and output property types don't match. Maybe we can do better?
 export type PropertyProcessors<
 	I extends { [X in keyof I & keyof O]: unknown },
@@ -7,7 +9,7 @@ export type PropertyProcessors<
  * A function that can be used to validate the properties of an object based on predefined rules.
  * @param options the object that should be validated
  * @param rules an object with matching keys, which defines how to normalize and or validate a property
- * @param fail A function that returns the format for the error message, should normalize or check fail.
+ * @param getErrorMessage A function that returns the format for the error message, should normalize or check fail.
  * @returns the normalized and checked object
  */
 
@@ -19,7 +21,7 @@ const processProperties = <
 >(
 	options: I,
 	rules: P, // ValidationProcessors<I, O>,
-	fail: (value: any, prop: keyof I, reason?: string) => string = (value, prop, reason) =>
+	getErrorMessage: (value: any, prop: keyof I, reason?: string) => string = (value, prop, reason) =>
 		`Invalid value ${value} for option ${prop}. ${reason}`
 ): O => {
 	return Object.keys(options).reduce((result, key) => {
@@ -30,7 +32,7 @@ const processProperties = <
 		try {
 			processedValue = processor?.(value) ?? (value as O[K]);
 		} catch (e) {
-			throw new Error(fail(value, prop, e.message));
+			throw failWith(getErrorMessage(value, prop, e.message));
 		}
 		result[prop] = processedValue;
 		return result;

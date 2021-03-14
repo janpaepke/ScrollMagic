@@ -1,5 +1,6 @@
 import { Container, ContainerEvent, ScrollParent } from './Container';
 import { ScrollMagic } from './ScrollMagic';
+import { failWithInternal } from './ScrollMagicError';
 
 type EventCallback = (e: ContainerEvent) => void;
 type CleanUpFunction = () => void;
@@ -32,7 +33,10 @@ export class ContainerProxy {
 		}
 		const { scrollParent } = this.container;
 		const cache = ContainerProxy.cache.get(scrollParent);
-		const [container, scenes] = cache!;
+		if (undefined === cache) {
+			throw failWithInternal('No cache info for scrollParent');
+		}
+		const [container, scenes] = cache;
 		scenes.delete(this.scene);
 		this.unsubscribers.forEach(unsubscribe => unsubscribe());
 		this.unsubscribers = [];
@@ -46,7 +50,7 @@ export class ContainerProxy {
 
 	public get size(): Container['size'] {
 		if (undefined === this.container) {
-			throw new Error('scene is not attached to a container...');
+			throw failWithInternal(`Can't get size when not attached to a container`);
 		}
 		return this.container.size;
 	}

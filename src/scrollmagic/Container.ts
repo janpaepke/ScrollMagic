@@ -46,6 +46,7 @@ export class Container {
 		this.dispatcher.dispatchEvent(new ContainerEvent(resize, this));
 	}
 
+	// subscribes to resize events of scrollParent and returns a function to reverse the effect
 	private subscribeResize(onResize: () => void) {
 		const { scrollParent } = this;
 		if (isWindow(scrollParent)) {
@@ -56,10 +57,12 @@ export class Container {
 		return () => observer.unobserve(scrollParent);
 	}
 
+	// subscribes to scroll events of scrollParent and returns a function to reverse the effect
 	private subscribeScroll(onScroll: () => void) {
 		return registerEvent(this.scrollParent, scroll, onScroll);
 	}
 
+	// subscribes Container and returns a function to reverse the effect
 	public subscribe(type: EventType, cb: (e: ContainerEvent) => void): () => void {
 		return this.dispatcher.addEventListener(type, cb);
 	}
