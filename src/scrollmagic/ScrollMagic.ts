@@ -11,6 +11,7 @@ import throttleRaf from './util/throttleRaf';
 import {
 	assertBetweenZeroAndOne,
 	numberOrStringToPixelConverter,
+	numberOrStringToPixelConverterAllowRelative,
 	numberToPercString,
 	scrollParentOptionToScrollParent,
 	selectorOrElementToHtmlElement,
@@ -29,16 +30,16 @@ export class ScrollMagic {
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
+	private viewportObserver = new ViewportObserver(this.onIntersect.bind(this));
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private viewportObserver?: ViewportObserver;
+	private isNaturalIntersection = true;
+	private currentProgress = 0;
 	private elementSize?: number; // cached element height (only updated if offset = 0 and height != 100%)
 	private active?: boolean; // scene active state
-	private currentProgress = 0;
-	private isNaturalIntersection = true;
 
 	// TODO: currently options.element isn't really optional. Can we make it?
 	constructor(options: Partial<Options.Public> = {}) {
@@ -91,13 +92,14 @@ export class ScrollMagic {
 				// if startOffset is 0 and height is 100% we can take a little shortcut here.
 				return [0, 0];
 			}
-			if (undefined === this.elementSize) {
+			const { elementSize } = this;
+			if (undefined === elementSize) {
 				// should never be the case, but why not...
 				this.updateElementSize();
 			}
-			const startOffset = offset(this.elementSize!) / containerSize;
-			const relativeHeight = height(this.elementSize!) / containerSize;
-			const endOffset = relativeHeight - this.elementSize! / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
+			const startOffset = offset(elementSize!) / containerSize;
+			const relativeHeight = height(elementSize!) / containerSize;
+			const endOffset = relativeHeight - elementSize! / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
 			return [startOffset, endOffset];
 		})();
 
@@ -147,11 +149,12 @@ export class ScrollMagic {
 		const total = relativeHeight + trackDistance;
 
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
-		if (nextProgress !== this.currentProgress) {
+		const { currentProgress } = this;
+		if (nextProgress !== currentProgress) {
 			const forward = nextProgress > this.progress;
 
 			// TODO: enter and leave don't dispatch when leaving scene on resize -> fix
-			if ((nextProgress > 0 && this.currentProgress === 0) || (nextProgress < 1 && this.currentProgress === 1)) {
+			if ((nextProgress > 0 && currentProgress === 0) || (nextProgress < 1 && currentProgress === 1)) {
 				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Enter, forward, this));
 			}
 
@@ -165,17 +168,12 @@ export class ScrollMagic {
 	}
 
 	private updateViewportObserver(): void {
-		const { scrollParent, element } = this.optionsPrivate;
+		const { scrollParent } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.getViewportMargin(),
 			root: isWindow(scrollParent) ? null : scrollParent,
 		};
-
-		if (undefined === this.viewportObserver) {
-			this.viewportObserver = new ViewportObserver(this.onIntersect.bind(this), observerOptions).observe(element);
-		} else {
-			this.viewportObserver.modify(observerOptions);
-		}
+		this.viewportObserver.modify(observerOptions);
 	}
 
 	private onOptionChanges(changes: Array<keyof Options.Private>) {
@@ -194,8 +192,11 @@ export class ScrollMagic {
 				this.updateElementSize();
 			}
 			if (elementChanged) {
+				const { element } = this.optionsPrivate;
+				this.viewportObserver.disconnect();
+				this.viewportObserver.observe(element);
 				this.resizeObserver.disconnect();
-				this.resizeObserver.observe(this.optionsPrivate.element);
+				this.resizeObserver.observe(element);
 			}
 		}
 		if (scrollParentChanged) {
@@ -207,10 +208,10 @@ export class ScrollMagic {
 	}
 
 	private onElementResize() {
-		const currentSize = this.elementSize;
+		const { elementSize, isNaturalIntersection } = this;
 		this.updateElementSize();
-		const sizeChanged = currentSize !== this.elementSize;
-		if (sizeChanged && !this.isNaturalIntersection) {
+		const sizeChanged = elementSize !== this.elementSize;
+		if (sizeChanged && !isNaturalIntersection) {
 			this.updateViewportObserver();
 		}
 		this.updateProgress();
@@ -291,7 +292,7 @@ export class ScrollMagic {
 
 	public destroy(): void {
 		this.resizeObserver.disconnect();
-		this.viewportObserver?.disconnect();
+		this.viewportObserver.disconnect();
 		this.container.detach();
 	}
 
@@ -313,6 +314,6 @@ export class ScrollMagic {
 		trackStart: batch(trackValueToNumber, assertBetweenZeroAndOne),
 		trackEnd: batch(trackValueToNumber, assertBetweenZeroAndOne),
 		offset: numberOrStringToPixelConverter,
-		height: numberOrStringToPixelConverter,
+		height: numberOrStringToPixelConverterAllowRelative,
 	};
 }

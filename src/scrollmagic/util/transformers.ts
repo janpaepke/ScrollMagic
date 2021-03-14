@@ -28,26 +28,34 @@ export const trackValueToNumber = (val: number | Options.TrackShorthand | `${Opt
 	return numericEquivalents[val];
 };
 
-export const stringToPixelConverter = (val: string): Options.PixelConverter => {
+export const stringToPixelConverter = (val: string, allowRelative = false): Options.PixelConverter => {
 	// if unit is %, value will be 1 for 100%
-	const match = val.match(/^([+-]?\d+|\d*[.]\d+)(%|px)$/);
+	const match = val.match(/^([+-])?(=)?(\d+|\d*[.]\d+)(%|px)$/);
 	if (match === null) {
-		throw failWith(`Value must be number or string with unit, i.e. 20px or 80%`);
+		const allowedFormat = allowRelative
+			? ' or relative values, i.e. 20px, 80%, +=20px or +=10%'
+			: ', i.e. 20px or 80%';
+		throw failWith(`Value must be number or string with unit${allowedFormat}`);
 	}
-	const value = parseFloat(match[1]);
-	const unit = match[2];
-	if (unit === 'px') {
-		return () => value;
+	const [, sign, equal, digits, unit] = match as [string, string | null, string | null, string, string];
+	const value = parseFloat(`${sign ?? ''}${digits}`);
+	const relative = equal === '=';
+	if (relative && !allowRelative) {
+		throw failWith(`Relative values (+=...) are not supported`);
 	}
-	/* unit === '%' */
-	return height => (value / 100) * height;
+	const getPx = unit === 'px' ? () => value : (height: number) => (value / 100) * height;
+	return relative ? height => getPx(height) + height : getPx;
 };
 
-export const numberOrStringToPixelConverter = (val: number | string): Options.PixelConverter => {
+export const numberOrStringToPixelConverter = (val: number | string, allowRelative = false): Options.PixelConverter => {
 	if (isNumber(val)) {
 		return () => val;
 	}
-	return stringToPixelConverter(val);
+	return stringToPixelConverter(val, allowRelative);
+};
+
+export const numberOrStringToPixelConverterAllowRelative = (val: number | string): Options.PixelConverter => {
+	return numberOrStringToPixelConverter(val, true);
 };
 
 export const selectorToSingleElement = (selector: string): Element => {

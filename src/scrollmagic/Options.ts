@@ -15,8 +15,8 @@ export type Public = {
 	vertical: boolean;
 	trackStart: number | TrackShorthand | `${TrackShorthand}`;
 	trackEnd: number | TrackShorthand | `${TrackShorthand}`;
-	offset: number | string;
-	height: number | string; // todo: suppport +=10px, +=20%, +=10vh
+	offset: number | string; // number in px or string like 10px or -10%
+	height: number | string; // number in px or string like 10px, -10%, +=10px or -=10%
 };
 
 // basically a normalized version of the options
@@ -35,7 +35,7 @@ export type Private = Modify<
 >;
 
 export const defaults: Public = {
-	element: 'body', // TODO: crap? remove!
+	element: 'body',
 	scrollParent: window,
 	vertical: true,
 	trackEnd: 'leave',
