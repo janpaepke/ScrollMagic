@@ -61,6 +61,7 @@ export default class ViewportObserver {
 		this.observerLeave?.disconnect();
 
 		// todo: check what happens, if the opposite value still overlaps (due to offset / height ?)
+		// !TODO: I know now: if effective duration exceeds available observer height it fails... -> BUG! -> FIX...
 		const marginEnter = { ...this.options.margin, top: none };
 		const marginLeave = { ...this.options.margin, bottom: none };
 

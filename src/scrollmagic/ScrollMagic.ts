@@ -4,14 +4,13 @@ import EventDispatcher from './EventDispatcher';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { batch } from './util/batch';
-import { getPixelDistance as getPixelValue } from './util/getRelativeDistance';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import processProperties, { PropertyProcessors } from './util/processProperties';
 import throttleRaf from './util/throttleRaf';
 import {
-	isBetweenZeroAndOne,
-	numberOrStringToUnitTuple,
+	assertBetweenZeroAndOne,
+	numberOrStringToPixelConverter,
 	numberToPercString,
 	scrollParentOptionToScrollParent,
 	selectorOrElementToHtmlElement,
@@ -36,7 +35,7 @@ export class ScrollMagic {
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
 	private viewportObserver?: ViewportObserver;
-	private elementSize?: number; // cached element height (only updated if height != 100%)
+	private elementSize?: number; // cached element height (only updated if offset = 0 and height != 100%)
 	private active?: boolean; // scene active state
 	private currentProgress = 0;
 	private isNaturalIntersection = true;
@@ -96,8 +95,8 @@ export class ScrollMagic {
 				// should never be the case, but why not...
 				this.updateElementSize();
 			}
-			const startOffset = getPixelValue(offset, this.elementSize!) / containerSize;
-			const relativeHeight = getPixelValue(height, this.elementSize!) / containerSize;
+			const startOffset = offset(this.elementSize!) / containerSize;
+			const relativeHeight = height(this.elementSize!) / containerSize;
 			const endOffset = relativeHeight - this.elementSize! / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
 			return [startOffset, endOffset];
 		})();
@@ -116,12 +115,10 @@ export class ScrollMagic {
 	}
 
 	private updateNaturalIntersection() {
-		// if there is no offset from the top and bottom of the element (default)
-		// this allows for simpler calculations and less refreshes.
+		// checks and caches if there is no offset from the top and bottom of the element (default)
+		// this allows for less element size calculations.
 		const { offset, height } = this.optionsPrivate;
-		const [offsetValue] = offset;
-		const [heightValue, heightUnit] = height;
-		this.isNaturalIntersection = offsetValue === 0 && heightValue === 1 && heightUnit === '%';
+		this.isNaturalIntersection = offset(1) === 0 && height(1) === 1;
 	}
 
 	private updateElementSize() {
@@ -141,8 +138,8 @@ export class ScrollMagic {
 		const { size: elemSize, start: elemStart } = pickRelevantValues(vertical, element.getBoundingClientRect()); //don't use cached value here, we need the current position
 		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
 
-		const startOffset = getPixelValue(offset, elemSize) / containerSize;
-		const relativeHeight = getPixelValue(height, elemSize) / containerSize;
+		const startOffset = offset(elemSize) / containerSize;
+		const relativeHeight = height(elemSize) / containerSize;
 		const relativeStart = startOffset + elemStart / containerSize;
 		const trackDistance = trackStart - trackEnd;
 
@@ -313,9 +310,9 @@ export class ScrollMagic {
 	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
 		element: selectorOrElementToHtmlElement,
 		scrollParent: scrollParentOptionToScrollParent,
-		trackStart: batch(trackValueToNumber, isBetweenZeroAndOne),
-		trackEnd: batch(trackValueToNumber, isBetweenZeroAndOne),
-		offset: numberOrStringToUnitTuple,
-		height: numberOrStringToUnitTuple,
+		trackStart: batch(trackValueToNumber, assertBetweenZeroAndOne),
+		trackEnd: batch(trackValueToNumber, assertBetweenZeroAndOne),
+		offset: numberOrStringToPixelConverter,
+		height: numberOrStringToPixelConverter,
 	};
 }

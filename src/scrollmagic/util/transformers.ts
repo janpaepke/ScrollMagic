@@ -5,7 +5,7 @@ import { isDocument, isHTMLElement, isNumber, isString, isWindow } from './typeg
 
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
-export const isBetweenZeroAndOne = (val: number): number => {
+export const assertBetweenZeroAndOne = (val: number): number => {
 	if (Math.abs(val) > 1) {
 		throw failWith('Value must be a number between 0 and 1');
 	}
@@ -28,22 +28,26 @@ export const trackValueToNumber = (val: number | Options.TrackShorthand | `${Opt
 	return numericEquivalents[val];
 };
 
-export const stringToUnitTuple = (val: string): [value: number, unit: string] => {
+export const stringToPixelConverter = (val: string): Options.PixelConverter => {
 	// if unit is %, value will be 1 for 100%
-	const match = val.match(/^(\d+|\d*[.]\d+)(%|px)$/);
+	const match = val.match(/^([+-]?\d+|\d*[.]\d+)(%|px)$/);
 	if (match === null) {
 		throw failWith(`Value must be number or string with unit, i.e. 20px or 80%`);
 	}
 	const value = parseFloat(match[1]);
 	const unit = match[2];
-	return [unit === 'px' ? value : value / 100, unit];
+	if (unit === 'px') {
+		return () => value;
+	}
+	/* unit === '%' */
+	return height => (value / 100) * height;
 };
 
-export const numberOrStringToUnitTuple = (val: number | string): [value: number, unit: string] => {
+export const numberOrStringToPixelConverter = (val: number | string): Options.PixelConverter => {
 	if (isNumber(val)) {
-		return [val, 'px'];
+		return () => val;
 	}
-	return stringToUnitTuple(val);
+	return stringToPixelConverter(val);
 };
 
 export const selectorToSingleElement = (selector: string): Element => {
