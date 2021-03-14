@@ -4,6 +4,7 @@ import getInnerDimensions from './util/getInnerDimensions';
 import getScrollPos from './util/getScrollPos';
 import registerEvent from './util/registerEvent';
 import throttleRaf from './util/throttleRaf';
+import { isWindow } from './util/typeguards';
 
 export type ScrollParent = HTMLElement | Window;
 
@@ -13,6 +14,9 @@ type EventType = 'scroll' | 'resize';
 export class ContainerEvent implements DispatchableEvent {
 	constructor(public readonly type: EventType, public readonly target: Container) {}
 }
+
+const scroll = 'scroll';
+const resize = 'resize';
 
 export class Container {
 	private scrollPosPrivate = { top: 0, left: 0 };
@@ -26,9 +30,8 @@ export class Container {
 		this.cleanups.push(
 			throttledScroll.cancel,
 			throttledResize.cancel,
-			registerEvent(scrollParent, 'scroll', throttledScroll),
-			// todo: use resize observer if scroll parent is not window...
-			registerEvent(scrollParent, 'resize', throttledResize)
+			this.subscribeScroll(throttledScroll),
+			this.subscribeResize(throttledResize)
 		);
 		this.updateScrollPos();
 		this.updateDimensions();
@@ -36,11 +39,25 @@ export class Container {
 
 	private updateScrollPos() {
 		this.scrollPosPrivate = getScrollPos(this.scrollParent);
-		this.dispatcher.dispatchEvent(new ContainerEvent('scroll', this));
+		this.dispatcher.dispatchEvent(new ContainerEvent(scroll, this));
 	}
 	private updateDimensions() {
 		this.dimensions = getInnerDimensions(this.scrollParent);
-		this.dispatcher.dispatchEvent(new ContainerEvent('resize', this));
+		this.dispatcher.dispatchEvent(new ContainerEvent(resize, this));
+	}
+
+	private subscribeResize(onResize: () => void) {
+		const { scrollParent } = this;
+		if (isWindow(scrollParent)) {
+			return registerEvent(scrollParent, resize, onResize);
+		}
+		const observer = new ResizeObserver(onResize);
+		observer.observe(scrollParent);
+		return () => observer.unobserve(scrollParent);
+	}
+
+	private subscribeScroll(onScroll: () => void) {
+		return registerEvent(this.scrollParent, scroll, onScroll);
 	}
 
 	public subscribe(type: EventType, cb: (e: ContainerEvent) => void): () => void {

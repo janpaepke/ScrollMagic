@@ -153,6 +153,7 @@ export class ScrollMagic {
 		if (nextProgress !== this.currentProgress) {
 			const forward = nextProgress > this.progress;
 
+			// TODO: enter and leave don't dispatch when leaving scene on resize -> fix
 			if ((nextProgress > 0 && this.currentProgress === 0) || (nextProgress < 1 && this.currentProgress === 1)) {
 				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Enter, forward, this));
 			}
