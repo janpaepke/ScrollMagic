@@ -11,7 +11,12 @@ import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import processProperties, { PropertyProcessors } from './util/processProperties';
 import throttleRaf from './util/throttleRaf';
-import { betweenZeroAndOne, normalizeTrack, numberToPercString, toUnitTuple } from './util/transformers';
+import {
+	isBetweenZeroAndOne,
+	numberOrStringToUnitTuple,
+	numberToPercString,
+	trackValueToNumber,
+} from './util/transformers';
 import { isWindow } from './util/typeguards';
 import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
 
@@ -307,9 +312,9 @@ export class ScrollMagic {
 	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
 		element: getElement,
 		scrollParent: getScrollContainerElement,
-		trackStart: batch(normalizeTrack, betweenZeroAndOne),
-		trackEnd: batch(normalizeTrack, betweenZeroAndOne),
-		offset: toUnitTuple,
-		height: toUnitTuple,
+		trackStart: batch(trackValueToNumber, isBetweenZeroAndOne),
+		trackEnd: batch(trackValueToNumber, isBetweenZeroAndOne),
+		offset: numberOrStringToUnitTuple,
+		height: numberOrStringToUnitTuple,
 	};
 }
