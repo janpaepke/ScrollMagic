@@ -1,3 +1,5 @@
+import { isUndefined } from './util/typeguards';
+
 type EventType = string;
 export interface DispatchableEvent {
 	readonly type: EventType;
@@ -11,7 +13,7 @@ export default class EventDispatcher {
 	// adds a listener to the dispatcher. returns a function to reverse the effect.
 	public addEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): () => void {
 		let list = this.callbacks.get(type);
-		if (undefined === list) {
+		if (isUndefined(list)) {
 			list = [];
 			this.callbacks.set(type, list);
 		}
@@ -22,7 +24,7 @@ export default class EventDispatcher {
 	// removes a listner from the dispatcher
 	public removeEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): void {
 		const list = this.callbacks.get(type);
-		if (undefined === list) {
+		if (isUndefined(list)) {
 			return;
 		}
 		const remaining = list.filter(registeredCallback => registeredCallback !== cb);
@@ -32,7 +34,7 @@ export default class EventDispatcher {
 	// dispatches an event... DUH!
 	public dispatchEvent(event: DispatchableEvent): void {
 		const list = this.callbacks.get(event.type);
-		if (undefined === list) {
+		if (isUndefined(list)) {
 			return;
 		}
 		list.forEach(cb => cb(event));
