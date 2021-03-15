@@ -10,8 +10,8 @@ export enum TrackShorthand {
 export type PixelConverter = (elementHeight: number) => number;
 
 export type Public = {
-	element: HTMLElement | string;
-	scrollParent: Window | Document | HTMLElement | string;
+	element: Element | string;
+	scrollParent: Window | Document | Element | string;
 	vertical: boolean;
 	trackStart: number | TrackShorthand | `${TrackShorthand}`;
 	trackEnd: number | TrackShorthand | `${TrackShorthand}`;
@@ -23,7 +23,7 @@ export type Public = {
 export type Private = Modify<
 	Public,
 	{
-		element: HTMLElement;
+		element: HTMLElement | SVGElement;
 		scrollParent: Window | HTMLElement;
 		vertical: boolean;
 		trackStart: number;

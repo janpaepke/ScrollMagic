@@ -15,7 +15,7 @@ import {
 	numberOrStringToPixelConverterAllowRelative,
 	numberToPercString,
 	scrollParentOptionToScrollParent,
-	selectorOrElementToHtmlElement,
+	selectorOrElementToHTMLorSVG,
 	stringPropertiesToNumber,
 	trackValueToNumber,
 } from './util/transformers';
@@ -343,7 +343,7 @@ export class ScrollMagic {
 		return this.defaultOptionsPublic;
 	}
 	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
-		element: selectorOrElementToHtmlElement,
+		element: selectorOrElementToHTMLorSVG,
 		scrollParent: scrollParentOptionToScrollParent,
 		trackStart: batch(trackValueToNumber, assertBetweenZeroAndOne),
 		trackEnd: batch(trackValueToNumber, assertBetweenZeroAndOne),

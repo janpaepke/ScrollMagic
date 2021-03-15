@@ -1,6 +1,6 @@
 import { isWindow } from './typeguards';
 
-const getInnerDimensions = (element: Window | HTMLElement): { width: number; height: number } => {
+const getInnerDimensions = (element: Window | Element): { width: number; height: number } => {
 	const elem = isWindow(element) ? document.documentElement : element;
 	const { clientWidth, clientHeight } = elem;
 	return {

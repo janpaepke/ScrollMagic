@@ -1,12 +1,12 @@
 import { isWindow } from './typeguards';
 
-const scrollTop = (container: Window | HTMLElement): number =>
+const scrollTop = (container: Window | Element): number =>
 	isWindow(container) ? window.pageYOffset : container.scrollTop;
 
-const scrollLeft = (container: Window | HTMLElement): number =>
+const scrollLeft = (container: Window | Element): number =>
 	isWindow(container) ? window.pageXOffset : container.scrollLeft;
 
-const getScrollPos = (container: Window | HTMLElement): { left: number; top: number } => ({
+const getScrollPos = (container: Window | Element): { left: number; top: number } => ({
 	left: scrollLeft(container),
 	top: scrollTop(container),
 });

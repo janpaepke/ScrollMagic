@@ -1,7 +1,7 @@
 import * as Options from 'scrollmagic/Options';
 import { failWith } from 'scrollmagic/ScrollMagicError';
 
-import { isDocument, isHTMLElement, isNumber, isString, isWindow } from './typeguards';
+import { isDocument, isHTMLElement, isNumber, isSVGElement, isString, isWindow } from './typeguards';
 
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
@@ -59,19 +59,17 @@ export const numberOrStringToPixelConverterAllowRelative = (val: number | string
 };
 
 export const selectorToSingleElement = (selector: string): Element => {
-	const nodeList = document.querySelectorAll(selector);
-	const { length } = nodeList;
-	if (length !== 1) {
-		const issue = length === 0 ? 'No element found' : 'More than one element found';
-		throw failWith(`${issue} for selector ${selector}`);
+	const elem = document.querySelector(selector);
+	if (elem === null) {
+		throw failWith(`No element found for selector ${selector}`);
 	}
-	return nodeList[0];
+	return elem;
 };
 
-export const selectorOrElementToHtmlElement = (reference: HTMLElement | string): HTMLElement => {
+export const selectorOrElementToHTMLorSVG = (reference: Element | string): HTMLElement | SVGElement => {
 	const elem = isString(reference) ? selectorToSingleElement(reference) : reference;
 	const { body } = window.document;
-	if (!isHTMLElement(elem) || !body.contains(elem)) {
+	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
 		throw failWith('Invalid element supplied');
 	}
 	return elem;
@@ -83,7 +81,11 @@ export const scrollParentOptionToScrollParent = (
 	if (isWindow(container) || isDocument(container)) {
 		return window;
 	}
-	return selectorOrElementToHtmlElement(container);
+	const elem = selectorOrElementToHTMLorSVG(container);
+	if (isSVGElement(elem)) {
+		throw failWith(`Can't use SVG as scrollParent`);
+	}
+	return elem;
 };
 
 export const stringPropertiesToNumber = <T extends Record<string, string>>(obj: T): Record<keyof T, number> =>
