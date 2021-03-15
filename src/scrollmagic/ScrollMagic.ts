@@ -22,7 +22,7 @@ export class ScrollMagic {
 	private dispatcher = new EventDispatcher();
 	private container = new ContainerProxy(this);
 	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
-	private viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
+	private viewportObserver = new ViewportObserver(throttleRaf(this.onIntersectionChange.bind(this)));
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
@@ -36,15 +36,28 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO1: fix event triggers outside of viewport (enter / leave should still trigger even without progress updates)
-	// TODO2: fix inverted scenes.
-	// TODO: consider what should happen, if no element is supplied (fallback to body). Should this mean different default values for trackStart and trackEnd?
+	// TODO: fix event triggers outside of viewport (enter / leave should still trigger even without progress updates)
+	// TODO: implement 'infer' option for trackStart and trackEnd
+	// TODO: fix inverted scenes - they used to work...
+	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
+	// TODO! BUGFIX enter and leave don't dispatch when leaving scene on resize
+
+	// TODO: ViewportObserver: only set up IntersectionObservers, once .observe is called
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
 			...options,
 		};
 		this.modify(initOptions);
+	}
+
+	private triggerEvent(type: ScrollMagicEventType, deltaProgress: number) {
+		if (deltaProgress === 0) {
+			return;
+		}
+		const inverse = this.triggerBounds.size < 0; // Houston, we may have an inverse scene on our hands...
+		const forward = inverse ? deltaProgress < 0 : deltaProgress > 0;
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
@@ -73,39 +86,51 @@ export class ScrollMagic {
 		return this;
 	}
 
-	private checkOptionsConsistency() {
-		// this currently only tests if the margin for ViewportObserver would result in positive values,
+	// this function checks if options make sense as a whole
+	private checkOptionsInterdependence() {
+		// test if the margin for ViewportObserver would result in positive values,
 		// which would put the triggerpoint outside of the viewport.
 		// This breaks, because IntersectionObserver only works within the viewport.
-		const margin = stringPropertiesToNumber(this.getViewportMargin());
-		const { start, end } = this.getRelevantValues(margin);
+		const margin = stringPropertiesToNumber(this.getViewportMargin()); // Watch out these are % values => 100%
+		const { start: marginStart, end: marginEnd } = this.getRelevantValues(margin);
+		const { size: containerSize } = this.getRelevantValues(this.container.rect);
+		const { size } = this.triggerBounds;
+		const relSize = size / containerSize;
 		const invalid = (what: string) =>
 			warn(
-				`The effective ${what} position is outside of the viewport. Unless something changes, the ${what} progress can never reach ${
+				`With the current configuration the trigger element ${
+					this.optionsPublic.element
+				} will be outside of the viewport when it touches the ${what} position. Unless something changes, the ${what} progress might never reach ${
 					what === 'start' ? 0 : 1
-				} for Element ${this.optionsPublic.element}.`
+				}`
 			);
 		// check `getViewportMargin`, if you're wondering why this appears to be flipped.
-		if (start > 0) {
+		if (marginStart - relSize * 100 > 0) {
 			invalid('end');
 		}
-		if (end > 0) {
+		if (marginEnd > 0) {
 			invalid('start');
 		}
+		// TODO: check again if this makes sense - maybe they would just be inverse?
+		// const { trackStart, trackEnd } = this.optionsPrivate;
+		// if (trackEnd - trackStart > relEnd) {
+		// 	warn(
+		// 		`There is currently no overlap between your track and your element, which is likely unintentional. Did you mean to swap trackStart and trackEnd?`
+		// 	);
+		// }
 	}
 
 	private getViewportMargin() {
-		// todo: memoize all or part of this? Might not be worth it...
 		const { trackEnd, trackStart } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = this.getRelevantProps();
-		const { size: containerSize } = this.getRelevantValues(this.container.size);
+		const { size: containerSize } = this.getRelevantValues(this.container.rect);
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
 
-		const { start, end } = this.triggerBounds;
+		const { start, end, size } = this.triggerBounds;
 		const relStart = start / containerSize;
-		const relEnd = end / containerSize;
+		const relEnd = (end - size) / containerSize;
 
 		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 		return {
@@ -144,7 +169,7 @@ export class ScrollMagic {
 
 		const { trackEnd, trackStart, element } = this.optionsPrivate;
 		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
-		const { size: containerSize } = this.getRelevantValues(this.container.size);
+		const { size: containerSize } = this.getRelevantValues(this.container.rect);
 
 		const { start, size } = this.triggerBounds;
 		const relativeSize = size / containerSize;
@@ -157,7 +182,6 @@ export class ScrollMagic {
 		const deltaProgress = nextProgress - this.currentProgress;
 		this.currentProgress = nextProgress;
 
-		// TODO: enter and leave don't dispatch when leaving scene on resize -> fix, if issue still exists
 		const skipped = deltaProgress === 1;
 		if (true === intersectionState || skipped) {
 			this.triggerEvent(ScrollMagicEventType.Enter, deltaProgress);
@@ -178,15 +202,12 @@ export class ScrollMagic {
 	}
 
 	private onOptionChanges(changes: Array<keyof Options.Private>) {
-		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
-
 		const isChanged = changes.includes.bind(changes);
 		const sizeChanged = isChanged('size');
 		const offsetChanged = isChanged('offset');
 		const elementChanged = isChanged('element');
 		const scrollParentChanged = isChanged('scrollParent');
 
-		// TODO: can this be written better?
 		if (sizeChanged || offsetChanged || elementChanged) {
 			this.updateTriggerBounds();
 			if (elementChanged) {
@@ -199,10 +220,10 @@ export class ScrollMagic {
 		}
 		if (scrollParentChanged) {
 			this.updateActive(undefined);
-			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this));
+			this.container.attach(this.optionsPrivate.scrollParent, throttleRaf(this.onContainerUpdate.bind(this)));
 		}
 		// one last check, before we go.
-		this.checkOptionsConsistency();
+		this.checkOptionsInterdependence();
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
 		this.updateViewportObserver();
 	}
@@ -230,15 +251,6 @@ export class ScrollMagic {
 			this.updateActive(intersecting);
 			this.updateProgress(intersecting);
 		}
-	}
-
-	private triggerEvent(type: ScrollMagicEventType, deltaProgress: number) {
-		if (deltaProgress === 0) {
-			return;
-		}
-		const inverse = this.triggerBounds.size < 0; // Houston, we may have an inverse scene on our hands...
-		const forward = inverse ? deltaProgress < 0 : deltaProgress > 0;
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
 	}
 
 	// getter/setter public
@@ -278,6 +290,14 @@ export class ScrollMagic {
 	public get offset(): Options.Public['offset'] {
 		return this.optionsPublic.offset;
 	}
+	public set size(size: Options.Public['size']) {
+		this.modify({ size });
+	}
+	public get size(): Options.Public['offset'] {
+		return this.optionsPublic.offset;
+	}
+
+	// not an option -> getter only
 	public get progress(): number {
 		return this.currentProgress;
 	}

@@ -76,7 +76,6 @@ export class Container {
 	}
 
 	public destroy(): void {
-		// TODO: Do all listeners need to be removed from dispatcher? Or the current one overwritten to remove all references to old one?
 		this.cleanups.forEach(cleanup => cleanup());
 		this.cleanups = [];
 	}

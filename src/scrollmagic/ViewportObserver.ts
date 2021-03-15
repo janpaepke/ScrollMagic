@@ -20,7 +20,6 @@ const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right,
 const none = '0px';
 export const defaultViewportObserverMargin = { top: none, right: none, bottom: none, left: none };
 
-// TODO: only set up IntersectionObservers, once .observe is called
 export default class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
@@ -63,8 +62,8 @@ export default class ViewportObserver {
 		this.observerEnter?.disconnect();
 		this.observerLeave?.disconnect();
 
-		// todo: check what happens, if the opposite value still overlaps (due to offset / height ?)
-		// !TODO: I know now: if effective duration exceeds available observer height it fails... -> BUG! -> FIX...
+		// TODO: check what happens, if the opposite value still overlaps (due to offset / height ?)
+		// TODO! I know now: if effective duration exceeds available observer height it fails... -> BUG! -> FIX...
 		const marginEnter = { ...this.options.margin, top: none };
 		const marginLeave = { ...this.options.margin, bottom: none };
 
@@ -82,6 +81,7 @@ export default class ViewportObserver {
 	}
 
 	public modify(options: Options): ViewportObserver {
+		console.log(options);
 		if (!this.optionsChanged(options)) {
 			return this;
 		}
@@ -109,6 +109,7 @@ export default class ViewportObserver {
 		return this;
 	}
 	public disconnect(): void {
+		this.observedElements.clear();
 		this.observerEnter?.disconnect();
 		this.observerLeave?.disconnect();
 	}

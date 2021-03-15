@@ -1,6 +1,5 @@
 import { failWith } from 'scrollmagic/ScrollMagicError';
 
-// TODO: this will also allow missing rules, if input and output property types don't match. Maybe we can do better?
 export type PropertyProcessors<
 	I extends { [X in keyof I & keyof O]: unknown },
 	O extends { [X in keyof I & keyof O]: unknown }
