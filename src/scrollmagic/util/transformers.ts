@@ -1,7 +1,13 @@
-import * as Options from 'scrollmagic/Options';
 import { failWith } from 'scrollmagic/ScrollMagicError';
 
 import { isDocument, isHTMLElement, isNumber, isSVGElement, isString, isWindow } from './typeguards';
+
+enum TrackShorthand {
+	Enter = 'enter',
+	Center = 'center',
+	Leave = 'leave',
+}
+type PixelConverter = (elementHeight: number) => number;
 
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
@@ -12,14 +18,14 @@ export const assertBetweenZeroAndOne = (val: number): number => {
 	return val;
 };
 
-export const trackValueToNumber = (val: number | Options.TrackShorthand | `${Options.TrackShorthand}`): number => {
+export const trackValueToNumber = (val: number | TrackShorthand | `${TrackShorthand}`): number => {
 	if (isNumber(val)) {
 		return val;
 	}
 	const numericEquivalents = {
-		[Options.TrackShorthand.Enter]: 1,
-		[Options.TrackShorthand.Center]: 0.5,
-		[Options.TrackShorthand.Leave]: 0,
+		[TrackShorthand.Enter]: 1,
+		[TrackShorthand.Center]: 0.5,
+		[TrackShorthand.Leave]: 0,
 	};
 	const valid = Object.keys(numericEquivalents);
 	if (!valid.includes(val)) {
@@ -28,7 +34,7 @@ export const trackValueToNumber = (val: number | Options.TrackShorthand | `${Opt
 	return numericEquivalents[val];
 };
 
-export const stringToPixelConverter = (val: string, allowRelative = false): Options.PixelConverter => {
+export const stringToPixelConverter = (val: string, allowRelative = false): PixelConverter => {
 	// if unit is %, value will be 1 for 100%
 	const match = val.match(/^([+-])?(=)?(\d+|\d*[.]\d+)(%|px)$/);
 	if (match === null) {
@@ -47,14 +53,14 @@ export const stringToPixelConverter = (val: string, allowRelative = false): Opti
 	return relative ? height => getPx(height) + height : getPx;
 };
 
-export const numberOrStringToPixelConverter = (val: number | string, allowRelative = false): Options.PixelConverter => {
+export const numberOrStringToPixelConverter = (val: number | string, allowRelative = false): PixelConverter => {
 	if (isNumber(val)) {
 		return () => val;
 	}
 	return stringToPixelConverter(val, allowRelative);
 };
 
-export const numberOrStringToPixelConverterAllowRelative = (val: number | string): Options.PixelConverter => {
+export const numberOrStringToPixelConverterAllowRelative = (val: number | string): PixelConverter => {
 	return numberOrStringToPixelConverter(val, true);
 };
 
@@ -75,9 +81,9 @@ export const selectorOrElementToHTMLorSVG = (reference: Element | string): HTMLE
 	return elem;
 };
 
-export const scrollParentOptionToScrollParent = (
-	container: Options.Public['scrollParent']
-): Options.Private['scrollParent'] => {
+export const elementOrSelectorToScrollParent = (
+	container: Window | Document | Element | string
+): Window | HTMLElement => {
 	if (isWindow(container) || isDocument(container)) {
 		return window;
 	}

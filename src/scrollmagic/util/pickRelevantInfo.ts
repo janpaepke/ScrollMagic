@@ -1,4 +1,4 @@
-interface RectInfo {
+export interface RectInfo {
 	width: number;
 	height: number;
 	top: number;

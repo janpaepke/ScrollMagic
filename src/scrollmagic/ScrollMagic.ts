@@ -6,20 +6,10 @@ import { warn } from './ScrollMagicError';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { batch } from './util/batch';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
-import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
-import processProperties, { PropertyProcessors } from './util/processProperties';
+import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import throttleRaf from './util/throttleRaf';
-import {
-	assertBetweenZeroAndOne,
-	numberOrStringToPixelConverter,
-	numberOrStringToPixelConverterAllowRelative,
-	numberToPercString,
-	scrollParentOptionToScrollParent,
-	selectorOrElementToHTMLorSVG,
-	stringPropertiesToNumber,
-	trackValueToNumber,
-} from './util/transformers';
-import { isWindow } from './util/typeguards';
+import { numberToPercString, stringPropertiesToNumber } from './util/transformers';
+import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
 
 export { Public as ScrollMagicOptions } from './Options';
@@ -38,12 +28,17 @@ export class ScrollMagic {
 	// update function MUST NOT call any other functions, with the exceptions of modify
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private isNaturalIntersection = true;
+	private triggerBounds: { start: number; end: number; size: number } = {
+		start: 0,
+		end: 0,
+		size: 0,
+	}; // start and end positions (relative to element origin) and end offset
 	private currentProgress = 0;
-	private elementSize?: number; // cached element height (only updated if offset = 0 and height != 100%)
 	private active?: boolean; // scene active state
 
-	// TODO: currently options.element isn't really optional. Can we make it?
+	// TODO1: fix event triggers outside of viewport (enter / leave should still trigger even without progress updates)
+	// TODO2: fix inverted scenes.
+	// TODO: consider what should happen, if no element is supplied (fallback to body). Should this mean different default values for trackStart and trackEnd?
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -53,17 +48,16 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const normalized = processProperties(options, ScrollMagic.propertyProcessors);
+		const normalized = batch(Options.sanitize, Options.process)(options);
 
 		this.optionsPublic = {
 			...this.optionsPublic,
 			...options,
 		};
 
-		const changed =
-			undefined === this.optionsPrivate // internal options not set on first run, so all changed
-				? normalized
-				: pickDifferencesFlat(normalized, this.optionsPrivate);
+		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
+			? normalized
+			: pickDifferencesFlat(normalized, this.optionsPrivate);
 		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
 
 		if (changedOptions.length === 0) {
@@ -84,7 +78,7 @@ export class ScrollMagic {
 		// which would put the triggerpoint outside of the viewport.
 		// This breaks, because IntersectionObserver only works within the viewport.
 		const margin = stringPropertiesToNumber(this.getViewportMargin());
-		const { start, end } = pickRelevantValues(this.optionsPrivate.vertical, margin);
+		const { start, end } = this.getRelevantValues(margin);
 		const invalid = (what: string) =>
 			warn(
 				`The effective ${what} position is outside of the viewport. Unless something changes, the ${what} progress can never reach ${
@@ -102,36 +96,31 @@ export class ScrollMagic {
 
 	private getViewportMargin() {
 		// todo: memoize all or part of this? Might not be worth it...
-		const { vertical, trackEnd, trackStart, offset, height } = this.optionsPrivate;
-		const { start, end } = pickRelevantProps(vertical);
-		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
+		const { trackEnd, trackStart } = this.optionsPrivate;
+		const { start: startProp, end: endProp } = this.getRelevantProps();
+		const { size: containerSize } = this.getRelevantValues(this.container.size);
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
 
-		// TODO: ask Pimm if this IIFE should get params or is ok to use parent values
-		const [startOffset, endOffset] = (() => {
-			if (this.isNaturalIntersection) {
-				// if startOffset is 0 and height is 100% we can take a little shortcut here.
-				return [0, 0];
-			}
-			const { elementSize } = this;
-			if (undefined === elementSize) {
-				// should never be the case, but why not...
-				this.updateElementSize();
-			}
-			const startOffset = offset(elementSize!) / containerSize;
-			const relativeHeight = height(elementSize!) / containerSize;
-			const endOffset = relativeHeight - elementSize! / containerSize; // deduct elem height to correct for the fact that trackEnd cares for the end of the element
-			return [startOffset, endOffset];
-		})();
+		const { start, end } = this.triggerBounds;
+		const relStart = start / containerSize;
+		const relEnd = end / containerSize;
 
 		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 		return {
 			...defaultViewportObserverMargin,
-			[end]: numberToPercString(trackStartMargin - startOffset),
-			[start]: numberToPercString(trackEndMargin + startOffset + endOffset),
+			[endProp]: numberToPercString(trackStartMargin - relStart),
+			[startProp]: numberToPercString(trackEndMargin + relEnd),
 		};
+	}
+
+	private getRelevantProps() {
+		return pickRelevantProps(this.optionsPrivate.vertical);
+	}
+
+	private getRelevantValues<T extends Partial<RectInfo>>(rect: T) {
+		return pickRelevantValues(this.optionsPrivate.vertical, rect);
 	}
 
 	private updateActive(nextActive: boolean | undefined) {
@@ -139,62 +128,43 @@ export class ScrollMagic {
 		this.active = nextActive;
 	}
 
-	private updateNaturalIntersection() {
-		// checks and caches if there is no offset from the top and bottom of the element (default)
-		// this allows for less element size calculations.
-		const { offset, height } = this.optionsPrivate;
-		this.isNaturalIntersection = offset(1) === 0 && height(1) === 1;
+	private updateTriggerBounds() {
+		const { offset, size, element } = this.optionsPrivate;
+		const { size: elementSize } = this.getRelevantValues(element.getBoundingClientRect());
+		const pxSize = size(elementSize);
+		const start = offset(elementSize);
+		const end = start + pxSize;
+		this.triggerBounds = { start, end, size: pxSize };
 	}
 
-	private updateElementSize() {
-		if (this.isNaturalIntersection) {
-			return;
+	private updateProgress(intersectionState?: boolean) {
+		if (isUndefined(intersectionState) && !this.active) {
+			return 0;
 		}
-		const { vertical, element } = this.optionsPrivate;
-		const { size: nextSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
-		this.elementSize = nextSize;
-	}
 
-	private updateProgress(force = false) {
-		if (!force && !this.active) {
-			return;
-		}
-		const { vertical, trackEnd, trackStart, offset, element, height } = this.optionsPrivate;
-		const { size: elementSize, start: elementStart } = pickRelevantValues(
-			vertical,
-			element.getBoundingClientRect()
-		); //don't use cached value here, we need the current position
-		const { size: containerSize } = pickRelevantValues(vertical, this.container.size);
+		const { trackEnd, trackStart, element } = this.optionsPrivate;
+		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
+		const { size: containerSize } = this.getRelevantValues(this.container.size);
 
-		const pxHeight = height(elementSize);
-		const startOffset = offset(elementSize) / containerSize;
-		const relativeHeight = pxHeight / containerSize;
-		const relativeStart = startOffset + elementStart / containerSize;
+		const { start, size } = this.triggerBounds;
+		const relativeSize = size / containerSize;
+		const relativeStart = (start + elementStart) / containerSize;
 		const trackDistance = trackStart - trackEnd;
 
 		const passed = trackStart - relativeStart;
-		const total = relativeHeight + trackDistance;
-
+		const total = relativeSize + trackDistance;
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
-		const { currentProgress } = this;
-		if (nextProgress !== currentProgress) {
-			let forward = nextProgress > this.progress;
-			if (pxHeight < 0) {
-				// Houston, we have an inverse scene on our hands...
-				forward = !forward;
-			}
+		const deltaProgress = nextProgress - this.currentProgress;
+		this.currentProgress = nextProgress;
 
-			// TODO: enter and leave don't dispatch when leaving scene on resize -> fix
-			if ((nextProgress > 0 && currentProgress === 0) || (nextProgress < 1 && currentProgress === 1)) {
-				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Enter, forward, this));
-			}
-
-			this.currentProgress = nextProgress;
-			this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Progress, forward, this));
-
-			if (nextProgress === 0 || nextProgress === 1) {
-				this.dispatcher.dispatchEvent(new ScrollMagicEvent(ScrollMagicEventType.Leave, forward, this));
-			}
+		// TODO: enter and leave don't dispatch when leaving scene on resize -> fix, if issue still exists
+		const skipped = deltaProgress === 1;
+		if (true === intersectionState || skipped) {
+			this.triggerEvent(ScrollMagicEventType.Enter, deltaProgress);
+		}
+		this.triggerEvent(ScrollMagicEventType.Progress, deltaProgress);
+		if (false === intersectionState || nextProgress === 1 || nextProgress === 0) {
+			this.triggerEvent(ScrollMagicEventType.Leave, deltaProgress);
 		}
 	}
 
@@ -211,17 +181,14 @@ export class ScrollMagic {
 		// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 
 		const isChanged = changes.includes.bind(changes);
-		const heightChanged = isChanged('height');
+		const sizeChanged = isChanged('size');
 		const offsetChanged = isChanged('offset');
 		const elementChanged = isChanged('element');
 		const scrollParentChanged = isChanged('scrollParent');
 
 		// TODO: can this be written better?
-		if (heightChanged || offsetChanged || elementChanged) {
-			this.updateNaturalIntersection();
-			if (heightChanged || elementChanged) {
-				this.updateElementSize();
-			}
+		if (sizeChanged || offsetChanged || elementChanged) {
+			this.updateTriggerBounds();
 			if (elementChanged) {
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
@@ -232,7 +199,7 @@ export class ScrollMagic {
 		}
 		if (scrollParentChanged) {
 			this.updateActive(undefined);
-			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerResize.bind(this));
+			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this));
 		}
 		// one last check, before we go.
 		this.checkOptionsConsistency();
@@ -241,16 +208,16 @@ export class ScrollMagic {
 	}
 
 	private onElementResize() {
-		const { elementSize, isNaturalIntersection } = this;
-		this.updateElementSize();
-		const sizeChanged = elementSize !== this.elementSize;
-		if (sizeChanged && !isNaturalIntersection) {
+		const { start: startPrevious, end: endPrevious } = this.triggerBounds;
+		this.updateTriggerBounds();
+		const { start, end } = this.triggerBounds;
+		if (startPrevious !== start || endPrevious !== end) {
 			this.updateViewportObserver();
 		}
 		this.updateProgress();
 	}
 
-	private onContainerResize(e: ContainerEvent) {
+	private onContainerUpdate(e: ContainerEvent) {
 		if ('resize' === e.type) {
 			this.updateViewportObserver();
 		}
@@ -258,15 +225,20 @@ export class ScrollMagic {
 	}
 
 	private onIntersectionChange(intersecting: boolean, target: Element) {
-		console.log(intersecting);
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
-			// for the first call (active === undefined) we need to update the progress,
-			// regardless if scene is now active or not (i.e. if the page loads when the scene was passed)
-			const initialCall = undefined === this.active;
 			this.updateActive(intersecting);
-			this.updateProgress(initialCall);
+			this.updateProgress(intersecting);
 		}
+	}
+
+	private triggerEvent(type: ScrollMagicEventType, deltaProgress: number) {
+		if (deltaProgress === 0) {
+			return;
+		}
+		const inverse = this.triggerBounds.size < 0; // Houston, we may have an inverse scene on our hands...
+		const forward = inverse ? deltaProgress < 0 : deltaProgress > 0;
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
 	}
 
 	// getter/setter public
@@ -335,19 +307,12 @@ export class ScrollMagic {
 	private static defaultOptionsPublic = Options.defaults;
 	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
-		processProperties(options, ScrollMagic.propertyProcessors);
+		const sanitized = Options.sanitize(options);
+		Options.process(sanitized); // run to check for errors, but ignore result
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
-			...options,
+			...sanitized,
 		};
 		return this.defaultOptionsPublic;
 	}
-	private static propertyProcessors: PropertyProcessors<Options.Public, Options.Private> = {
-		element: selectorOrElementToHTMLorSVG,
-		scrollParent: scrollParentOptionToScrollParent,
-		trackStart: batch(trackValueToNumber, assertBetweenZeroAndOne),
-		trackEnd: batch(trackValueToNumber, assertBetweenZeroAndOne),
-		offset: numberOrStringToPixelConverter,
-		height: numberOrStringToPixelConverterAllowRelative,
-	};
 }
