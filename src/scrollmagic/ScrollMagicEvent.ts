@@ -8,16 +8,8 @@ export enum ScrollMagicEventType {
 }
 
 export enum ScrollMagicEventScrollDirection {
-	Up = 'up',
-	Down = 'down',
-	Left = 'left',
-	Right = 'right',
-}
-function getDirection(vertical: boolean, forward: boolean) {
-	const directions = vertical
-		? [ScrollMagicEventScrollDirection.Down, ScrollMagicEventScrollDirection.Up]
-		: [ScrollMagicEventScrollDirection.Right, ScrollMagicEventScrollDirection.Left];
-	return forward ? directions[0] : directions[1];
+	Forward = 'forward',
+	Reverse = 'reverse',
 }
 class ScrollMagicEvent implements DispatchableEvent {
 	public readonly direction: ScrollMagicEventScrollDirection;
@@ -26,7 +18,9 @@ class ScrollMagicEvent implements DispatchableEvent {
 		movingForward: boolean,
 		public readonly target: ScrollMagic
 	) {
-		this.direction = getDirection(target.vertical, movingForward);
+		this.direction = movingForward
+			? ScrollMagicEventScrollDirection.Forward
+			: ScrollMagicEventScrollDirection.Reverse;
 	}
 }
 export default ScrollMagicEvent;

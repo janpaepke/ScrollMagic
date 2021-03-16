@@ -61,11 +61,13 @@ export default class ViewportObserver {
 	private rebuildObserver() {
 		this.observerEnter?.disconnect();
 		this.observerLeave?.disconnect();
+		const { margin } = this.options;
+		const maxDimension = (val: string) => `${Math.max(0, parseFloat(val))}%`;
 
 		// TODO: check what happens, if the opposite value still overlaps (due to offset / height ?)
 		// TODO! I know now: if effective duration exceeds available observer height it fails... -> BUG! -> FIX...
-		const marginEnter = { ...this.options.margin, top: none };
-		const marginLeave = { ...this.options.margin, bottom: none };
+		const marginEnter = { ...margin, top: maxDimension(margin.top) };
+		const marginLeave = { ...margin, bottom: maxDimension(margin.bottom) };
 
 		this.observerEnter = this.createObserver(marginObjToString(marginEnter));
 		this.observerLeave = this.createObserver(marginObjToString(marginLeave));
@@ -81,7 +83,6 @@ export default class ViewportObserver {
 	}
 
 	public modify(options: Options): ViewportObserver {
-		console.log(options);
 		if (!this.optionsChanged(options)) {
 			return this;
 		}

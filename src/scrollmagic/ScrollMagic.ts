@@ -1,14 +1,14 @@
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
+import { ThrottledExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
-import { warn } from './ScrollMagicError';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import { batch } from './util/batch';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
-import throttleRaf from './util/throttleRaf';
-import { numberToPercString, stringPropertiesToNumber } from './util/transformers';
+import scheduleRaf from './util/scheduleRaf';
+import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
 
@@ -19,10 +19,17 @@ type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
-	private dispatcher = new EventDispatcher();
-	private container = new ContainerProxy(this);
-	private resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
-	private viewportObserver = new ViewportObserver(throttleRaf(this.onIntersectionChange.bind(this)));
+	private readonly dispatcher = new EventDispatcher();
+	private readonly container = new ContainerProxy(this);
+	private readonly resizeObserver = new ResizeObserver(scheduleRaf(this.onElementResize.bind(this)));
+	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
+	private readonly executionQueue = new ThrottledExecutionQueue();
+	private readonly boundMethods = {
+		// these are set to get permanent references for the throttled execution queue
+		updateProgress: this.updateProgress.bind(this),
+		updateViewportObserver: this.updateViewportObserver.bind(this),
+		updateTriggerBounds: this.updateTriggerBounds.bind(this),
+	} as const;
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
@@ -36,13 +43,15 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO: fix event triggers outside of viewport (enter / leave should still trigger even without progress updates)
 	// TODO: implement 'infer' option for trackStart and trackEnd
 	// TODO: fix inverted scenes - they used to work...
 	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
-	// TODO! BUGFIX enter and leave don't dispatch when leaving scene on resize
+	// TODO! BUGFIX enter and leave don't dispatch when leaving scene on resize (still exists?)
+	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
+	// TODO: consider what should actually be private and what protected.
 
 	// TODO: ViewportObserver: only set up IntersectionObservers, once .observe is called
+	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -87,30 +96,8 @@ export class ScrollMagic {
 	}
 
 	// this function checks if options make sense as a whole
+	// TODO: Do we still need it?
 	private checkOptionsInterdependence() {
-		// test if the margin for ViewportObserver would result in positive values,
-		// which would put the triggerpoint outside of the viewport.
-		// This breaks, because IntersectionObserver only works within the viewport.
-		const margin = stringPropertiesToNumber(this.getViewportMargin()); // Watch out these are % values => 100%
-		const { start: marginStart, end: marginEnd } = this.getRelevantValues(margin);
-		const { size: containerSize } = this.getRelevantValues(this.container.rect);
-		const { size } = this.triggerBounds;
-		const relSize = size / containerSize;
-		const invalid = (what: string) =>
-			warn(
-				`With the current configuration the trigger element ${
-					this.optionsPublic.element
-				} will be outside of the viewport when it touches the ${what} position. Unless something changes, the ${what} progress might never reach ${
-					what === 'start' ? 0 : 1
-				}`
-			);
-		// check `getViewportMargin`, if you're wondering why this appears to be flipped.
-		if (marginStart - relSize * 100 > 0) {
-			invalid('end');
-		}
-		if (marginEnd > 0) {
-			invalid('start');
-		}
 		// TODO: check again if this makes sense - maybe they would just be inverse?
 		// const { trackStart, trackEnd } = this.optionsPrivate;
 		// if (trackEnd - trackStart > relEnd) {
@@ -162,8 +149,8 @@ export class ScrollMagic {
 		this.triggerBounds = { start, end, size: pxSize };
 	}
 
-	private updateProgress(intersectionState?: boolean) {
-		if (isUndefined(intersectionState) && !this.active) {
+	private updateProgress() {
+		if (this.active === false) {
 			return 0;
 		}
 
@@ -178,16 +165,17 @@ export class ScrollMagic {
 
 		const passed = trackStart - relativeStart;
 		const total = relativeSize + trackDistance;
+		const previousProgress = this.currentProgress;
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
-		const deltaProgress = nextProgress - this.currentProgress;
+		const deltaProgress = nextProgress - previousProgress;
+
 		this.currentProgress = nextProgress;
 
-		const skipped = deltaProgress === 1;
-		if (true === intersectionState || skipped) {
+		if (previousProgress === 0 || previousProgress === 1) {
 			this.triggerEvent(ScrollMagicEventType.Enter, deltaProgress);
 		}
 		this.triggerEvent(ScrollMagicEventType.Progress, deltaProgress);
-		if (false === intersectionState || nextProgress === 1 || nextProgress === 0) {
+		if (nextProgress === 0 || nextProgress === 1) {
 			this.triggerEvent(ScrollMagicEventType.Leave, deltaProgress);
 		}
 	}
@@ -220,7 +208,7 @@ export class ScrollMagic {
 		}
 		if (scrollParentChanged) {
 			this.updateActive(undefined);
-			this.container.attach(this.optionsPrivate.scrollParent, throttleRaf(this.onContainerUpdate.bind(this)));
+			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
 		// one last check, before we go.
 		this.checkOptionsInterdependence();
@@ -229,27 +217,30 @@ export class ScrollMagic {
 	}
 
 	private onElementResize() {
-		const { start: startPrevious, end: endPrevious } = this.triggerBounds;
-		this.updateTriggerBounds();
-		const { start, end } = this.triggerBounds;
-		if (startPrevious !== start || endPrevious !== end) {
-			this.updateViewportObserver();
-		}
-		this.updateProgress();
+		const { executionQueue, boundMethods, triggerBounds } = this;
+		const { start: startPrevious, end: endPrevious } = triggerBounds;
+		executionQueue.schedule(boundMethods.updateTriggerBounds);
+		executionQueue.schedule(
+			boundMethods.updateViewportObserver,
+			() => startPrevious !== triggerBounds.start || endPrevious !== triggerBounds.end // compare to current values => only execute, if changed
+		);
+		executionQueue.schedule(this.boundMethods.updateProgress);
 	}
 
 	private onContainerUpdate(e: ContainerEvent) {
+		const { executionQueue, boundMethods } = this;
 		if ('resize' === e.type) {
-			this.updateViewportObserver();
+			executionQueue.schedule(boundMethods.updateViewportObserver);
 		}
-		this.updateProgress();
+		executionQueue.schedule(boundMethods.updateProgress);
 	}
 
 	private onIntersectionChange(intersecting: boolean, target: Element) {
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
+			this.executionQueue.schedule(this.boundMethods.updateProgress);
+			this.executionQueue.moveUp();
 			this.updateActive(intersecting);
-			this.updateProgress(intersecting);
 		}
 	}
 
@@ -317,6 +308,7 @@ export class ScrollMagic {
 	}
 
 	public destroy(): void {
+		this.executionQueue.clear();
 		this.resizeObserver.disconnect();
 		this.viewportObserver.disconnect();
 		this.container.detach();
