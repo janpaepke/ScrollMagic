@@ -4,7 +4,6 @@ import EventDispatcher from './EventDispatcher';
 import { ThrottledExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
-import { batch } from './util/batch';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import scheduleRaf from './util/scheduleRaf';
@@ -43,12 +42,11 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO: implement 'infer' option for trackStart and trackEnd
 	// TODO: fix inverted scenes - they used to work...
 	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
-	// TODO! BUGFIX enter and leave don't dispatch when leaving scene on resize (still exists?)
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
+	// TODO: feature: add getters for scroll start and end offset (to be able to scroll there)
 
 	// TODO: ViewportObserver: only set up IntersectionObservers, once .observe is called
 	// TODO: Maybe only include internal errors for development? process.env...
@@ -70,41 +68,26 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const normalized = batch(Options.sanitize, Options.process)(options);
+		const sanitized = Options.sanitize(options);
+		const normalized = Options.process(sanitized);
 
-		this.optionsPublic = {
-			...this.optionsPublic,
-			...options,
-		};
+		this.optionsPublic = { ...this.optionsPublic, ...options };
+
+		const nextPrivate = Options.inferNullValues({ ...this.optionsPrivate, ...normalized });
 
 		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
-			? normalized
-			: pickDifferencesFlat(normalized, this.optionsPrivate);
+			? nextPrivate
+			: pickDifferencesFlat(nextPrivate, this.optionsPrivate);
 		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
 
 		if (changedOptions.length === 0) {
 			return this;
 		}
 
-		this.optionsPrivate = {
-			...this.optionsPrivate,
-			...normalized,
-		};
+		this.optionsPrivate = nextPrivate;
 
 		this.onOptionChanges(changedOptions);
 		return this;
-	}
-
-	// this function checks if options make sense as a whole
-	// TODO: Do we still need it?
-	private checkOptionsInterdependence() {
-		// TODO: check again if this makes sense - maybe they would just be inverse?
-		// const { trackStart, trackEnd } = this.optionsPrivate;
-		// if (trackEnd - trackStart > relEnd) {
-		// 	warn(
-		// 		`There is currently no overlap between your track and your element, which is likely unintentional. Did you mean to swap trackStart and trackEnd?`
-		// 	);
-		// }
 	}
 
 	private getViewportMargin() {
@@ -210,8 +193,6 @@ export class ScrollMagic {
 			this.updateActive(undefined);
 			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
-		// one last check, before we go.
-		this.checkOptionsInterdependence();
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
 		this.updateViewportObserver();
 	}

@@ -1,6 +1,6 @@
 import { failWith } from 'scrollmagic/ScrollMagicError';
 
-import { isDocument, isHTMLElement, isNumber, isSVGElement, isString, isWindow } from './typeguards';
+import { isDocument, isHTMLElement, isNull, isNumber, isSVGElement, isString, isWindow } from './typeguards';
 
 enum TrackShorthand {
 	Enter = 'enter',
@@ -11,15 +11,11 @@ type PixelConverter = (elementHeight: number) => number;
 
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
-export const assertBetweenZeroAndOne = (val: number): number => {
-	if (Math.abs(val) > 1) {
-		throw failWith('Value must be a number between 0 and 1');
-	}
-	return val;
-};
-
 export const trackValueToNumber = (val: number | TrackShorthand | `${TrackShorthand}`): number => {
 	if (isNumber(val)) {
+		if (Math.abs(val) > 1) {
+			throw failWith('Value must be a number between 0 and 1');
+		}
 		return val;
 	}
 	const numericEquivalents = {
@@ -37,7 +33,7 @@ export const trackValueToNumber = (val: number | TrackShorthand | `${TrackShorth
 export const stringToPixelConverter = (val: string, allowRelative = false): PixelConverter => {
 	// if unit is %, value will be 1 for 100%
 	const match = val.match(/^([+-])?(=)?(\d+|\d*[.]\d+)(%|px)$/);
-	if (match === null) {
+	if (isNull(match)) {
 		const allowedFormat = allowRelative
 			? ' or relative values, i.e. 20px, 80%, +=20px or +=10%'
 			: ', i.e. 20px or 80%';
@@ -66,7 +62,7 @@ export const numberOrStringToPixelConverterAllowRelative = (val: number | string
 
 export const selectorToSingleElement = (selector: string): Element => {
 	const elem = document.querySelector(selector);
-	if (elem === null) {
+	if (isNull(elem)) {
 		throw failWith(`No element found for selector ${selector}`);
 	}
 	return elem;
@@ -92,6 +88,15 @@ export const elementOrSelectorToScrollParent = (
 		throw failWith(`Can't use SVG as scrollParent`);
 	}
 	return elem;
+};
+
+export const passThroughNull = <F extends (val: P) => any, P extends any>(
+	func: F
+): ((val: P | null) => ReturnType<F> | null) => (val: P | null) => {
+	if (isNull(val)) {
+		return val;
+	}
+	return func(val);
 };
 
 export const stringPropertiesToNumber = <T extends Record<string, string>>(obj: T): Record<keyof T, number> =>

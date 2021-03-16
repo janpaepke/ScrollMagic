@@ -15,7 +15,7 @@ export type PropertyProcessors<
 const processProperties = <
 	I extends { [X in keyof I]: any },
 	P extends { [X in K]: (value: Required<I>[X]) => any },
-	O extends { [X in K]: ReturnType<P[X]> },
+	O extends { [X in K]: ReturnType<P[X]> | I[K] },
 	K extends keyof I
 >(
 	options: I,
@@ -29,7 +29,7 @@ const processProperties = <
 		const processor = rules[prop];
 		let processedValue: O[K];
 		try {
-			processedValue = processor?.(value) ?? (value as O[K]);
+			processedValue = processor?.(value) ?? value;
 		} catch (e) {
 			throw failWith(getErrorMessage(value, prop, e.message));
 		}
