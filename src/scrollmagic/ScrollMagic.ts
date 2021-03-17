@@ -4,6 +4,7 @@ import EventDispatcher from './EventDispatcher';
 import { ThrottledExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
+import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import throttleRaf from './util/throttleRaf';
@@ -46,7 +47,6 @@ export class ScrollMagic {
 	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
-	// TODO: feature: add getters for scroll start and end offset (to be able to scroll there)
 	// TODO: do we need to get a way to get the internal options?
 	// todo: fix: horizontal scroll would trigger leave from viewport observer
 	// TODO: Maybe only include internal errors for development? process.env...
@@ -139,11 +139,11 @@ export class ScrollMagic {
 
 		const { trackEnd, trackStart, element } = this.optionsPrivate;
 		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
+		const { start: elementOffset, size: elementSize } = this.triggerBounds;
 		const { size: containerSize } = this.getRelevantValues(this.container.rect);
 
-		const { start, size } = this.triggerBounds;
-		const relativeSize = size / containerSize;
-		const relativeStart = (start + elementStart) / containerSize;
+		const relativeSize = elementSize / containerSize;
+		const relativeStart = (elementOffset + elementStart) / containerSize;
 		const trackDistance = trackStart - trackEnd;
 
 		const passed = trackStart - relativeStart;
@@ -272,6 +272,20 @@ export class ScrollMagic {
 	// not an option -> getter only
 	public get progress(): number {
 		return this.currentProgress;
+	}
+	public get scrollOffset(): { start: number; end: number } {
+		const { element, scrollParent, trackStart, trackEnd } = this.optionsPrivate;
+		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
+		const { start: elementOffsetStart, end: elementOffsetEnd } = this.triggerBounds;
+		const { start: parentOffset } = this.getRelevantValues(getScrollPos(scrollParent));
+		const { size: containerSize } = this.getRelevantValues(this.container.rect);
+		const elemOffset = elementStart + parentOffset;
+		const trackOffsetStart = containerSize * trackStart;
+		const trackOffsetEnd = containerSize * trackEnd;
+		return {
+			start: Math.floor(elemOffset + elementOffsetStart - trackOffsetStart),
+			end: Math.ceil(elemOffset + elementOffsetEnd - trackOffsetEnd),
+		};
 	}
 
 	// event listener

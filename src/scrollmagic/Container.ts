@@ -19,7 +19,6 @@ const scroll = 'scroll';
 const resize = 'resize';
 
 export class Container {
-	private scrollPosPrivate = { top: 0, left: 0 };
 	private dimensions = { width: 0, height: 0 };
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
@@ -38,7 +37,6 @@ export class Container {
 	}
 
 	private updateScrollPos() {
-		this.scrollPosPrivate = getScrollPos(this.scrollParent);
 		this.dispatcher.dispatchEvent(new ContainerEvent(scroll, this));
 	}
 	private updateDimensions() {
@@ -69,10 +67,6 @@ export class Container {
 
 	public get size(): Container['dimensions'] {
 		return this.dimensions;
-	}
-
-	public get scrollPos(): Container['scrollPosPrivate'] {
-		return this.scrollPosPrivate;
 	}
 
 	public destroy(): void {
