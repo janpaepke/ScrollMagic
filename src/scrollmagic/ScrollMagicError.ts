@@ -16,6 +16,6 @@ export const failWith = (message: string): ScrollMagicError => {
 export const failWithInternal = (message: string): ScrollMagicErrorInternal => {
 	return new ScrollMagicErrorInternal(message);
 };
-export const warn = (message: string): void => {
-	console?.warn(`${SM} Warning: ${message}`);
+export const warn = (first: unknown, ...args: unknown[]): void => {
+	console?.warn(`${SM} Warning: ${first}`, ...args);
 };

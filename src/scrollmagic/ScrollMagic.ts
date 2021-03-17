@@ -66,22 +66,20 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const sanitized = Options.sanitize(options);
-		const normalized = Options.transform(sanitized);
-		const nextPrivate = Options.infer({ ...this.optionsPrivate, ...normalized });
+		const { sanitized, processed } = Options.process(options, this.optionsPrivate);
 
 		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
 
 		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
-			? nextPrivate
-			: pickDifferencesFlat(nextPrivate, this.optionsPrivate);
+			? processed
+			: pickDifferencesFlat(processed, this.optionsPrivate);
 		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
 
 		if (changedOptions.length === 0) {
 			return this;
 		}
 
-		this.optionsPrivate = nextPrivate;
+		this.optionsPrivate = processed;
 
 		this.onOptionChanges(changedOptions);
 		return this;
@@ -294,8 +292,8 @@ export class ScrollMagic {
 			end: Math.ceil(elemOffset + elementOffsetEnd - trackOffsetEnd),
 		};
 	}
-	public get computedOptions(): Options.Private {
-		return { ...this.optionsPrivate };
+	public get computedOptions() {
+		return Options.output(this.optionsPrivate);
 	}
 
 	// event listener
@@ -324,11 +322,9 @@ export class ScrollMagic {
 	private static defaultOptionsPublic = Options.defaults;
 	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
-		const sanitized = Options.sanitize(options);
-		Options.transform(sanitized); // run to check for errors, but ignore result
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
-			...sanitized,
+			...Options.sanitize(options),
 		};
 		return this.defaultOptionsPublic;
 	}

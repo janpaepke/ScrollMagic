@@ -85,14 +85,14 @@ const transformers: PropertyProcessors<Public, PrivateUninferred> = {
 };
 
 // removes unknown properties from supplied options
-export const sanitize = (obj: Record<string, any>): Partial<Public> => sanitizeProperties(obj, defaults);
+export const sanitize = <T extends Partial<Public>>(options: T): T => sanitizeProperties(options, defaults);
 
 // converts all public values to their corresponding private value, leaving null values untoched
-export const transform = (obj: Partial<Public>): Partial<PrivateUninferred> => processProperties(obj, transformers);
+const transform = (options: Partial<Public>): Partial<PrivateUninferred> => processProperties(options, transformers);
 
 // processes remaining null values
-export const infer = (obj: PrivateUninferred): Private => {
-	const { vertical, scrollParent } = obj;
+const infer = (options: PrivateUninferred): Private => {
+	const { vertical, scrollParent } = options;
 	// get element first, cause we'll need that for the tracks
 	const getFirstChild = () => {
 		const elem = isWindow(scrollParent) ? document.body : scrollParent.firstElementChild;
@@ -102,7 +102,7 @@ export const infer = (obj: PrivateUninferred): Private => {
 		return selectorOrElementToHTMLorSVG(elem);
 	};
 
-	const inferred = processProperties(obj, {
+	const inferred = processProperties(options, {
 		element: elem => toNonNullable(elem, () => getFirstChild()),
 	});
 
@@ -127,4 +127,43 @@ export const infer = (obj: PrivateUninferred): Private => {
 		trackStart: val => toNonNullable(val, () => getTrackDefault('trackStart')),
 		trackEnd: val => toNonNullable(val, () => getTrackDefault('trackEnd')),
 	});
+};
+
+// checks if the options the user entered actually make sense
+const check = (options: Private): void => {
+	const { trackEnd, trackStart, element, scrollParent, vertical, size, offset } = options;
+	const { size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+	const { size: containerSize } = pickRelevantValues(vertical, getInnerDimensions(scrollParent));
+
+	const relativeDistance = size(elementSize) / containerSize;
+	const trackDistance = trackStart - trackEnd;
+
+	const total = relativeDistance + trackDistance;
+	if (total < 0) {
+		warn(
+			'Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
+			output(options)
+		);
+	}
+};
+
+export const output = (options: Private): ExtendProperty<Private, 'size' | 'offset', number> => {
+	const { element, vertical, size, offset } = options;
+	const { size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+	return {
+		...options,
+		offset: offset(elementSize),
+		size: size(elementSize),
+	};
+};
+
+export const process = <T extends Partial<Public>>(
+	newOptions: T,
+	oldOptions: Private
+): { sanitized: T; processed: Private } => {
+	const sanitized = sanitize(newOptions);
+	const normalized = transform(sanitized);
+	const processed = infer({ ...oldOptions, ...normalized });
+	check(processed);
+	return { sanitized, processed };
 };
