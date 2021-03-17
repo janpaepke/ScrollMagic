@@ -36,10 +36,10 @@ export class ScrollMagic {
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
 	private triggerBounds: { start: number; end: number; size: number } = {
-		start: 0,
-		end: 0,
-		size: 0,
-	}; // start and end positions (relative to element origin) and end offset
+		start: 0, // start relative to origin (= offset)
+		end: 0, // end position relative to origin (= start offset + calculcated size)
+		size: 0, // actual size of element
+	};
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
@@ -50,6 +50,7 @@ export class ScrollMagic {
 	// TODO: do we need to get a way to get the internal options?
 	// todo: fix: horizontal scroll would trigger leave from viewport observer
 	// TODO: Maybe only include internal errors for development? process.env...
+	// TODO: check how often updateTriggerBounds is called
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -62,6 +63,7 @@ export class ScrollMagic {
 		if (deltaProgress === 0) {
 			return;
 		}
+		// todo: wrong
 		const inverse = this.triggerBounds.size < 0; // Houston, we may have an inverse scene on our hands...
 		const forward = inverse ? deltaProgress < 0 : deltaProgress > 0;
 		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
@@ -98,15 +100,15 @@ export class ScrollMagic {
 		const trackEndMargin = -trackEnd; // distance from top
 
 		const { start, end, size } = this.triggerBounds;
-		const relStart = start / containerSize;
-		const relEnd = (end - size) / containerSize;
+		const relStartOffset = start / containerSize;
+		const relEndOffset = (end - size) / containerSize;
 
 		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 		const reset = { top: '0px', right: '0px', bottom: '0px', left: '0px' };
 		return {
 			...reset,
-			[endProp]: numberToPercString(trackStartMargin - relStart),
-			[startProp]: numberToPercString(trackEndMargin + relEnd),
+			[endProp]: numberToPercString(trackStartMargin - relStartOffset),
+			[startProp]: numberToPercString(trackEndMargin + relEndOffset),
 		};
 	}
 
@@ -124,12 +126,12 @@ export class ScrollMagic {
 	}
 
 	private updateTriggerBounds() {
+		// check variable initialisation for property description
 		const { offset, size, element } = this.optionsPrivate;
 		const { size: elementSize } = this.getRelevantValues(element.getBoundingClientRect());
-		const pxSize = size(elementSize);
 		const start = offset(elementSize);
-		const end = start + pxSize;
-		this.triggerBounds = { start, end, size: pxSize };
+		const end = size(elementSize) + start;
+		this.triggerBounds = { start, end, size: elementSize };
 	}
 
 	private updateProgress() {
@@ -138,16 +140,16 @@ export class ScrollMagic {
 		}
 
 		const { trackEnd, trackStart, element } = this.optionsPrivate;
-		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
-		const { start: elementOffset, size: elementSize } = this.triggerBounds;
+		const { start: elementPosition } = this.getRelevantValues(element.getBoundingClientRect());
+		const { start: elementStart, end: elementEnd } = this.triggerBounds;
 		const { size: containerSize } = this.getRelevantValues(this.container.rect);
 
-		const relativeSize = elementSize / containerSize;
-		const relativeStart = (elementOffset + elementStart) / containerSize;
+		const relativeStart = (elementPosition + elementStart) / containerSize;
+		const relativeDistance = (elementEnd - elementStart) / containerSize;
 		const trackDistance = trackStart - trackEnd;
 
 		const passed = trackStart - relativeStart;
-		const total = relativeSize + trackDistance;
+		const total = relativeDistance + trackDistance;
 		const previousProgress = this.currentProgress;
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		const deltaProgress = nextProgress - previousProgress;
@@ -286,6 +288,9 @@ export class ScrollMagic {
 			start: Math.floor(elemOffset + elementOffsetStart - trackOffsetStart),
 			end: Math.ceil(elemOffset + elementOffsetEnd - trackOffsetEnd),
 		};
+	}
+	public get computedOptions(): Options.Private {
+		return { ...this.optionsPrivate };
 	}
 
 	// event listener
