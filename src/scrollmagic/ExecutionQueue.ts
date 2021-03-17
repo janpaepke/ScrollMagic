@@ -1,4 +1,4 @@
-import scheduleRaf from './util/scheduleRaf';
+import throttleRaf from './util/throttleRaf';
 
 type Command = () => void;
 type Prerequisite = () => boolean;
@@ -37,7 +37,7 @@ export class ExecutionQueue {
 }
 
 export class ThrottledExecutionQueue extends ExecutionQueue {
-	protected executeThrottled = scheduleRaf(this.execute.bind(this));
+	protected executeThrottled = throttleRaf(this.execute.bind(this));
 	// adds a command to the queue and schedules it for execution
 	public schedule(command: Command, prerequisite?: Prerequisite): void {
 		this.add(command, prerequisite);

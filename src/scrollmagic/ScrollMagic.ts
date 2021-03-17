@@ -6,7 +6,7 @@ import * as Options from './Options';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
-import scheduleRaf from './util/scheduleRaf';
+import throttleRaf from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
@@ -20,7 +20,7 @@ export class ScrollMagic {
 
 	private readonly dispatcher = new EventDispatcher();
 	private readonly container = new ContainerProxy(this);
-	private readonly resizeObserver = new ResizeObserver(scheduleRaf(this.onElementResize.bind(this)));
+	private readonly resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ThrottledExecutionQueue();
 	private readonly boundMethods = {

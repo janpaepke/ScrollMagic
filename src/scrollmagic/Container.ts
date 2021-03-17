@@ -3,7 +3,7 @@ import debounce from './util/debounce';
 import getInnerDimensions from './util/getInnerDimensions';
 import getScrollPos from './util/getScrollPos';
 import registerEvent from './util/registerEvent';
-import scheduleRaf from './util/scheduleRaf';
+import throttleRaf from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
 
 export type ScrollParent = HTMLElement | Window;
@@ -25,7 +25,7 @@ export class Container {
 	private cleanups = new Array<CleanUpFunction>();
 
 	constructor(public readonly scrollParent: ScrollParent) {
-		const throttledScroll = scheduleRaf(this.updateScrollPos.bind(this));
+		const throttledScroll = throttleRaf(this.updateScrollPos.bind(this));
 		const throttledResize = debounce(this.updateDimensions.bind(this), 100);
 		this.cleanups.push(
 			throttledScroll.cancel,
