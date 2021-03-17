@@ -43,7 +43,6 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO: fix inverted scenes - they used to work...
 	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
@@ -63,10 +62,7 @@ export class ScrollMagic {
 		if (deltaProgress === 0) {
 			return;
 		}
-		// todo: wrong
-		const inverse = this.triggerBounds.size < 0; // Houston, we may have an inverse scene on our hands...
-		const forward = inverse ? deltaProgress < 0 : deltaProgress > 0;
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, forward, this));
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, deltaProgress > 0, this));
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
@@ -150,6 +146,12 @@ export class ScrollMagic {
 
 		const passed = trackStart - relativeStart;
 		const total = relativeDistance + trackDistance;
+
+		if (total < 0) {
+			// no overlap of track and scroll distance
+			return;
+		}
+
 		const previousProgress = this.currentProgress;
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		const deltaProgress = nextProgress - previousProgress;
@@ -222,7 +224,10 @@ export class ScrollMagic {
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
 			this.executionQueue.schedule(this.boundMethods.updateProgress);
-			this.executionQueue.moveUp();
+			if (!intersecting) {
+				// update immediately, if leaving and change active state after.
+				this.executionQueue.moveUp();
+			}
 			this.updateActive(intersecting);
 		}
 	}
