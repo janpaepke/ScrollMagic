@@ -18,7 +18,14 @@ const scroll = 'scroll';
 const resize = 'resize';
 
 export class Container {
-	private dimensions = { clientWidth: 0, clientHeight: 0, scrollWidth: 0, scrollHeight: 0 };
+	private dimensions = {
+		// inner size excluding scrollbars
+		clientWidth: 0,
+		clientHeight: 0,
+		// size of scrollable content
+		scrollWidth: 0,
+		scrollHeight: 0,
+	};
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
 

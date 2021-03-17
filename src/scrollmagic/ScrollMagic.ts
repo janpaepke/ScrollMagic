@@ -87,7 +87,10 @@ export class ScrollMagic {
 		const { trackEnd, trackStart, vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = this.getRelevantProps();
 		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
-		const { scrollSize } = pickRelevantValues(!vertical, this.container.rect); // gets the opposite
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
+			!vertical,
+			this.container.rect
+		); // gets the opposite
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
@@ -97,7 +100,7 @@ export class ScrollMagic {
 		const relEndOffset = (end - size) / containerSize;
 
 		// adding available scrollspace to margin, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
-		const scrollableOpposite = numberToPxString(scrollSize - containerSize);
+		const scrollableOpposite = numberToPxString(oppositeScrollSize - oppositeClientSize);
 		return {
 			top: scrollableOpposite,
 			right: scrollableOpposite,
