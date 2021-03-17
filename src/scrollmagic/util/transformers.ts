@@ -18,6 +18,7 @@ enum TrackShorthand {
 }
 type PixelConverter = (elementHeight: number) => number;
 
+export const numberToPxString = (val: number): string => `${val}px`;
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
 export const trackValueToNumber = (val: number | TrackShorthand | `${TrackShorthand}`): number => {

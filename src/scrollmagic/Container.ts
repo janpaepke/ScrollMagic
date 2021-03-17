@@ -1,7 +1,6 @@
 import EventDispatcher, { DispatchableEvent } from './EventDispatcher';
 import debounce from './util/debounce';
-import getInnerDimensions from './util/getInnerDimensions';
-import getScrollPos from './util/getScrollPos';
+import getDimensions from './util/getDimensions';
 import registerEvent from './util/registerEvent';
 import throttleRaf from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
@@ -19,7 +18,7 @@ const scroll = 'scroll';
 const resize = 'resize';
 
 export class Container {
-	private dimensions = { width: 0, height: 0 };
+	private dimensions = { clientWidth: 0, clientHeight: 0, scrollWidth: 0, scrollHeight: 0 };
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
 
@@ -40,7 +39,7 @@ export class Container {
 		this.dispatcher.dispatchEvent(new ContainerEvent(scroll, this));
 	}
 	private updateDimensions() {
-		this.dimensions = getInnerDimensions(this.scrollParent);
+		this.dimensions = getDimensions(this.scrollParent);
 		this.dispatcher.dispatchEvent(new ContainerEvent(resize, this));
 	}
 

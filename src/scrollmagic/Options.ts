@@ -1,5 +1,5 @@
 import { failWith, warn } from './ScrollMagicError';
-import getInnerDimensions from './util/getInnerDimensions';
+import getDimensions from './util/getDimensions';
 import { pickRelevantValues } from './util/pickRelevantInfo';
 import processProperties, { PropertyProcessors } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
@@ -113,7 +113,7 @@ const infer = (options: PrivateUninferred): Private => {
 			if (!isUndefined(isLarger)) {
 				return isLarger;
 			}
-			const { size: containerSize } = pickRelevantValues(vertical, getInnerDimensions(scrollParent));
+			const { clientSize: containerSize } = pickRelevantValues(vertical, getDimensions(scrollParent));
 			const { size: elementSize } = pickRelevantValues(vertical, inferred.element.getBoundingClientRect());
 			isLarger = elementSize > containerSize;
 			return isLarger;
@@ -131,9 +131,9 @@ const infer = (options: PrivateUninferred): Private => {
 
 // checks if the options the user entered actually make sense
 const check = (options: Private): void => {
-	const { trackEnd, trackStart, element, scrollParent, vertical, size, offset } = options;
+	const { trackEnd, trackStart, element, scrollParent, vertical, size } = options;
 	const { size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
-	const { size: containerSize } = pickRelevantValues(vertical, getInnerDimensions(scrollParent));
+	const { clientSize: containerSize } = pickRelevantValues(vertical, getDimensions(scrollParent));
 
 	const relativeDistance = size(elementSize) / containerSize;
 	const trackDistance = trackStart - trackEnd;

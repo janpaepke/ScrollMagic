@@ -8,7 +8,7 @@ import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import throttleRaf from './util/throttleRaf';
-import { numberToPercString } from './util/transformers';
+import { numberToPercString, numberToPxString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
 
@@ -47,9 +47,7 @@ export class ScrollMagic {
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
 	// TODO: do we need to get a way to get the internal options?
-	// todo: fix: horizontal scroll would trigger leave from viewport observer
 	// TODO: Maybe only include internal errors for development? process.env...
-	// TODO: check how often updateTriggerBounds is called
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -86,9 +84,10 @@ export class ScrollMagic {
 	}
 
 	private getViewportMargin() {
-		const { trackEnd, trackStart } = this.optionsPrivate;
+		const { trackEnd, trackStart, vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = this.getRelevantProps();
-		const { size: containerSize } = this.getRelevantValues(this.container.rect);
+		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
+		const { scrollSize } = pickRelevantValues(!vertical, this.container.rect); // gets the opposite
 
 		const trackStartMargin = trackStart - 1; // distance from bottom
 		const trackEndMargin = -trackEnd; // distance from top
@@ -97,10 +96,14 @@ export class ScrollMagic {
 		const relStartOffset = start / containerSize;
 		const relEndOffset = (end - size) / containerSize;
 
-		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
-		const reset = { top: '0px', right: '0px', bottom: '0px', left: '0px' };
+		// adding available scrollspace to margin, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
+		const scrollableOpposite = numberToPxString(scrollSize - containerSize);
 		return {
-			...reset,
+			top: scrollableOpposite,
+			right: scrollableOpposite,
+			bottom: scrollableOpposite,
+			left: scrollableOpposite,
+			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 			[endProp]: numberToPercString(trackStartMargin - relStartOffset),
 			[startProp]: numberToPercString(trackEndMargin + relEndOffset),
 		};
@@ -136,7 +139,7 @@ export class ScrollMagic {
 		const { trackEnd, trackStart, element } = this.optionsPrivate;
 		const { start: elementPosition } = this.getRelevantValues(element.getBoundingClientRect());
 		const { start: elementStart, end: elementEnd } = this.triggerBounds;
-		const { size: containerSize } = this.getRelevantValues(this.container.rect);
+		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
 
 		const relativeStart = (elementPosition + elementStart) / containerSize;
 		const relativeDistance = (elementEnd - elementStart) / containerSize;
@@ -283,7 +286,7 @@ export class ScrollMagic {
 		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
 		const { start: elementOffsetStart, end: elementOffsetEnd } = this.triggerBounds;
 		const { start: parentOffset } = this.getRelevantValues(getScrollPos(scrollParent));
-		const { size: containerSize } = this.getRelevantValues(this.container.rect);
+		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
 		const elemOffset = elementStart + parentOffset;
 		const trackOffsetStart = containerSize * trackStart;
 		const trackOffsetEnd = containerSize * trackEnd;
