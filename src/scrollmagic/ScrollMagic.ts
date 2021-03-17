@@ -43,7 +43,6 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO: consider what should happen to active state when parent or element are changed. Should leave / enter be dispatched?
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
 	// TODO: do we need to get a way to get the internal options?
@@ -190,6 +189,7 @@ export class ScrollMagic {
 		if (sizeChanged || offsetChanged || elementChanged) {
 			this.updateTriggerBounds();
 			if (elementChanged) {
+				this.updateActive(undefined);
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
 				this.viewportObserver.observe(element);
