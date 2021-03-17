@@ -9,7 +9,7 @@ import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRele
 import scheduleRaf from './util/scheduleRaf';
 import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
-import ViewportObserver, { defaultViewportObserverMargin } from './ViewportObserver';
+import ViewportObserver from './ViewportObserver';
 
 export { Public as ScrollMagicOptions } from './Options';
 
@@ -48,8 +48,7 @@ export class ScrollMagic {
 	// TODO: consider what should actually be private and what protected.
 	// TODO: feature: add getters for scroll start and end offset (to be able to scroll there)
 	// TODO: do we need to get a way to get the internal options?
-
-	// TODO: ViewportObserver: only set up IntersectionObservers, once .observe is called
+	// todo: fix: horizontal scroll would trigger leave from viewport observer
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
@@ -103,8 +102,9 @@ export class ScrollMagic {
 		const relEnd = (end - size) / containerSize;
 
 		// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
+		const reset = { top: '0px', right: '0px', bottom: '0px', left: '0px' };
 		return {
-			...defaultViewportObserverMargin,
+			...reset,
 			[endProp]: numberToPercString(trackStartMargin - relStart),
 			[startProp]: numberToPercString(trackEndMargin + relEnd),
 		};

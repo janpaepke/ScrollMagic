@@ -15,25 +15,27 @@ interface Options {
 
 type ObserverCallback = (isIntersecting: boolean, target: Element) => void;
 
+// this ensures the order in the object doesn't matter
 const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right, bottom, left].join(' ');
 
 const none = '0px';
-export const defaultViewportObserverMargin = { top: none, right: none, bottom: none, left: none };
 
 export default class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
-	private options: Required<Options>;
+	private options: Required<Options> = {
+		root: null,
+		margin: { top: none, right: none, bottom: none, left: none },
+	};
 	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
-	constructor(
-		private callback: ObserverCallback,
-		{ root = null, margin = defaultViewportObserverMargin }: Options = {}
-	) {
+	constructor(private callback: ObserverCallback, options?: Options) {
+		if (isUndefined(options)) {
+			return; // nothing will happen, until modify is called.
+		}
 		this.options = {
-			root,
-			margin,
+			...this.options,
+			...options,
 		};
-		this.rebuildObserver();
 	}
 	private observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
 		entries.forEach(({ target, isIntersecting }) => {
@@ -96,16 +98,16 @@ export default class ViewportObserver {
 	public observe(elem: Element): ViewportObserver {
 		if (!this.observedElements.has(elem)) {
 			this.observedElements.set(elem, [undefined, undefined]);
-			this.observerEnter!.observe(elem);
-			this.observerLeave!.observe(elem);
+			this.observerEnter?.observe(elem);
+			this.observerLeave?.observe(elem);
 		}
 		return this;
 	}
 	public unobserve(elem: Element): ViewportObserver {
 		if (this.observedElements.has(elem)) {
 			this.observedElements.delete(elem);
-			this.observerEnter!.unobserve(elem);
-			this.observerLeave!.unobserve(elem);
+			this.observerEnter?.unobserve(elem);
+			this.observerLeave?.unobserve(elem);
 		}
 		return this;
 	}
