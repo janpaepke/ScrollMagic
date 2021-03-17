@@ -5,15 +5,17 @@ import processProperties, { PropertyProcessors } from './util/processProperties'
 import { sanitizeProperties } from './util/sanitizeProperties';
 import {
 	elementOrSelectorToScrollParent,
+	nullPassThrough,
 	numberOrStringToPixelConverter,
 	numberOrStringToPixelConverterAllowRelative,
-	passThroughNull,
+	passThrough,
 	selectorOrElementToHTMLorSVG,
+	toNonNullable,
 	trackValueToNumber,
 } from './util/transformers';
-import { isNull, isWindow } from './util/typeguards';
+import { isNull, isUndefined, isWindow } from './util/typeguards';
 
-type Modify<T extends { [K in keyof T]: unknown }, R extends { [K in keyof T]: unknown }> = Omit<T, keyof R> & R;
+type SameProperties<T extends { [K in keyof T]: unknown }, R extends { [K in keyof T]: unknown }> = R;
 type ExtendProperty<T extends { [K in keyof T]: unknown }, K extends keyof T, E> = Omit<T, K> & { [X in K]: T[X] | E };
 
 enum TrackShorthand {
@@ -36,7 +38,7 @@ export type Public = {
 };
 
 // basically a normalized version of the options
-export type Private = Modify<
+export type Private = SameProperties<
 	Public,
 	{
 		element: HTMLElement | SVGElement;
@@ -46,12 +48,8 @@ export type Private = Modify<
 		trackEnd: number;
 		offset: PixelConverter; // if unit is %, value will be 1 for 100%
 		size: PixelConverter; // if unit is %, value will be 1 for 100%
-		test: number;
 	}
 >;
-
-type PrivateUninferred = ExtendProperty<Private, 'trackStart' | 'trackEnd' | 'element', null>;
-
 export const defaults: Public = {
 	element: null,
 	scrollParent: window,
@@ -62,60 +60,71 @@ export const defaults: Public = {
 	size: '100%',
 };
 
+// values that can be null after processing and need to be inferred, if still null
+type PrivateUninferred = ExtendProperty<Private, 'trackStart' | 'trackEnd' | 'element', null>;
+// applied during fallback inference. if the element is larger than the viewport, `large` is used, otherwise `small`
 const inferredTrackDefaults = {
-	smallerThanViewport: {
-		trackStart: 1,
-		trackEnd: 0,
-	},
-	largerThanViewport: {
+	large: {
 		trackStart: 0,
 		trackEnd: 1,
+	},
+	small: {
+		trackStart: 1,
+		trackEnd: 0,
 	},
 };
 
 const transformers: PropertyProcessors<Public, PrivateUninferred> = {
-	element: passThroughNull(selectorOrElementToHTMLorSVG),
+	element: nullPassThrough(selectorOrElementToHTMLorSVG),
 	scrollParent: elementOrSelectorToScrollParent,
-	trackStart: passThroughNull(trackValueToNumber),
-	trackEnd: passThroughNull(trackValueToNumber),
+	vertical: passThrough,
+	trackStart: nullPassThrough(trackValueToNumber),
+	trackEnd: nullPassThrough(trackValueToNumber),
 	offset: numberOrStringToPixelConverter,
 	size: numberOrStringToPixelConverterAllowRelative,
 };
 
-export const sanitize = (obj: Record<string, any>): Partial<Public> =>
-	sanitizeProperties(obj, defaults, (propertyName: string) => {
-		warn(`Unknown option ${propertyName} will be disregarded`);
+// removes unknown properties from supplied options
+export const sanitize = (obj: Record<string, any>): Partial<Public> => sanitizeProperties(obj, defaults);
+
+// converts all public values to their corresponding private value, leaving null values untoched
+export const transform = (obj: Partial<Public>): Partial<PrivateUninferred> => processProperties(obj, transformers);
+
+// processes remaining null values
+export const infer = (obj: PrivateUninferred): Private => {
+	const { vertical, scrollParent } = obj;
+	// get element first, cause we'll need that for the tracks
+	const getFirstChild = () => {
+		const elem = isWindow(scrollParent) ? document.body : scrollParent.firstElementChild;
+		if (isNull(elem)) {
+			throw failWith(`Could not autodetect element, as scrollParent has no children.`);
+		}
+		return selectorOrElementToHTMLorSVG(elem);
+	};
+
+	const inferred = processProperties(obj, {
+		element: elem => toNonNullable(elem, () => getFirstChild()),
 	});
 
-export const process = (obj: Partial<Public>): Partial<PrivateUninferred> => processProperties(obj, transformers);
+	const isLargerThanViewport = (() => {
+		// cache it so it doesn't have to run twice.
+		let isLarger: boolean | undefined;
+		return () => {
+			if (!isUndefined(isLarger)) {
+				return isLarger;
+			}
+			const { size: containerSize } = pickRelevantValues(vertical, getInnerDimensions(scrollParent));
+			const { size: elementSize } = pickRelevantValues(vertical, inferred.element.getBoundingClientRect());
+			isLarger = elementSize > containerSize;
+			return isLarger;
+		};
+	})();
 
-export const inferNullValues = (obj: PrivateUninferred): Private => {
-	let { trackStart, trackEnd, element } = obj; // these three need to be inferred, if null.
-	const { vertical, scrollParent } = obj;
-	if (isNull(element)) {
-		element = isWindow(scrollParent) ? document.body : (scrollParent.firstElementChild as HTMLElement | SVGElement);
-		if (isNull(element)) {
-			failWith(`Could not autodetect element, as scrollParent has no children.`);
-		}
-	}
+	const getTrackDefault = (which: 'trackStart' | 'trackEnd') =>
+		inferredTrackDefaults[isLargerThanViewport() ? 'large' : 'small'][which];
 
-	const { size: containerSize } = pickRelevantValues(vertical, getInnerDimensions(scrollParent));
-	const { size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
-	const isLargerThanViewport = elementSize > containerSize;
-	const trackDefaults = isLargerThanViewport
-		? inferredTrackDefaults.largerThanViewport
-		: inferredTrackDefaults.smallerThanViewport;
-
-	if (isNull(trackStart)) {
-		trackStart = trackDefaults.trackStart;
-	}
-	if (isNull(trackEnd)) {
-		trackEnd = trackDefaults.trackEnd;
-	}
-	return {
-		...obj,
-		element,
-		trackStart,
-		trackEnd,
-	};
+	return processProperties(inferred, {
+		trackStart: val => toNonNullable(val, () => getTrackDefault('trackStart')),
+		trackEnd: val => toNonNullable(val, () => getTrackDefault('trackEnd')),
+	});
 };

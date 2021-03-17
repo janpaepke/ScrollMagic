@@ -47,6 +47,7 @@ export class ScrollMagic {
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
 	// TODO: feature: add getters for scroll start and end offset (to be able to scroll there)
+	// TODO: do we need to get a way to get the internal options?
 
 	// TODO: ViewportObserver: only set up IntersectionObservers, once .observe is called
 	// TODO: Maybe only include internal errors for development? process.env...
@@ -69,11 +70,10 @@ export class ScrollMagic {
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
 		const sanitized = Options.sanitize(options);
-		const normalized = Options.process(sanitized);
+		const normalized = Options.transform(sanitized);
+		const nextPrivate = Options.infer({ ...this.optionsPrivate, ...normalized });
 
-		this.optionsPublic = { ...this.optionsPublic, ...options };
-
-		const nextPrivate = Options.inferNullValues({ ...this.optionsPrivate, ...normalized });
+		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
 
 		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
 			? nextPrivate
@@ -301,7 +301,7 @@ export class ScrollMagic {
 	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
 		const sanitized = Options.sanitize(options);
-		Options.process(sanitized); // run to check for errors, but ignore result
+		Options.transform(sanitized); // run to check for errors, but ignore result
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
 			...sanitized,

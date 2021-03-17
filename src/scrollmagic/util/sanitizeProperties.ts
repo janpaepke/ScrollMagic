@@ -1,7 +1,11 @@
+import { warn } from 'scrollmagic/ScrollMagicError';
+
 export const sanitizeProperties = <T extends Record<string, any>>(
 	obj: Record<string, any>,
 	defaults: T,
-	onUnknown?: (propertyName: string) => void
+	onUnknown = (propertyName: string) => {
+		warn(`Unknown property ${propertyName} will be disregarded`);
+	}
 ): Partial<T> =>
 	Object.entries(obj).reduce((res, [key, value]) => {
 		if (key in defaults === false) {

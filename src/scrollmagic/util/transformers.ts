@@ -1,6 +1,15 @@
 import { failWith } from 'scrollmagic/ScrollMagicError';
 
-import { isDocument, isHTMLElement, isNull, isNumber, isSVGElement, isString, isWindow } from './typeguards';
+import {
+	isDocument,
+	isHTMLElement,
+	isNull,
+	isNumber,
+	isSVGElement,
+	isString,
+	isUndefined,
+	isWindow,
+} from './typeguards';
 
 enum TrackShorthand {
 	Enter = 'enter',
@@ -90,17 +99,27 @@ export const elementOrSelectorToScrollParent = (
 	return elem;
 };
 
-export const passThroughNull = <F extends (val: P) => any, P extends any>(
-	func: F
-): ((val: P | null) => ReturnType<F> | null) => (val: P | null) => {
-	if (isNull(val)) {
-		return val;
-	}
-	return func(val);
-};
-
 export const stringPropertiesToNumber = <T extends Record<string, string>>(obj: T): Record<keyof T, number> =>
 	Object.entries(obj).reduce(
 		(res, [key, value]) => ({ ...res, [key]: parseFloat(value) }),
 		{} as Record<keyof T, number>
 	);
+
+export const nullPassThrough = <F extends (val: any) => any>(
+	func: F
+): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) => (val: Parameters<F>[0] | null) =>
+	isNull(val) ? val : func(val);
+
+// checks if a value is null and returns it, if it is not.
+// if it is, it can either return a fallback value or function, which is executed to return an alternative
+export const toNonNullable = <T extends unknown, U extends (() => NonNullable<T>) | NonNullable<T>>(
+	val: T,
+	fallbackTo: U
+): NonNullable<T> =>
+	isNull(val) || isUndefined(val)
+		? typeof fallbackTo === 'function'
+			? fallbackTo()
+			: fallbackTo
+		: (val as NonNullable<T>);
+
+export const passThrough = <T extends unknown>(val: T): T => val;
