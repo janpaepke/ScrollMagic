@@ -18,12 +18,13 @@ export class ExecutionQueue {
 				return;
 			}
 			command();
+			this.commands.delete(command);
 		});
 	}
 	public add(command: Command, prerequisite?: Prerequisite): void {
 		const existing = this.commands.get(command);
 		if (null === existing) {
-			// currently we can only go from has prerequisite to no prerequisite (get less strict)
+			// we can only go from has prerequisite to no prerequisite (get less strict)
 			return;
 		}
 		this.commands.set(command, prerequisite ?? null);
