@@ -3,12 +3,18 @@ import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
 import { ThrottledExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
+import {
+	compute as computeOptions,
+	process as processOptions,
+	sanitize as sanitizeOptions,
+} from './Options.processors';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
 import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
-import { RectInfo, pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import { roundToDecimals } from './util/roundToDecimals';
 import throttleRaf from './util/throttleRaf';
-import { numberToPercString, numberToPxString } from './util/transformers';
+import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
 
@@ -28,16 +34,17 @@ export class ScrollMagic {
 		// these are set to get permanent references for the throttled execution queue
 		updateProgress: this.updateProgress.bind(this),
 		updateViewportObserver: this.updateViewportObserver.bind(this),
-		updateTriggerBounds: this.updateTriggerBounds.bind(this),
+		updateTriggerBounds: this.updateElementBoundsCache.bind(this),
 	} as const;
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private triggerBounds: { start: number; end: number; size: number } = {
-		start: 0, // start relative to origin (= offset)
-		end: 0, // end position relative to origin (= start offset + calculcated size)
+	private elementBoundsCache: { start: number; offsetStart: number; offsetEnd: number; size: number } = {
+		start: 0, // position relative to viewport
+		offsetStart: 0, // offset relative to top/left of element
+		offsetEnd: 0, // offset relative to bottom/right of element
 		size: 0, // actual size of element
 	};
 	private currentProgress = 0;
@@ -45,7 +52,6 @@ export class ScrollMagic {
 
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
 	// TODO: consider what should actually be private and what protected.
-	// TODO: do we need to get a way to get the internal options?
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
@@ -63,7 +69,7 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const { sanitized, processed } = Options.process(options, this.optionsPrivate);
+		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
 		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
 
@@ -83,40 +89,51 @@ export class ScrollMagic {
 	}
 
 	private getViewportMargin() {
-		const { trackEnd, trackStart, vertical } = this.optionsPrivate;
-		const { start: startProp, end: endProp } = this.getRelevantProps();
-		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
-			!vertical,
-			this.container.rect
-		); // gets the opposite
+		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
+		const { start: startProp, end: endProp } = pickRelevantProps(vertical);
+		const { start: oppositeStartProp, end: oppositeEndProp } = pickRelevantProps(!vertical);
+		const { clientSize: containerSize } = this.getContainerBounds();
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = this.getContainerBounds(!vertical); // gets the opposites
+		const { offsetStart, offsetEnd } = this.elementBoundsCache; // from cache
 
-		const trackStartMargin = trackStart - 1; // distance from bottom
-		const trackEndMargin = -trackEnd; // distance from top
+		const marginStart = containerSize - triggerStart(containerSize) + offsetStart;
+		const marginEnd = containerSize - triggerEnd(containerSize) + offsetEnd;
+		/**
+		 ** confusingly IntersectionObserver (and thus ViewportObserver) treat margins in the opposite direction (negative means towards the center)
+		 ** so we'l have to flip the signs here.
+		 ** Additionally we convert it to percentages and round, as this means they are less likely to change, meaning less refreshes for the observer
+		 ** (as the observer internally compares old values to new ones)
+		 ** This way it won't create new ViewportObservers, just because the scrollparent's size changes.
+		 */
+		const relMarginStart = -roundToDecimals(marginStart / containerSize, 5);
+		const relMarginEnd = -roundToDecimals(marginEnd / containerSize, 5);
 
-		const { start, end, size } = this.triggerBounds;
-		const relStartOffset = start / containerSize;
-		const relEndOffset = (end - size) / containerSize;
-
-		// adding available scrollspace to margin, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
-		const scrollableOpposite = numberToPxString(oppositeScrollSize - oppositeClientSize);
+		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
+		const scrollableOpposite = numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize);
 		return {
-			top: scrollableOpposite,
-			right: scrollableOpposite,
-			bottom: scrollableOpposite,
-			left: scrollableOpposite,
 			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
-			[endProp]: numberToPercString(trackStartMargin - relStartOffset),
-			[startProp]: numberToPercString(trackEndMargin + relEndOffset),
+			[endProp]: numberToPercString(relMarginStart),
+			[startProp]: numberToPercString(relMarginEnd),
+			[oppositeStartProp]: scrollableOpposite,
+			[oppositeEndProp]: scrollableOpposite,
+		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
+	}
+
+	private getElementBounds() {
+		// this should be called cautiously, getBoundingClientRect costs...
+		// check variable initialisation for property description
+		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
+		const { start, size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		return {
+			start,
+			offsetStart: elementStart(elementSize),
+			offsetEnd: elementEnd(elementSize),
+			size: elementSize,
 		};
 	}
 
-	private getRelevantProps() {
-		return pickRelevantProps(this.optionsPrivate.vertical);
-	}
-
-	private getRelevantValues<T extends Partial<RectInfo>>(rect: T) {
-		return pickRelevantValues(this.optionsPrivate.vertical, rect);
+	private getContainerBounds(forceDirection?: boolean) {
+		return pickRelevantValues(forceDirection ?? this.optionsPrivate.vertical, this.container.rect); // these are already cached. fine to call as often as we like
 	}
 
 	private updateActive(nextActive: boolean | undefined) {
@@ -124,31 +141,28 @@ export class ScrollMagic {
 		this.active = nextActive;
 	}
 
-	private updateTriggerBounds() {
-		// check variable initialisation for property description
-		const { offset, size, element } = this.optionsPrivate;
-		const { size: elementSize } = this.getRelevantValues(element.getBoundingClientRect());
-		const start = offset(elementSize);
-		const end = size(elementSize) + start;
-		this.triggerBounds = { start, end, size: elementSize };
+	private updateElementBoundsCache() {
+		this.elementBoundsCache = this.getElementBounds();
 	}
 
 	private updateProgress() {
 		if (this.active === false) {
-			return 0;
+			// return;
 		}
 
-		const { trackEnd, trackStart, element } = this.optionsPrivate;
-		const { start: elementPosition } = this.getRelevantValues(element.getBoundingClientRect());
-		const { start: elementStart, end: elementEnd } = this.triggerBounds;
-		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
+		const { triggerStart, triggerEnd } = this.optionsPrivate;
+		// todo cache on scroll!
+		const { offsetStart, offsetEnd, size: elementSize, start: elementPosition } = this.getElementBounds(); // get fresh
+		const { clientSize: containerSize } = this.getContainerBounds();
 
-		const relativeStart = (elementPosition + elementStart) / containerSize;
-		const relativeDistance = (elementEnd - elementStart) / containerSize;
-		const trackDistance = trackStart - trackEnd;
+		const containerOffsetStart = triggerStart(containerSize);
+		const containerOffsetEnd = triggerEnd(containerSize);
+		const start = elementPosition + offsetStart;
+		const elementDistance = elementSize - offsetStart - offsetEnd;
+		const trackDistance = -(containerSize - containerOffsetStart - containerOffsetEnd);
 
-		const passed = trackStart - relativeStart;
-		const total = relativeDistance + trackDistance;
+		const passed = containerOffsetStart - start;
+		const total = elementDistance + trackDistance;
 
 		if (total < 0) {
 			// no overlap of track and scroll distance
@@ -181,13 +195,13 @@ export class ScrollMagic {
 
 	private onOptionChanges(changes: Array<keyof Options.Private>) {
 		const isChanged = changes.includes.bind(changes);
-		const sizeChanged = isChanged('size');
-		const offsetChanged = isChanged('offset');
+		const sizeChanged = isChanged('elementStart');
+		const offsetChanged = isChanged('elementEnd');
 		const elementChanged = isChanged('element');
 		const scrollParentChanged = isChanged('scrollParent');
 
 		if (sizeChanged || offsetChanged || elementChanged) {
-			this.updateTriggerBounds();
+			this.updateElementBoundsCache();
 			if (elementChanged) {
 				this.updateActive(undefined);
 				const { element } = this.optionsPrivate;
@@ -206,12 +220,13 @@ export class ScrollMagic {
 	}
 
 	private onElementResize() {
-		const { executionQueue, boundMethods, triggerBounds } = this;
-		const { start: startPrevious, end: endPrevious } = triggerBounds;
+		const { executionQueue, boundMethods, elementBoundsCache } = this;
+		const { offsetStart: startPrevious, offsetEnd: endPrevious } = elementBoundsCache;
 		executionQueue.schedule(boundMethods.updateTriggerBounds);
 		executionQueue.schedule(
 			boundMethods.updateViewportObserver,
-			() => startPrevious !== triggerBounds.start || endPrevious !== triggerBounds.end // compare to current values => only execute, if changed
+			// compare to current values => only execute, if changed during scheduled update above
+			() => startPrevious !== elementBoundsCache.offsetStart || endPrevious !== elementBoundsCache.offsetEnd
 		);
 		executionQueue.schedule(this.boundMethods.updateProgress);
 	}
@@ -255,29 +270,29 @@ export class ScrollMagic {
 	public get vertical(): Options.Public['vertical'] {
 		return this.optionsPublic.vertical;
 	}
-	public set trackStart(trackStart: Options.Public['trackStart']) {
-		this.modify({ trackStart });
+	public set triggerStart(triggerStart: Options.Public['triggerStart']) {
+		this.modify({ triggerStart });
 	}
-	public get trackStart(): Options.Public['trackStart'] {
-		return this.optionsPublic.trackStart;
+	public get triggerStart(): Options.Public['triggerStart'] {
+		return this.optionsPublic.triggerStart;
 	}
-	public set trackEnd(trackEnd: Options.Public['trackEnd']) {
-		this.modify({ trackEnd });
+	public set triggerEnd(triggerEnd: Options.Public['triggerEnd']) {
+		this.modify({ triggerEnd });
 	}
-	public get trackEnd(): Options.Public['trackEnd'] {
-		return this.optionsPublic.trackEnd;
+	public get triggerEnd(): Options.Public['triggerEnd'] {
+		return this.optionsPublic.triggerEnd;
 	}
-	public set offset(offset: Options.Public['offset']) {
-		this.modify({ offset });
+	public set elementStart(elementStart: Options.Public['elementStart']) {
+		this.modify({ elementStart });
 	}
-	public get offset(): Options.Public['offset'] {
-		return this.optionsPublic.offset;
+	public get elementStart(): Options.Public['elementStart'] {
+		return this.optionsPublic.elementStart;
 	}
-	public set size(size: Options.Public['size']) {
-		this.modify({ size });
+	public set elementEnd(elementEnd: Options.Public['elementEnd']) {
+		this.modify({ elementEnd });
 	}
-	public get size(): Options.Public['offset'] {
-		return this.optionsPublic.offset;
+	public get elementEnd(): Options.Public['elementEnd'] {
+		return this.optionsPublic.elementEnd;
 	}
 
 	// not an option -> getter only
@@ -285,21 +300,18 @@ export class ScrollMagic {
 		return this.currentProgress;
 	}
 	public get scrollOffset(): { start: number; end: number } {
-		const { element, scrollParent, trackStart, trackEnd } = this.optionsPrivate;
-		const { start: elementStart } = this.getRelevantValues(element.getBoundingClientRect());
-		const { start: elementOffsetStart, end: elementOffsetEnd } = this.triggerBounds;
-		const { start: parentOffset } = this.getRelevantValues(getScrollPos(scrollParent));
-		const { clientSize: containerSize } = this.getRelevantValues(this.container.rect);
-		const elemOffset = elementStart + parentOffset;
-		const trackOffsetStart = containerSize * trackStart;
-		const trackOffsetEnd = containerSize * trackEnd;
+		const { scrollParent, triggerStart, triggerEnd, vertical } = this.optionsPrivate;
+		const { start: elementStart, offsetStart, offsetEnd, size: elementSize } = this.getElementBounds();
+		const { clientSize: containerSize } = this.getContainerBounds();
+		const { start: scrollOffset } = pickRelevantValues(vertical, getScrollPos(scrollParent));
+		const elemOffset = elementStart + scrollOffset;
 		return {
-			start: Math.floor(elemOffset + elementOffsetStart - trackOffsetStart),
-			end: Math.ceil(elemOffset + elementOffsetEnd - trackOffsetEnd),
+			start: Math.floor(elemOffset + offsetStart - triggerStart(containerSize)),
+			end: Math.ceil(elemOffset + elementSize + offsetEnd - triggerEnd(containerSize)),
 		};
 	}
-	public get computedOptions() {
-		return Options.output(this.optionsPrivate);
+	public get computedOptions(): Options.PrivateComputed {
+		return computeOptions(this.optionsPrivate);
 	}
 
 	// event listener
@@ -330,7 +342,7 @@ export class ScrollMagic {
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
-			...Options.sanitize(options),
+			...sanitizeOptions(options),
 		};
 		return this.defaultOptionsPublic;
 	}

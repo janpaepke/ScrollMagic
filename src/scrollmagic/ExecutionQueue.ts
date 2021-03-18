@@ -18,8 +18,8 @@ export class ExecutionQueue {
 				return;
 			}
 			command();
-			this.commands.delete(command);
 		});
+		this.commands.clear();
 	}
 	public add(command: Command, prerequisite?: Prerequisite): void {
 		const existing = this.commands.get(command);

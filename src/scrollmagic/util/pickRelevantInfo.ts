@@ -17,7 +17,7 @@ type VerticalProps = typeof verticalProps;
 type HorizontalProps = typeof horizontalProps;
 type Props = keyof VerticalProps & keyof HorizontalProps;
 type SourceProps = VerticalProps[Props] | HorizontalProps[Props];
-export type RectInfo = Record<SourceProps, number>;
+type RectInfo = Record<SourceProps, number>;
 
 type MatchType<T, P, K extends keyof T & keyof P> = T[K] extends P[K] ? T[K] : undefined;
 

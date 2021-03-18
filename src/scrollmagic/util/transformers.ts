@@ -11,63 +11,50 @@ import {
 	isWindow,
 } from './typeguards';
 
-enum TrackShorthand {
-	Enter = 'enter',
-	Center = 'center',
-	Leave = 'leave',
-}
-type PixelConverter = (elementHeight: number) => number;
+type PixelConverter = (size: number) => number;
+type UnitString = `${number}px` | `${number}%`;
 
-export const numberToPxString = (val: number): string => `${val}px`;
+const centerShorthand = 'center';
+
 export const numberToPercString = (val: number): string => `${val * 100}%`;
 
-export const trackValueToNumber = (val: number | TrackShorthand | `${TrackShorthand}`): number => {
-	if (isNumber(val)) {
-		if (Math.abs(val) > 1) {
-			throw failWith('Value must be a number between 0 and 1');
-		}
-		return val;
-	}
-	const numericEquivalents = {
-		[TrackShorthand.Enter]: 1,
-		[TrackShorthand.Center]: 0.5,
-		[TrackShorthand.Leave]: 0,
-	};
-	const valid = Object.keys(numericEquivalents);
-	if (!valid.includes(val)) {
-		throw failWith(`Value must be number or one of: ${valid.join(' / ')}`);
-	}
-	return numericEquivalents[val];
+const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelConverter => {
+	return unit === 'px' ? () => value : (size: number) => (value / 100) * size;
 };
 
-export const stringToPixelConverter = (val: string, allowRelative = false): PixelConverter => {
-	// if unit is %, value will be 1 for 100%
-	const match = val.match(/^([+-])?(=)?(\d+|\d*[.]\d+)(%|px)$/);
+export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
+	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (isNull(match)) {
-		const allowedFormat = allowRelative
-			? ' or relative values, i.e. 20px, 80%, +=20px or +=10%'
-			: ', i.e. 20px or 80%';
-		throw failWith(`Value must be number or string with unit${allowedFormat}`);
+		throw failWith(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (=50%)`);
 	}
-	const [, sign, equal, digits, unit] = match as [string, string | null, string | null, string, string];
-	const value = parseFloat(`${sign ?? ''}${digits}`);
-	const relative = equal === '=';
-	if (relative && !allowRelative) {
-		throw failWith(`Relative values (+=...) are not supported`);
-	}
-	const getPx = unit === 'px' ? () => value : (height: number) => (value / 100) * height;
-	return relative ? height => getPx(height) + height : getPx;
+	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
+	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
 };
 
-export const numberOrStringToPixelConverter = (val: number | string, allowRelative = false): PixelConverter => {
+export const toPixelConverter = (
+	val: number | UnitString | typeof centerShorthand | PixelConverter
+): PixelConverter => {
 	if (isNumber(val)) {
 		return () => val;
 	}
-	return stringToPixelConverter(val, allowRelative);
-};
-
-export const numberOrStringToPixelConverterAllowRelative = (val: number | string): PixelConverter => {
-	return numberOrStringToPixelConverter(val, true);
+	if (isString(val)) {
+		if (centerShorthand === val) {
+			const x = unitTupleToPixelConverter([50, '%']);
+			return x;
+		}
+		return unitStringToPixelConverter(val);
+	}
+	// ok, probably passed in function, let's see if it works.
+	let returnsNumber: boolean;
+	try {
+		returnsNumber = isNumber(val(1));
+	} catch (e) {
+		throw failWith('Unsupported value type');
+	}
+	if (!returnsNumber) {
+		throw failWith('Function must return a number');
+	}
+	return val;
 };
 
 export const selectorToSingleElement = (selector: string): Element => {
@@ -78,7 +65,7 @@ export const selectorToSingleElement = (selector: string): Element => {
 	return elem;
 };
 
-export const selectorOrElementToHTMLorSVG = (reference: Element | string): HTMLElement | SVGElement => {
+export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | SVGElement => {
 	const elem = isString(reference) ? selectorToSingleElement(reference) : reference;
 	const { body } = window.document;
 	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
@@ -87,40 +74,26 @@ export const selectorOrElementToHTMLorSVG = (reference: Element | string): HTMLE
 	return elem;
 };
 
-export const elementOrSelectorToScrollParent = (
-	container: Window | Document | Element | string
-): Window | HTMLElement => {
+export const toValidScrollParent = (container: Window | Document | Element | string): Window | HTMLElement => {
 	if (isWindow(container) || isDocument(container)) {
 		return window;
 	}
-	const elem = selectorOrElementToHTMLorSVG(container);
+	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {
 		throw failWith(`Can't use SVG as scrollParent`);
 	}
 	return elem;
 };
 
-export const stringPropertiesToNumber = <T extends Record<string, string>>(obj: T): Record<keyof T, number> =>
-	Object.entries(obj).reduce(
-		(res, [key, value]) => ({ ...res, [key]: parseFloat(value) }),
-		{} as Record<keyof T, number>
-	);
-
+// returns null if null is passed in or returns the return value of the function that's passed in.
 export const nullPassThrough = <F extends (val: any) => any>(
 	func: F
 ): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) => (val: Parameters<F>[0] | null) =>
 	isNull(val) ? val : func(val);
 
 // checks if a value is null and returns it, if it is not.
-// if it is, it can either return a fallback value or function, which is executed to return an alternative
-export const toNonNullable = <T extends unknown, U extends (() => NonNullable<T>) | NonNullable<T>>(
-	val: T,
-	fallbackTo: U
-): NonNullable<T> =>
-	isNull(val) || isUndefined(val)
-		? typeof fallbackTo === 'function'
-			? fallbackTo()
-			: fallbackTo
-		: (val as NonNullable<T>);
+// if it is, it runs a function to recover a value
+export const toNonNullable = <T extends unknown>(val: T, recover: () => NonNullable<T>): NonNullable<T> =>
+	isNull(val) || isUndefined(val) ? recover() : (val as NonNullable<T>);
 
-export const passThrough = <T extends unknown>(val: T): T => val;
+export const toBoolean = (val: unknown): boolean => !!val;
