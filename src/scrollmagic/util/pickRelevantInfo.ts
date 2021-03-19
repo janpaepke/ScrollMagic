@@ -4,6 +4,7 @@ const verticalProps = {
 	size: 'height',
 	clientSize: 'clientHeight',
 	scrollSize: 'scrollHeight',
+	scrollDelta: 'deltaY',
 } as const;
 const horizontalProps = {
 	start: 'left',
@@ -11,6 +12,7 @@ const horizontalProps = {
 	size: 'width',
 	clientSize: 'clientWidth',
 	scrollSize: 'scrollWidth',
+	scrollDelta: 'deltaX',
 } as const;
 
 type VerticalProps = typeof verticalProps;

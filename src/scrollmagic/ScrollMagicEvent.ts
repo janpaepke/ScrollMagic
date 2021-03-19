@@ -22,9 +22,9 @@ class ScrollMagicEvent implements DispatchableEvent {
 	public readonly direction: ScrollMagicEventScrollDirection;
 	public readonly location: ScrollMagicEventLocation;
 	constructor(
+		public readonly target: ScrollMagic,
 		public readonly type: ScrollMagicEventType,
-		movingForward: boolean,
-		public readonly target: ScrollMagic
+		movingForward: boolean
 	) {
 		this.location = (() => {
 			if (ScrollMagicEventType.Progress === type) {

@@ -9,6 +9,7 @@ import {
 	sanitize as sanitizeOptions,
 } from './Options.processors';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
+import debounce from './util/debounce';
 import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
@@ -22,6 +23,13 @@ export { Public as ScrollMagicOptions } from './Options';
 
 // used for listeners to allow the value to be passed in either from the enum or as a string literal
 type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
+type ElementBounds = {
+	start: number; //		position relative to viewport
+	offsetStart: number; // offset relative to top/left of element
+	offsetEnd: number; // 	offset relative to bottom/right of element
+	size: number; // 		actual size of element
+	trackSize: number; // 	total size including offsets
+};
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
@@ -33,26 +41,28 @@ export class ScrollMagic {
 	private readonly boundMethods = {
 		// these are set to get permanent references for the throttled execution queue
 		updateProgress: this.updateProgress.bind(this),
+		updateProgressForced: this.updateProgress.bind(this, true),
 		updateViewportObserver: this.updateViewportObserver.bind(this),
 		updateTriggerBounds: this.updateElementBoundsCache.bind(this),
 	} as const;
+	private readonly debouncedOnFastScrollDetected = debounce(this.onFastScrollDetected.bind(this), 100); // why 100? because.
 
 	// all below options should only ever be changed by a dedicated method
 	// update function MUST NOT call any other functions, with the exceptions of modify
 	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
 	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private elementBoundsCache: { start: number; offsetStart: number; offsetEnd: number; size: number } = {
-		start: 0, // position relative to viewport
-		offsetStart: 0, // offset relative to top/left of element
-		offsetEnd: 0, // offset relative to bottom/right of element
-		size: 0, // actual size of element
+	private elementBoundsCache: ElementBounds = {
+		// see typedef for details
+		start: 0,
+		offsetStart: 0,
+		offsetEnd: 0,
+		size: 0,
+		trackSize: 0,
 	};
 	private currentProgress = 0;
 	private active?: boolean; // scene active state
 
-	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
-	// TODO: Don't update triggerBoundsCache in updateProgress, but add it to the scheduling
-	// TODO: Execution Queue: Make sure items are always executed in the expected order
+	// TODO: check if Execution queue  still makes sense (often same shape)
 	// TODO: properly react to mobile headers resizing
 	// TODO: build plugin interface
 	// TODO: consider what should actually be private and what protected.
@@ -69,7 +79,7 @@ export class ScrollMagic {
 		if (deltaProgress === 0) {
 			return;
 		}
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(type, deltaProgress > 0, this));
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, deltaProgress > 0));
 	}
 
 	public modify(options: Partial<Options.Public>): ScrollMagic {
@@ -123,16 +133,19 @@ export class ScrollMagic {
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
 	}
 
-	private getElementBounds() {
+	private getElementBounds(): ElementBounds {
 		// this should be called cautiously, getBoundingClientRect costs...
 		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
 		const { start, size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const offsetStart = elementStart(elementSize);
+		const offsetEnd = elementEnd(elementSize);
 		return {
 			start,
-			offsetStart: elementStart(elementSize),
-			offsetEnd: elementEnd(elementSize),
+			offsetStart,
+			offsetEnd,
 			size: elementSize,
+			trackSize: elementSize - offsetStart - offsetEnd,
 		};
 	}
 
@@ -149,21 +162,20 @@ export class ScrollMagic {
 		this.elementBoundsCache = this.getElementBounds();
 	}
 
-	private updateProgress() {
-		if (false === this.active) {
+	private updateProgress(force = false) {
+		if (!force && false === this.active) {
 			// also run if active is undefined (ViewportObserver not ready)
 			return;
 		}
 
 		const { triggerStart, triggerEnd } = this.optionsPrivate;
 		// todo cache on scroll!
-		const { offsetStart, offsetEnd, size: elementSize, start: elementPosition } = this.getElementBounds(); // get fresh
+		const { offsetStart, trackSize: elementDistance, start: elementPosition } = this.elementBoundsCache;
 		const { clientSize: containerSize } = this.getContainerBounds();
 
 		const containerOffsetStart = triggerStart(containerSize);
 		const containerOffsetEnd = triggerEnd(containerSize);
 		const start = elementPosition + offsetStart;
-		const elementDistance = elementSize - offsetStart - offsetEnd;
 		const trackDistance = -(containerSize - containerOffsetStart - containerOffsetEnd);
 
 		const passed = containerOffsetStart - start;
@@ -238,22 +250,42 @@ export class ScrollMagic {
 
 	private onContainerUpdate(e: ContainerEvent) {
 		const { executionQueue, boundMethods } = this;
+		executionQueue.schedule(boundMethods.updateTriggerBounds);
 		if ('resize' === e.type) {
 			executionQueue.schedule(boundMethods.updateViewportObserver);
 		}
 		executionQueue.schedule(boundMethods.updateProgress);
+		if ('scroll' === e.type) {
+			const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
+			const { trackSize } = this.elementBoundsCache;
+			if (!this.active && Math.abs(scrollDelta) > Math.abs(trackSize)) {
+				// in case the scroll position changes by more than the track distance, the viewport observer might miss it.
+				// this can trigger multiple times, if the user jumps from page top to bottom, so we need to debounce it.
+				this.debouncedOnFastScrollDetected();
+			}
+		}
 	}
 
 	private onIntersectionChange(intersecting: boolean, target: Element) {
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
-			this.executionQueue.schedule(this.boundMethods.updateProgress);
+			const { executionQueue, boundMethods } = this;
+			executionQueue.schedule(boundMethods.updateTriggerBounds);
+			executionQueue.schedule(boundMethods.updateProgress);
 			if (!intersecting) {
 				// update immediately, if leaving and change active state after.
 				this.executionQueue.moveUp();
 			}
 			this.updateActive(intersecting);
 		}
+	}
+
+	private onFastScrollDetected() {
+		// We might jump over the active area, so we need to manually trigger an update.
+		const { executionQueue, boundMethods } = this;
+		executionQueue.schedule(boundMethods.updateTriggerBounds);
+		executionQueue.remove(boundMethods.updateProgress); // no need for double calls
+		executionQueue.schedule(boundMethods.updateProgressForced);
 	}
 
 	// getter/setter public
@@ -306,13 +338,13 @@ export class ScrollMagic {
 	}
 	public get scrollOffset(): { start: number; end: number } {
 		const { scrollParent, triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { start: elementPosition, offsetStart, offsetEnd, size: elementSize } = this.getElementBounds();
+		const { start: elementPosition, offsetStart, trackSize } = this.getElementBounds(); // it's ok here to not use cached values
 		const { clientSize: containerSize } = this.getContainerBounds();
 		const { start: scrollOffset } = pickRelevantValues(vertical, getScrollPos(scrollParent));
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;
-		const end = absolutePosition + elementSize - offsetEnd;
+		const end = start + trackSize;
 		return {
 			start: Math.floor(start - triggerStart(containerSize)),
 			end: Math.ceil(end - containerSize + triggerEnd(containerSize)),

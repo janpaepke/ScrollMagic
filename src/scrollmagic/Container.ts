@@ -1,6 +1,7 @@
 import EventDispatcher, { DispatchableEvent } from './EventDispatcher';
 import debounce from './util/debounce';
 import getDimensions from './util/getDimensions';
+import getScrollPos from './util/getScrollPos';
 import registerEvent from './util/registerEvent';
 import throttleRaf from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
@@ -8,10 +9,18 @@ import { isWindow } from './util/typeguards';
 export type ScrollParent = HTMLElement | Window;
 
 type CleanUpFunction = () => void;
+type ScrollDelta = {
+	deltaX: number;
+	deltaY: number;
+};
 
 type EventType = 'scroll' | 'resize';
 export class ContainerEvent implements DispatchableEvent {
-	constructor(public readonly type: EventType, public readonly target: Container) {}
+	constructor(
+		public readonly target: Container,
+		public readonly type: EventType,
+		public readonly scrollDelta: ScrollDelta = { deltaX: 0, deltaY: 0 } // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize evnents...
+	) {}
 }
 
 const scroll = 'scroll';
@@ -25,6 +34,10 @@ export class Container {
 		// size of scrollable content
 		scrollWidth: 0,
 		scrollHeight: 0,
+	};
+	private scrollPos = {
+		top: 0,
+		left: 0,
 	};
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
@@ -43,11 +56,15 @@ export class Container {
 	}
 
 	private updateScrollPos() {
-		this.dispatcher.dispatchEvent(new ContainerEvent(scroll, this));
+		const prevScrollPos = this.scrollPos;
+		this.scrollPos = getScrollPos(this.scrollParent);
+		const deltaY = this.scrollPos.top - prevScrollPos.top;
+		const deltaX = this.scrollPos.left - prevScrollPos.left;
+		this.dispatcher.dispatchEvent(new ContainerEvent(this, scroll, { deltaX, deltaY }));
 	}
 	private updateDimensions() {
 		this.dimensions = getDimensions(this.scrollParent);
-		this.dispatcher.dispatchEvent(new ContainerEvent(resize, this));
+		this.dispatcher.dispatchEvent(new ContainerEvent(this, resize));
 	}
 
 	// subscribes to resize events of scrollParent and returns a function to reverse the effect

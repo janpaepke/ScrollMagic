@@ -2,8 +2,8 @@ import { isUndefined } from './util/typeguards';
 
 type EventType = string;
 export interface DispatchableEvent {
-	readonly type: EventType;
 	readonly target: any;
+	readonly type: EventType;
 }
 
 type Callback<E extends DispatchableEvent> = (event: E) => void;
