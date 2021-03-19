@@ -51,6 +51,10 @@ export class ScrollMagic {
 	private active?: boolean; // scene active state
 
 	// TODO! BUGFIX scrolling too fast breaks it (use keyboard to go to top / bottom of page)
+	// TODO: Don't update triggerBoundsCache in updateProgress, but add it to the scheduling
+	// TODO: Execution Queue: Make sure items are always executed in the expected order
+	// TODO: properly react to mobile headers resizing
+	// TODO: build plugin interface
 	// TODO: consider what should actually be private and what protected.
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
@@ -100,10 +104,10 @@ export class ScrollMagic {
 		const marginEnd = containerSize - triggerEnd(containerSize) + offsetEnd;
 		/**
 		 ** confusingly IntersectionObserver (and thus ViewportObserver) treat margins in the opposite direction (negative means towards the center)
-		 ** so we'l have to flip the signs here.
+		 ** so we'll have to flip the signs here.
 		 ** Additionally we convert it to percentages and round, as this means they are less likely to change, meaning less refreshes for the observer
 		 ** (as the observer internally compares old values to new ones)
-		 ** This way it won't create new ViewportObservers, just because the scrollparent's size changes.
+		 ** This way it won't have to internally create new IntersectionObservers, just because the scrollparent's size changes.
 		 */
 		const relMarginStart = -roundToDecimals(marginStart / containerSize, 5);
 		const relMarginEnd = -roundToDecimals(marginEnd / containerSize, 5);
