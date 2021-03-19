@@ -8,6 +8,10 @@
 
 ---
 
+### 🚨 **ScrollMagic 3.0 is on the horizon.** [Helpers & Testers wanted](https://github.com/janpaepke/ScrollMagic/issues/982)! 🚨
+
+---
+
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
 
@@ -33,19 +37,19 @@ The recommended solution is the [Greensock Animation Platform (GSAP)](http://www
 
 ScrollMagic was developed with these principles in mind:
 
-* optimized performance
-* lightweight (6KB gzipped)
-* flexibility and extendibility
-* mobile compatibility
-* event management
-* support for responsive web design
-* object oriented programming and object chaining
-* readable, centralized code and intuitive development
-* support for both x and y direction scrolling (even both on one page)
-* support for scrolling inside div containers (even multiple on one page)
-* extensive debugging and logging capabilities
-* detailed documentation
-* many application examples
+-   optimized performance
+-   lightweight (6KB gzipped)
+-   flexibility and extendibility
+-   mobile compatibility
+-   event management
+-   support for responsive web design
+-   object oriented programming and object chaining
+-   readable, centralized code and intuitive development
+-   support for both x and y direction scrolling (even both on one page)
+-   support for scrolling inside div containers (even multiple on one page)
+-   extensive debugging and logging capabilities
+-   detailed documentation
+-   many application examples
 
 **Is ScrollMagic the right library for you?**  
 ScrollMagic takes an object oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.  
@@ -132,7 +136,7 @@ var controller = new ScrollMagic.Controller();
 // create a scene
 new ScrollMagic.Scene({
 	duration: 100, // the scene should last for a scroll distance of 100px
-	offset: 50 // start this scene after scrolling for 50px
+	offset: 50, // start this scene after scrolling for 50px
 })
 	.setPin('#my-sticky-element') // pins the element for the the scene's duration
 	.addTo(controller); // assign the scene to the controller
