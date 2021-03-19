@@ -150,8 +150,9 @@ export class ScrollMagic {
 	}
 
 	private updateProgress() {
-		if (this.active === false) {
-			// return;
+		if (false === this.active) {
+			// also run if active is undefined (ViewportObserver not ready)
+			return;
 		}
 
 		const { triggerStart, triggerEnd } = this.optionsPrivate;
