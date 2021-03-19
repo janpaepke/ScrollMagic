@@ -306,13 +306,16 @@ export class ScrollMagic {
 	}
 	public get scrollOffset(): { start: number; end: number } {
 		const { scrollParent, triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { start: elementStart, offsetStart, offsetEnd, size: elementSize } = this.getElementBounds();
+		const { start: elementPosition, offsetStart, offsetEnd, size: elementSize } = this.getElementBounds();
 		const { clientSize: containerSize } = this.getContainerBounds();
 		const { start: scrollOffset } = pickRelevantValues(vertical, getScrollPos(scrollParent));
-		const elemOffset = elementStart + scrollOffset;
+
+		const absolutePosition = elementPosition + scrollOffset;
+		const start = absolutePosition + offsetStart;
+		const end = absolutePosition + elementSize - offsetEnd;
 		return {
-			start: Math.floor(elemOffset + offsetStart - triggerStart(containerSize)),
-			end: Math.ceil(elemOffset + elementSize + offsetEnd - triggerEnd(containerSize)),
+			start: Math.floor(start - triggerStart(containerSize)),
+			end: Math.ceil(end - containerSize + triggerEnd(containerSize)),
 		};
 	}
 	public get computedOptions(): Options.PrivateComputed {
