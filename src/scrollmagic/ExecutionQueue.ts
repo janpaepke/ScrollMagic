@@ -1,56 +1,63 @@
 import throttleRaf from './util/throttleRaf';
+import { isUndefined } from './util/typeguards';
 
 type Command = () => void;
-type Prerequisite = () => boolean;
+type ExecutionCondition = () => boolean;
 
 /**
+ * TODO! Update - this is very different now
  * Holds a list of commands and execute them in order.
  * If a command is added twice before executing, it will stay in the order position as before.
  * Caveats:
  * - can't override commands with existing precondition
  */
 
-export class ExecutionQueue {
-	protected readonly commands = new Map<Command, Prerequisite | null>(); // in js: remembers the original insertion order
-	public execute(): void {
-		this.commands.forEach((prerequisite, command) => {
-			if (false === prerequisite?.()) {
-				return;
-			}
-			command();
-		});
-		this.commands.clear();
-	}
-	public add(command: Command, prerequisite?: Prerequisite): void {
-		const existing = this.commands.get(command);
-		if (null === existing) {
-			// we can only go from has prerequisite to no prerequisite (get less strict)
-			return;
+type CommandList<T extends string> = Record<T, QueueItem>;
+
+class QueueItem {
+	protected conditions: ExecutionCondition[] = [];
+	constructor(public readonly execute: Command, protected readonly onSchedule: () => void) {}
+	public schedule(condition?: ExecutionCondition) {
+		if (isUndefined(condition)) {
+			// if no condition is provided, conditions are considered always met. Any conditions added after this woun't even be run
+			this.conditions = [];
+			condition = () => true;
 		}
-		this.commands.set(command, prerequisite ?? null);
+		this.conditions.push(condition);
+		this.onSchedule();
 	}
-	public remove(command: Command): boolean {
-		return this.commands.delete(command);
+	public resetConditions() {
+		this.conditions = [];
 	}
-	public clear(): void {
-		this.commands.clear();
+	public get conditionsMet() {
+		return this.conditions.some(condition => condition());
 	}
 }
 
-export class ThrottledExecutionQueue extends ExecutionQueue {
+export class ExecutionQueue<C extends string> {
+	public readonly commands: CommandList<C>;
 	protected executeThrottled = throttleRaf(this.execute.bind(this));
-	// adds a command to the queue and schedules it for execution
-	public schedule(command: Command, prerequisite?: Prerequisite): void {
-		this.add(command, prerequisite);
-		this.executeThrottled();
+
+	constructor(queueItems: Record<C, Command>) {
+		this.commands = Object.entries<Command>(queueItems).reduce(
+			(res, [name, command]) => ({
+				...res,
+				[name]: new QueueItem(command, this.executeThrottled),
+			}),
+			{} as CommandList<C>
+		);
 	}
-	// exedcutes the whole queue immediately
-	public moveUp(): void {
-		this.executeThrottled.cancel();
-		this.execute();
+
+	// executes all commands in the list in order, depending on wether or not their conditions are met
+	public execute(): void {
+		Object.values<QueueItem>(this.commands).forEach(item => {
+			if (item.conditionsMet) {
+				item.execute();
+			}
+			item.resetConditions();
+		});
 	}
-	public clear(): void {
+	public cancel(): void {
 		this.executeThrottled.cancel();
-		super.clear();
 	}
 }

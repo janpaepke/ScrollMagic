@@ -1,7 +1,7 @@
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
-import { ThrottledExecutionQueue } from './ExecutionQueue';
+import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import {
 	compute as computeOptions,
@@ -37,14 +37,13 @@ export class ScrollMagic {
 	private readonly container = new ContainerProxy(this);
 	private readonly resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
-	private readonly executionQueue = new ThrottledExecutionQueue();
-	private readonly boundMethods = {
-		// these are set to get permanent references for the throttled execution queue
-		updateProgress: this.updateProgress.bind(this),
-		updateProgressForced: this.updateProgress.bind(this, true),
-		updateViewportObserver: this.updateViewportObserver.bind(this),
-		updateTriggerBounds: this.updateElementBoundsCache.bind(this),
-	} as const;
+	private readonly executionQueue = new ExecutionQueue({
+		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
+		elementBounds: this.updateElementBoundsCache.bind(this),
+		viewportObserver: this.updateViewportObserver.bind(this),
+		progress: this.updateProgress.bind(this),
+	});
+	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
 	private readonly debouncedOnFastScrollDetected = debounce(this.onFastScrollDetected.bind(this), 100); // why 100? because.
 
 	// all below options should only ever be changed by a dedicated method
@@ -60,9 +59,8 @@ export class ScrollMagic {
 		trackSize: 0,
 	};
 	private currentProgress = 0;
-	private active?: boolean; // scene active state
+	private intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
-	// TODO: check if Execution queue  still makes sense (often same shape)
 	// TODO: properly react to mobile headers resizing
 	// TODO: build plugin interface
 	// TODO: consider what should actually be private and what protected.
@@ -153,23 +151,19 @@ export class ScrollMagic {
 		return pickRelevantValues(forceDirection ?? this.optionsPrivate.vertical, this.container.rect); // these are already cached. fine to call as often as we like
 	}
 
-	private updateActive(nextActive: boolean | undefined) {
+	private updateIntersecting(nextIntersecting: boolean | undefined) {
 		// doesn't have to be a method, but I want to keep modifications obvious (only called from update... methods)
-		this.active = nextActive;
+		this.intersecting = nextIntersecting;
 	}
 
 	private updateElementBoundsCache() {
+		// console.log(this.optionsPrivate.element.id, 'bounds', new Date().getMilliseconds());
 		this.elementBoundsCache = this.getElementBounds();
 	}
 
-	private updateProgress(force = false) {
-		if (!force && false === this.active) {
-			// also run if active is undefined (ViewportObserver not ready)
-			return;
-		}
-
+	private updateProgress() {
+		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
 		const { triggerStart, triggerEnd } = this.optionsPrivate;
-		// todo cache on scroll!
 		const { offsetStart, trackSize: elementDistance, start: elementPosition } = this.elementBoundsCache;
 		const { clientSize: containerSize } = this.getContainerBounds();
 
@@ -218,9 +212,9 @@ export class ScrollMagic {
 		const scrollParentChanged = isChanged('scrollParent');
 
 		if (sizeChanged || offsetChanged || elementChanged) {
-			this.updateElementBoundsCache();
+			this.update.elementBounds.schedule();
 			if (elementChanged) {
-				this.updateActive(undefined);
+				this.updateIntersecting(undefined);
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
 				this.viewportObserver.observe(element);
@@ -229,63 +223,95 @@ export class ScrollMagic {
 			}
 		}
 		if (scrollParentChanged) {
-			this.updateActive(undefined);
+			this.updateIntersecting(undefined);
 			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
-		this.updateViewportObserver();
+		this.update.viewportObserver.schedule();
 	}
 
 	private onElementResize() {
-		const { executionQueue, boundMethods, elementBoundsCache } = this;
+		/**
+		 * * element resized
+		 * updateElementBounds => schedule always (obviously),	execute regardless.
+		 * updateViewportObserver => schedule always, 			execute if start or end offset changed in trigger bounds update above
+		 * updateProgress => schedule if currently intersecting,		execute if start or end offset changed in trigger bounds update above
+		 */
+		const { update, elementBoundsCache } = this;
 		const { offsetStart: startPrevious, offsetEnd: endPrevious } = elementBoundsCache;
-		executionQueue.schedule(boundMethods.updateTriggerBounds);
-		executionQueue.schedule(
-			boundMethods.updateViewportObserver,
-			// compare to current values => only execute, if changed during scheduled update above
-			() => startPrevious !== elementBoundsCache.offsetStart || endPrevious !== elementBoundsCache.offsetEnd
-		);
-		executionQueue.schedule(this.boundMethods.updateProgress);
+		const boundsChanged = () =>
+			startPrevious !== elementBoundsCache.offsetStart || endPrevious !== elementBoundsCache.offsetEnd;
+		update.elementBounds.schedule();
+		update.viewportObserver.schedule(boundsChanged);
+		if (this.intersecting) {
+			update.progress.schedule(boundsChanged);
+		}
 	}
 
 	private onContainerUpdate(e: ContainerEvent) {
-		const { executionQueue, boundMethods } = this;
-		executionQueue.schedule(boundMethods.updateTriggerBounds);
+		/**
+		 * * container resized
+		 * updateElementBounds => 		schedule if currently intersecting, 	execute regardless (resizes are caught in onElementResize but position might change due to container resize, which wouldn't be)
+		 * updateViewportObserver => 	schedule always (to get new margins),	execute regardless.
+		 * updateProgress => 			schedule if currently intersecting, 	execute if position changed in triggerBounds update
+		 */
+		const { update, intersecting } = this;
 		if ('resize' === e.type) {
-			executionQueue.schedule(boundMethods.updateViewportObserver);
-		}
-		executionQueue.schedule(boundMethods.updateProgress);
-		if ('scroll' === e.type) {
-			const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
-			const { trackSize } = this.elementBoundsCache;
-			if (!this.active && Math.abs(scrollDelta) > Math.abs(trackSize)) {
-				// in case the scroll position changes by more than the track distance, the viewport observer might miss it.
-				// this can trigger multiple times, if the user jumps from page top to bottom, so we need to debounce it.
-				this.debouncedOnFastScrollDetected();
+			if (intersecting) {
+				update.elementBounds.schedule();
 			}
+			update.viewportObserver.schedule();
+			const { start: startPrevious } = this.elementBoundsCache;
+			const positionChanged = () => startPrevious !== this.elementBoundsCache.start;
+			update.progress.schedule(positionChanged);
+			return;
 		}
+		/**
+		 * * container scrolled
+		 * if relevant scrollDelta is 0, do nothing (scroll was in other direction)
+		 * updateElementBounds =>		schedule if currently intersecting,		execute regardless
+		 * updateViewportObserver => 	never
+		 * updateProgress =>			schedule if currently intersecting, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
+		 */
+		const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
+		// TODO! fix fast scroll detection - currently only element track is used, but viewport track should be added
+		if (!this.intersecting && Math.abs(scrollDelta) > Math.abs(this.elementBoundsCache.trackSize)) {
+			// in case the scroll position changes by more than the track distance, the viewport observer might miss it.
+			// this can trigger multiple times, if the user jumps from page top to bottom, so we need to debounce it.
+			this.debouncedOnFastScrollDetected();
+		}
+		if (0 === scrollDelta || !this.intersecting) {
+			return;
+		}
+		update.elementBounds.schedule();
+		update.progress.schedule();
 	}
 
 	private onIntersectionChange(intersecting: boolean, target: Element) {
+		/**
+		 * * intersection state changed
+		 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
+		 * updateViewportObserver =>	never
+		 * updateProgress =>			schedule regardless, execute regardless
+		 */
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
-			const { executionQueue, boundMethods } = this;
-			executionQueue.schedule(boundMethods.updateTriggerBounds);
-			executionQueue.schedule(boundMethods.updateProgress);
-			if (!intersecting) {
-				// update immediately, if leaving and change active state after.
-				this.executionQueue.moveUp();
-			}
-			this.updateActive(intersecting);
+			this.updateIntersecting(intersecting);
+			this.update.progress.schedule();
 		}
 	}
 
 	private onFastScrollDetected() {
-		// We might jump over the active area, so we need to manually trigger an update.
-		const { executionQueue, boundMethods } = this;
-		executionQueue.schedule(boundMethods.updateTriggerBounds);
-		executionQueue.remove(boundMethods.updateProgress); // no need for double calls
-		executionQueue.schedule(boundMethods.updateProgressForced);
+		/**
+		 * * fast scroll detected
+		 * * this means the ViewportObserver might "miss", that we passed the scene
+		 * updateElementBounds => schedule regardless, execute regardless
+		 * updateViewportObserver => never
+		 * updateProgress => schedule regardless, execute regardless
+		 */
+		// console.log('fastScroll!');
+		this.update.elementBounds.schedule();
+		this.update.progress.schedule();
 	}
 
 	// getter/setter public
@@ -369,7 +395,7 @@ export class ScrollMagic {
 	}
 
 	public destroy(): void {
-		this.executionQueue.clear();
+		this.executionQueue.cancel();
 		this.resizeObserver.disconnect();
 		this.viewportObserver.disconnect();
 		this.container.detach();
