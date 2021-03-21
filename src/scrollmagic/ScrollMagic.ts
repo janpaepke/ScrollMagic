@@ -30,6 +30,10 @@ type ElementBounds = {
 	size: number; // 		actual size of element
 	trackSize: number; // 	total size including offsets
 };
+type ContainerBounds = {
+	clientSize: number; //	inner visible area of scroll container
+	scrollSize: number; //	total size of content of container
+};
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
@@ -47,10 +51,9 @@ export class ScrollMagic {
 	private readonly debouncedOnFastScrollDetected = debounce(this.onFastScrollDetected.bind(this), 100); // why 100? because.
 
 	// all below options should only ever be changed by a dedicated method
-	// update function MUST NOT call any other functions, with the exceptions of modify
-	private optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
-	private optionsPrivate!: Options.Private; // set in modify in constructor
-	private elementBoundsCache: ElementBounds = {
+	protected optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
+	protected optionsPrivate!: Options.Private; // set in modify in constructor
+	protected elementBoundsCache: ElementBounds = {
 		// see typedef for details
 		start: 0,
 		offsetStart: 0,
@@ -58,11 +61,10 @@ export class ScrollMagic {
 		size: 0,
 		trackSize: 0,
 	};
-	private currentProgress = 0;
-	private intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
+	protected currentProgress = 0;
+	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
 	// TODO: build plugin interface
-	// TODO: consider what should actually be private and what protected.
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
@@ -72,34 +74,7 @@ export class ScrollMagic {
 		this.modify(initOptions);
 	}
 
-	private triggerEvent(type: ScrollMagicEventType, deltaProgress: number) {
-		if (deltaProgress === 0) {
-			return;
-		}
-		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, deltaProgress > 0));
-	}
-
-	public modify(options: Partial<Options.Public>): ScrollMagic {
-		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
-
-		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
-
-		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
-			? processed
-			: pickDifferencesFlat(processed, this.optionsPrivate);
-		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
-
-		if (changedOptions.length === 0) {
-			return this;
-		}
-
-		this.optionsPrivate = processed;
-
-		this.onOptionChanges(changedOptions);
-		return this;
-	}
-
-	private getViewportMargin() {
+	protected getViewportMargin(): { top: string; left: string; right: string; bottom: string } {
 		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = pickRelevantProps(vertical);
 		const { start: oppositeStartProp, end: oppositeEndProp } = pickRelevantProps(!vertical);
@@ -130,7 +105,7 @@ export class ScrollMagic {
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
 	}
 
-	private getElementBounds(): ElementBounds {
+	protected getElementBounds(): ElementBounds {
 		// this should be called cautiously, getBoundingClientRect costs...
 		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
@@ -146,21 +121,22 @@ export class ScrollMagic {
 		};
 	}
 
-	private getContainerBounds(forceDirection?: boolean) {
+	protected getContainerBounds(forceDirection?: boolean): ContainerBounds {
 		return pickRelevantValues(forceDirection ?? this.optionsPrivate.vertical, this.container.rect); // these are already cached. fine to call as often as we like
 	}
 
-	private updateIntersecting(nextIntersecting: boolean | undefined) {
+	// !update function MUST NOT call any other functions causing side effects, with the exceptions of modify and event triggers in progress
+	protected updateIntersecting(nextIntersecting: boolean | undefined): void {
 		// doesn't have to be a method, but I want to keep modifications obvious (only called from update... methods)
 		this.intersecting = nextIntersecting;
 	}
 
-	private updateElementBoundsCache() {
+	protected updateElementBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'bounds', new Date().getMilliseconds());
 		this.elementBoundsCache = this.getElementBounds();
 	}
 
-	private updateProgress() {
+	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
 		const { triggerStart, triggerEnd } = this.optionsPrivate;
 		const { offsetStart, trackSize: elementDistance, start: elementPosition } = this.elementBoundsCache;
@@ -183,18 +159,23 @@ export class ScrollMagic {
 		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
 		const deltaProgress = nextProgress - previousProgress;
 
+		if (deltaProgress === 0) {
+			return;
+		}
+
 		this.currentProgress = nextProgress;
+		const forward = deltaProgress > 0;
 
 		if (previousProgress === 0 || previousProgress === 1) {
-			this.triggerEvent(ScrollMagicEventType.Enter, deltaProgress);
+			this.triggerEvent(ScrollMagicEventType.Enter, forward);
 		}
-		this.triggerEvent(ScrollMagicEventType.Progress, deltaProgress);
+		this.triggerEvent(ScrollMagicEventType.Progress, forward);
 		if (nextProgress === 0 || nextProgress === 1) {
-			this.triggerEvent(ScrollMagicEventType.Leave, deltaProgress);
+			this.triggerEvent(ScrollMagicEventType.Leave, forward);
 		}
 	}
 
-	private updateViewportObserver(): void {
+	protected updateViewportObserver(): void {
 		const { scrollParent } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.getViewportMargin(),
@@ -203,7 +184,7 @@ export class ScrollMagic {
 		this.viewportObserver.modify(observerOptions);
 	}
 
-	private onOptionChanges(changes: Array<keyof Options.Private>) {
+	protected onOptionChanges(changes: Array<keyof Options.Private>): void {
 		const isChanged = changes.includes.bind(changes);
 		const sizeChanged = isChanged('elementStart');
 		const offsetChanged = isChanged('elementEnd');
@@ -229,7 +210,7 @@ export class ScrollMagic {
 		this.update.viewportObserver.schedule();
 	}
 
-	private onElementResize() {
+	protected onElementResize(): void {
 		/**
 		 * * element resized
 		 * updateElementBounds => schedule always (obviously),	execute regardless.
@@ -247,7 +228,7 @@ export class ScrollMagic {
 		}
 	}
 
-	private onContainerUpdate(e: ContainerEvent) {
+	protected onContainerUpdate(e: ContainerEvent): void {
 		/**
 		 * * container resized
 		 * updateElementBounds => 		schedule if currently intersecting, 	execute regardless (resizes are caught in onElementResize but position might change due to container resize, which wouldn't be)
@@ -286,7 +267,7 @@ export class ScrollMagic {
 		update.progress.schedule();
 	}
 
-	private onIntersectionChange(intersecting: boolean, target: Element) {
+	protected onIntersectionChange(intersecting: boolean, target: Element): void {
 		/**
 		 * * intersection state changed
 		 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
@@ -300,7 +281,7 @@ export class ScrollMagic {
 		}
 	}
 
-	private onFastScrollDetected() {
+	protected onFastScrollDetected(): void {
 		/**
 		 * * fast scroll detected
 		 * * this means the ViewportObserver might "miss", that we passed the scene
@@ -311,6 +292,30 @@ export class ScrollMagic {
 		// console.log('fastScroll!');
 		this.update.elementBounds.schedule();
 		this.update.progress.schedule();
+	}
+
+	protected triggerEvent(type: ScrollMagicEventType, forward: boolean): void {
+		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, forward));
+	}
+
+	public modify(options: Partial<Options.Public>): ScrollMagic {
+		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
+
+		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
+
+		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
+			? processed
+			: pickDifferencesFlat(processed, this.optionsPrivate);
+		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
+
+		if (changedOptions.length === 0) {
+			return this;
+		}
+
+		this.optionsPrivate = processed;
+
+		this.onOptionChanges(changedOptions);
+		return this;
 	}
 
 	// getter/setter public
@@ -388,7 +393,7 @@ export class ScrollMagic {
 		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
-	// same as on, but returns a function to reverse the effect (remove the listener).
+	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
 	public subscribe(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): () => void {
 		return this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 	}
@@ -402,7 +407,7 @@ export class ScrollMagic {
 
 	// static options/methods
 
-	private static defaultOptionsPublic = Options.defaults;
+	protected static defaultOptionsPublic = Options.defaults;
 	// get or change default options
 	public static default(options: Partial<Options.Public> = {}): Options.Public {
 		this.defaultOptionsPublic = {
