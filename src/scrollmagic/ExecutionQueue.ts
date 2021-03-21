@@ -3,6 +3,7 @@ import { isUndefined } from './util/typeguards';
 
 type Command = () => void;
 type ExecutionCondition = () => boolean;
+type CommandList<T extends string> = Record<T, QueueItem>;
 
 /**
  * TODO! Update - this is very different now
@@ -12,14 +13,12 @@ type ExecutionCondition = () => boolean;
  * - can't override commands with existing precondition
  */
 
-type CommandList<T extends string> = Record<T, QueueItem>;
-
 class QueueItem {
 	protected conditions: ExecutionCondition[] = [];
 	constructor(public readonly execute: Command, protected readonly onSchedule: () => void) {}
 	public schedule(condition?: ExecutionCondition) {
 		if (isUndefined(condition)) {
-			// if no condition is provided, conditions are considered always met. Any conditions added after this woun't even be run
+			// if no condition is provided, conditions are considered always met. Any conditions added after this won't even be run
 			this.conditions = [];
 			condition = () => true;
 		}

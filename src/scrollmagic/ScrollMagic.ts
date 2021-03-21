@@ -61,7 +61,6 @@ export class ScrollMagic {
 	private currentProgress = 0;
 	private intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
-	// TODO: properly react to mobile headers resizing
 	// TODO: build plugin interface
 	// TODO: consider what should actually be private and what protected.
 	// TODO: Maybe only include internal errors for development? process.env...
@@ -239,12 +238,12 @@ export class ScrollMagic {
 		 */
 		const { update, elementBoundsCache } = this;
 		const { offsetStart: startPrevious, offsetEnd: endPrevious } = elementBoundsCache;
-		const boundsChanged = () =>
+		const isBoundsChanged = () =>
 			startPrevious !== elementBoundsCache.offsetStart || endPrevious !== elementBoundsCache.offsetEnd;
 		update.elementBounds.schedule();
-		update.viewportObserver.schedule(boundsChanged);
+		update.viewportObserver.schedule(isBoundsChanged);
 		if (this.intersecting) {
-			update.progress.schedule(boundsChanged);
+			update.progress.schedule(isBoundsChanged);
 		}
 	}
 
@@ -262,8 +261,8 @@ export class ScrollMagic {
 			}
 			update.viewportObserver.schedule();
 			const { start: startPrevious } = this.elementBoundsCache;
-			const positionChanged = () => startPrevious !== this.elementBoundsCache.start;
-			update.progress.schedule(positionChanged);
+			const isPositionChanged = () => startPrevious !== this.elementBoundsCache.start;
+			update.progress.schedule(isPositionChanged);
 			return;
 		}
 		/**

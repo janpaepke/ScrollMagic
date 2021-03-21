@@ -41,7 +41,11 @@ export class Container {
 	};
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
-
+	/**
+	 * TODO: Currently we have no way of detecting, when physical scrollbars appear or disappear, which should technically trigger a resize event.
+	 * One potential way of getting around this would be to add an additional resize observer to the documentElement and detect when it crosses 100% of the container's client size (either in or out)
+	 * But this seems quite hacky and code intense for this edge case scenario. It would also work for document scrolls, not for Element scrolls.
+	 */
 	constructor(public readonly scrollParent: ScrollParent) {
 		const throttledScroll = throttleRaf(this.updateScrollPos.bind(this));
 		const throttledResize = debounce(this.updateDimensions.bind(this), 100);
