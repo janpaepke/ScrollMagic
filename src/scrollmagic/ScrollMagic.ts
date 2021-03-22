@@ -92,15 +92,15 @@ export class ScrollMagic {
 		const { vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = pickRelevantProps(vertical);
 		const { start: oppositeStartProp, end: oppositeEndProp } = pickRelevantProps(!vertical);
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
+			!vertical, // retrieving the opposites
+			this.container.rect // this is cached, so ok to get
+		);
 		const {
 			clientSize: containerSize,
 			offsetStart: containerOffsetStart,
 			offsetEnd: containerOffsetEnd,
 		} = this.containerBoundsCache;
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
-			!vertical, // retrieving the opposites
-			this.container.rect // this is cached, so ok to get
-		);
 		const { offsetStart, offsetEnd } = this.elementBoundsCache; // from cache
 
 		const marginStart = containerSize - containerOffsetStart + offsetStart;
@@ -112,11 +112,15 @@ export class ScrollMagic {
 		 ** (as the observer internally compares old values to new ones)
 		 ** This way it won't have to internally create new IntersectionObservers, just because the scrollparent's size changes.
 		 */
-		const relMarginStart = -roundToDecimals(marginStart / containerSize, 5);
-		const relMarginEnd = -roundToDecimals(marginEnd / containerSize, 5);
+		const noSize = containerSize > 0;
+		const relMarginStart = noSize ? 0 : -roundToDecimals(marginStart / containerSize, 5);
+		const relMarginEnd = noSize ? 0 : -roundToDecimals(marginEnd / containerSize, 5);
 
 		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
-		const scrollableOpposite = numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize);
+		const noOppositeSize = oppositeClientSize > 0;
+		const scrollableOpposite = noOppositeSize
+			? 0
+			: numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize);
 		return {
 			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 			[endProp]: numberToPercString(relMarginStart),
@@ -126,7 +130,8 @@ export class ScrollMagic {
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
 	}
 
-	// !update function MUST NOT call any other functions causing side effects, with the exceptions of modify and event triggers in progress
+	// !update functions MUST NOT call any other functions causing side effects, with the exceptions of modify and event triggers in progress
+
 	protected updateIntersectingState(nextIntersecting: boolean | undefined): void {
 		// doesn't have to be a method, but I want to keep modifications obvious (only called from update... methods)
 		this.intersecting = nextIntersecting;
@@ -161,25 +166,25 @@ export class ScrollMagic {
 			scrollSize,
 			offsetStart,
 			offsetEnd,
-			trackSize: -(clientSize - offsetStart - offsetEnd), // container track is inverted (start should be hit first, then end)
+			trackSize: -(clientSize - offsetStart - offsetEnd), // container track is inverted (start is usually below end)
 		};
 	}
 
 	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
-		const { offsetStart, trackSize: elementDistance, start: elementPosition } = this.elementBoundsCache;
+		const { offsetStart, trackSize: elementTrack, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerStart, trackSize: containerTrack } = this.containerBoundsCache;
 
 		const elementStart = elementPosition + offsetStart;
 		const passed = containerStart - elementStart;
-		const total = elementDistance + containerTrack;
+		const total = elementTrack + containerTrack;
 
 		if (total < 0) {
 			return; // no overlap of track and scroll distance
 		}
 
 		const previousProgress = this.currentProgress;
-		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1
+		const nextProgress = Math.min(Math.max(passed / total, 0), 1); // when leaving, it will overshoot, this normalises to 0 / 1 (also when total is 0)
 		const deltaProgress = nextProgress - previousProgress;
 
 		if (deltaProgress === 0) {
@@ -298,15 +303,15 @@ export class ScrollMagic {
 	}
 
 	protected onIntersectionChange(intersecting: boolean, target: Element): void {
-		/**
-		 * * intersection state changed
-		 * updateContainerBounds => 	never
-		 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
-		 * updateViewportObserver =>	never
-		 * updateProgress =>			schedule regardless, execute regardless
-		 */
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
+			/**
+			 * * intersection state changed
+			 * updateContainerBounds => 	never
+			 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
+			 * updateViewportObserver =>	never
+			 * updateProgress =>			schedule regardless, execute regardless
+			 */
 			this.updateIntersectingState(intersecting);
 			this.update.progress.schedule();
 		}
