@@ -112,12 +112,13 @@ export class ScrollMagic {
 		 ** (as the observer internally compares old values to new ones)
 		 ** This way it won't have to internally create new IntersectionObservers, just because the scrollparent's size changes.
 		 */
-		const noSize = containerSize > 0;
+		const noSize = containerSize <= 0;
 		const relMarginStart = noSize ? 0 : -roundToDecimals(marginStart / containerSize, 5);
 		const relMarginEnd = noSize ? 0 : -roundToDecimals(marginEnd / containerSize, 5);
+		console.log(containerSize, containerSize);
 
 		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
-		const noOppositeSize = oppositeClientSize > 0;
+		const noOppositeSize = oppositeClientSize <= 0;
 		const scrollableOpposite = noOppositeSize
 			? 0
 			: numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize);
