@@ -25,13 +25,16 @@ export { Public as ScrollMagicOptions } from './Options';
 type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
 type ElementBounds = {
 	start: number; //		position relative to viewport
+	size: number; // 		outer visible size of element (excluding margins)
 	offsetStart: number; // offset relative to top/left of element
 	offsetEnd: number; // 	offset relative to bottom/right of element
-	size: number; // 		actual size of element
-	trackSize: number; // 	total size including offsets
+	trackSize: number; // 	effective track size including offsets
 };
 type ContainerBounds = {
-	clientSize: number; //	inner visible area of scroll container
+	clientSize: number; //	inner visible area of scroll container (excluding scrollbars)
+	offsetStart: number; // offset relative to top/left of container
+	offsetEnd: number; // 	offset relative to bottom/right of container
+	trackSize: number; // 	effective track size including offsets
 	scrollSize: number; //	total size of content of container
 };
 export class ScrollMagic {
@@ -44,6 +47,7 @@ export class ScrollMagic {
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
 		elementBounds: this.updateElementBoundsCache.bind(this),
+		containerBounds: this.updateContainerBoundsCache.bind(this),
 		viewportObserver: this.updateViewportObserver.bind(this),
 		progress: this.updateProgress.bind(this),
 	});
@@ -56,15 +60,25 @@ export class ScrollMagic {
 	protected elementBoundsCache: ElementBounds = {
 		// see typedef for details
 		start: 0,
+		size: 0,
 		offsetStart: 0,
 		offsetEnd: 0,
-		size: 0,
 		trackSize: 0,
+	};
+	protected containerBoundsCache: ContainerBounds = {
+		// see typedef for details
+		clientSize: 0,
+		offsetStart: 0,
+		offsetEnd: 0,
+		trackSize: 0,
+		scrollSize: 0,
 	};
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
 	// TODO: build plugin interface
+	// TODO: correctly take into account container position, if not window
+	// TODO: fix if container size is 0
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Partial<Options.Public> = {}) {
 		const initOptions: Options.Public = {
@@ -75,15 +89,22 @@ export class ScrollMagic {
 	}
 
 	protected getViewportMargin(): { top: string; left: string; right: string; bottom: string } {
-		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
+		const { vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = pickRelevantProps(vertical);
 		const { start: oppositeStartProp, end: oppositeEndProp } = pickRelevantProps(!vertical);
-		const { clientSize: containerSize } = this.getContainerBounds();
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = this.getContainerBounds(!vertical); // gets the opposites
+		const {
+			clientSize: containerSize,
+			offsetStart: containerOffsetStart,
+			offsetEnd: containerOffsetEnd,
+		} = this.containerBoundsCache;
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
+			!vertical, // retrieving the opposites
+			this.container.rect // this is cached, so ok to get
+		);
 		const { offsetStart, offsetEnd } = this.elementBoundsCache; // from cache
 
-		const marginStart = containerSize - triggerStart(containerSize) + offsetStart;
-		const marginEnd = containerSize - triggerEnd(containerSize) + offsetEnd;
+		const marginStart = containerSize - containerOffsetStart + offsetStart;
+		const marginEnd = containerSize - containerOffsetEnd + offsetEnd;
 		/**
 		 ** confusingly IntersectionObserver (and thus ViewportObserver) treat margins in the opposite direction (negative means towards the center)
 		 ** so we'll have to flip the signs here.
@@ -105,54 +126,56 @@ export class ScrollMagic {
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
 	}
 
-	protected getElementBounds(): ElementBounds {
-		// this should be called cautiously, getBoundingClientRect costs...
-		// check variable initialisation for property description
-		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
-		const { start, size: elementSize } = pickRelevantValues(vertical, element.getBoundingClientRect());
-		const offsetStart = elementStart(elementSize);
-		const offsetEnd = elementEnd(elementSize);
-		return {
-			start,
-			offsetStart,
-			offsetEnd,
-			size: elementSize,
-			trackSize: elementSize - offsetStart - offsetEnd,
-		};
-	}
-
-	protected getContainerBounds(forceDirection?: boolean): ContainerBounds {
-		return pickRelevantValues(forceDirection ?? this.optionsPrivate.vertical, this.container.rect); // these are already cached. fine to call as often as we like
-	}
-
 	// !update function MUST NOT call any other functions causing side effects, with the exceptions of modify and event triggers in progress
-	protected updateIntersecting(nextIntersecting: boolean | undefined): void {
+	protected updateIntersectingState(nextIntersecting: boolean | undefined): void {
 		// doesn't have to be a method, but I want to keep modifications obvious (only called from update... methods)
 		this.intersecting = nextIntersecting;
 	}
 
 	protected updateElementBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'bounds', new Date().getMilliseconds());
-		this.elementBoundsCache = this.getElementBounds();
+		// this should be called cautiously, getBoundingClientRect costs...
+		// check variable initialisation for property description
+		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
+		const { start, size } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const offsetStart = elementStart(size);
+		const offsetEnd = elementEnd(size);
+		this.elementBoundsCache = {
+			start,
+			size,
+			offsetStart,
+			offsetEnd,
+			trackSize: size - offsetStart - offsetEnd,
+		};
+	}
+
+	protected updateContainerBoundsCache(): void {
+		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
+		// check variable initialisation for property description
+		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
+		const { clientSize, scrollSize } = pickRelevantValues(vertical, this.container.rect);
+		const offsetStart = triggerStart(clientSize);
+		const offsetEnd = triggerEnd(clientSize);
+		this.containerBoundsCache = {
+			clientSize,
+			scrollSize,
+			offsetStart,
+			offsetEnd,
+			trackSize: -(clientSize - offsetStart - offsetEnd), // container track is inverted (start should be hit first, then end)
+		};
 	}
 
 	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
-		const { triggerStart, triggerEnd } = this.optionsPrivate;
 		const { offsetStart, trackSize: elementDistance, start: elementPosition } = this.elementBoundsCache;
-		const { clientSize: containerSize } = this.getContainerBounds();
+		const { offsetStart: containerStart, trackSize: containerTrack } = this.containerBoundsCache;
 
-		const containerOffsetStart = triggerStart(containerSize);
-		const containerOffsetEnd = triggerEnd(containerSize);
-		const start = elementPosition + offsetStart;
-		const trackDistance = -(containerSize - containerOffsetStart - containerOffsetEnd);
-
-		const passed = containerOffsetStart - start;
-		const total = elementDistance + trackDistance;
+		const elementStart = elementPosition + offsetStart;
+		const passed = containerStart - elementStart;
+		const total = elementDistance + containerTrack;
 
 		if (total < 0) {
-			// no overlap of track and scroll distance
-			return;
+			return; // no overlap of track and scroll distance
 		}
 
 		const previousProgress = this.currentProgress;
@@ -194,7 +217,7 @@ export class ScrollMagic {
 		if (sizeChanged || offsetChanged || elementChanged) {
 			this.update.elementBounds.schedule();
 			if (elementChanged) {
-				this.updateIntersecting(undefined);
+				this.updateIntersectingState(undefined);
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
 				this.viewportObserver.observe(element);
@@ -203,7 +226,8 @@ export class ScrollMagic {
 			}
 		}
 		if (scrollParentChanged) {
-			this.updateIntersecting(undefined);
+			this.update.containerBounds.schedule();
+			this.updateIntersectingState(undefined);
 			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
 		// if the options change we always have to refresh the viewport observer, regardless which one it is...
@@ -213,9 +237,10 @@ export class ScrollMagic {
 	protected onElementResize(): void {
 		/**
 		 * * element resized
-		 * updateElementBounds => schedule always (obviously),	execute regardless.
-		 * updateViewportObserver => schedule always, 			execute if start or end offset changed in trigger bounds update above
-		 * updateProgress => schedule if currently intersecting,		execute if start or end offset changed in trigger bounds update above
+		 * updateContainerBounds => 	never
+		 * updateElementBounds =>		schedule always (obviously),		execute regardless.
+		 * updateViewportObserver => 	schedule always, 					execute if start or end offset changed in trigger bounds update above
+		 * updateProgress => 			schedule if currently intersecting,	execute if start or end offset changed in trigger bounds update above
 		 */
 		const { update, elementBoundsCache } = this;
 		const { offsetStart: startPrevious, offsetEnd: endPrevious } = elementBoundsCache;
@@ -231,13 +256,15 @@ export class ScrollMagic {
 	protected onContainerUpdate(e: ContainerEvent): void {
 		/**
 		 * * container resized
+		 * updateContainerBounds => 	schedule always							execute regardless
 		 * updateElementBounds => 		schedule if currently intersecting, 	execute regardless (resizes are caught in onElementResize but position might change due to container resize, which wouldn't be)
 		 * updateViewportObserver => 	schedule always (to get new margins),	execute regardless.
 		 * updateProgress => 			schedule if currently intersecting, 	execute if position changed in triggerBounds update
 		 */
-		const { update, intersecting } = this;
+		const { update } = this;
 		if ('resize' === e.type) {
-			if (intersecting) {
+			this.update.containerBounds.schedule();
+			if (this.intersecting) {
 				update.elementBounds.schedule();
 			}
 			update.viewportObserver.schedule();
@@ -249,14 +276,17 @@ export class ScrollMagic {
 		/**
 		 * * container scrolled
 		 * if relevant scrollDelta is 0, do nothing (scroll was in other direction)
+		 * updateContainerBounds => 	never
 		 * updateElementBounds =>		schedule if currently intersecting,		execute regardless
 		 * updateViewportObserver => 	never
 		 * updateProgress =>			schedule if currently intersecting, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
 		const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
-		// TODO! fix fast scroll detection - currently only element track is used, but viewport track should be added
-		if (!this.intersecting && Math.abs(scrollDelta) > Math.abs(this.elementBoundsCache.trackSize)) {
-			// in case the scroll position changes by more than the track distance, the viewport observer might miss it.
+		if (
+			!this.intersecting &&
+			Math.abs(scrollDelta) > Math.abs(this.elementBoundsCache.trackSize + this.containerBoundsCache.trackSize)
+		) {
+			// in case the scroll position changes by more than the total track distance and we're currently not intersecting, the viewport observer might miss it.
 			// this can trigger multiple times, if the user jumps from page top to bottom, so we need to debounce it.
 			this.debouncedOnFastScrollDetected();
 		}
@@ -270,13 +300,14 @@ export class ScrollMagic {
 	protected onIntersectionChange(intersecting: boolean, target: Element): void {
 		/**
 		 * * intersection state changed
+		 * updateContainerBounds => 	never
 		 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
 		 * updateViewportObserver =>	never
 		 * updateProgress =>			schedule regardless, execute regardless
 		 */
 		// the check below should always be true, as we only ever observe one element, but you can never be too sure, I guess...
 		if (target === this.optionsPrivate.element) {
-			this.updateIntersecting(intersecting);
+			this.updateIntersectingState(intersecting);
 			this.update.progress.schedule();
 		}
 	}
@@ -285,9 +316,10 @@ export class ScrollMagic {
 		/**
 		 * * fast scroll detected
 		 * * this means the ViewportObserver might "miss", that we passed the scene
-		 * updateElementBounds => schedule regardless, execute regardless
-		 * updateViewportObserver => never
-		 * updateProgress => schedule regardless, execute regardless
+		 * updateContainerBounds => 	never
+		 * updateElementBounds => 		schedule regardless, execute regardless
+		 * updateViewportObserver => 	never
+		 * updateProgress => 			schedule regardless, execute regardless
 		 */
 		// console.log('fastScroll!');
 		this.update.elementBounds.schedule();
@@ -367,17 +399,21 @@ export class ScrollMagic {
 		return this.currentProgress;
 	}
 	public get scrollOffset(): { start: number; end: number } {
-		const { scrollParent, triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { start: elementPosition, offsetStart, trackSize } = this.getElementBounds(); // it's ok here to not use cached values
-		const { clientSize: containerSize } = this.getContainerBounds();
+		const { scrollParent, vertical } = this.optionsPrivate;
+		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
+		const {
+			clientSize: containerSize,
+			offsetStart: containerOffsetStart,
+			offsetEnd: containerOffsetEnd,
+		} = this.containerBoundsCache;
 		const { start: scrollOffset } = pickRelevantValues(vertical, getScrollPos(scrollParent));
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;
 		const end = start + trackSize;
 		return {
-			start: Math.floor(start - triggerStart(containerSize)),
-			end: Math.ceil(end - containerSize + triggerEnd(containerSize)),
+			start: Math.floor(start - containerOffsetStart),
+			end: Math.ceil(end - containerSize + containerOffsetEnd),
 		};
 	}
 	public get computedOptions(): Options.PrivateComputed {
