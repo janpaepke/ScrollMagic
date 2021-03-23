@@ -387,6 +387,7 @@ export class ScrollMagic {
 		return this.currentProgress;
 	}
 	public get scrollOffset(): { start: number; end: number } {
+		this.updateElementBoundsCache(); // need to get frash position
 		const { scrollParent, vertical } = this.optionsPrivate;
 		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
 		const {
