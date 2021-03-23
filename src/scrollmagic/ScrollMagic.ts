@@ -3,13 +3,8 @@ import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
-import {
-	compute as computeOptions,
-	process as processOptions,
-	sanitize as sanitizeOptions,
-} from './Options.processors';
+import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
 import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
-import debounce from './util/debounce';
 import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
@@ -52,7 +47,6 @@ export class ScrollMagic {
 		progress: this.updateProgress.bind(this),
 	});
 	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
-	private readonly debouncedOnFastScrollDetected = debounce(this.onFastScrollDetected.bind(this), 100); // why 100? because.
 
 	// all below options should only ever be changed by a dedicated method
 	protected optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
@@ -115,7 +109,6 @@ export class ScrollMagic {
 		const noSize = containerSize <= 0;
 		const relMarginStart = noSize ? 0 : -roundToDecimals(marginStart / containerSize, 5);
 		const relMarginEnd = noSize ? 0 : -roundToDecimals(marginEnd / containerSize, 5);
-		console.log(containerSize, containerSize);
 
 		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
 		const noOppositeSize = oppositeClientSize <= 0;
@@ -129,6 +122,10 @@ export class ScrollMagic {
 			[oppositeStartProp]: scrollableOpposite,
 			[oppositeEndProp]: scrollableOpposite,
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
+	}
+
+	protected getTrackSize(): number {
+		return this.elementBoundsCache.trackSize + this.containerBoundsCache.trackSize;
 	}
 
 	// !update functions MUST NOT call any other functions causing side effects, with the exceptions of modify and event triggers in progress
@@ -173,12 +170,12 @@ export class ScrollMagic {
 
 	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
-		const { offsetStart, trackSize: elementTrack, start: elementPosition } = this.elementBoundsCache;
-		const { offsetStart: containerStart, trackSize: containerTrack } = this.containerBoundsCache;
+		const { offsetStart, start: elementPosition } = this.elementBoundsCache;
+		const { offsetStart: containerStart } = this.containerBoundsCache;
 
 		const elementStart = elementPosition + offsetStart;
 		const passed = containerStart - elementStart;
-		const total = elementTrack + containerTrack;
+		const total = this.getTrackSize();
 
 		if (total < 0) {
 			return; // no overlap of track and scroll distance
@@ -283,20 +280,19 @@ export class ScrollMagic {
 		 * * container scrolled
 		 * if relevant scrollDelta is 0, do nothing (scroll was in other direction)
 		 * updateContainerBounds => 	never
-		 * updateElementBounds =>		schedule if currently intersecting,		execute regardless
+		 * updateElementBounds =>		schedule if currently intersecting,							execute regardless
 		 * updateViewportObserver => 	never
-		 * updateProgress =>			schedule if currently intersecting, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
+		 * updateProgress =>			schedule if currently intersecting or potentially skipped, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
 		const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
-		if (
-			!this.intersecting &&
-			Math.abs(scrollDelta) > Math.abs(this.elementBoundsCache.trackSize + this.containerBoundsCache.trackSize)
-		) {
-			// in case the scroll position changes by more than the total track distance and we're currently not intersecting, the viewport observer might miss it.
-			// this can trigger multiple times, if the user jumps from page top to bottom, so we need to debounce it.
-			this.debouncedOnFastScrollDetected();
+		if (0 === scrollDelta) {
+			return; // scroll was in other direction
 		}
-		if (0 === scrollDelta || !this.intersecting) {
+		// in case the scroll position changes by more than the total track distance, the viewport observer might miss it.
+		// this means running the progress update more than we have to, but in this case we have no choice.
+		const potentiallySkipped = Math.abs(scrollDelta) > this.getTrackSize();
+
+		if (!this.intersecting && !potentiallySkipped) {
 			return;
 		}
 		update.elementBounds.schedule();
@@ -316,20 +312,6 @@ export class ScrollMagic {
 			this.updateIntersectingState(intersecting);
 			this.update.progress.schedule();
 		}
-	}
-
-	protected onFastScrollDetected(): void {
-		/**
-		 * * fast scroll detected
-		 * * this means the ViewportObserver might "miss", that we passed the scene
-		 * updateContainerBounds => 	never
-		 * updateElementBounds => 		schedule regardless, execute regardless
-		 * updateViewportObserver => 	never
-		 * updateProgress => 			schedule regardless, execute regardless
-		 */
-		// console.log('fastScroll!');
-		this.update.elementBounds.schedule();
-		this.update.progress.schedule();
 	}
 
 	protected triggerEvent(type: ScrollMagicEventType, forward: boolean): void {
@@ -423,7 +405,15 @@ export class ScrollMagic {
 		};
 	}
 	public get computedOptions(): Options.PrivateComputed {
-		return computeOptions(this.optionsPrivate);
+		const { offsetStart: triggerStart, offsetEnd: triggerEnd } = this.containerBoundsCache;
+		const { offsetStart: elementStart, offsetEnd: elementEnd } = this.elementBoundsCache;
+		return {
+			...this.optionsPrivate,
+			triggerStart,
+			triggerEnd,
+			elementStart,
+			elementEnd,
+		};
 	}
 
 	// event listener

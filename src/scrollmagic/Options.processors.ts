@@ -74,21 +74,15 @@ const check = (options: Private): void => {
 	if (total < 0) {
 		warn(
 			'Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
-			compute(options)
+			{
+				...options,
+				triggerStart: triggerStart(elementSize),
+				triggerEnd: triggerEnd(elementSize),
+				elementStart: elementStart(elementSize),
+				elementEnd: elementEnd(elementSize),
+			}
 		);
 	}
-};
-
-export const compute = (options: Private): PrivateComputed => {
-	const { triggerStart, triggerEnd, elementStart, elementEnd } = options;
-	const { size: elementSize } = getElementSize(options);
-	return {
-		...options,
-		triggerStart: triggerStart(elementSize),
-		triggerEnd: triggerEnd(elementSize),
-		elementStart: elementStart(elementSize),
-		elementEnd: elementEnd(elementSize),
-	};
 };
 
 export const process = <T extends Partial<Public>>(
