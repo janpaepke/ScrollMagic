@@ -1,46 +1,46 @@
 import { DispatchableEvent } from './EventDispatcher';
 import { ScrollMagic } from './ScrollMagic';
 
-export enum ScrollMagicEventType {
+export enum EventType {
 	Enter = 'enter',
 	Leave = 'leave',
 	Progress = 'progress',
 }
 
-export enum ScrollMagicEventScrollDirection {
-	Forward = 'forward',
-	Reverse = 'reverse',
-}
-
-export enum ScrollMagicEventLocation {
+enum EventLocation {
 	Start = 'start',
 	Inside = 'inside',
 	End = 'end',
 }
 
+enum ScrollDirection {
+	Forward = 'forward',
+	Reverse = 'reverse',
+}
+
+type EnumToLiteral<T extends string> = `${T}`;
+export type ScrollMagicEventType = EnumToLiteral<EventType>;
+export type ScrollMagicEventLocation = EnumToLiteral<EventLocation>;
+export type ScrollMagicEventScrollDirection = EnumToLiteral<ScrollDirection>;
+
 class ScrollMagicEvent implements DispatchableEvent {
-	public readonly direction: ScrollMagicEventScrollDirection;
 	public readonly location: ScrollMagicEventLocation;
+	public readonly direction: ScrollMagicEventScrollDirection;
 	constructor(
 		public readonly target: ScrollMagic,
 		public readonly type: ScrollMagicEventType,
 		movingForward: boolean
 	) {
 		this.location = (() => {
-			if (ScrollMagicEventType.Progress === type) {
-				return ScrollMagicEventLocation.Inside;
+			if (EventType.Progress === type) {
+				return EventLocation.Inside;
 			}
-			if (
-				(ScrollMagicEventType.Enter === type && movingForward) ||
-				(ScrollMagicEventType.Leave === type && !movingForward)
-			) {
-				return ScrollMagicEventLocation.Start;
+			if ((EventType.Enter === type && movingForward) || (EventType.Leave === type && !movingForward)) {
+				return EventLocation.Start;
 			}
-			return ScrollMagicEventLocation.End;
+			return EventLocation.End;
 		})();
-		this.direction = movingForward
-			? ScrollMagicEventScrollDirection.Forward
-			: ScrollMagicEventScrollDirection.Reverse;
+		this.direction = movingForward ? ScrollDirection.Forward : ScrollDirection.Reverse;
 	}
 }
 export default ScrollMagicEvent;

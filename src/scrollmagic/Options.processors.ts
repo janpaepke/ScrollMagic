@@ -1,7 +1,6 @@
 import {
 	PixelConverterScrollParent,
 	Private,
-	PrivateComputed,
 	PrivateUninferred,
 	Public,
 	inferredTriggers,
@@ -22,7 +21,7 @@ import {
 } from './util/transformers';
 import { isHTMLElement, isNull, isSVGElement, isWindow } from './util/typeguards';
 
-const transformers: PropertyProcessors<Public, PrivateUninferred> = {
+const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
 	element: nullPassThrough(toSvgOrHtmlElement),
 	scrollParent: toValidScrollParent,
 	vertical: toBoolean,
@@ -33,10 +32,10 @@ const transformers: PropertyProcessors<Public, PrivateUninferred> = {
 };
 
 // removes unknown properties from supplied options
-export const sanitize = <T extends Partial<Public>>(options: T): T => sanitizeProperties(options, optionDefaults);
+export const sanitize = <T extends Public>(options: T): T => sanitizeProperties(options, optionDefaults);
 
 // converts all public values to their corresponding private value, leaving null values untoched
-const transform = (options: Partial<Public>): Partial<PrivateUninferred> => processProperties(options, transformers);
+const transform = (options: Public): Partial<PrivateUninferred> => processProperties(options, transformers);
 
 // processes remaining null values
 const infer = (options: PrivateUninferred): Private => {
@@ -85,10 +84,7 @@ const check = (options: Private): void => {
 	}
 };
 
-export const process = <T extends Partial<Public>>(
-	newOptions: T,
-	oldOptions: Private
-): { sanitized: T; processed: Private } => {
+export const process = <T extends Public>(newOptions: T, oldOptions: Private): { sanitized: T; processed: Private } => {
 	const sanitized = sanitize(newOptions);
 	const normalized = transform(sanitized);
 	const processed = infer({ ...oldOptions, ...normalized });

@@ -10,13 +10,13 @@ export type PixelConverterElement = (elementSize: number) => number;
 export type PixelConverterScrollParent = (scrollParentSize: number) => number;
 
 export type Public = {
-	element: Element | CssSelector | null;
-	scrollParent: Window | Document | Element | CssSelector;
-	vertical: boolean;
-	triggerStart: number | UnitString | CenterShorthand | PixelConverterScrollParent | null;
-	triggerEnd: number | UnitString | CenterShorthand | PixelConverterScrollParent | null;
-	elementStart: number | UnitString | CenterShorthand | PixelConverterElement;
-	elementEnd: number | UnitString | CenterShorthand | PixelConverterElement;
+	element?: Element | CssSelector | null;
+	scrollParent?: Window | Document | Element | CssSelector;
+	vertical?: boolean;
+	triggerStart?: number | UnitString | CenterShorthand | PixelConverterScrollParent | null; // null means infer default values based on wether or not an element is supplied
+	triggerEnd?: number | UnitString | CenterShorthand | PixelConverterScrollParent | null; // null means infer default values based on wether or not an element is supplied
+	elementStart?: number | UnitString | CenterShorthand | PixelConverterElement;
+	elementEnd?: number | UnitString | CenterShorthand | PixelConverterElement;
 };
 
 // basically a normalized version of the options
@@ -43,7 +43,7 @@ export type PrivateComputed = ModifyProperty<
 >;
 
 // default options
-export const defaults: Public = {
+export const defaults: Required<Public> = {
 	element: null,
 	scrollParent: window,
 	vertical: true,

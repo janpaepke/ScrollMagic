@@ -4,7 +4,7 @@ import EventDispatcher from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
-import ScrollMagicEvent, { ScrollMagicEventType } from './ScrollMagicEvent';
+import ScrollMagicEvent, { EventType, ScrollMagicEventType } from './ScrollMagicEvent';
 import getScrollPos from './util/getScrollPos';
 import pickDifferencesFlat from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
@@ -14,10 +14,6 @@ import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import ViewportObserver from './ViewportObserver';
 
-export { Public as ScrollMagicOptions } from './Options';
-
-// used for listeners to allow the value to be passed in either from the enum or as a string literal
-type EventTypeEnumOrUnion = ScrollMagicEventType | `${ScrollMagicEventType}`;
 type ElementBounds = {
 	start: number; //		position relative to viewport
 	size: number; // 		outer visible size of element (excluding margins)
@@ -49,7 +45,7 @@ export class ScrollMagic {
 	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
 
 	// all below options should only ever be changed by a dedicated method
-	protected optionsPublic: Options.Public = ScrollMagic.defaultOptionsPublic;
+	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
 	protected optionsPrivate!: Options.Private; // set in modify in constructor
 	protected elementBoundsCache: ElementBounds = {
 		// see typedef for details
@@ -74,8 +70,8 @@ export class ScrollMagic {
 	// TODO: correctly take into account container position, if not window
 	// TODO: fix if container size is 0
 	// TODO: Maybe only include internal errors for development? process.env...
-	constructor(options: Partial<Options.Public> = {}) {
-		const initOptions: Options.Public = {
+	constructor(options: Options.Public = {}) {
+		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,
 			...options,
 		};
@@ -193,11 +189,11 @@ export class ScrollMagic {
 		const forward = deltaProgress > 0;
 
 		if (previousProgress === 0 || previousProgress === 1) {
-			this.triggerEvent(ScrollMagicEventType.Enter, forward);
+			this.triggerEvent(EventType.Enter, forward);
 		}
-		this.triggerEvent(ScrollMagicEventType.Progress, forward);
+		this.triggerEvent(EventType.Progress, forward);
 		if (nextProgress === 0 || nextProgress === 1) {
-			this.triggerEvent(ScrollMagicEventType.Leave, forward);
+			this.triggerEvent(EventType.Leave, forward);
 		}
 	}
 
@@ -318,7 +314,7 @@ export class ScrollMagic {
 		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, forward));
 	}
 
-	public modify(options: Partial<Options.Public>): ScrollMagic {
+	public modify(options: Options.Public): ScrollMagic {
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
 		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
@@ -339,46 +335,46 @@ export class ScrollMagic {
 	}
 
 	// getter/setter public
-	public set element(element: Options.Public['element']) {
+	public set element(element: Required<Options.Public>['element']) {
 		this.modify({ element });
 	}
-	public get element(): Options.Public['element'] {
+	public get element(): Required<Options.Public>['element'] {
 		return this.optionsPublic.element;
 	}
-	public set scrollParent(scrollParent: Options.Public['scrollParent']) {
+	public set scrollParent(scrollParent: Required<Options.Public>['scrollParent']) {
 		this.modify({ scrollParent });
 	}
-	public get scrollParent(): Options.Public['scrollParent'] {
+	public get scrollParent(): Required<Options.Public>['scrollParent'] {
 		return this.optionsPublic.scrollParent;
 	}
-	public set vertical(vertical: Options.Public['vertical']) {
+	public set vertical(vertical: Required<Options.Public>['vertical']) {
 		this.modify({ vertical });
 	}
-	public get vertical(): Options.Public['vertical'] {
+	public get vertical(): Required<Options.Public>['vertical'] {
 		return this.optionsPublic.vertical;
 	}
-	public set triggerStart(triggerStart: Options.Public['triggerStart']) {
+	public set triggerStart(triggerStart: Required<Options.Public>['triggerStart']) {
 		this.modify({ triggerStart });
 	}
-	public get triggerStart(): Options.Public['triggerStart'] {
+	public get triggerStart(): Required<Options.Public>['triggerStart'] {
 		return this.optionsPublic.triggerStart;
 	}
-	public set triggerEnd(triggerEnd: Options.Public['triggerEnd']) {
+	public set triggerEnd(triggerEnd: Required<Options.Public>['triggerEnd']) {
 		this.modify({ triggerEnd });
 	}
-	public get triggerEnd(): Options.Public['triggerEnd'] {
+	public get triggerEnd(): Required<Options.Public>['triggerEnd'] {
 		return this.optionsPublic.triggerEnd;
 	}
-	public set elementStart(elementStart: Options.Public['elementStart']) {
+	public set elementStart(elementStart: Required<Options.Public>['elementStart']) {
 		this.modify({ elementStart });
 	}
-	public get elementStart(): Options.Public['elementStart'] {
+	public get elementStart(): Required<Options.Public>['elementStart'] {
 		return this.optionsPublic.elementStart;
 	}
-	public set elementEnd(elementEnd: Options.Public['elementEnd']) {
+	public set elementEnd(elementEnd: Required<Options.Public>['elementEnd']) {
 		this.modify({ elementEnd });
 	}
-	public get elementEnd(): Options.Public['elementEnd'] {
+	public get elementEnd(): Required<Options.Public>['elementEnd'] {
 		return this.optionsPublic.elementEnd;
 	}
 
@@ -418,16 +414,16 @@ export class ScrollMagic {
 	}
 
 	// event listener
-	public on(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+	public on(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
-	public off(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+	public off(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
 		return this;
 	}
 	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
-	public subscribe(type: EventTypeEnumOrUnion, cb: (e: ScrollMagicEvent) => void): () => void {
+	public subscribe(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): () => void {
 		return this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
 	}
 
@@ -442,7 +438,7 @@ export class ScrollMagic {
 
 	protected static defaultOptionsPublic = Options.defaults;
 	// get or change default options
-	public static default(options: Partial<Options.Public> = {}): Options.Public {
+	public static defaultOptions(options: Options.Public = {}): Required<Options.Public> {
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
 			...sanitizeOptions(options),
