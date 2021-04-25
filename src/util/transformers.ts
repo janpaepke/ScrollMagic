@@ -1,5 +1,4 @@
-import { failWith } from 'scrollmagic/ScrollMagicError';
-
+import { failWith } from '../ScrollMagicError';
 import {
 	isDocument,
 	isHTMLElement,

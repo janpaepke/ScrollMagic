@@ -1,4 +1,4 @@
-import { warn } from 'scrollmagic/ScrollMagicError';
+import { warn } from '../ScrollMagicError';
 
 export const sanitizeProperties = <T extends Record<string, any>>(
 	obj: T,

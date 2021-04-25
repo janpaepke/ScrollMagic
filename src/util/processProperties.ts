@@ -1,4 +1,4 @@
-import { failWith } from 'scrollmagic/ScrollMagicError';
+import { failWith } from '../ScrollMagicError';
 
 // type to ensure there's an output processor for every input
 export type PropertyProcessors<I extends { [X in keyof I]: unknown }, O extends { [X in keyof I]: unknown }> = {

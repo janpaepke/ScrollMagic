@@ -2,12 +2,17 @@
 	"compilerOptions": {
 		"baseUrl": "./src",
 		"outDir": "./dist",
+		"target": "ES5",
 		"strict": true,
+		"alwaysStrict": true,
+		"strictNullChecks": true,
 		"sourceMap": true,
 		"noImplicitAny": true,
-		"forceConsistentCasingInFileNames": true,
 		"downlevelIteration": true,
-		"target": "ES5"
+		"removeComments": true,
+		"forceConsistentCasingInFileNames": true,
+		"declaration": true,
+		"declarationMap": true
 	},
 	"include": ["src/**/*"]
 }
