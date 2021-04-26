@@ -1,3 +1,4 @@
+import { version } from '../package.json';
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import EventDispatcher from './EventDispatcher';
@@ -30,6 +31,7 @@ type ContainerBounds = {
 };
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
+	public readonly version = version;
 
 	private readonly dispatcher = new EventDispatcher();
 	private readonly container = new ContainerProxy(this);

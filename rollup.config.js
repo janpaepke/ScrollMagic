@@ -1,5 +1,7 @@
 import path from 'path';
 
+import json from '@rollup/plugin-json';
+import bundleSize from 'rollup-plugin-bundle-size';
 import license from 'rollup-plugin-license';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
@@ -53,5 +55,5 @@ const licenseConfig = {
 export default {
 	input: inputFile,
 	output: [umdOutput, esmOutput],
-	plugins: [typescript(tsPluginConfig), terser(minificationConfig), license(licenseConfig)],
+	plugins: [bundleSize(), json(), typescript(tsPluginConfig), terser(minificationConfig), license(licenseConfig)],
 };

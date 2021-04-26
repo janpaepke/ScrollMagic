@@ -2,14 +2,12 @@
 	"compilerOptions": {
 		"baseUrl": "./src",
 		"outDir": "./dist",
-		"target": "ES5",
+		"target": "ES6",
 		"strict": true,
-		"alwaysStrict": true,
-		"strictNullChecks": true,
 		"sourceMap": true,
-		"noImplicitAny": true,
-		"downlevelIteration": true,
 		"removeComments": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
 		"forceConsistentCasingInFileNames": true,
 		"declaration": true,
 		"declarationMap": true
