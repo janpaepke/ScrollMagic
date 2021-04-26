@@ -6,8 +6,7 @@
 		"strict": true,
 		"sourceMap": true,
 		"removeComments": true,
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
+		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"declaration": true,
 		"declarationMap": true
