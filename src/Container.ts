@@ -1,6 +1,6 @@
 import EventDispatcher, { DispatchableEvent } from './EventDispatcher';
 import debounce from './util/debounce';
-import getDimensions from './util/getDimensions';
+import getScrollContainerDimensions from './util/getScrollContainerDimensions';
 import getScrollPos from './util/getScrollPos';
 import registerEvent from './util/registerEvent';
 import throttleRaf from './util/throttleRaf';
@@ -14,17 +14,18 @@ type ScrollDelta = {
 	deltaY: number;
 };
 
-type EventType = 'scroll' | 'resize';
+// type EventType = 'scroll' | 'resize';
+enum EventType {
+	Scroll = 'scroll',
+	Resize = 'resize',
+}
 export class ContainerEvent implements DispatchableEvent {
 	constructor(
 		public readonly target: Container,
-		public readonly type: EventType,
+		public readonly type: `${EventType}`,
 		public readonly scrollDelta: ScrollDelta = { deltaX: 0, deltaY: 0 } // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize evnents...
 	) {}
 }
-
-const scroll = 'scroll';
-const resize = 'resize';
 
 export class Container {
 	private dimensions = {
@@ -64,18 +65,19 @@ export class Container {
 		this.scrollPos = getScrollPos(this.scrollParent);
 		const deltaY = this.scrollPos.top - prevScrollPos.top;
 		const deltaX = this.scrollPos.left - prevScrollPos.left;
-		this.dispatcher.dispatchEvent(new ContainerEvent(this, scroll, { deltaX, deltaY }));
+		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Scroll, { deltaX, deltaY }));
 	}
+
 	private updateDimensions() {
-		this.dimensions = getDimensions(this.scrollParent);
-		this.dispatcher.dispatchEvent(new ContainerEvent(this, resize));
+		this.dimensions = getScrollContainerDimensions(this.scrollParent);
+		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Resize));
 	}
 
 	// subscribes to resize events of scrollParent and returns a function to reverse the effect
 	private subscribeResize(onResize: () => void) {
 		const { scrollParent } = this;
 		if (isWindow(scrollParent)) {
-			return registerEvent(scrollParent, resize, onResize);
+			return registerEvent(scrollParent, EventType.Resize, onResize);
 		}
 		const observer = new ResizeObserver(onResize);
 		observer.observe(scrollParent);
@@ -84,11 +86,11 @@ export class Container {
 
 	// subscribes to scroll events of scrollParent and returns a function to reverse the effect
 	private subscribeScroll(onScroll: () => void) {
-		return registerEvent(this.scrollParent, scroll, onScroll);
+		return registerEvent(this.scrollParent, EventType.Scroll, onScroll);
 	}
 
 	// subscribes Container and returns a function to reverse the effect
-	public subscribe(type: EventType, cb: (e: ContainerEvent) => void): () => void {
+	public subscribe(type: `${EventType}`, cb: (e: ContainerEvent) => void): () => void {
 		return this.dispatcher.addEventListener(type, cb);
 	}
 

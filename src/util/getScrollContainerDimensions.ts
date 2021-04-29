@@ -8,7 +8,7 @@ interface Dimensions {
 }
 
 // info limited to what we need...
-const getDimensions = (element: Window | Element): Dimensions => {
+const getScrollContainerDimensions = (element: Window | Element): Dimensions => {
 	const elem = isWindow(element) ? document.documentElement : element;
 	const { clientWidth, scrollHeight, scrollWidth } = elem;
 	let { clientHeight } = elem;
@@ -28,4 +28,4 @@ const getDimensions = (element: Window | Element): Dimensions => {
 	};
 };
 
-export default getDimensions;
+export default getScrollContainerDimensions;

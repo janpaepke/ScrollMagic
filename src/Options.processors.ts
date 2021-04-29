@@ -7,7 +7,7 @@ import {
 	defaults as optionDefaults,
 } from './Options';
 import { failWith, warn } from './ScrollMagicError';
-import getDimensions from './util/getDimensions';
+import getScrollContainerDimensions from './util/getScrollContainerDimensions';
 import { pickRelevantValues } from './util/pickRelevantInfo';
 import processProperties, { PropertyProcessors } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
@@ -64,7 +64,7 @@ const infer = (options: PrivateUninferred): Private => {
 const check = (options: Private): void => {
 	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent } = options;
 	const { size: elementSize } = getElementSize(options);
-	const { clientSize: containerSize } = pickRelevantValues(vertical, getDimensions(scrollParent));
+	const { clientSize: containerSize } = pickRelevantValues(vertical, getScrollContainerDimensions(scrollParent));
 
 	const elementDistance = elementSize - elementStart(elementSize) - elementEnd(elementSize);
 	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
