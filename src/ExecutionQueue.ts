@@ -1,4 +1,4 @@
-import throttleRaf from './util/throttleRaf';
+import { throttleRaf } from './util/throttleRaf';
 import { isUndefined } from './util/typeguards';
 
 type Command = () => void;

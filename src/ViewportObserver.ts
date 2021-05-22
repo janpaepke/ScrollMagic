@@ -1,4 +1,4 @@
-import pickDifferencesFlat from './util/pickDifferencesFlat';
+import { pickDifferencesFlat } from './util/pickDifferencesFlat';
 import { isUndefined } from './util/typeguards';
 
 type Margin = {
@@ -20,7 +20,7 @@ const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right,
 
 const none = '0px';
 
-export default class ViewportObserver {
+export class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
 	private options: Required<Options> = {

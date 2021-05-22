@@ -1,4 +1,4 @@
-const throttleRaf = <F extends (...a: any) => any>(
+export const throttleRaf = <F extends (...a: any) => any>(
 	func: F
 ): ((this: ThisParameterType<F>, ...args: Parameters<F>) => void) & {
 	cancel: () => void;
@@ -21,5 +21,3 @@ const throttleRaf = <F extends (...a: any) => any>(
 	};
 	return scheduled;
 };
-
-export default throttleRaf;

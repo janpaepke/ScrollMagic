@@ -13,7 +13,7 @@ export type PropertyProcessors<I extends { [X in keyof I]: unknown }, O extends 
  * @returns the normalized and checked object
  */
 
-const processProperties = <
+export const processProperties = <
 	I extends { [X in keyof I]: any },
 	P extends { [X in K]?: (value: Required<I>[X]) => any },
 	O extends { [X in K]: P[X] extends (...args: any) => infer R ? R : I[X] },
@@ -38,4 +38,3 @@ const processProperties = <
 		return result;
 	}, {} as O);
 };
-export default processProperties;

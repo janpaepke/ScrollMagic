@@ -6,7 +6,7 @@
  * @param {*} listener callback
  * @param {*} options Event listener options
  */
-const registerEvent = (
+export const registerEvent = (
 	target: GlobalEventHandlers,
 	type: keyof (GlobalEventHandlersEventMap & WindowEventMap), // this does not catch if the wrong event is used on the wrong target, but should be stricter than 'string'
 	listener: EventListenerOrEventListenerObject,
@@ -15,5 +15,3 @@ const registerEvent = (
 	target.addEventListener(type, listener, options);
 	return target.removeEventListener.bind(target, type, listener, options);
 };
-
-export default registerEvent;

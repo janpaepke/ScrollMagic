@@ -7,9 +7,9 @@ import {
 	defaults as optionDefaults,
 } from './Options';
 import { failWith, warn } from './ScrollMagicError';
-import getScrollContainerDimensions from './util/getScrollContainerDimensions';
+import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { pickRelevantValues } from './util/pickRelevantInfo';
-import processProperties, { PropertyProcessors } from './util/processProperties';
+import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
 import {
 	nullPassThrough,

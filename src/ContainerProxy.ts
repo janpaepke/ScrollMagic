@@ -49,10 +49,13 @@ export class ContainerProxy {
 		this.container = undefined;
 	}
 
-	public get rect(): Container['size'] {
+	public get rect(): Container['size'] & Container['position'] {
 		if (isUndefined(this.container)) {
 			throw failWithInternal(`Can't get size when not attached to a container`);
 		}
-		return this.container.size;
+		return {
+			...this.container.position,
+			...this.container.size,
+		};
 	}
 }

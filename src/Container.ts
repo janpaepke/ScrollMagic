@@ -1,9 +1,9 @@
-import EventDispatcher, { DispatchableEvent } from './EventDispatcher';
-import debounce from './util/debounce';
-import getScrollContainerDimensions from './util/getScrollContainerDimensions';
-import getScrollPos from './util/getScrollPos';
-import registerEvent from './util/registerEvent';
-import throttleRaf from './util/throttleRaf';
+import { DispatchableEvent, EventDispatcher } from './EventDispatcher';
+import { debounce } from './util/debounce';
+import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
+import { getScrollPos } from './util/getScrollPos';
+import { registerEvent } from './util/registerEvent';
+import { throttleRaf } from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
 
 export type ScrollParent = HTMLElement | Window;
@@ -40,6 +40,11 @@ export class Container {
 		top: 0,
 		left: 0,
 	};
+	private positionCache = {
+		// position of scroll parent (if not window) relative to window
+		top: 0,
+		left: 0,
+	};
 	private dispatcher = new EventDispatcher();
 	private cleanups = new Array<CleanUpFunction>();
 	/**
@@ -49,12 +54,16 @@ export class Container {
 	 */
 	constructor(public readonly scrollParent: ScrollParent) {
 		const throttledScroll = throttleRaf(this.updateScrollPos.bind(this));
-		const throttledResize = debounce(this.updateDimensions.bind(this), 100);
+		const debouncedResize = debounce(this.updateDimensions.bind(this), 100);
+		if (!isWindow(scrollParent)) {
+			const throttledMove = throttleRaf(this.updatePosition.bind(this));
+			this.cleanups.push(throttledMove.cancel, this.subscribeMove(throttledMove));
+		}
 		this.cleanups.push(
 			throttledScroll.cancel,
-			throttledResize.cancel,
+			debouncedResize.cancel,
 			this.subscribeScroll(throttledScroll),
-			this.subscribeResize(throttledResize)
+			this.subscribeResize(debouncedResize)
 		);
 		this.updateScrollPos();
 		this.updateDimensions();
@@ -73,6 +82,12 @@ export class Container {
 		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Resize));
 	}
 
+	private updatePosition() {
+		// this should only be executed, when scrollParent is NOT window
+		const { top, left } = (this.scrollParent as HTMLElement).getBoundingClientRect();
+		this.positionCache = { top, left };
+	}
+
 	// subscribes to resize events of scrollParent and returns a function to reverse the effect
 	private subscribeResize(onResize: () => void) {
 		const { scrollParent } = this;
@@ -89,6 +104,14 @@ export class Container {
 		return registerEvent(this.scrollParent, EventType.Scroll, onScroll);
 	}
 
+	private subscribeMove(onMove: () => void) {
+		const listeners = [
+			registerEvent(window, EventType.Scroll, onMove),
+			registerEvent(window, EventType.Resize, onMove),
+		];
+		return () => listeners.forEach(cleanup => cleanup());
+	}
+
 	// subscribes Container and returns a function to reverse the effect
 	public subscribe(type: `${EventType}`, cb: (e: ContainerEvent) => void): () => void {
 		return this.dispatcher.addEventListener(type, cb);
@@ -96,6 +119,10 @@ export class Container {
 
 	public get size(): Container['dimensions'] {
 		return this.dimensions;
+	}
+
+	public get position(): Container['positionCache'] {
+		return this.positionCache;
 	}
 
 	public destroy(): void {

@@ -1,18 +1,18 @@
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
-import EventDispatcher from './EventDispatcher';
+import { EventDispatcher } from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
-import ScrollMagicEvent, { EventType, ScrollMagicEventType } from './ScrollMagicEvent';
-import getScrollPos from './util/getScrollPos';
-import pickDifferencesFlat from './util/pickDifferencesFlat';
+import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
+import { getScrollPos } from './util/getScrollPos';
+import { pickDifferencesFlat } from './util/pickDifferencesFlat';
 import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
 import { roundToDecimals } from './util/roundToDecimals';
-import throttleRaf from './util/throttleRaf';
+import { throttleRaf } from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
-import ViewportObserver from './ViewportObserver';
+import { ViewportObserver } from './ViewportObserver';
 
 type ElementBounds = {
 	start: number; //		position relative to viewport
@@ -68,6 +68,7 @@ export class ScrollMagic {
 
 	// TODO: build plugin interface
 	// TODO: correctly take into account container position, if not window
+	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	// TODO: fix if container size is 0
 	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Options.Public = {}) {
@@ -166,10 +167,12 @@ export class ScrollMagic {
 
 	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
-		const { offsetStart, start: elementPosition } = this.elementBoundsCache;
-		const { offsetStart: containerStart } = this.containerBoundsCache;
+		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
+		const { offsetStart: containerOffset } = this.containerBoundsCache;
+		const { start: containerPosition } = pickRelevantValues(this.optionsPrivate.vertical, this.container.rect);
 
-		const elementStart = elementPosition + offsetStart;
+		const elementStart = elementPosition + elementOffset;
+		const containerStart = containerPosition + containerOffset;
 		const passed = containerStart - elementStart;
 		const total = this.getTrackSize();
 
@@ -310,7 +313,7 @@ export class ScrollMagic {
 		}
 	}
 
-	protected triggerEvent(type: ScrollMagicEventType, forward: boolean): void {
+	protected triggerEvent(type: EventType, forward: boolean): void {
 		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, forward));
 	}
 
@@ -414,17 +417,17 @@ export class ScrollMagic {
 	}
 
 	// event listener
-	public on(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
-		this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
+	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+		this.dispatcher.addEventListener(type, cb);
 		return this;
 	}
-	public off(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
-		this.dispatcher.removeEventListener(type as ScrollMagicEventType, cb);
+	public off(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+		this.dispatcher.removeEventListener(type, cb);
 		return this;
 	}
 	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
-	public subscribe(type: ScrollMagicEventType, cb: (e: ScrollMagicEvent) => void): () => void {
-		return this.dispatcher.addEventListener(type as ScrollMagicEventType, cb);
+	public subscribe(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): () => void {
+		return this.dispatcher.addEventListener(type, cb);
 	}
 
 	public destroy(): void {
@@ -445,4 +448,7 @@ export class ScrollMagic {
 		};
 		return this.defaultOptionsPublic;
 	}
+	public static readonly EventType = EventType;
+	public static readonly EventLocation = EventLocation;
+	public static readonly EventScrollDirection = ScrollDirection;
 }

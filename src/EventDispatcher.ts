@@ -7,7 +7,7 @@ export interface DispatchableEvent {
 }
 
 type Callback<E extends DispatchableEvent> = (event: E) => void;
-export default class EventDispatcher {
+export class EventDispatcher {
 	private callbacks = new Map<string, Callback<any>[]>();
 
 	// adds a listener to the dispatcher. returns a function to reverse the effect.

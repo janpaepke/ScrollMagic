@@ -1,4 +1,4 @@
-const debounce = <F extends (...args: any) => ReturnType<F>>(func: F, wait: number) => {
+export const debounce = <F extends (...args: any) => ReturnType<F>>(func: F, wait: number) => {
 	let timeoutId = 0; // setTimeout returns positive integer, so 0 represents no call requested
 
 	const debounced = function (this: ThisParameterType<F>, ...args: Parameters<F>) {
@@ -16,4 +16,3 @@ const debounce = <F extends (...args: any) => ReturnType<F>>(func: F, wait: numb
 
 	return debounced as ((...args: Parameters<F>) => ReturnType<F>) & { cancel: () => void };
 };
-export default debounce;

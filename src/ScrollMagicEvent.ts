@@ -7,23 +7,23 @@ export enum EventType {
 	Progress = 'progress',
 }
 
-enum EventLocation {
+export enum EventLocation {
 	Start = 'start',
 	Inside = 'inside',
 	End = 'end',
 }
 
-enum ScrollDirection {
+export enum ScrollDirection {
 	Forward = 'forward',
 	Reverse = 'reverse',
 }
 
 type EnumToLiteral<T extends string> = `${T}`;
-export type ScrollMagicEventType = EnumToLiteral<EventType>;
-export type ScrollMagicEventLocation = EnumToLiteral<EventLocation>;
-export type ScrollMagicEventScrollDirection = EnumToLiteral<ScrollDirection>;
+type ScrollMagicEventType = EnumToLiteral<EventType>;
+type ScrollMagicEventLocation = EnumToLiteral<EventLocation>;
+type ScrollMagicEventScrollDirection = EnumToLiteral<ScrollDirection>;
 
-class ScrollMagicEvent implements DispatchableEvent {
+export class ScrollMagicEvent implements DispatchableEvent {
 	public readonly location: ScrollMagicEventLocation;
 	public readonly direction: ScrollMagicEventScrollDirection;
 	constructor(
@@ -43,4 +43,3 @@ class ScrollMagicEvent implements DispatchableEvent {
 		this.direction = movingForward ? ScrollDirection.Forward : ScrollDirection.Reverse;
 	}
 }
-export default ScrollMagicEvent;
