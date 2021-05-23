@@ -6,17 +6,16 @@ type CenterShorthand = 'center';
 type CssSelector = string;
 
 // takes the width or height height of an element and returns the value that is used for position calculations
-export type PixelConverterElement = (elementSize: number) => number;
-export type PixelConverterScrollParent = (scrollParentSize: number) => number;
+export type PixelConverter = (size: number) => number;
 
 export type Public = {
 	element?: Element | CssSelector | null;
 	scrollParent?: Window | Document | Element | CssSelector;
 	vertical?: boolean;
-	triggerStart?: number | UnitString | CenterShorthand | PixelConverterScrollParent | null; // null means infer default values based on wether or not an element is supplied
-	triggerEnd?: number | UnitString | CenterShorthand | PixelConverterScrollParent | null; // null means infer default values based on wether or not an element is supplied
-	elementStart?: number | UnitString | CenterShorthand | PixelConverterElement;
-	elementEnd?: number | UnitString | CenterShorthand | PixelConverterElement;
+	triggerStart?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
+	triggerEnd?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
+	elementStart?: number | UnitString | CenterShorthand | PixelConverter;
+	elementEnd?: number | UnitString | CenterShorthand | PixelConverter;
 };
 
 // basically a normalized version of the options
@@ -26,10 +25,10 @@ export type Private = SameProperties<
 		element: HTMLElement | SVGElement;
 		scrollParent: Window | HTMLElement;
 		vertical: boolean;
-		triggerStart: PixelConverterScrollParent;
-		triggerEnd: PixelConverterScrollParent;
-		elementStart: PixelConverterElement;
-		elementEnd: PixelConverterElement;
+		triggerStart: PixelConverter;
+		triggerEnd: PixelConverter;
+		elementStart: PixelConverter;
+		elementEnd: PixelConverter;
 	}
 >;
 
@@ -54,7 +53,7 @@ export const defaults: Required<Public> = {
 };
 
 // applied during fallback inference. if triggerStart or triggerEnd is null this will apply default if element is present and fallback otherwise
-export const inferredTriggers: Record<string, PixelConverterElement> = {
+export const inferredTriggers: Record<string, PixelConverter> = {
 	default: (scrollParentSize: number) => scrollParentSize, // default 100%, starts at bottom, ends at top
 	fallback: () => 0, // if no element is supplied, it will fall back to the first child of scroll parent (usually the body), so it starts at the top and ends at the bottom
 };

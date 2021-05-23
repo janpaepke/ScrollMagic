@@ -1,5 +1,5 @@
 import {
-	PixelConverterScrollParent,
+	PixelConverter,
 	Private,
 	PrivateUninferred,
 	Public,
@@ -50,7 +50,7 @@ const infer = (options: PrivateUninferred): Private => {
 			return elem;
 		});
 
-	const inferTrigger = (val: PixelConverterScrollParent | null) =>
+	const inferTrigger = (val: PixelConverter | null) =>
 		toNonNullable(val, () => (isNull(element) ? inferredTriggers.fallback : inferredTriggers.default));
 
 	return processProperties(options, {
