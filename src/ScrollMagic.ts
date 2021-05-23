@@ -209,14 +209,20 @@ export class ScrollMagic {
 		this.viewportObserver.modify(observerOptions);
 	}
 
-	protected onOptionChanges(changes: Array<keyof Options.Private>): void {
+	protected onOptionChanges(changes: Array<keyof Options.Public>): void {
+		if (changes.length === 0) {
+			return;
+		}
 		const isChanged = changes.includes.bind(changes);
-		const sizeChanged = isChanged('elementStart');
-		const offsetChanged = isChanged('elementEnd');
+		const elementStartChanged = isChanged('elementStart');
+		const elementEndChanged = isChanged('elementEnd');
 		const elementChanged = isChanged('element');
 		const scrollParentChanged = isChanged('scrollParent');
+		const triggerStartChanged = isChanged('triggerStart');
+		const triggerEndChanged = isChanged('triggerEnd');
+		const directionChanged = isChanged('vertical');
 
-		if (sizeChanged || offsetChanged || elementChanged) {
+		if (elementStartChanged || elementEndChanged || elementChanged) {
 			this.update.elementBounds.schedule();
 			if (elementChanged) {
 				this.updateIntersectingState(undefined);
@@ -227,13 +233,16 @@ export class ScrollMagic {
 				this.resizeObserver.observe(element);
 			}
 		}
-		if (scrollParentChanged) {
-			this.update.containerBounds.schedule();
-			this.updateIntersectingState(undefined);
-			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
+		if (scrollParentChanged || triggerStartChanged || triggerEndChanged || directionChanged) {
+			this.update.viewportObserver.schedule();
+			if (scrollParentChanged) {
+				this.update.containerBounds.schedule();
+				this.updateIntersectingState(undefined);
+				this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
+			}
 		}
-		// if the options change we always have to refresh the viewport observer, regardless which one it is...
-		this.update.viewportObserver.schedule();
+		// if any options changes we always have to refresh the progress
+		this.update.progress.schedule();
 	}
 
 	protected onElementResize(): void {
@@ -320,17 +329,13 @@ export class ScrollMagic {
 	public modify(options: Options.Public): ScrollMagic {
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
-		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
-
 		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
-			? processed
-			: pickDifferencesFlat(processed, this.optionsPrivate);
-		const changedOptions = Object.keys(changed) as Array<keyof Options.Private>;
+			? processed // contains all option keys
+			: pickDifferencesFlat(sanitized, this.optionsPublic);
 
-		if (changedOptions.length === 0) {
-			return this;
-		}
+		const changedOptions = Object.keys(changed) as Array<keyof Options.Public>;
 
+		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
 		this.optionsPrivate = processed;
 
 		this.onOptionChanges(changedOptions);
