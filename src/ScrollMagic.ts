@@ -28,6 +28,13 @@ type ContainerBounds = {
 	trackSize: number; // 	effective track size including offsets
 	scrollSize: number; //	total size of content of container
 };
+
+export interface ScrollMagicPlugin {
+	onAdd?(this: ScrollMagic): void;
+	onRemove?(this: ScrollMagic): void;
+	onModify?(this: ScrollMagic, changesPublic: Options.Public): void;
+}
+
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
@@ -43,6 +50,7 @@ export class ScrollMagic {
 		progress: this.updateProgress.bind(this),
 	});
 	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
+	private readonly plugins = new Set<ScrollMagicPlugin>();
 
 	// all below options should only ever be changed by a dedicated method
 	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
@@ -66,7 +74,6 @@ export class ScrollMagic {
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
-	// TODO: build plugin interface
 	// TODO: correctly take into account container position, if not window
 	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	// TODO: fix if container size is 0
@@ -209,7 +216,8 @@ export class ScrollMagic {
 		this.viewportObserver.modify(observerOptions);
 	}
 
-	protected onOptionChanges(changes: Array<keyof Options.Public>): void {
+	protected onOptionChanges(changedOptions: Options.Public): void {
+		const changes = Object.keys(changedOptions) as Array<keyof Options.Public>;
 		if (changes.length === 0) {
 			return;
 		}
@@ -329,16 +337,27 @@ export class ScrollMagic {
 	public modify(options: Options.Public): ScrollMagic {
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
-		const changed = isUndefined(this.optionsPrivate) // internal options not set on first run, so all changed
-			? processed // contains all option keys
+		const changedOptions = isUndefined(this.optionsPublic) // not set on first run, so all changed
+			? sanitized
 			: pickDifferencesFlat(sanitized, this.optionsPublic);
 
-		const changedOptions = Object.keys(changed) as Array<keyof Options.Public>;
-
-		this.optionsPublic = { ...this.optionsPublic, ...sanitized };
+		this.optionsPublic = { ...this.optionsPublic, ...changedOptions };
 		this.optionsPrivate = processed;
 
 		this.onOptionChanges(changedOptions);
+		this.plugins.forEach(plugin => plugin.onModify?.call(this, changedOptions));
+		return this;
+	}
+
+	public addPlugin(plugin: ScrollMagicPlugin): ScrollMagic {
+		this.plugins.add(plugin);
+		plugin.onAdd?.call(this);
+		return this;
+	}
+
+	public removePlugin(plugin: ScrollMagicPlugin): ScrollMagic {
+		this.plugins.delete(plugin);
+		plugin.onRemove?.call(this);
 		return this;
 	}
 
@@ -440,6 +459,7 @@ export class ScrollMagic {
 		this.resizeObserver.disconnect();
 		this.viewportObserver.disconnect();
 		this.container.detach();
+		this.plugins.forEach(this.removePlugin);
 	}
 
 	// static options/methods

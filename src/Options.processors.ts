@@ -41,7 +41,7 @@ const transform = (options: Public): Partial<PrivateUninferred> => processProper
 const infer = (options: PrivateUninferred): Private => {
 	const { scrollParent, element } = options;
 
-	const inferElement = (elem: HTMLElement | SVGElement | null) =>
+	const inferElement = (elem: Element | null) =>
 		toNonNullable(elem, () => {
 			const elem = isWindow(scrollParent) ? document.body : scrollParent.firstElementChild;
 			if (isNull(elem) || !(isHTMLElement(elem) || isSVGElement(elem))) {

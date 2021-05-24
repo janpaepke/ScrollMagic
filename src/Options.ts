@@ -22,7 +22,7 @@ export type Public = {
 export type Private = SameProperties<
 	Public,
 	{
-		element: HTMLElement | SVGElement;
+		element: Element;
 		scrollParent: Window | HTMLElement;
 		vertical: boolean;
 		triggerStart: PixelConverter;

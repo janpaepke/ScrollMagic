@@ -1,3 +1,4 @@
+// Object.fromEntries replacement
 const fromEntries = <T extends { [key: string]: any }>(obj: T, [key, value]: [string, any]) => ({
 	...obj,
 	[key]: value,
