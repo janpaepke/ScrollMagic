@@ -439,6 +439,9 @@ export class ScrollMagic {
 			elementEnd,
 		};
 	}
+	public get pluginList(): Array<ScrollMagicPlugin> {
+		return [...this.plugins];
+	}
 
 	// event listener
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
@@ -459,7 +462,7 @@ export class ScrollMagic {
 		this.resizeObserver.disconnect();
 		this.viewportObserver.disconnect();
 		this.container.detach();
-		this.plugins.forEach(this.removePlugin);
+		this.plugins.forEach(this.removePlugin.bind(this));
 	}
 
 	// static options/methods

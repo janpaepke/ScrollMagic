@@ -104,8 +104,7 @@ export class ViewportObserver {
 		return this;
 	}
 	public unobserve(elem: Element): ViewportObserver {
-		if (this.observedElements.has(elem)) {
-			this.observedElements.delete(elem);
+		if (this.observedElements.delete(elem)) {
 			this.observerEnter?.unobserve(elem);
 			this.observerLeave?.unobserve(elem);
 		}
