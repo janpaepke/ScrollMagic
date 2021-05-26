@@ -309,6 +309,7 @@ export class ScrollMagic {
 		const potentiallySkipped = Math.abs(scrollDelta) > this.getTrackSize();
 
 		if (!this.intersecting && !potentiallySkipped) {
+			// if we're not intersecting and there's no danger we skipped the scene, we don't have to do anything...
 			return;
 		}
 		update.elementBounds.schedule();
@@ -321,11 +322,13 @@ export class ScrollMagic {
 			/**
 			 * * intersection state changed
 			 * updateContainerBounds => 	never
-			 * updateElementBounds =>		never (would be caught by onElementResize or onContainerUpdate)
+			 * updateElementBounds =>		schedule regardless, if intersection state changed, position likely did, too.
 			 * updateViewportObserver =>	never
 			 * updateProgress =>			schedule regardless, execute regardless
 			 */
 			this.updateIntersectingState(intersecting);
+
+			this.update.elementBounds.schedule();
 			this.update.progress.schedule();
 		}
 	}
