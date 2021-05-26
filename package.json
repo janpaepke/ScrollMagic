@@ -1,7 +1,7 @@
 {
 	"name": "scrollmagic",
 	"title": "ScrollMagic",
-	"version": "3.0.0-alpha.2",
+	"version": "3.0.0-alpha.3",
 	"description": "The Library for magical scroll interactions.",
 	"main": "./dist/umd/scrollmagic.js",
 	"module": "./dist/esm/scrollmagic.esm.js",
@@ -36,7 +36,7 @@
 		"lint:fix": "eslint --fix ./src --ext .ts",
 		"prettier": "prettier --check ./src",
 		"prettier:fix": "prettier --write ./src",
-		"release:pre": "npm version prerelease --preid='alpha' --git-tag-version=false && npm publish --tag next"
+		"release:pre": "npm version prerelease --preid='alpha' && npm run build && npm publish --tag next"
 	},
 	"repository": {
 		"type": "git",
