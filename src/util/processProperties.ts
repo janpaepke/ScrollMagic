@@ -1,4 +1,4 @@
-import { failWith } from '../ScrollMagicError';
+import { makeError } from '../ScrollMagicError';
 
 // type to ensure there's an output processor for every input
 export type PropertyProcessors<I extends { [X in keyof I]: unknown }, O extends { [X in keyof I]: unknown }> = {
@@ -32,7 +32,7 @@ export const processProperties = <
 		try {
 			processedValue = processor?.(value) ?? value;
 		} catch (e) {
-			throw failWith(getErrorMessage(value, prop, e.message));
+			throw makeError(getErrorMessage(value, prop, e.message));
 		}
 		result[prop] = processedValue;
 		return result;

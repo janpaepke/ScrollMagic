@@ -1,6 +1,6 @@
 import { Container, ContainerEvent, ScrollParent } from './Container';
 import { ScrollMagic } from './ScrollMagic';
-import { failWithInternal } from './ScrollMagicError';
+import { makeError } from './ScrollMagicError';
 import { isUndefined } from './util/typeguards';
 
 type EventCallback = (e: ContainerEvent) => void;
@@ -35,7 +35,7 @@ export class ContainerProxy {
 		const { scrollParent } = this.container;
 		const cache = ContainerProxy.cache.get(scrollParent);
 		if (isUndefined(cache)) {
-			throw failWithInternal('No cache info for scrollParent');
+			throw makeError('No cache info for scrollParent', true);
 		}
 		const [container, scenes] = cache;
 		scenes.delete(this.scene);
@@ -51,7 +51,7 @@ export class ContainerProxy {
 
 	public get rect(): Container['size'] & Container['position'] {
 		if (isUndefined(this.container)) {
-			throw failWithInternal(`Can't get size when not attached to a container`);
+			throw makeError(`Can't get size when not attached to a container`, true);
 		}
 		return {
 			...this.container.position,

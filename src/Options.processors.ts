@@ -6,7 +6,7 @@ import {
 	inferredTriggers,
 	defaults as optionDefaults,
 } from './Options';
-import { failWith, warn } from './ScrollMagicError';
+import { makeError, warn } from './ScrollMagicError';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { pickRelevantValues } from './util/pickRelevantInfo';
 import { PropertyProcessors, processProperties } from './util/processProperties';
@@ -45,7 +45,7 @@ const infer = (options: PrivateUninferred): Private => {
 		toNonNullable(elem, () => {
 			const elem = isWindow(scrollParent) ? document.body : scrollParent.firstElementChild;
 			if (isNull(elem) || !(isHTMLElement(elem) || isSVGElement(elem))) {
-				throw failWith(`Could not autodetect element, as scrollParent has no valid children.`);
+				throw makeError(`Could not autodetect element, as scrollParent has no valid children.`);
 			}
 			return elem;
 		});

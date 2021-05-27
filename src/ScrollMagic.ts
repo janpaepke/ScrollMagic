@@ -77,7 +77,6 @@ export class ScrollMagic {
 	// TODO: correctly take into account container position, if not window
 	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	// TODO: fix if container size is 0
-	// TODO: Maybe only include internal errors for development? process.env...
 	constructor(options: Options.Public = {}) {
 		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,

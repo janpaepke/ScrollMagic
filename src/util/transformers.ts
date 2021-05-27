@@ -1,4 +1,4 @@
-import { failWith } from '../ScrollMagicError';
+import { makeError } from '../ScrollMagicError';
 import {
 	isDocument,
 	isHTMLElement,
@@ -24,7 +24,7 @@ const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelCo
 export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (isNull(match)) {
-		throw failWith(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (=50%)`);
+		throw makeError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (=50%)`);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
 	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
@@ -48,10 +48,10 @@ export const toPixelConverter = (
 	try {
 		returnsNumber = isNumber(val(1));
 	} catch (e) {
-		throw failWith('Unsupported value type');
+		throw makeError('Unsupported value type');
 	}
 	if (!returnsNumber) {
-		throw failWith('Function must return a number');
+		throw makeError('Function must return a number');
 	}
 	return val;
 };
@@ -59,7 +59,7 @@ export const toPixelConverter = (
 export const selectorToSingleElement = (selector: string): Element => {
 	const elem = document.querySelector(selector);
 	if (isNull(elem)) {
-		throw failWith(`No element found for selector ${selector}`);
+		throw makeError(`No element found for selector ${selector}`);
 	}
 	return elem;
 };
@@ -68,7 +68,7 @@ export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | S
 	const elem = isString(reference) ? selectorToSingleElement(reference) : reference;
 	const { body } = window.document;
 	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
-		throw failWith('Invalid element supplied');
+		throw makeError('Invalid element supplied');
 	}
 	return elem;
 };
@@ -79,7 +79,7 @@ export const toValidScrollParent = (container: Window | Document | Element | str
 	}
 	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {
-		throw failWith(`Can't use SVG as scrollParent`);
+		throw makeError(`Can't use SVG as scrollParent`);
 	}
 	return elem;
 };
