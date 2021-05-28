@@ -8,7 +8,7 @@ import {
 } from './Options';
 import { makeError, warn } from './ScrollMagicError';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
-import { pickRelevantValues } from './util/pickRelevantInfo';
+import { agonosticValues } from './util/agnosticValues';
 import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
 import {
@@ -64,7 +64,7 @@ const infer = (options: PrivateUninferred): Private => {
 const check = (options: Private): void => {
 	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent } = options;
 	const { size: elementSize } = getElementSize(options);
-	const { clientSize: containerSize } = pickRelevantValues(vertical, getScrollContainerDimensions(scrollParent));
+	const { clientSize: containerSize } = agonosticValues(vertical, getScrollContainerDimensions(scrollParent));
 
 	const elementDistance = elementSize - elementStart(elementSize) - elementEnd(elementSize);
 	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
@@ -94,4 +94,4 @@ export const process = <T extends Public>(newOptions: T, oldOptions: Private): {
 
 // helpers
 const getElementSize = ({ vertical, element }: Pick<Private, 'vertical' | 'element'>) =>
-	pickRelevantValues(vertical, element.getBoundingClientRect());
+	agonosticValues(vertical, element.getBoundingClientRect());

@@ -7,7 +7,7 @@ import { process as processOptions, sanitize as sanitizeOptions } from './Option
 import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
 import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
-import { pickRelevantProps, pickRelevantValues } from './util/pickRelevantInfo';
+import { agnosticProps, agonosticValues } from './util/agnosticValues';
 import { roundToDecimals } from './util/roundToDecimals';
 import { throttleRaf } from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
@@ -87,9 +87,9 @@ export class ScrollMagic {
 
 	protected getViewportMargin(): { top: string; left: string; right: string; bottom: string } {
 		const { vertical } = this.optionsPrivate;
-		const { start: startProp, end: endProp } = pickRelevantProps(vertical);
-		const { start: oppositeStartProp, end: oppositeEndProp } = pickRelevantProps(!vertical);
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = pickRelevantValues(
+		const { start: startProp, end: endProp } = agnosticProps(vertical);
+		const { start: oppositeStartProp, end: oppositeEndProp } = agnosticProps(!vertical);
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agonosticValues(
 			!vertical, // retrieving the opposites
 			this.container.rect // this is cached, so ok to get
 		);
@@ -143,7 +143,7 @@ export class ScrollMagic {
 		// this should be called cautiously, getBoundingClientRect costs...
 		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
-		const { start, size } = pickRelevantValues(vertical, element.getBoundingClientRect());
+		const { start, size } = agonosticValues(vertical, element.getBoundingClientRect());
 		const offsetStart = elementStart(size);
 		const offsetEnd = elementEnd(size);
 		this.elementBoundsCache = {
@@ -159,7 +159,7 @@ export class ScrollMagic {
 		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
 		// check variable initialisation for property description
 		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { clientSize, scrollSize } = pickRelevantValues(vertical, this.container.rect);
+		const { clientSize, scrollSize } = agonosticValues(vertical, this.container.rect);
 		const offsetStart = triggerStart(clientSize);
 		const offsetEnd = triggerEnd(clientSize);
 		this.containerBoundsCache = {
@@ -175,7 +175,7 @@ export class ScrollMagic {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
-		const { start: containerPosition } = pickRelevantValues(this.optionsPrivate.vertical, this.container.rect);
+		const { start: containerPosition } = agonosticValues(this.optionsPrivate.vertical, this.container.rect);
 
 		const elementStart = elementPosition + elementOffset;
 		const containerStart = containerPosition + containerOffset;
@@ -299,7 +299,7 @@ export class ScrollMagic {
 		 * updateViewportObserver => 	never
 		 * updateProgress =>			schedule if currently intersecting or potentially skipped, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
-		const { scrollDelta } = pickRelevantValues(this.optionsPrivate.vertical, e.scrollDelta);
+		const { scrollDelta } = agonosticValues(this.optionsPrivate.vertical, e.scrollDelta);
 		if (0 === scrollDelta) {
 			return; // scroll was in other direction
 		}
@@ -420,7 +420,7 @@ export class ScrollMagic {
 			offsetStart: containerOffsetStart,
 			offsetEnd: containerOffsetEnd,
 		} = this.containerBoundsCache;
-		const { start: scrollOffset } = pickRelevantValues(vertical, getScrollPos(scrollParent));
+		const { start: scrollOffset } = agonosticValues(vertical, getScrollPos(scrollParent));
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;
