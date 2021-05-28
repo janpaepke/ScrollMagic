@@ -1,4 +1,4 @@
-import { processValues } from './processValues';
+import { transformObject } from './transformObject';
 
 // { agnosticProp: [verticalProp, horizontalProp] }
 const translationMap = {
@@ -15,7 +15,8 @@ type AgnosticProps = keyof TranslationMap;
 type Vertical = { [X in AgnosticProps]: TranslationMap[X][0] };
 type Horizontal = { [X in AgnosticProps]: TranslationMap[X][1] };
 
-const flat = (index: number) => processValues(translationMap, value => value[index]);
+// cache props
+const flat = (index: number) => transformObject(translationMap, ([key, value]) => [key, value[index]]);
 const propsV = flat(0) as Vertical;
 const propsH = flat(1) as Horizontal;
 
@@ -23,8 +24,7 @@ const propsH = flat(1) as Horizontal;
  * Returns a map of agnostic props and their translation depending on vertical or horizontal orientation.
  * @param vertical scrolldirection (true = vertical)
  */
-export const agnosticProps = <T extends boolean>(vertical: T): T extends true ? Vertical : Horizontal =>
-	(vertical ? propsV : propsH) as any;
+export const agnosticProps = (vertical: boolean): Vertical | Horizontal => (vertical ? propsV : propsH);
 
 type MatchKeys<K, T> = T extends K ? number : undefined;
 type GetType<V extends boolean, T extends Record<string, unknown>> = {
@@ -41,4 +41,4 @@ type GetType<V extends boolean, T extends Record<string, unknown>> = {
 export const agonosticValues = <V extends boolean, T extends { [key: string]: any }>(
 	vertical: V,
 	obj: T
-): GetType<V, T> => processValues(agnosticProps(vertical), value => obj[(value as unknown) as keyof T]);
+): GetType<V, T> => transformObject(agnosticProps(vertical), ([key, value]) => [key, obj[value]]);

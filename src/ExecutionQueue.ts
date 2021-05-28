@@ -1,5 +1,5 @@
-import { processValues } from 'util/processValues';
 import { throttleRaf } from './util/throttleRaf';
+import { transformObject } from './util/transformObject';
 import { isUndefined } from './util/typeguards';
 
 type Callback = () => void;
@@ -35,7 +35,10 @@ export class ExecutionQueue<C extends string> {
 	protected executeThrottled = throttleRaf(this.execute.bind(this));
 
 	constructor(queueItems: Record<C, Callback>) {
-		this.commands = processValues(queueItems, command => new Command(command, this.executeThrottled));
+		this.commands = transformObject(queueItems, ([key, command]) => [
+			key,
+			new Command(command, this.executeThrottled),
+		]);
 	}
 
 	// executes all commands in the list in order, depending on wether or not their conditions are met
