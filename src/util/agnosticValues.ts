@@ -12,9 +12,9 @@ const translationMap = {
 
 type TranslationMap = typeof translationMap;
 type AgnosticProps = keyof TranslationMap;
-type Translate<K extends AgnosticProps, V extends boolean> = TranslationMap[K][V extends true ? 0 : 1];
-type Vertical = { [K in AgnosticProps]: Translate<K, true> };
-type Horizontal = { [K in AgnosticProps]: Translate<K, false> };
+type TranslateProp<K extends AgnosticProps, V extends boolean> = TranslationMap[K][V extends true ? 0 : 1];
+type Vertical = { [K in AgnosticProps]: TranslateProp<K, true> };
+type Horizontal = { [K in AgnosticProps]: TranslateProp<K, false> };
 
 // cache props
 const flat = (index: number) => transformObject(translationMap, ([key, value]) => [key, value[index]]);
@@ -29,7 +29,7 @@ export const agnosticProps = (vertical: boolean): Vertical | Horizontal => (vert
 
 type MatchProp<K extends string, T extends Record<string, unknown>> = K extends keyof T ? T[K] : never;
 type GetType<V extends boolean, T extends Record<string, unknown>> = {
-	[K in AgnosticProps]: MatchProp<Translate<K, V>, T>;
+	[K in AgnosticProps]: MatchProp<TranslateProp<K, V>, T>;
 };
 /**
  * Returns the relevant boundary values depending on vertical or horizontal orientation.
