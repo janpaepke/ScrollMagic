@@ -5,10 +5,9 @@ import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
 import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
+import { agnosticProps, agonosticValues } from './util/agnosticValues';
 import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
-import { agnosticProps, agonosticValues } from './util/agnosticValues';
-import { roundToDecimals } from './util/roundToDecimals';
 import { throttleRaf } from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
@@ -109,19 +108,20 @@ export class ScrollMagic {
 		 ** (as the observer internally compares old values to new ones)
 		 ** This way it won't have to internally create new IntersectionObservers, just because the scrollparent's size changes.
 		 */
+		const decimals = 10;
 		const noSize = containerSize <= 0;
-		const relMarginStart = noSize ? 0 : -roundToDecimals(marginStart / containerSize, 5);
-		const relMarginEnd = noSize ? 0 : -roundToDecimals(marginEnd / containerSize, 5);
+		const relMarginStart = noSize ? 0 : -marginStart / containerSize;
+		const relMarginEnd = noSize ? 0 : -marginEnd / containerSize;
 
 		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
 		const noOppositeSize = oppositeClientSize <= 0;
 		const scrollableOpposite = noOppositeSize
 			? 0
-			: numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize);
+			: numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize, decimals);
 		return {
 			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
-			[endProp]: numberToPercString(relMarginStart),
-			[startProp]: numberToPercString(relMarginEnd),
+			[endProp]: numberToPercString(relMarginStart, decimals),
+			[startProp]: numberToPercString(relMarginEnd, decimals),
 			[oppositeStartProp]: scrollableOpposite,
 			[oppositeEndProp]: scrollableOpposite,
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;

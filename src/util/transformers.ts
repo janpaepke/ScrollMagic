@@ -15,7 +15,7 @@ type UnitString = `${number}px` | `${number}%`;
 
 const centerShorthand = 'center';
 
-export const numberToPercString = (val: number): string => `${val * 100}%`;
+export const numberToPercString = (val: number, decimals: number): string => `${(val * 100).toFixed(decimals)}%`;
 
 const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelConverter => {
 	return unit === 'px' ? () => value : (size: number) => (value / 100) * size;
