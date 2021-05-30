@@ -31,7 +31,7 @@
 		"build": "rollup --config",
 		"dev": "rollup --config --watch",
 		"test": "jest",
-		"test:watch": "jest",
+		"test:watch": "jest --watch",
 		"lint": "eslint ./src --ext .ts",
 		"lint:fix": "eslint --fix ./src --ext .ts",
 		"prettier": "prettier --check ./src",

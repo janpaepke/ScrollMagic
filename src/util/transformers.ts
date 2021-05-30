@@ -24,7 +24,9 @@ const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelCo
 export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (isNull(match)) {
-		throw makeError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (=50%)`);
+		throw makeError(
+			`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`
+		);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
 	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
@@ -38,12 +40,11 @@ export const toPixelConverter = (
 	}
 	if (isString(val)) {
 		if (centerShorthand === val) {
-			const x = unitTupleToPixelConverter([50, '%']);
-			return x;
+			return unitTupleToPixelConverter([50, '%']);
 		}
 		return unitStringToPixelConverter(val);
 	}
-	// ok, probably passed in function, let's see if it works.
+	// ok, user passed in a function, let's see if it works.
 	let returnsNumber: boolean;
 	try {
 		returnsNumber = isNumber(val(1));
@@ -66,7 +67,7 @@ export const selectorToSingleElement = (selector: string): Element => {
 
 export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | SVGElement => {
 	const elem = isString(reference) ? selectorToSingleElement(reference) : reference;
-	const { body } = window.document;
+	const { body } = document;
 	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
 		throw makeError('Invalid element supplied');
 	}
@@ -74,8 +75,15 @@ export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | S
 };
 
 export const toValidScrollParent = (container: Window | Document | Element | string): Window | HTMLElement => {
-	if (isWindow(container) || isDocument(container)) {
-		return window;
+	if (isWindow(container)) {
+		return container;
+	}
+	if (isDocument(container)) {
+		const win = container.defaultView;
+		if (!isWindow(win)) {
+			throw makeError('Supplied document element not attached to window');
+		}
+		return win;
 	}
 	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {
