@@ -7,11 +7,13 @@ type ScrollDirectionLiteral = `${ScrollDirection}`;
 
 export { ScrollMagic as default } from './ScrollMagic';
 
-// types
+// relevant types
 export type { ScrollMagicError } from './ScrollMagicError';
 export type { ScrollMagicEvent } from './ScrollMagicEvent';
-export type { Plugin } from './ScrollMagic';
-export type { Public as Options } from './Options';
+export type { Plugin as ScrollMagicPlugin } from './ScrollMagic';
+export type { Public as ScrollMagicOptions } from './Options';
+
+// less relevant enum types as literals
 export type {
 	EventTypeLiteral as EventType,
 	EventLocationLiteral as EventLocation,
