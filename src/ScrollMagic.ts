@@ -28,7 +28,8 @@ type ContainerBounds = {
 	scrollSize: number; //	total size of content of container
 };
 
-export interface ScrollMagicPlugin {
+export interface Plugin {
+	name: string;
 	onAdd?(this: ScrollMagic): void;
 	onRemove?(this: ScrollMagic): void;
 	onModify?(this: ScrollMagic, changesPublic: Options.Public): void;
@@ -49,7 +50,7 @@ export class ScrollMagic {
 		progress: this.updateProgress.bind(this),
 	});
 	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
-	private readonly plugins = new Set<ScrollMagicPlugin>();
+	private readonly plugins = new Set<Plugin>();
 
 	// all below options should only ever be changed by a dedicated method
 	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
@@ -351,13 +352,13 @@ export class ScrollMagic {
 		return this;
 	}
 
-	public addPlugin(plugin: ScrollMagicPlugin): ScrollMagic {
+	public addPlugin(plugin: Plugin): ScrollMagic {
 		this.plugins.add(plugin);
 		plugin.onAdd?.call(this);
 		return this;
 	}
 
-	public removePlugin(plugin: ScrollMagicPlugin): ScrollMagic {
+	public removePlugin(plugin: Plugin): ScrollMagic {
 		this.plugins.delete(plugin);
 		plugin.onRemove?.call(this);
 		return this;
@@ -441,7 +442,7 @@ export class ScrollMagic {
 			elementEnd,
 		};
 	}
-	public get pluginList(): Array<ScrollMagicPlugin> {
+	public get pluginList(): Array<Plugin> {
 		return [...this.plugins];
 	}
 

@@ -15,13 +15,11 @@ const umdOutput = {
 	format: 'umd',
 	file: pkg.main,
 	name: pkg.title, // var name of browser global
-	sourcemap: true,
 };
 
 const esmOutput = {
 	format: 'esm',
 	file: pkg.module,
-	sourcemap: true,
 };
 
 const tsPluginConfig = {

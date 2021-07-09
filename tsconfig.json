@@ -4,12 +4,10 @@
 		"outDir": "./dist",
 		"target": "ES6",
 		"strict": true,
-		"sourceMap": true,
-		"removeComments": true,
+		"removeComments": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"declaration": true,
-		"declarationMap": true
+		"declaration": true
 	},
 	"include": ["src/**/*"]
 }
