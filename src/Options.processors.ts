@@ -23,7 +23,7 @@ import { isHTMLElement, isNull, isSVGElement, isWindow } from './util/typeguards
 
 const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
 	element: nullPassThrough(toSvgOrHtmlElement),
-	scrollParent: toValidScrollParent,
+	scrollParent: nullPassThrough(toValidScrollParent),
 	vertical: toBoolean,
 	triggerStart: nullPassThrough(toPixelConverter),
 	triggerEnd: nullPassThrough(toPixelConverter),
@@ -39,11 +39,13 @@ const transform = (options: Public): Partial<PrivateUninferred> => processProper
 
 // processes remaining null values
 const infer = (options: PrivateUninferred): Private => {
-	const { scrollParent, element } = options;
+	const inferScrollParent = (container: Window | HTMLElement | null) =>
+		toNonNullable(container, () => (isNull(container) ? window : container));
 
 	const inferElement = (elem: Element | null) =>
 		toNonNullable(elem, () => {
-			const elem = isWindow(scrollParent) ? document.body : scrollParent.firstElementChild;
+			const container = inferScrollParent(options.scrollParent);
+			const elem = isWindow(container) ? document.body : container.firstElementChild;
 			if (isNull(elem) || !(isHTMLElement(elem) || isSVGElement(elem))) {
 				throw makeError(`Could not autodetect element, as scrollParent has no valid children.`);
 			}
@@ -51,9 +53,10 @@ const infer = (options: PrivateUninferred): Private => {
 		});
 
 	const inferTrigger = (val: PixelConverter | null) =>
-		toNonNullable(val, () => (isNull(element) ? inferredTriggers.fallback : inferredTriggers.default));
+		toNonNullable(val, () => (isNull(options.element) ? inferredTriggers.fallback : inferredTriggers.default));
 
 	return processProperties(options, {
+		scrollParent: inferScrollParent,
 		element: inferElement,
 		triggerStart: inferTrigger,
 		triggerEnd: inferTrigger,

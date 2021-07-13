@@ -1,14 +1,5 @@
 import { makeError } from '../ScrollMagicError';
-import {
-	isDocument,
-	isHTMLElement,
-	isNull,
-	isNumber,
-	isSVGElement,
-	isString,
-	isUndefined,
-	isWindow,
-} from './typeguards';
+import { isHTMLElement, isNull, isNumber, isSVGElement, isString, isUndefined, isWindow } from './typeguards';
 
 type PixelConverter = (size: number) => number;
 type UnitString = `${number}px` | `${number}%`;
@@ -74,16 +65,9 @@ export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | S
 	return elem;
 };
 
-export const toValidScrollParent = (container: Window | Document | Element | string): Window | HTMLElement => {
+export const toValidScrollParent = (container: Window | Element | string): HTMLElement | Window => {
 	if (isWindow(container)) {
 		return container;
-	}
-	if (isDocument(container)) {
-		const win = container.defaultView;
-		if (!isWindow(win)) {
-			throw makeError('Supplied document element not attached to window');
-		}
-		return win;
 	}
 	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {

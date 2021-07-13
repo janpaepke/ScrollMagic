@@ -10,7 +10,7 @@ export type PixelConverter = (size: number) => number;
 
 export type Public = {
 	element?: Element | CssSelector | null;
-	scrollParent?: Window | Document | Element | CssSelector;
+	scrollParent?: Window | Element | CssSelector | null;
 	vertical?: boolean;
 	triggerStart?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
 	triggerEnd?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
@@ -33,7 +33,11 @@ export type Private = SameProperties<
 >;
 
 // values that can be null after processing and need to be inferred, if still null
-export type PrivateUninferred = ExtendProperty<Private, 'triggerStart' | 'triggerEnd' | 'element', null>;
+export type PrivateUninferred = ExtendProperty<
+	Private,
+	'triggerStart' | 'triggerEnd' | 'element' | 'scrollParent',
+	null
+>;
 // PixelConverters are executed and their values returned during computation
 export type PrivateComputed = ModifyProperty<
 	Private,
@@ -44,7 +48,7 @@ export type PrivateComputed = ModifyProperty<
 // default options
 export const defaults: Required<Public> = {
 	element: null,
-	scrollParent: window,
+	scrollParent: null,
 	vertical: true,
 	triggerStart: null,
 	triggerEnd: null,

@@ -1,3 +1,5 @@
+import isSSR from 'util/isSSR';
+
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import { EventDispatcher } from './EventDispatcher';
@@ -40,7 +42,9 @@ export class ScrollMagic {
 
 	private readonly dispatcher = new EventDispatcher();
 	private readonly container = new ContainerProxy(this);
-	private readonly resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
+	private readonly resizeObserver = isSSR
+		? ({} as ResizeObserver)
+		: new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -338,6 +342,9 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Options.Public): ScrollMagic {
+		if (isSSR) {
+			return this; // in Node we don't do anything for now.
+		}
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
 		const changedOptions = isUndefined(this.optionsPublic) // not set on first run, so all changed

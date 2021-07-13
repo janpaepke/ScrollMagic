@@ -3,10 +3,10 @@ export const debounce = <F extends (...args: any) => any>(func: F, wait: number)
 
 	const debounced = function (this: ThisParameterType<F>, ...args: Parameters<F>) {
 		clearTimeout(timeoutId);
-		timeoutId = window.setTimeout(() => {
+		timeoutId = setTimeout(() => {
 			timeoutId = 0;
 			func.apply(this, args);
-		}, wait);
+		}, wait) as any;
 	};
 
 	debounced.cancel = function () {
