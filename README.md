@@ -147,7 +147,7 @@ To learn more about the ScrollMagic code structure, please [read here](https://g
 ## Help
 
 To get started, check out the available learning resources [in the wiki section](https://github.com/janpaepke/ScrollMagic/wiki).  
-Be sure to have a look at the [examples](http://janpaepke.github.com/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.com/ScrollMagic/docs/index.html) for a complete reference.
+Be sure to have a look at the [examples](http://janpaepke.github.io/ScrollMagic/examples/index.html) to get source code pointers and make use of the [documentation](http://janpaepke.github.io/ScrollMagic/docs/index.html) for a complete reference.
 
 If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide).
 
