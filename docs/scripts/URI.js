@@ -4,7 +4,7 @@
  * Version: 1.8.3
  *
  * Author: Rodney Rehm
- * Web: http://medialize.github.com/URI.js/
+ * Web: http://medialize.github.io/URI.js/
  *
  * Licensed under
  *   MIT License http://www.opensource.org/licenses/mit-license
@@ -636,11 +636,11 @@
     var _URI = href instanceof URI;
     var _object = typeof href === "object" && (href.hostname || href.path);
     // window.location is reported to be an object, but it's not the sort
-    // of object we're looking for: 
+    // of object we're looking for:
     // * location.protocol ends with a colon
     // * location.query != object.search
     // * location.hash != object.fragment
-    // simply serializing the unknown object should do the trick 
+    // simply serializing the unknown object should do the trick
     // (for location, not for everything...)
     if (!_URI && _object && Object.prototype.toString.call(href) !== "[object Object]") {
       href = href.toString();
@@ -1321,7 +1321,7 @@
     }
     // determine common sub path
     common = URI.commonPath(relative.path(), base.path());
-    // no relation if there's nothing in common 
+    // no relation if there's nothing in common
     if (!common || common === '/') {
       return relative;
     }
