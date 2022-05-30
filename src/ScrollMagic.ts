@@ -453,7 +453,16 @@ export class ScrollMagic {
 		return [...this.plugins];
 	}
 
-	// event listener
+	public get [Symbol.toStringTag](): string {
+		return this.name;
+	}
+
+	/**
+	 * add an event listener
+	 * @param type ScrollMagic Event Type
+	 * @param cb callback
+	 * @returns ScorllMagic instance
+	 */
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.addEventListener(type, cb);
 		return this;
@@ -489,4 +498,7 @@ export class ScrollMagic {
 	public static readonly EventType = EventType;
 	public static readonly EventLocation = EventLocation;
 	public static readonly EventScrollDirection = ScrollDirection;
+	public static readonly util = {
+		agonosticValues,
+	};
 }

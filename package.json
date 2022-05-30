@@ -2,7 +2,7 @@
 	"name": "scrollmagic",
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha.5",
-	"description": "The Library for magical scroll interactions.",
+	"description": "The lightweight library for magical scroll interactions.",
 	"main": "./dist/umd/scrollmagic.js",
 	"module": "./dist/esm/scrollmagic.esm.js",
 	"types": "./dist/types/index.d.ts",
@@ -52,7 +52,7 @@
 			"name": "Stefan Knop"
 		}
 	],
-	"license": "(MIT OR GPL-3.0+)",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/janpaepke/ScrollMagic/issues"
 	},
