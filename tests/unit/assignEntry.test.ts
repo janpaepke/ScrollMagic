@@ -1,4 +1,4 @@
-import { assignEntry } from '../assignEntry';
+import { assignEntry } from '../../src/util/assignEntry';
 
 test('returns merged Object and modifies original', () => {
 	const x = { a: 1 };
