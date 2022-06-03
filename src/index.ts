@@ -1,3 +1,5 @@
+import type { Public as ScrollMagicOptions } from './Options';
+import type { Plugin as ScrollMagicPlugin } from './ScrollMagic';
 import { EventLocation, EventType, ScrollDirection } from './ScrollMagicEvent';
 
 // make literals from enums for export
@@ -10,8 +12,8 @@ export { ScrollMagic as default } from './ScrollMagic';
 // relevant types
 export type { ScrollMagicError } from './ScrollMagicError';
 export type { ScrollMagicEvent } from './ScrollMagicEvent';
-export type { Plugin as ScrollMagicPlugin } from './ScrollMagic';
-export type { Public as ScrollMagicOptions } from './Options';
+export type { ScrollMagicPlugin };
+export type { ScrollMagicOptions };
 
 // less relevant enum types as literals
 export type {
