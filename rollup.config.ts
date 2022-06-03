@@ -1,4 +1,6 @@
 import json from '@rollup/plugin-json';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import bundleSize from 'rollup-plugin-bundle-size';
 import clean from 'rollup-plugin-delete';
 import license from 'rollup-plugin-license';

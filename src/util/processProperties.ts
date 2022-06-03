@@ -22,7 +22,7 @@ export const processProperties = <
 	obj: I,
 	processors: P,
 	getErrorMessage: (value: unknown, prop: keyof I, reason?: string) => string = (value, prop, reason) =>
-		`Invalid value ${value} for ${prop}. ${reason}`
+		`Invalid value ${String(value)} for ${String(prop)}. ${reason}`
 ): O => {
 	return Object.keys(obj).reduce((result, key) => {
 		const prop = key as K;
@@ -31,7 +31,7 @@ export const processProperties = <
 		let processedValue: O[K];
 		try {
 			processedValue = processor?.(value) ?? value;
-		} catch (e) {
+		} catch (e: any) {
 			throw makeError(getErrorMessage(value, prop, e.message));
 		}
 		result[prop] = processedValue;

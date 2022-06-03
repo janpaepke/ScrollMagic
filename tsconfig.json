@@ -7,6 +7,8 @@
 		"removeComments": false,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
 		"declaration": true
 	},
 	"include": ["src/**/*"]
