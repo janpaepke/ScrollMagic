@@ -33,7 +33,7 @@ It's a complete rewrite of its predecessor [Superscrollorama](https://github.com
 A plugin-based architecture offers easy customizability and extendability.
 
 To implement animations, ScrollMagic can work with multiple frameworks.
-The recommended solution is the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) due to its stability and feature richness. For a more lightweight approach the [VelocityJS](http://VelocityJS.org) framework is also supported. Alternatively custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply using CSS and class toggles.
+The recommended solution is the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) due to its stability and feature richness. For a more lightweight approach, the [VelocityJS](http://VelocityJS.org) framework is also supported. Alternatively, custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply using CSS and class toggles.
 
 ScrollMagic was developed with these principles in mind:
 
@@ -43,8 +43,8 @@ ScrollMagic was developed with these principles in mind:
 -   mobile compatibility
 -   event management
 -   support for responsive web design
--   object oriented programming and object chaining
--   readable, centralized code and intuitive development
+-   object-oriented programming and object chaining
+-   readable, centralized code, and intuitive development
 -   support for both x and y direction scrolling (even both on one page)
 -   support for scrolling inside div containers (even multiple on one page)
 -   extensive debugging and logging capabilities
@@ -52,7 +52,7 @@ ScrollMagic was developed with these principles in mind:
 -   many application examples
 
 **Is ScrollMagic the right library for you?**  
-ScrollMagic takes an object oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.  
+ScrollMagic takes an object-oriented approach using a controller for each scroll container and attaching multiple scenes defining what should happen at what part of the page. While this offers a great deal of control, it might be a little confusing, especially if you're just starting out with javascript.  
 If the above points are not crucial for you and you are just looking for a simple solution to implement css animations I would strongly recommend taking a look at the awesome [skrollr](http://prinzhorn.github.io/skrollr/) project. It almost solely relies on element attributes and thus requires minimal to no javascript knowledge.
 
 ## Availability
@@ -114,7 +114,7 @@ For deployment use the minified version **instead**:
 
 _**NOTE:** The logging feature is removed in the minified version due to file size considerations._
 
-To use **plugins** like the indicators visualization, simply include them additionally to the main library:
+To use **plugins** like the indicators visualization, simply include them in addition to the main library:
 
 ```html
 <script src="js/scrollmagic/uncompressed/plugins/debug.addIndicators.js"></script>
@@ -151,8 +151,8 @@ Be sure to have a look at the [examples](http://janpaepke.github.io/ScrollMagic/
 
 If you run into trouble using ScrollMagic please follow the [Troubleshooting guide](https://github.com/janpaepke/ScrollMagic/wiki/Troubleshooting-Guide).
 
-**Please do not post support requests in the github issue section**, as it's reserverd for issue and bug reporting.
-If all above options for self-help fail, please use [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic) or the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link).
+**Please do not post support requests in the github issue section**, as it's reserved for issue and bug reporting.
+If all the above options for self-help fail, please use [Stack Overflow](https://stackoverflow.com/questions/tagged/scrollmagic) or the [ScrollMagic Premium Support](https://support.scrollmagic.io/?utm_source=github&utm_medium=link).
 
 ## Browser Support
 
@@ -172,4 +172,4 @@ For more information click [here](https://github.com/janpaepke/ScrollMagic/blob/
 
 ## Thanks
 
-This library was made possible by many people who have supported it with passion, donations or advice. Special thanks go out to: [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebel](https://github.com/grayghostvisuals).
+This library was made possible by many people who have supported it with passion, donations, or advice. Special thanks go out to [John Polacek](https://github.com/johnpolacek), [Jack Doyle](https://github.com/greensock), [Paul Irish](https://github.com/paulirish), [Nicholas Cerminara](https://github.com/ncerminara), [Kai Dorschner](https://github.com/krnlde), [Petr Tichy](https://github.com/petr-tichy) and [Dennis Gaebel](https://github.com/grayghostvisuals).
