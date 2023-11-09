@@ -2,7 +2,7 @@
 
 ### The javascript library for magical scroll interactions.
 
-[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg 'Shut up and take my money!')](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL 'Shut up and take my money!') <a href="https://nerdpool.io/support/scrollmagic?utm_source=github&utm_medium=btn" title="Get personal live support"><img src="https://cdn.nerdpool.io/np-btn-support-blue.png" style="height: 40px" height="40" alt="Request personal live support"></a>
+[![Donate](https://scrollmagic.io/assets/img/btn_donate.svg 'Shut up and take my money!')](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8BJC8B58XHKLL 'Shut up and take my money!')
 
 **Quicklinks:** [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
 
@@ -132,7 +132,7 @@ var controller = new ScrollMagic.Controller();
 // create a scene
 new ScrollMagic.Scene({
 	duration: 100, // the scene should last for a scroll distance of 100px
-	offset: 50 // start this scene after scrolling for 50px
+	offset: 50, // start this scene after scrolling for 50px
 })
 	.setPin('#my-sticky-element') // pins the element for the the scene's duration
 	.addTo(controller); // assign the scene to the controller
