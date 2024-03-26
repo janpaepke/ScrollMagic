@@ -6,11 +6,9 @@
 
 **Quicklinks:** [About](#about-the-library) | [Download](#availability) | [Installation](#installation) | [Usage](#usage) | [Help](#help) | [Compatibility](#browser-support) | [Author](#about-the-author) | [License](#license) | [Thanks](#thanks)
 
----
 
 ### 🚨 **ScrollMagic 3.0 is on the horizon.** [Helpers & Testers wanted](https://github.com/janpaepke/ScrollMagic/issues/982)! 🚨
 
----
 
 ScrollMagic helps you to easily react to the user's current scroll position.  
 It's the perfect library for you, if you want to ...
@@ -27,10 +25,6 @@ If you want to contribute please [get in touch](mailto:e-mail@janpaepke.de) and 
 
 ## About the Library
 
-ScrollMagic is a scroll interaction library.
-
-It's a complete rewrite of its predecessor [Superscrollorama](https://github.com/johnpolacek/superscrollorama) by [John Polacek](http://johnpolacek.com).  
-A plugin-based architecture offers easy customizability and extendability.
 
 To implement animations, ScrollMagic can work with multiple frameworks.
 The recommended solution is the [Greensock Animation Platform (GSAP)](http://www.greensock.com/gsap-js/) due to its stability and feature richness. For a more lightweight approach, the [VelocityJS](http://VelocityJS.org) framework is also supported. Alternatively, custom extensions can be implemented or the necessity of a framework can be completely avoided by animating simply using CSS and class toggles.
