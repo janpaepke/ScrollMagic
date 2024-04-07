@@ -8,22 +8,6 @@
 
 ---
 
-### 🚨 **ScrollMagic 3.0 is on the horizon.** [Helpers & Testers wanted](https://github.com/janpaepke/ScrollMagic/issues/982)! 🚨
-
----
-
-ScrollMagic helps you to easily react to the user's current scroll position.  
-It's the perfect library for you, if you want to ...
-
--   animate based on scroll position – either trigger an animation or synchronize it to the scrollbar movement (like a playback scrub control).
--   pin an element starting at a specific scroll position – either indefinitely or for a limited amount of scroll progress (sticky elements).
--   toggle CSS classes of elements on and off based on scroll position.
--   effortlessly add parallax effects to your website.
--   create an infinitely scrolling page (ajax load of additional content).
--   add callbacks at specific scroll positions or while scrolling past a specific section, passing a progress parameter.
-
-Check out [the demo page](http://scrollmagic.io), browse [the examples](http://scrollmagic.io/examples/index.html) or read [the documentation](http://scrollmagic.io/docs/index.html) to get started.  
-If you want to contribute please [get in touch](mailto:e-mail@janpaepke.de) and let me know about your specialty and experience.
 
 ## About the Library
 
