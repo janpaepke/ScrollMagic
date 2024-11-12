@@ -181,7 +181,7 @@ CHANGELOG
  - **zero duration scene events & states**  
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
-   furthermore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
+   Furthermore, this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
    To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://scrollmagic.io/docs/ScrollMagic.Scene.html#progress).
  - **removed method `startPosition()`**  
    Method was marked deprecated since v1.0.7 and has now been replaced by `triggerPosition()`.  
