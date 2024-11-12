@@ -165,7 +165,7 @@ CHANGELOG
 #### changes (non-breaking):
  - better code for mobile clicks (See issue [169](https://github.com/janpaepke/ScrollMagic/issues/169))
  - updated [draw example](http://scrollmagic.io/examples/advanced/svg_drawing.html) to camel case to support Firefox
- - updated [parralax sections example](http://scrollmagic.io/examples/advanced/parallax_sections.html) to moving divs instead of background position
+ - updated [parallax sections example](http://scrollmagic.io/examples/advanced/parallax_sections.html) to moving divs instead of background position
  - added new references
  - added favicon
 
@@ -181,19 +181,19 @@ CHANGELOG
  - **zero duration scene events & states**  
    The event logic for zero duration scenes has been changed: From now on a zero duration scene will trigger `enter`, `start`, `progress` (in this order) when scrolling forward past the trigger point and `progress`, `start`, `leave` when scrolling in reverse.  
    This means there will never be an `end` event triggered, which reflects the behaviour more accurately.  
-   Furthemore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
+   furthermore this affects the scene's possible states, which can now only be `"BEFORE"` and `"DURING"` for zero duration scenes.  
    To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141#issuecomment-53549776) or [this documentation](http://scrollmagic.io/docs/ScrollMagic.Scene.html#progress).
  - **removed method `startPosition()`**  
    Method was marked deprecated since v1.0.7 and has now been replaced by `triggerPosition()`.  
    The terms "_offset_" and "_position_" were used too randomly.  
-   To avoid confision, from now on "_offset_" will be used in connection with the scroll offset of the container, while "_position_" refers to the top / left values within the DOM.
+   To avoid confusion, from now on "_offset_" will be used in connection with the scroll offset of the container, while "_position_" refers to the top / left values within the DOM.
  - **`change` event only fires when change actually happened**  
    If a setter is used with the current value or the internal validator fails and defaults to the same value an option is already set to, no `change` event will be fired anymore.
 
 #### changes (non-breaking)
  - **scenes are sorted in controller**  
    Scenes attached to the same controller are now updated in the order of their start position.  
-   This way DOM modifcations (e.g. tweens) that influence each other are sure to be called in the right order.  
+   This way DOM modifications (e.g. tweens) that influence each other are sure to be called in the right order.  
    To learn more, read [this issue](https://github.com/janpaepke/ScrollMagic/issues/141).
  - **marked `triggerOffset` as deprecated, replaced by `triggerPosition`**  
    Renaming to avoid confusion. Read above for clarification.
