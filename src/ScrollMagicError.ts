@@ -13,6 +13,3 @@ export class ScrollMagicInternalError extends ScrollMagicError {
 		super(`Internal Error: ${message}`, options);
 	}
 }
-export const warn = (first: unknown, ...args: unknown[]): void => {
-	console?.warn(`ScrollMagic Warning: ${String(first)}`, ...args);
-};

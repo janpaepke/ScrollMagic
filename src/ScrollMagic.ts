@@ -3,7 +3,7 @@ import { ContainerProxy } from './ContainerProxy';
 import { EventDispatcher } from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
-import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
+import { processOptions, sanitizeOptions } from './Options.processors';
 import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
 import { agnosticProps, agnosticValues } from './util/agnosticValues';
 import { getScrollPos } from './util/getScrollPos';

@@ -6,17 +6,12 @@ import {
 	inferredTriggers,
 	defaults as optionDefaults,
 } from './Options';
-import { ScrollMagicError, warn } from './ScrollMagicError';
+import { ScrollMagicError } from './ScrollMagicError';
 import { agnosticValues } from './util/agnosticValues';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
-import {
-	skipNull,
-	toPixelConverter,
-	toSvgOrHtmlElement,
-	toValidScrollParent,
-} from './util/transformers';
+import { skipNull, toPixelConverter, toSvgOrHtmlElement, toValidScrollParent } from './util/transformers';
 import { isHTMLElement, isSVGElement, isWindow } from './util/typeguards';
 
 const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
@@ -30,7 +25,7 @@ const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
 };
 
 // removes unknown properties from supplied options
-export const sanitize = <T extends Public>(options: T): T => sanitizeProperties(options, optionDefaults);
+export const sanitizeOptions = <T extends Public>(options: T): T => sanitizeProperties(options, optionDefaults);
 
 // converts all public values to their corresponding private value, leaving null values untouched
 const transform = (options: Public): Partial<PrivateUninferred> => processProperties(options, transformers);
@@ -72,9 +67,9 @@ const check = (options: Private): void => {
 	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
 
 	const total = elementDistance + trackDistance;
-	if (total < 0) {
-		warn(
-			'Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
+	if (total < 0 && (typeof process === 'undefined' || process.env.NODE_ENV !== 'production')) {
+		console?.warn(
+			'ScrollMagic Warning: Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
 			{
 				...options,
 				triggerStart: triggerStart(containerSize),
@@ -86,11 +81,11 @@ const check = (options: Private): void => {
 	}
 };
 
-export const process = <T extends Public>(
+export const processOptions = <T extends Public>(
 	newOptions: T,
 	oldOptions?: Private
 ): { sanitized: T; processed: Private } => {
-	const sanitized = sanitize(newOptions);
+	const sanitized = sanitizeOptions(newOptions);
 	const normalized = transform(sanitized);
 	const processed = infer({ ...oldOptions, ...normalized } as PrivateUninferred);
 	check(processed); // finally sanity check

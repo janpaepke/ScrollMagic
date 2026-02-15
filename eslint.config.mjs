@@ -24,6 +24,7 @@ export default defineConfig(
 			},
 		},
 		rules: {
+			'no-useless-rename': 'warn',
 			'@typescript-eslint/no-explicit-any': 'off',
 		},
 	},
