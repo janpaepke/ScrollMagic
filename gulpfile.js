@@ -22,7 +22,6 @@ var
 	replace =			require('gulp-replace-task'),
 	through =			require('through2'),
 	uglify =			require('gulp-uglify'),
-	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
 	open =				require('open').default || require('open'),
 
@@ -158,41 +157,41 @@ var summary = function() {
 				 .pipe(size({showFiles: false, gzip: true, title: "Plugins minified"}));
 }
 
-// syncs the version accross all relevant files
+// syncs the version across all relevant files (idempotent — only writes when content changes)
 var syncVersion = function(done) {
-	var beautifyOptions = {
-		"keep_array_indentation": true,
-		"end_with_newline": true
+	function writeIfChanged(filepath, content) {
+		var existing = fs.existsSync(filepath) ? fs.readFileSync(filepath, 'utf-8') : '';
+		if (existing !== content) {
+			fs.writeFileSync(filepath, content, 'utf-8');
+			log.info("Updated", filepath);
+		}
 	}
-	gulp.src(["./package.json", "./bower.json"])
-			.pipe(jeditor(config.info, beautifyOptions))
-			.pipe(jeditor({version: options.version}, beautifyOptions))
-			.pipe(gulp.dest("./"));
-	gulp.src("./dev/build/config.json")
-			.pipe(jeditor(
-				{
-					version: options.version,
-					lastupdate: options.date.getFullYear() + "-" + ("0"+(options.date.getMonth() + 1)).slice(-2) + "-" + ("0"+options.date.getDate()).slice(-2)
-				},
-				beautifyOptions
-			))
-			.pipe(gulp.dest("./dev/build"));
-	gulp.src("./README.md")
-			.pipe(replace({
-				patterns: [
-					{
-						// link to changelog
-						match: /(<a .*class='version'.*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi,
-						replacement: "$1" + options.version + "$3"
-					},
-					{
-						// cdnjs url
-						match: /(cdnjs.cloudflare.com\/ajax\/libs\/ScrollMagic\/)\d+\.\d+\.\d+(\-\w+)?(\/)/gi,
-						replacement: "$1" + options.version + "$3"
-					}
-				]
-			}))
-			.pipe(gulp.dest("./"));
+	function updateJson(filepath, updates) {
+		var json = JSON.parse(fs.readFileSync(filepath, 'utf-8'));
+		Object.keys(updates).forEach(function(key) { json[key] = updates[key]; });
+		writeIfChanged(filepath, JSON.stringify(json, null, '\t') + '\n');
+	}
+
+	var infoUpdates = {
+		version: options.version,
+		description: config.info.description,
+		homepage: config.info.homepage,
+		keywords: config.info.keywords
+	};
+
+	updateJson('./package.json', infoUpdates);
+	updateJson('./bower.json', infoUpdates);
+	updateJson('./dev/build/config.json', {
+		version: options.version,
+		lastupdate: options.date.getFullYear() + "-" + ("0"+(options.date.getMonth() + 1)).slice(-2) + "-" + ("0"+options.date.getDate()).slice(-2)
+	});
+
+	var readme = fs.readFileSync('./README.md', 'utf-8');
+	var updated = readme
+		.replace(/(<a [^>]*class='version'[^>]*>v)\d+\.\d+\.\d+(\-\w+)?(<\/a>)/gi, "$1" + options.version + "$3")
+		.replace(/(cdnjs.cloudflare.com\/ajax\/libs\/ScrollMagic\/)\d+\.\d+\.\d+(\-\w+)?(\/)/gi, "$1" + options.version + "$3");
+	writeIfChanged('./README.md', updated);
+
 	done();
 };
 syncVersion.displayName = "sync-version";
