@@ -2,7 +2,7 @@
 'use strict';
 var colors = require('ansi-colors');
 var through = require('through2');
-var prettyBytes = require('pretty-bytes');
+var prettyBytes = require('pretty-bytes').default || require('pretty-bytes');
 var gzipSize = require('gzip-size');
 var logger = require('./logger');
 
@@ -31,7 +31,7 @@ module.exports = function (options) {
 		}
 
 		var size = file.contents.length;
-		var gzipsize = gzipSize.sync(file.contents)
+		var gzipsize = (gzipSize.gzipSizeSync || gzipSize.sync)(file.contents)
 		totalSize += size;
 		totalSizeGzip += gzipsize;
 

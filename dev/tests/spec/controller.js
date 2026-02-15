@@ -258,7 +258,7 @@ define(["ScrollMagic"], function (ScrollMagic) {
 		});
 
 		xdescribe(".destroy()", function () {
-
+			xit("is pending", function () {});
 		});
 
 	});

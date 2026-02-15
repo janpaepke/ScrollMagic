@@ -11,7 +11,7 @@ var
 	fs = 					require('fs'),
 	del = 				require('del'),
 	semver =			require('semver'),
-	yargs = 			require('yargs'),
+	yargs = 			require('yargs/yargs'),
 	karma =				require('karma'),
 
 	// gulp & modules
@@ -20,11 +20,11 @@ var
 	include =			require('gulp-file-include'),
 	rename =			require('gulp-rename'),
 	replace =			require('gulp-replace-task'),
-	header =			require('gulp-header'),
+	through =			require('through2'),
 	uglify =			require('gulp-uglify'),
 	jeditor = 		require('gulp-json-editor'),
 	beautify =		require('gulp-jsbeautifier'),
-	open =				require('open'),
+	open =				require('open').default || require('open'),
 
 	// custom built
 	log = 				require('./dev/build/logger'),
@@ -40,7 +40,7 @@ var
 /* ########################################## */
 
 // command line options (use gulp -? to for help)
-var args = yargs
+var args = yargs(process.argv.slice(2))
 	.usage('Usage: gulp [task] [options]')
 	.describe('o', 'Specify output folder for dist files ')
 		.alias('o', 'out')
@@ -117,8 +117,16 @@ if (options.dodocs && !fs.existsSync(options.folderDocsOut)) {
 /* ################ helpers ################# */
 /* ########################################## */
 
+function header (text) {
+	var prefix = Buffer.from(text);
+	return through.obj(function (file, enc, cb) {
+		file.contents = Buffer.concat([prefix, file.contents]);
+		cb(null, file);
+	});
+}
+
 function clearFolder (path) {
-	return del ([
+	return del.deleteAsync([
 		path + '/**/*',
 		path + '/**/.*' // match also hidden files
 	])

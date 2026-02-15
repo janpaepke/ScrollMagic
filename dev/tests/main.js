@@ -53,6 +53,7 @@ function loadTests() {
 				// specs
 				"spec": "dev/tests/spec",
 				// libs
+				"gsap": "assets/js/lib/gsap3/gsap.min",
 				"velocity": "assets/js/lib/velocity.min",
 				"TweenLite": "assets/js/lib/greensock/TweenLite.min",
 				"TweenMax": "assets/js/lib/greensock/TweenMax.min",
