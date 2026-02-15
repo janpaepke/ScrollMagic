@@ -358,7 +358,5 @@ gulp.task('generate:docs', generateDocs);
 
 gulp.task('open-demo', openDemo);
 
-gulp.task('travis-ci', gulp.series(sourceErrorcheck, buildAll, runKarmaTests));
-
 // Default task for compilation. This is run with `gulp` and no defined task
 gulp.task('default', gulp.series(defaultSequence, summary));

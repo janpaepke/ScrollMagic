@@ -1,6 +1,29 @@
 CHANGELOG
 =========
 
+## 2.0.8 (2020-08-14)
+
+#### changes (non-breaking):
+ - added GSAP 3 support for animation.gsap plugin
+
+#### project management:
+ - updated: all dependencies
+
+## 2.0.9 (2026-02-15)
+
+**Final v2 release.** ScrollMagic v2 is no longer actively maintained and has been replaced by [ScrollMagic 3.0](https://github.com/janpaepke/ScrollMagic/tree/main).
+
+#### project management:
+ - updated: all dev dependencies to latest versions
+ - removed: `gulp-header` dependency (replaced with inline transform to resolve lodash.template vulnerability)
+ - removed: `gulp-json-editor` dependency (syncVersion rewritten to be idempotent)
+ - removed: Travis CI configuration (no longer in use)
+ - fixed: build compatibility with yargs 18, del 8, open 11, gzip-size 7, pretty-bytes 7
+ - fixed: test suite compatibility with Jasmine 6 and GSAP 3
+ - fixed: `syncVersion` gulp task now only writes files when content actually changes
+ - fixed: deduplicated keywords in package.json and bower.json
+ - added: `npm run build` script
+
 ## 2.0.7 (2019-05-07)
 
 #### bugfixes:
