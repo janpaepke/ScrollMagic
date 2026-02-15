@@ -1,5 +1,3 @@
-import isSSR from './util/isSSR';
-
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
 import { EventDispatcher } from './EventDispatcher';
@@ -14,6 +12,8 @@ import { throttleRaf } from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
 import { isUndefined, isWindow } from './util/typeguards';
 import { ViewportObserver } from './ViewportObserver';
+
+const isBrowser = 'undefined' !== typeof window;
 
 type ElementBounds = {
 	start: number; //		position relative to viewport
@@ -42,8 +42,7 @@ export class ScrollMagic {
 
 	private readonly dispatcher = new EventDispatcher<ScrollMagicEvent>();
 	private readonly container = new ContainerProxy(this);
-	private readonly resizeObserver =
-		isSSR ? ({} as ResizeObserver) : new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
+	private resizeObserver?: ResizeObserver;
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -81,6 +80,9 @@ export class ScrollMagic {
 	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	// TODO: fix if container size is 0
 	constructor(options: Options.Public = {}) {
+		if (isBrowser) {
+			this.resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
+		}
 		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,
 			...options,
@@ -240,8 +242,8 @@ export class ScrollMagic {
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
 				this.viewportObserver.observe(element);
-				this.resizeObserver.disconnect();
-				this.resizeObserver.observe(element);
+				this.resizeObserver?.disconnect();
+				this.resizeObserver?.observe(element);
 			}
 		}
 		if (scrollParentChanged || triggerStartChanged || triggerEndChanged || directionChanged) {
@@ -341,8 +343,8 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Options.Public): ScrollMagic {
-		if (isSSR) {
-			return this; // in Node we don't do anything for now.
+		if (!isBrowser) {
+			return this; // no browser APIs available
 		}
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
@@ -480,11 +482,11 @@ export class ScrollMagic {
 	}
 
 	public destroy(): void {
-		if (isSSR) {
+		if (!isBrowser) {
 			return;
 		}
 		this.executionQueue.cancel();
-		this.resizeObserver.disconnect();
+		this.resizeObserver?.disconnect();
 		this.viewportObserver.disconnect();
 		this.container.detach();
 		this.plugins.forEach(this.removePlugin.bind(this));
