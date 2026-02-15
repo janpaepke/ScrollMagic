@@ -3,6 +3,8 @@ import { debounce } from './util/debounce';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { getScrollPos } from './util/getScrollPos';
 import { registerEvent } from './util/registerEvent';
+import { rafQueue } from './util/rafQueue';
+import { observeResize } from './util/sharedResizeObserver';
 import { throttleRaf } from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
 
@@ -54,8 +56,14 @@ export class Container {
 	 * But this seems quite hacky and code intense for this edge case scenario. It would also work for document scrolls, not for Element scrolls.
 	 */
 	constructor(public readonly scrollParent: ScrollParent) {
-		const throttledScroll = throttleRaf(this.updateScrollPos.bind(this));
-		const debouncedResize = debounce(this.updateDimensions.bind(this), 100);
+		const throttledScroll = throttleRaf(() => {
+			this.updateScrollPos();
+			rafQueue.flush();
+		});
+		const debouncedResize = debounce(() => {
+			this.updateDimensions();
+			rafQueue.flush();
+		}, 100);
 		if (!isWindow(scrollParent)) {
 			const throttledMove = throttleRaf(this.updatePosition.bind(this));
 			this.cleanups.push(throttledMove.cancel, this.subscribeMove(throttledMove));
@@ -95,9 +103,7 @@ export class Container {
 		if (isWindow(scrollParent)) {
 			return registerEvent(scrollParent, EventType.Resize, onResize);
 		}
-		const observer = new ResizeObserver(onResize);
-		observer.observe(scrollParent);
-		return () => observer.unobserve(scrollParent);
+		return observeResize(scrollParent, onResize);
 	}
 
 	// subscribes to scroll events of scrollParent and returns a function to reverse the effect

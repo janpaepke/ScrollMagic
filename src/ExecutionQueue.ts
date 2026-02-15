@@ -1,7 +1,8 @@
-import { throttleRaf } from './util/throttleRaf';
+import { rafQueue } from './util/rafQueue';
 import { transformObject } from './util/transformObject';
 type Callback = () => void;
 type ExecutionCondition = () => boolean;
+const always: ExecutionCondition = () => true;
 type CommandList<T extends string> = Record<T, Command>;
 
 /**
@@ -30,10 +31,9 @@ type CommandList<T extends string> = Record<T, Command>;
  */
 export class ExecutionQueue<C extends string> {
 	public readonly commands: CommandList<C>;
-	protected executeThrottled = throttleRaf(this.execute.bind(this));
 
 	constructor(queueItems: Record<C, Callback>) {
-		this.commands = transformObject(queueItems, ([key, command]) => [key, new Command(command, this.executeThrottled)]);
+		this.commands = transformObject(queueItems, ([key, command]) => [key, new Command(command, () => rafQueue.schedule(this))]);
 	}
 
 	// executes all commands in the list in order, depending on whether or not their conditions are met
@@ -46,7 +46,7 @@ export class ExecutionQueue<C extends string> {
 		});
 	}
 	public cancel(): void {
-		this.executeThrottled.cancel();
+		rafQueue.unschedule(this);
 	}
 }
 
@@ -86,7 +86,7 @@ class Command {
 		if (undefined === condition) {
 			// if no condition is provided, conditions are considered always met. Any conditions added after this won't even be run
 			this.conditions = [];
-			condition = () => true;
+			condition = always;
 		}
 		this.conditions.push(condition);
 		this.onSchedule();

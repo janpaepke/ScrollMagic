@@ -8,7 +8,7 @@ import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './S
 import { agnosticProps, agnosticValues } from './util/agnosticValues';
 import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
-import { throttleRaf } from './util/throttleRaf';
+import { observeResize } from './util/sharedResizeObserver';
 import { numberToPercString } from './util/transformers';
 import { isWindow } from './util/typeguards';
 import { ViewportObserver } from './ViewportObserver';
@@ -42,7 +42,7 @@ export class ScrollMagic {
 
 	private readonly dispatcher = new EventDispatcher<ScrollMagicEvent>();
 	private readonly container = new ContainerProxy(this);
-	private resizeObserver?: ResizeObserver;
+	private resizeCleanup?: () => void;
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -80,9 +80,6 @@ export class ScrollMagic {
 	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	// TODO: fix if container size is 0
 	constructor(options: Options.Public = {}) {
-		if (isBrowser) {
-			this.resizeObserver = new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
-		}
 		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,
 			...options,
@@ -242,8 +239,8 @@ export class ScrollMagic {
 				const { element } = this.optionsPrivate;
 				this.viewportObserver.disconnect();
 				this.viewportObserver.observe(element);
-				this.resizeObserver?.disconnect();
-				this.resizeObserver?.observe(element);
+				this.resizeCleanup?.();
+				this.resizeCleanup = observeResize(element, this.onElementResize.bind(this));
 			}
 		}
 		if (scrollParentChanged || triggerStartChanged || triggerEndChanged || directionChanged) {
@@ -486,7 +483,7 @@ export class ScrollMagic {
 			return;
 		}
 		this.executionQueue.cancel();
-		this.resizeObserver?.disconnect();
+		this.resizeCleanup?.();
 		this.viewportObserver.disconnect();
 		this.container.detach();
 		this.plugins.forEach(this.removePlugin.bind(this));
