@@ -1,4 +1,4 @@
-import { makeError } from '../ScrollMagicError';
+import { ScrollMagicError } from '../ScrollMagicError';
 
 // type to ensure there's an output processor for every input
 export type PropertyProcessors<I extends { [X in keyof I]: unknown }, O extends { [X in keyof I]: unknown }> = {
@@ -21,8 +21,8 @@ export const processProperties = <
 >(
 	obj: I,
 	processors: P,
-	getErrorMessage: (value: unknown, prop: keyof I, reason?: string) => string = (value, prop, reason) =>
-		`Invalid value ${String(value)} for ${String(prop)}. ${reason}`
+	getErrorMessage: (value: unknown, prop: keyof I) => string = (value, prop) =>
+		`Invalid value ${String(value)} for ${String(prop)}.`
 ): O => {
 	return Object.keys(obj).reduce((result, key) => {
 		const prop = key as K;
@@ -33,7 +33,8 @@ export const processProperties = <
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- generic processor output is intentionally any
 			processedValue = processor?.(value) ?? value;
 		} catch (e: unknown) {
-			throw makeError(getErrorMessage(value, prop, (e as Error).message));
+			const reason = e instanceof ScrollMagicError ? ` ${e.message}` : '';
+			throw new ScrollMagicError(getErrorMessage(value, prop) + reason, { cause: e });
 		}
 		result[prop] = processedValue;
 		return result;

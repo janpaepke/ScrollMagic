@@ -1,17 +1,18 @@
 export class ScrollMagicError extends Error {
-	public readonly name = `ScrollMagicError`;
-	constructor(message: string) {
-		super(message);
+	public override readonly name: string = 'ScrollMagicError';
+	public get [Symbol.toStringTag]() {
+		return this.name;
+	}
+	constructor(message: string, options?: ErrorOptions) {
+		super(message, options);
 	}
 }
-class ScrollMagicErrorInternal extends ScrollMagicError {
-	constructor(message: string) {
-		super(`Internal Error: ${message}`);
+export class ScrollMagicInternalError extends ScrollMagicError {
+	public override readonly name = 'ScrollMagicInternalError';
+	constructor(message: string, options?: ErrorOptions) {
+		super(`Internal Error: ${message}`, options);
 	}
 }
-export const makeError = (message: string, internal = false): ScrollMagicError => {
-	return internal ? new ScrollMagicErrorInternal(message) : new ScrollMagicError(message);
-};
 export const warn = (first: unknown, ...args: unknown[]): void => {
 	console?.warn(`ScrollMagic Warning: ${String(first)}`, ...args);
 };

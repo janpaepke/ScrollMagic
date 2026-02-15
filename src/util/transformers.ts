@@ -1,4 +1,4 @@
-import { makeError } from '../ScrollMagicError';
+import { ScrollMagicError } from '../ScrollMagicError';
 import { isHTMLElement, isSVGElement, isWindow } from './typeguards';
 
 type PixelConverter = (size: number) => number;
@@ -15,7 +15,7 @@ const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelCo
 export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (null === match) {
-		throw makeError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`);
+		throw new ScrollMagicError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
 	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
@@ -38,10 +38,10 @@ export const toPixelConverter = (
 	try {
 		returnsNumber = 'number' === typeof val(1);
 	} catch {
-		throw makeError('Unsupported value type');
+		throw new ScrollMagicError('Unsupported value type');
 	}
 	if (!returnsNumber) {
-		throw makeError('Function must return a number');
+		throw new ScrollMagicError('Function must return a number');
 	}
 	return val;
 };
@@ -49,7 +49,7 @@ export const toPixelConverter = (
 export const selectorToSingleElement = (selector: string): Element => {
 	const elem = document.querySelector(selector);
 	if (null === elem) {
-		throw makeError(`No element found for selector ${selector}`);
+		throw new ScrollMagicError(`No element found for selector ${selector}`);
 	}
 	return elem;
 };
@@ -58,7 +58,7 @@ export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | S
 	const elem = 'string' === typeof reference ? selectorToSingleElement(reference) : reference;
 	const { body } = document;
 	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
-		throw makeError('Invalid element supplied');
+		throw new ScrollMagicError('Invalid element supplied');
 	}
 	return elem;
 };
@@ -69,21 +69,14 @@ export const toValidScrollParent = (container: Window | Element | string): HTMLE
 	}
 	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {
-		throw makeError(`Can't use SVG as scrollParent`);
+		throw new ScrollMagicError(`Can't use SVG as scrollParent`);
 	}
 	return elem;
 };
 
-// returns null if null is passed in or returns the return value of the function that's passed in.
-export const nullPassThrough =
-	<F extends (val: any) => any>(func: F): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) =>
-	(val: Parameters<F>[0] | null) =>
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- generic HOF return type is intentionally any
-		null === val ? val : func(val);
+/** Wraps a function to pass `null` through without calling it. */
+export const skipNull =
+	<T, R>(fn: (val: T) => R) =>
+	(val: T | null): R | null =>
+		null === val ? null : fn(val);
 
-// checks if a value is null and returns it, if it is not.
-// if it is, it runs a function to recover a value
-export const toNonNullable = <T>(val: T, recover: () => NonNullable<T>): NonNullable<T> =>
-	null == val ? recover() : val;
-
-export const toBoolean = (val: unknown): boolean => !!val;

@@ -6,15 +6,13 @@ import {
 	inferredTriggers,
 	defaults as optionDefaults,
 } from './Options';
-import { makeError, warn } from './ScrollMagicError';
+import { ScrollMagicError, warn } from './ScrollMagicError';
 import { agnosticValues } from './util/agnosticValues';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
 import {
-	nullPassThrough,
-	toBoolean,
-	toNonNullable,
+	skipNull,
 	toPixelConverter,
 	toSvgOrHtmlElement,
 	toValidScrollParent,
@@ -22,11 +20,11 @@ import {
 import { isHTMLElement, isSVGElement, isWindow } from './util/typeguards';
 
 const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
-	element: nullPassThrough(toSvgOrHtmlElement),
-	scrollParent: nullPassThrough(toValidScrollParent),
-	vertical: toBoolean,
-	triggerStart: nullPassThrough(toPixelConverter),
-	triggerEnd: nullPassThrough(toPixelConverter),
+	element: skipNull(toSvgOrHtmlElement),
+	scrollParent: skipNull(toValidScrollParent),
+	vertical: Boolean,
+	triggerStart: skipNull(toPixelConverter),
+	triggerEnd: skipNull(toPixelConverter),
 	elementStart: toPixelConverter,
 	elementEnd: toPixelConverter,
 };
@@ -39,21 +37,22 @@ const transform = (options: Public): Partial<PrivateUninferred> => processProper
 
 // processes remaining null values
 const infer = (options: PrivateUninferred): Private => {
-	const inferScrollParent = (container: Window | HTMLElement | null) =>
-		toNonNullable(container, () => (null === container ? window : container));
+	const inferScrollParent = (container: Window | HTMLElement | null): Window | HTMLElement => container ?? window;
 
-	const inferElement = (elem: Element | null) =>
-		toNonNullable(elem, () => {
-			const container = inferScrollParent(options.scrollParent);
-			const elem = isWindow(container) ? document.body : container.firstElementChild;
-			if (null === elem || !(isHTMLElement(elem) || isSVGElement(elem))) {
-				throw makeError(`Could not autodetect element, as scrollParent has no valid children.`);
-			}
-			return elem;
-		});
+	const inferElement = (elem: Element | null): HTMLElement | SVGElement => {
+		if (null !== elem) {
+			return elem as HTMLElement | SVGElement;
+		}
+		const container = inferScrollParent(options.scrollParent);
+		const child = isWindow(container) ? document.body : container.firstElementChild;
+		if (null === child || !(isHTMLElement(child) || isSVGElement(child))) {
+			throw new ScrollMagicError(`Could not autodetect element, as scrollParent has no valid children.`);
+		}
+		return child;
+	};
 
-	const inferTrigger = (val: PixelConverter | null) =>
-		toNonNullable(val, () => (null === options.element ? inferredTriggers.fallback : inferredTriggers.default));
+	const inferTrigger = (val: PixelConverter | null): PixelConverter =>
+		val ?? (null === options.element ? inferredTriggers.fallback : inferredTriggers.default);
 
 	return processProperties(options, {
 		scrollParent: inferScrollParent,
