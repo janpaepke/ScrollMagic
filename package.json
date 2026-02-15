@@ -3,43 +3,53 @@
 	"title": "ScrollMagic",
 	"version": "3.0.0-alpha.5",
 	"description": "The lightweight library for magical scroll interactions.",
+	"type": "module",
 	"main": "./dist/scrollmagic.umd.js",
 	"module": "./dist/scrollmagic.esm.js",
-	"types": "./dist/index.d.ts",
+	"types": "./dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/scrollmagic.esm.js",
+			"require": "./dist/scrollmagic.umd.js"
+		}
+	},
+	"sideEffects": false,
 	"files": [
 		"dist"
 	],
 	"devDependencies": {
-		"@rollup/plugin-json": "^4.1.0",
-		"@types/jest": "^28.1.0",
-		"@typescript-eslint/eslint-plugin": "^5.27.0",
-		"@typescript-eslint/parser": "^5.27.0",
-		"eslint": "^8.16.0",
-		"jest": "^28.1.0",
-		"jest-environment-jsdom": "^28.1.0",
-		"prettier": "^2.6.2",
-		"rollup": "^2.75.5",
+		"@eslint/js": "^9.39.2",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^12.3.0",
+		"eslint": "^9.39.2",
+		"globals": "^17.3.0",
+		"jsdom": "^28.1.0",
+		"prettier": "^3.8.1",
+		"rollup": "^4.57.1",
 		"rollup-plugin-bundle-size": "^1.0.3",
-		"rollup-plugin-delete": "^2.0.0",
-		"rollup-plugin-filesize": "^9.1.2",
-		"rollup-plugin-license": "^2.8.0",
-		"rollup-plugin-terser": "^7.0.2",
-		"rollup-plugin-ts": "^3.0.1",
-		"ts-jest": "^28.0.4",
-		"ts-node": "^10.8.0",
-		"typescript": "^4.7.2"
+		"rollup-plugin-delete": "^3.0.2",
+		"rollup-plugin-license": "^3.6.0",
+		"tslib": "^2.8.1",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.55.0",
+		"vitest": "^4.0.18"
+	},
+	"engines": {
+		"node": ">=18"
 	},
 	"scripts": {
-		"start": "npm run dev",
-		"build": "rollup --config rollup.config.ts --configPlugin ts",
+		"build": "rollup -c",
 		"dev": "npm run build -- --watch",
-		"test": "jest",
-		"test:watch": "jest --watch",
-		"lint": "eslint {src/**/*.ts,README.md}",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint .",
 		"lint:fix": "npm run lint -- --fix",
-		"prettier": "prettier --check ./src",
-		"prettier:fix": "prettier --write ./src",
-		"release:pre": "npm version prerelease --preid='alpha' && npm run build && npm publish --tag next",
+		"prettier": "prettier --check .",
+		"prettier:fix": "prettier --write .",
+		"prepublishOnly": "npm run build",
+		"release:pre": "npm version prerelease --preid='alpha' && npm publish --tag next",
 		"scripts:update-deps": "npx npm-check --skip-unused -u"
 	},
 	"repository": {
@@ -52,47 +62,11 @@
 		"email": "e-mail@janpaepke.de"
 	},
 	"contributors": [
-		{
-			"name": "Stefan Knop"
-		}
+		{}
 	],
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/janpaepke/ScrollMagic/issues"
 	},
-	"homepage": "https://scrollmagic.io",
-	"eslintConfig": {
-		"parser": "@typescript-eslint/parser",
-		"parserOptions": {
-			"ecmaVersion": 9,
-			"sourceType": "module",
-			"ecmaFeatures": {
-				"impliedStrict": true
-			}
-		},
-		"env": {
-			"es6": true,
-			"node": true,
-			"browser": true
-		},
-		"extends": [
-			"eslint:recommended",
-			"plugin:@typescript-eslint/recommended"
-		],
-		"plugins": [
-			"@typescript-eslint"
-		]
-	},
-	"prettier": {
-		"semi": true,
-		"useTabs": true,
-		"tabWidth": 4,
-		"printWidth": 120,
-		"bracketSpacing": true,
-		"arrowParens": "avoid",
-		"htmlWhitespaceSensitivity": "css",
-		"endOfLine": "lf",
-		"singleQuote": true,
-		"trailingComma": "es5"
-	}
+	"homepage": "https://scrollmagic.io"
 }

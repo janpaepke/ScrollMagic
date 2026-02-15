@@ -1,4 +1,4 @@
-import isSSR from 'util/isSSR';
+import isSSR from './util/isSSR';
 
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
@@ -42,9 +42,8 @@ export class ScrollMagic {
 
 	private readonly dispatcher = new EventDispatcher();
 	private readonly container = new ContainerProxy(this);
-	private readonly resizeObserver = isSSR
-		? ({} as ResizeObserver)
-		: new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
+	private readonly resizeObserver =
+		isSSR ? ({} as ResizeObserver) : new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -120,9 +119,8 @@ export class ScrollMagic {
 
 		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
 		const noOppositeSize = oppositeClientSize <= 0;
-		const scrollableOpposite = noOppositeSize
-			? 0
-			: numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize, decimals);
+		const scrollableOpposite =
+			noOppositeSize ? 0 : numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize, decimals);
 		return {
 			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
 			[endProp]: numberToPercString(relMarginStart, decimals),
@@ -347,9 +345,12 @@ export class ScrollMagic {
 		}
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
-		const changedOptions = isUndefined(this.optionsPublic) // not set on first run, so all changed
-			? sanitized
-			: pickDifferencesFlat(sanitized, this.optionsPublic);
+		const changedOptions =
+			(
+				isUndefined(this.optionsPublic) // not set on first run, so all changed
+			) ?
+				sanitized
+			:	pickDifferencesFlat(sanitized, this.optionsPublic);
 
 		this.optionsPublic = { ...this.optionsPublic, ...changedOptions };
 		this.optionsPrivate = processed;

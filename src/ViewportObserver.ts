@@ -28,7 +28,10 @@ export class ViewportObserver {
 		margin: { top: none, right: none, bottom: none, left: none },
 	};
 	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
-	constructor(private callback: ObserverCallback, options?: Options) {
+	constructor(
+		private callback: ObserverCallback,
+		options?: Options
+	) {
 		if (isUndefined(options)) {
 			return; // nothing will happen, until modify is called.
 		}

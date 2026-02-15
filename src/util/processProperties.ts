@@ -16,8 +16,8 @@ export type PropertyProcessors<I extends { [X in keyof I]: unknown }, O extends 
 export const processProperties = <
 	I extends { [X in keyof I]: any },
 	P extends { [X in K]?: (value: Required<I>[X]) => any },
-	O extends { [X in K]: P[X] extends (...args: any) => infer R ? R : I[X] },
-	K extends keyof I
+	O extends { [X in K]: P[X] extends (...args: any[]) => infer R ? R : I[X] },
+	K extends keyof I,
 >(
 	obj: I,
 	processors: P,
@@ -30,9 +30,10 @@ export const processProperties = <
 		const processor = processors[prop];
 		let processedValue: O[K];
 		try {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- generic processor output is intentionally any
 			processedValue = processor?.(value) ?? value;
-		} catch (e: any) {
-			throw makeError(getErrorMessage(value, prop, e.message));
+		} catch (e: unknown) {
+			throw makeError(getErrorMessage(value, prop, (e as Error).message));
 		}
 		result[prop] = processedValue;
 		return result;

@@ -5,26 +5,26 @@
 ScrollMagic allows you to easily trigger events based on element visibility / scroll position within the user's viewport.  
 It's the perfect library for you, if you want to ...
 
--   trigger a DOM/CSS changes based when and how far an element is scrolled into view
--   use the scrollbar like a video scrub control to control animation progress
--   add or remove css classes
--   create paralax effects
--   create infinitely scrolling pages
--   implement behavioural tracking in one-pagers
+- trigger a DOM/CSS changes based when and how far an element is scrolled into view
+- use the scrollbar like a video scrub control to control animation progress
+- add or remove css classes
+- create paralax effects
+- create infinitely scrolling pages
+- implement behavioural tracking in one-pagers
 
 ### Why ScrollMagic?
 
--   smallest possible footprint (< 6KB)
--   free to use (open source MIT license[TODO LINK])
--   standalone (no dependencies)
--   optimized for performance
--   mobile compatibile
--   build for modern browsers (ES6)
--   SSR safe
--   support for custom scroll containers
--   easy extendibility (Plugin System)
--   type safety (build with typescript)
--   robust error management
+- smallest possible footprint (< 6KB)
+- free to use (open source MIT license[TODO LINK])
+- standalone (no dependencies)
+- optimized for performance
+- mobile compatibile
+- build for modern browsers (ES6)
+- SSR safe
+- support for custom scroll containers
+- easy extendibility (Plugin System)
+- type safety (build with typescript)
+- robust error management
 
 ## Installation
 
@@ -32,7 +32,7 @@ It's the perfect library for you, if you want to ...
 
 ### Getting Started
 
-### 
+###
 
 ## Plugins
 

@@ -35,10 +35,7 @@ export class ExecutionQueue<C extends string> {
 	protected executeThrottled = throttleRaf(this.execute.bind(this));
 
 	constructor(queueItems: Record<C, Callback>) {
-		this.commands = transformObject(queueItems, ([key, command]) => [
-			key,
-			new Command(command, this.executeThrottled),
-		]);
+		this.commands = transformObject(queueItems, ([key, command]) => [key, new Command(command, this.executeThrottled)]);
 	}
 
 	// executes all commands in the list in order, depending on wether or not their conditions are met
@@ -83,7 +80,10 @@ export class ExecutionQueue<C extends string> {
  */
 class Command {
 	protected conditions: ExecutionCondition[] = [];
-	constructor(public readonly execute: Callback, protected readonly onSchedule: () => void) {}
+	constructor(
+		public readonly execute: Callback,
+		protected readonly onSchedule: () => void
+	) {}
 	public schedule(condition?: ExecutionCondition) {
 		if (isUndefined(condition)) {
 			// if no condition is provided, conditions are considered always met. Any conditions added after this won't even be run

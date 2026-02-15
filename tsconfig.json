@@ -1,15 +1,17 @@
 {
 	"compilerOptions": {
-		"baseUrl": "./src",
 		"outDir": "./dist",
 		"target": "ES6",
+		"lib": ["ES2020", "DOM"],
+		"module": "ES2020",
+		"moduleResolution": "bundler",
 		"strict": true,
-		"removeComments": false,
+		"isolatedModules": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"moduleResolution": "node",
 		"resolveJsonModule": true,
-		"declaration": true
+		"declaration": true,
+		"skipLibCheck": true
 	},
-	"include": ["src/**/*"]
+	"include": ["src/**/*", "tests/**/*"]
 }

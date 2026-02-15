@@ -1,4 +1,4 @@
-export const throttleRaf = <F extends (...a: any) => any>(
+export const throttleRaf = <F extends (...a: unknown[]) => any>(
 	func: F
 ): ((this: ThisParameterType<F>, ...args: Parameters<F>) => void) & {
 	cancel: () => void;

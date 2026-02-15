@@ -1,6 +1,5 @@
 <%= pkg.title %> v<%= pkg.version %>
 Author: <%= pkg.author.name %> (<%= pkg.author.url %>)
-Contributors: <%= pkg.contributors.map(({ name }) => name).join(',') %>
-Generated: <%= moment().format('YYYY-MM-DD') %>
+<%= pkg.contributors && pkg.contributors.some(function(c) { return c.name }) ? 'Contributors: ' + pkg.contributors.filter(function(c) { return c.name }).map(function(c) { return c.name }).join(', ') + '\n' : '' %>Generated: <%= moment().format('YYYY-MM-DD') %>
 License: <%= pkg.license %>
 Docs & Demos: <%= pkg.homepage %>

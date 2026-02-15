@@ -2,7 +2,7 @@ import { isUndefined } from './util/typeguards';
 
 type EventType = string;
 export interface DispatchableEvent {
-	readonly target: any;
+	readonly target: unknown;
 	readonly type: EventType;
 }
 

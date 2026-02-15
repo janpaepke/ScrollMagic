@@ -15,9 +15,7 @@ const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelCo
 export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (isNull(match)) {
-		throw makeError(
-			`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`
-		);
+		throw makeError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
 	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
@@ -39,7 +37,7 @@ export const toPixelConverter = (
 	let returnsNumber: boolean;
 	try {
 		returnsNumber = isNumber(val(1));
-	} catch (e) {
+	} catch {
 		throw makeError('Unsupported value type');
 	}
 	if (!returnsNumber) {
@@ -77,14 +75,15 @@ export const toValidScrollParent = (container: Window | Element | string): HTMLE
 };
 
 // returns null if null is passed in or returns the return value of the function that's passed in.
-export const nullPassThrough = <F extends (val: any) => any>(
-	func: F
-): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) => (val: Parameters<F>[0] | null) =>
-	isNull(val) ? val : func(val);
+export const nullPassThrough =
+	<F extends (val: any) => any>(func: F): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) =>
+	(val: Parameters<F>[0] | null) =>
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- generic HOF return type is intentionally any
+		isNull(val) ? val : func(val);
 
 // checks if a value is null and returns it, if it is not.
 // if it is, it runs a function to recover a value
-export const toNonNullable = <T extends unknown>(val: T, recover: () => NonNullable<T>): NonNullable<T> =>
+export const toNonNullable = <T>(val: T, recover: () => NonNullable<T>): NonNullable<T> =>
 	isNull(val) || isUndefined(val) ? recover() : (val as NonNullable<T>);
 
 export const toBoolean = (val: unknown): boolean => !!val;

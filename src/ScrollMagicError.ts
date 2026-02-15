@@ -13,5 +13,5 @@ export const makeError = (message: string, internal = false): ScrollMagicError =
 	return internal ? new ScrollMagicErrorInternal(message) : new ScrollMagicError(message);
 };
 export const warn = (first: unknown, ...args: unknown[]): void => {
-	console?.warn(`ScrollMagic Warning: ${first}`, ...args);
+	console?.warn(`ScrollMagic Warning: ${String(first)}`, ...args);
 };

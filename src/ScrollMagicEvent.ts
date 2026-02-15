@@ -18,10 +18,10 @@ export enum ScrollDirection {
 	Reverse = 'reverse',
 }
 
-type EnumToLiteral<T extends string> = `${T}`;
-type ScrollMagicEventType = EnumToLiteral<EventType>;
-type ScrollMagicEventLocation = EnumToLiteral<EventLocation>;
-type ScrollMagicEventScrollDirection = EnumToLiteral<ScrollDirection>;
+type EnumOrLiteral<T extends string> = T | `${T}`;
+type ScrollMagicEventType = EnumOrLiteral<EventType>;
+type ScrollMagicEventLocation = EnumOrLiteral<EventLocation>;
+type ScrollMagicEventScrollDirection = EnumOrLiteral<ScrollDirection>;
 
 export class ScrollMagicEvent implements DispatchableEvent {
 	public readonly location: ScrollMagicEventLocation;
