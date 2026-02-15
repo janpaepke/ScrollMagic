@@ -1,7 +1,5 @@
 import { throttleRaf } from './util/throttleRaf';
 import { transformObject } from './util/transformObject';
-import { isUndefined } from './util/typeguards';
-
 type Callback = () => void;
 type ExecutionCondition = () => boolean;
 type CommandList<T extends string> = Record<T, Command>;
@@ -85,7 +83,7 @@ class Command {
 		protected readonly onSchedule: () => void
 	) {}
 	public schedule(condition?: ExecutionCondition) {
-		if (isUndefined(condition)) {
+		if (undefined === condition) {
 			// if no condition is provided, conditions are considered always met. Any conditions added after this won't even be run
 			this.conditions = [];
 			condition = () => true;

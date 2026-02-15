@@ -1,5 +1,5 @@
 import { makeError } from '../ScrollMagicError';
-import { isHTMLElement, isNull, isNumber, isSVGElement, isString, isUndefined, isWindow } from './typeguards';
+import { isHTMLElement, isSVGElement, isWindow } from './typeguards';
 
 type PixelConverter = (size: number) => number;
 type UnitString = `${number}px` | `${number}%`;
@@ -14,7 +14,7 @@ const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelCo
 
 export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
-	if (isNull(match)) {
+	if (null === match) {
 		throw makeError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
@@ -24,10 +24,10 @@ export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
 export const toPixelConverter = (
 	val: number | UnitString | typeof centerShorthand | PixelConverter
 ): PixelConverter => {
-	if (isNumber(val)) {
+	if ('number' === typeof val) {
 		return () => val;
 	}
-	if (isString(val)) {
+	if ('string' === typeof val) {
 		if (centerShorthand === val) {
 			return unitTupleToPixelConverter([50, '%']);
 		}
@@ -36,7 +36,7 @@ export const toPixelConverter = (
 	// ok, user passed in a function, let's see if it works.
 	let returnsNumber: boolean;
 	try {
-		returnsNumber = isNumber(val(1));
+		returnsNumber = 'number' === typeof val(1);
 	} catch {
 		throw makeError('Unsupported value type');
 	}
@@ -48,14 +48,14 @@ export const toPixelConverter = (
 
 export const selectorToSingleElement = (selector: string): Element => {
 	const elem = document.querySelector(selector);
-	if (isNull(elem)) {
+	if (null === elem) {
 		throw makeError(`No element found for selector ${selector}`);
 	}
 	return elem;
 };
 
 export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | SVGElement => {
-	const elem = isString(reference) ? selectorToSingleElement(reference) : reference;
+	const elem = 'string' === typeof reference ? selectorToSingleElement(reference) : reference;
 	const { body } = document;
 	if (!(isHTMLElement(elem) || isSVGElement(elem)) || !body.contains(elem)) {
 		throw makeError('Invalid element supplied');
@@ -79,11 +79,11 @@ export const nullPassThrough =
 	<F extends (val: any) => any>(func: F): ((val: Parameters<F>[0] | null) => ReturnType<F> | null) =>
 	(val: Parameters<F>[0] | null) =>
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return -- generic HOF return type is intentionally any
-		isNull(val) ? val : func(val);
+		null === val ? val : func(val);
 
 // checks if a value is null and returns it, if it is not.
 // if it is, it runs a function to recover a value
 export const toNonNullable = <T>(val: T, recover: () => NonNullable<T>): NonNullable<T> =>
-	isNull(val) || isUndefined(val) ? recover() : (val as NonNullable<T>);
+	null == val ? recover() : val;
 
 export const toBoolean = (val: unknown): boolean => !!val;

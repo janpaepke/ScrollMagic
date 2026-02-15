@@ -10,7 +10,7 @@ import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
 import { throttleRaf } from './util/throttleRaf';
 import { numberToPercString } from './util/transformers';
-import { isUndefined, isWindow } from './util/typeguards';
+import { isWindow } from './util/typeguards';
 import { ViewportObserver } from './ViewportObserver';
 
 const isBrowser = 'undefined' !== typeof window;
@@ -350,7 +350,7 @@ export class ScrollMagic {
 
 		const changedOptions =
 			(
-				isUndefined(this.optionsPublic) // not set on first run, so all changed
+				undefined === this.optionsPublic // not set on first run, so all changed
 			) ?
 				sanitized
 			:	pickDifferencesFlat(sanitized, this.optionsPublic);

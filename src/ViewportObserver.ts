@@ -1,5 +1,4 @@
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
-import { isUndefined } from './util/typeguards';
 
 type Margin = {
 	top: string;
@@ -40,7 +39,7 @@ export class ViewportObserver {
 		private callback: ObserverCallback,
 		options?: Options
 	) {
-		if (isUndefined(options)) {
+		if (undefined === options) {
 			return; // nothing will happen, until modify is called.
 		}
 		this.options = {
@@ -59,7 +58,7 @@ export class ViewportObserver {
 			}
 			this.observedElements.set(target, [hitEnter, hitLeave]);
 			const newState = resolveState(hitEnter, hitLeave);
-			if (isUndefined(newState) || prevState === newState) {
+			if (undefined === newState || prevState === newState) {
 				return;
 			}
 			this.callback(newState, target);
@@ -94,13 +93,13 @@ export class ViewportObserver {
 		this.observerLeave = this.createObserver(marginObjToString(marginLeave));
 	}
 	private optionsChanged({ root, margin, vertical }: Options) {
-		if (!isUndefined(root) && root !== this.options.root) {
+		if (undefined !== root && root !== this.options.root) {
 			return true;
 		}
-		if (!isUndefined(vertical) && vertical !== this.options.vertical) {
+		if (undefined !== vertical && vertical !== this.options.vertical) {
 			return true;
 		}
-		if (!isUndefined(margin)) {
+		if (undefined !== margin) {
 			return Object.keys(pickDifferencesFlat(margin, this.options.margin)).length > 0;
 		}
 		return false;

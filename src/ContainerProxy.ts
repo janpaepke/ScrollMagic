@@ -1,8 +1,6 @@
 import { Container, ContainerEvent, ScrollParent } from './Container';
 import { ScrollMagic } from './ScrollMagic';
 import { makeError } from './ScrollMagicError';
-import { isUndefined } from './util/typeguards';
-
 type EventCallback = (e: ContainerEvent) => void;
 type CleanUpFunction = () => void;
 
@@ -14,11 +12,11 @@ export class ContainerProxy {
 	private unsubscribers: CleanUpFunction[] = [];
 
 	public attach(scrollParent: ScrollParent, onUpdate: EventCallback): void {
-		if (!isUndefined(this.container)) {
+		if (undefined !== this.container) {
 			this.detach();
 		}
 		let cache = ContainerProxy.cache.get(scrollParent);
-		if (isUndefined(cache)) {
+		if (undefined === cache) {
 			cache = [new Container(scrollParent), new Set()];
 			ContainerProxy.cache.set(scrollParent, cache);
 		}
@@ -29,12 +27,12 @@ export class ContainerProxy {
 	}
 
 	public detach(): void {
-		if (isUndefined(this.container)) {
+		if (undefined === this.container) {
 			return;
 		}
 		const { scrollParent } = this.container;
 		const cache = ContainerProxy.cache.get(scrollParent);
-		if (isUndefined(cache)) {
+		if (undefined === cache) {
 			throw makeError('No cache info for scrollParent', true);
 		}
 		const [container, scenes] = cache;
@@ -50,7 +48,7 @@ export class ContainerProxy {
 	}
 
 	public get rect(): Container['size'] & Container['position'] {
-		if (isUndefined(this.container)) {
+		if (undefined === this.container) {
 			throw makeError(`Can't get size when not attached to a container`, true);
 		}
 		return {
