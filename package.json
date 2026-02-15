@@ -24,6 +24,7 @@
 		"@rollup/plugin-typescript": "^12.3.0",
 		"@vitest/browser-playwright": "^4.0.18",
 		"eslint": "^9.39.2",
+		"eslint-plugin-compat": "^6.1.0",
 		"globals": "^17.3.0",
 		"jsdom": "^28.1.0",
 		"prettier": "^3.8.1",
@@ -70,5 +71,14 @@
 	"bugs": {
 		"url": "https://github.com/janpaepke/ScrollMagic/issues"
 	},
-	"homepage": "https://scrollmagic.io"
+	"homepage": "https://scrollmagic.io",
+	"browserslist": [
+		"Chrome >= 73",
+		"Firefox >= 69",
+		"Safari >= 13.1",
+		"Edge >= 79",
+		"iOS >= 13.4",
+		"Samsung >= 9.2",
+		"not dead"
+	]
 }
