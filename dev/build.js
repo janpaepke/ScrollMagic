@@ -34,8 +34,8 @@ var exec = require('child_process').exec;
 var semver = require('semver');
 var hint = require("jshint").JSHINT;
 var uglify = require('uglify-js');
-var chalk = require('chalk');
-var detectIndent = require('detect-indent');
+var chalk = require('chalk').default || require('chalk');
+var detectIndent = require('detect-indent').default || require('detect-indent');
 
 
 /* ########################################## */
@@ -256,8 +256,12 @@ var build = function (release) {
 	// minify ?
 	if (release.minify) {
 		var
-			ugly = uglify.minify(content, {fromString: true}),
+			ugly = uglify.minify(content),
 			preamble = fs.readFileSync(DIR.source + "/" + release.minify.preamble, 'utf-8');
+
+		if (ugly.error) {
+			log.exit("Minification failed:", ugly.error);
+		}
 
 		for (var search in replaces) {
 			preamble = replaceAll(preamble, search, replaces[search]);

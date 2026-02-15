@@ -237,7 +237,7 @@ describe('ScrollMagic', function() {
 	});
 
 	xdescribe(".destroy()", function () {
-
+		xit("is pending", function () {});
 	});
 
 });
