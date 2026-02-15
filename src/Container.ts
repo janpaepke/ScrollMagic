@@ -102,12 +102,12 @@ export class Container {
 
 	// subscribes to scroll events of scrollParent and returns a function to reverse the effect
 	private subscribeScroll(onScroll: () => void) {
-		return registerEvent(this.scrollParent, EventType.Scroll, onScroll);
+		return registerEvent(this.scrollParent, EventType.Scroll, onScroll, { passive: true });
 	}
 
 	private subscribeMove(onMove: () => void) {
 		const listeners = [
-			registerEvent(window, EventType.Scroll, onMove),
+			registerEvent(window, EventType.Scroll, onMove, { passive: true }),
 			registerEvent(window, EventType.Resize, onMove),
 		];
 		return () => listeners.forEach(cleanup => cleanup());

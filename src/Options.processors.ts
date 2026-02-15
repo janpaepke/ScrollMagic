@@ -58,7 +58,7 @@ const infer = (options: PrivateUninferred): Private => {
 };
 
 // checks if the options the user entered actually make sense
-const check = (options: Private): void => {
+const sanityCheck = (options: Private): void => {
 	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent } = options;
 	const { size: elementSize } = getElementSize(options);
 	const { clientSize: containerSize } = agnosticValues(vertical, getScrollContainerDimensions(scrollParent));
@@ -67,7 +67,7 @@ const check = (options: Private): void => {
 	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
 
 	const total = elementDistance + trackDistance;
-	if (total < 0 && (typeof process === 'undefined' || process.env.NODE_ENV !== 'production')) {
+	if (total < 0) {
 		console?.warn(
 			'ScrollMagic Warning: Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
 			{
@@ -88,7 +88,9 @@ export const processOptions = <T extends Public>(
 	const sanitized = sanitizeOptions(newOptions);
 	const normalized = transform(sanitized);
 	const processed = infer({ ...oldOptions, ...normalized } as PrivateUninferred);
-	check(processed); // finally sanity check
+	if (typeof process === 'undefined' || process.env.NODE_ENV !== 'production') {
+		sanityCheck(processed);
+	}
 	return { sanitized, processed };
 };
 
