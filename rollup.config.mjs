@@ -29,6 +29,7 @@ export default {
 		bundleSize(),
 		typescript({
 			declarationDir: './dist/types',
+			exclude: ['tests/**/*'],
 		}),
 		terser(),
 		license({
