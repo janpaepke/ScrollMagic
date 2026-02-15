@@ -5,15 +5,15 @@ type UnitString = `${number}px` | `${number}%`;
 type CenterShorthand = 'center';
 type CssSelector = string;
 
-// takes the width or height height of an element and returns the value that is used for position calculations
+// takes the width or height of an element and returns the value that is used for position calculations
 export type PixelConverter = (size: number) => number;
 
 export type Public = {
 	element?: Element | CssSelector | null;
 	scrollParent?: Window | Element | CssSelector | null;
 	vertical?: boolean;
-	triggerStart?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
-	triggerEnd?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on wether or not an element is supplied
+	triggerStart?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
+	triggerEnd?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
 	elementStart?: number | UnitString | CenterShorthand | PixelConverter;
 	elementEnd?: number | UnitString | CenterShorthand | PixelConverter;
 };

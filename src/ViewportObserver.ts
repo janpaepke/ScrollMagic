@@ -11,6 +11,7 @@ type Margin = {
 interface Options {
 	root?: Element | null; // null is window
 	margin?: Margin;
+	vertical?: boolean;
 }
 
 type ObserverCallback = (isIntersecting: boolean, target: Element) => void;
@@ -20,12 +21,19 @@ const marginObjToString = ({ top, right, bottom, left }: Margin) => [top, right,
 
 const none = '0px';
 
+// resolves the combined state of enter/leave observers into a single boolean or undefined (if not yet fully initialized)
+const resolveState = (hitEnter: boolean | undefined, hitLeave: boolean | undefined): boolean | undefined => {
+	if (hitEnter === undefined || hitLeave === undefined) return undefined;
+	return hitEnter && hitLeave;
+};
+
 export class ViewportObserver {
 	private observerEnter?: IntersectionObserver;
 	private observerLeave?: IntersectionObserver;
 	private options: Required<Options> = {
 		root: null,
 		margin: { top: none, right: none, bottom: none, left: none },
+		vertical: true,
 	};
 	private observedElements = new Map<Element, [boolean | undefined, boolean | undefined]>();
 	constructor(
@@ -43,14 +51,14 @@ export class ViewportObserver {
 	private observerCallback(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
 		entries.forEach(({ target, isIntersecting }) => {
 			let [hitEnter, hitLeave] = this.observedElements.get(target) ?? [];
-			const prevState = hitEnter && hitLeave;
+			const prevState = resolveState(hitEnter, hitLeave);
 			if (observer === this.observerEnter) {
 				hitEnter = isIntersecting;
 			} else {
 				hitLeave = isIntersecting;
 			}
 			this.observedElements.set(target, [hitEnter, hitLeave]);
-			const newState = hitEnter && hitLeave;
+			const newState = resolveState(hitEnter, hitLeave);
 			if (isUndefined(newState) || prevState === newState) {
 				return;
 			}
@@ -66,19 +74,30 @@ export class ViewportObserver {
 	private rebuildObserver() {
 		this.observerEnter?.disconnect();
 		this.observerLeave?.disconnect();
-		const { margin } = this.options;
-		const maxDimension = (val: string) => `${Math.max(0, parseFloat(val))}%`;
+		const { margin, vertical } = this.options;
+		const clampPositive = (val: string) => `${Math.max(0, parseFloat(val))}%`;
 
+		// The enter observer clips the "leave side" margin to >= 0 (so it doesn't shrink the viewport on that side).
+		// The leave observer clips the "enter side" margin to >= 0.
+		// For vertical: leave side = top, enter side = bottom.
+		// For horizontal: leave side = left, enter side = right.
 		// TODO: check what happens, if the opposite value still overlaps (due to offset / height ?)
 		// TODO! I know now: if effective duration exceeds available observer height it fails... -> BUG! -> FIX...
-		const marginEnter = { ...margin, top: maxDimension(margin.top) };
-		const marginLeave = { ...margin, bottom: maxDimension(margin.bottom) };
+		const marginEnter =
+			vertical ? { ...margin, top: clampPositive(margin.top) } : { ...margin, left: clampPositive(margin.left) };
+		const marginLeave =
+			vertical ?
+				{ ...margin, bottom: clampPositive(margin.bottom) }
+			:	{ ...margin, right: clampPositive(margin.right) };
 
 		this.observerEnter = this.createObserver(marginObjToString(marginEnter));
 		this.observerLeave = this.createObserver(marginObjToString(marginLeave));
 	}
-	private optionsChanged({ root, margin }: Options) {
+	private optionsChanged({ root, margin, vertical }: Options) {
 		if (!isUndefined(root) && root !== this.options.root) {
+			return true;
+		}
+		if (!isUndefined(vertical) && vertical !== this.options.vertical) {
 			return true;
 		}
 		if (!isUndefined(margin)) {

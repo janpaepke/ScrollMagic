@@ -7,11 +7,11 @@ type EventCallback = (e: ContainerEvent) => void;
 type CleanUpFunction = () => void;
 
 export class ContainerProxy {
-	private static cache = new Map<ScrollParent, [Container, Set<ScrollMagic>]>();
+	private static cache = new WeakMap<ScrollParent, [Container, Set<ScrollMagic>]>();
 
 	private container?: Container;
 	constructor(private readonly scene: ScrollMagic) {}
-	private unsubscribers = new Array<CleanUpFunction>();
+	private unsubscribers: CleanUpFunction[] = [];
 
 	public attach(scrollParent: ScrollParent, onUpdate: EventCallback): void {
 		if (!isUndefined(this.container)) {

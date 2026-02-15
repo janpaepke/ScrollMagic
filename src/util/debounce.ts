@@ -1,4 +1,7 @@
-export const debounce = <F extends (...args: unknown[]) => any>(func: F, wait: number): F & { cancel: () => void } => {
+export const debounce = <F extends (...args: unknown[]) => any>(
+	func: F,
+	wait: number
+): ((...args: Parameters<F>) => void) & { cancel: () => void } => {
 	let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
 	const debounced = function (this: ThisParameterType<F>, ...args: Parameters<F>) {
@@ -14,5 +17,5 @@ export const debounce = <F extends (...args: unknown[]) => any>(func: F, wait: n
 		timeoutId = undefined;
 	};
 
-	return debounced as F & { cancel: () => void };
+	return debounced;
 };

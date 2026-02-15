@@ -23,7 +23,7 @@ export class ContainerEvent implements DispatchableEvent {
 	constructor(
 		public readonly target: Container,
 		public readonly type: `${EventType}`,
-		public readonly scrollDelta: ScrollDelta = { deltaX: 0, deltaY: 0 } // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize evnents...
+		public readonly scrollDelta: ScrollDelta = { deltaX: 0, deltaY: 0 } // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize events...
 	) {}
 }
 
@@ -45,8 +45,9 @@ export class Container {
 		top: 0,
 		left: 0,
 	};
-	private dispatcher = new EventDispatcher();
-	private cleanups = new Array<CleanUpFunction>();
+	private dispatcher = new EventDispatcher<ContainerEvent>();
+	private cleanups: CleanUpFunction[] = [];
+	private destroyed = false;
 	/**
 	 * TODO: Currently we have no way of detecting, when physical scrollbars appear or disappear, which should technically trigger a resize event.
 	 * One potential way of getting around this would be to add an additional resize observer to the documentElement and detect when it crosses 100% of the container's client size (either in or out)
@@ -126,6 +127,10 @@ export class Container {
 	}
 
 	public destroy(): void {
+		if (this.destroyed) {
+			return;
+		}
+		this.destroyed = true;
 		this.cleanups.forEach(cleanup => cleanup());
 		this.cleanups = [];
 	}

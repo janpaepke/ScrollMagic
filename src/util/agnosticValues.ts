@@ -23,7 +23,7 @@ const propsH = flat(1) as Horizontal;
 
 /**
  * Returns a map of agnostic props and their translation depending on vertical or horizontal orientation.
- * @param vertical scrolldirection (true = vertical)
+ * @param vertical scroll direction (true = vertical)
  */
 export const agnosticProps = (vertical: boolean): Vertical | Horizontal => (vertical ? propsV : propsH);
 
@@ -34,11 +34,11 @@ type GetType<V extends boolean, T extends Record<string, unknown>> = {
 /**
  * Returns the relevant boundary values depending on vertical or horizontal orientation.
  * I.E. top or left value => start, width / height => size.
- * The equivalent return value (start) is dependent on wether or not the respective source prop (top / left) is present in the source object
- * @param vertical scrolldirection (true = vertical)
- * @param obj Object to tretrieve the values from
+ * The equivalent return value (start) is dependent on whether or not the respective source prop (top / left) is present in the source object
+ * @param vertical scroll direction (true = vertical)
+ * @param obj Object to retrieve the values from
  */
-export const agonosticValues = <V extends boolean, T extends { [key: string]: any }>(
+export const agnosticValues = <V extends boolean, T extends { [key: string]: any }>(
 	vertical: V,
 	obj: T
 ): GetType<V, T> => transformObject(agnosticProps(vertical), ([key, value]) => [key, obj[value]]);

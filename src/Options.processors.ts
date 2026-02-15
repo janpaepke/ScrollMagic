@@ -7,7 +7,7 @@ import {
 	defaults as optionDefaults,
 } from './Options';
 import { makeError, warn } from './ScrollMagicError';
-import { agonosticValues } from './util/agnosticValues';
+import { agnosticValues } from './util/agnosticValues';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
@@ -34,7 +34,7 @@ const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
 // removes unknown properties from supplied options
 export const sanitize = <T extends Public>(options: T): T => sanitizeProperties(options, optionDefaults);
 
-// converts all public values to their corresponding private value, leaving null values untoched
+// converts all public values to their corresponding private value, leaving null values untouched
 const transform = (options: Public): Partial<PrivateUninferred> => processProperties(options, transformers);
 
 // processes remaining null values
@@ -67,7 +67,7 @@ const infer = (options: PrivateUninferred): Private => {
 const check = (options: Private): void => {
 	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent } = options;
 	const { size: elementSize } = getElementSize(options);
-	const { clientSize: containerSize } = agonosticValues(vertical, getScrollContainerDimensions(scrollParent));
+	const { clientSize: containerSize } = agnosticValues(vertical, getScrollContainerDimensions(scrollParent));
 
 	const elementDistance = elementSize - elementStart(elementSize) - elementEnd(elementSize);
 	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
@@ -78,8 +78,8 @@ const check = (options: Private): void => {
 			'Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
 			{
 				...options,
-				triggerStart: triggerStart(elementSize),
-				triggerEnd: triggerEnd(elementSize),
+				triggerStart: triggerStart(containerSize),
+				triggerEnd: triggerEnd(containerSize),
 				elementStart: elementStart(elementSize),
 				elementEnd: elementEnd(elementSize),
 			}
@@ -87,14 +87,17 @@ const check = (options: Private): void => {
 	}
 };
 
-export const process = <T extends Public>(newOptions: T, oldOptions: Private): { sanitized: T; processed: Private } => {
+export const process = <T extends Public>(
+	newOptions: T,
+	oldOptions?: Private
+): { sanitized: T; processed: Private } => {
 	const sanitized = sanitize(newOptions);
 	const normalized = transform(sanitized);
-	const processed = infer({ ...oldOptions, ...normalized });
+	const processed = infer({ ...oldOptions, ...normalized } as PrivateUninferred);
 	check(processed); // finally sanity check
 	return { sanitized, processed };
 };
 
 // helpers
 const getElementSize = ({ vertical, element }: Pick<Private, 'vertical' | 'element'>) =>
-	agonosticValues(vertical, element.getBoundingClientRect());
+	agnosticValues(vertical, element.getBoundingClientRect());

@@ -1,5 +1,3 @@
-import { isUndefined } from './util/typeguards';
-
 type EventType = string;
 export interface DispatchableEvent {
 	readonly target: unknown;
@@ -7,13 +5,13 @@ export interface DispatchableEvent {
 }
 
 type Callback<E extends DispatchableEvent> = (event: E) => void;
-export class EventDispatcher {
-	private callbacks = new Map<string, Callback<any>[]>();
+export class EventDispatcher<E extends DispatchableEvent = DispatchableEvent> {
+	private callbacks = new Map<string, Callback<E>[]>();
 
 	// adds a listener to the dispatcher. returns a function to reverse the effect.
-	public addEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): () => void {
+	public addEventListener(type: E['type'], cb: Callback<E>): () => void {
 		let list = this.callbacks.get(type);
-		if (isUndefined(list)) {
+		if (!list) {
 			list = [];
 			this.callbacks.set(type, list);
 		}
@@ -21,22 +19,23 @@ export class EventDispatcher {
 		return () => this.removeEventListener(type, cb);
 	}
 
-	// removes a listner from the dispatcher
-	public removeEventListener<T extends DispatchableEvent>(type: T['type'], cb: Callback<T>): void {
+	// removes a listener from the dispatcher
+	public removeEventListener(type: E['type'], cb: Callback<E>): void {
 		const list = this.callbacks.get(type);
-		if (isUndefined(list)) {
+		if (!list) {
 			return;
 		}
-		const remaining = list.filter(registeredCallback => registeredCallback !== cb);
-		this.callbacks.set(type, remaining);
+		const index = list.indexOf(cb);
+		if (index !== -1) {
+			list.splice(index, 1);
+		}
+		if (0 === list.length) {
+			this.callbacks.delete(type);
+		}
 	}
 
-	// dispatches an event... DUH!
-	public dispatchEvent(event: DispatchableEvent): void {
-		const list = this.callbacks.get(event.type);
-		if (isUndefined(list)) {
-			return;
-		}
-		list.forEach(cb => cb(event));
+	// dispatches an event
+	public dispatchEvent(event: E): void {
+		this.callbacks.get(event.type)?.forEach(cb => cb(event));
 	}
 }

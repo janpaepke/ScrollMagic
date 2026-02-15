@@ -38,7 +38,7 @@ export class ExecutionQueue<C extends string> {
 		this.commands = transformObject(queueItems, ([key, command]) => [key, new Command(command, this.executeThrottled)]);
 	}
 
-	// executes all commands in the list in order, depending on wether or not their conditions are met
+	// executes all commands in the list in order, depending on whether or not their conditions are met
 	public execute(): void {
 		Object.values<Command>(this.commands).forEach(item => {
 			if (item.conditionsMet) {

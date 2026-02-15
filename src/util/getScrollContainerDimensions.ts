@@ -12,13 +12,10 @@ export const getScrollContainerDimensions = (element: Window | Element): Dimensi
 	const elem = isWindow(element) ? document.documentElement : element;
 	const { clientWidth, scrollHeight, scrollWidth } = elem;
 	let { clientHeight } = elem;
-	if (isWindow(element)) {
-		// this is supposed to normalize for mobile, where the clientHeight excludes the menu bar, even when hidden after scroll
-		// not sure how reliable this is, but so far it seems to work well
-		const { innerHeight } = element;
-		if (innerHeight - 15 > clientHeight) {
-			clientHeight = innerHeight;
-		}
+	if (isWindow(element) && null != window.visualViewport) {
+		// visualViewport.height accounts for mobile browser chrome (address bar show/hide)
+		// multiplying by scale compensates for pinch-zoom, giving us the layout viewport height
+		clientHeight = window.visualViewport.height * window.visualViewport.scale;
 	}
 	return {
 		clientWidth,

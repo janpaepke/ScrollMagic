@@ -7,7 +7,7 @@ import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { process as processOptions, sanitize as sanitizeOptions } from './Options.processors';
 import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
-import { agnosticProps, agonosticValues } from './util/agnosticValues';
+import { agnosticProps, agnosticValues } from './util/agnosticValues';
 import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
 import { throttleRaf } from './util/throttleRaf';
@@ -40,7 +40,7 @@ export interface Plugin {
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
-	private readonly dispatcher = new EventDispatcher();
+	private readonly dispatcher = new EventDispatcher<ScrollMagicEvent>();
 	private readonly container = new ContainerProxy(this);
 	private readonly resizeObserver =
 		isSSR ? ({} as ResizeObserver) : new ResizeObserver(throttleRaf(this.onElementResize.bind(this)));
@@ -52,7 +52,7 @@ export class ScrollMagic {
 		viewportObserver: this.updateViewportObserver.bind(this),
 		progress: this.updateProgress.bind(this),
 	});
-	private readonly update = this.executionQueue.commands; // not sure this is good style, but I kind of don't want to write this.executionQueue.commands every time...
+	private readonly update = this.executionQueue.commands;
 	private readonly plugins = new Set<Plugin>();
 
 	// all below options should only ever be changed by a dedicated method
@@ -92,7 +92,7 @@ export class ScrollMagic {
 		const { vertical } = this.optionsPrivate;
 		const { start: startProp, end: endProp } = agnosticProps(vertical);
 		const { start: oppositeStartProp, end: oppositeEndProp } = agnosticProps(!vertical);
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agonosticValues(
+		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agnosticValues(
 			!vertical, // retrieving the opposites
 			this.container.rect // this is cached, so ok to get
 		);
@@ -146,7 +146,7 @@ export class ScrollMagic {
 		// this should be called cautiously, getBoundingClientRect costs...
 		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
-		const { start, size } = agonosticValues(vertical, element.getBoundingClientRect());
+		const { start, size } = agnosticValues(vertical, element.getBoundingClientRect());
 		const offsetStart = elementStart(size);
 		const offsetEnd = elementEnd(size);
 		this.elementBoundsCache = {
@@ -162,7 +162,7 @@ export class ScrollMagic {
 		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
 		// check variable initialisation for property description
 		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { clientSize, scrollSize } = agonosticValues(vertical, this.container.rect);
+		const { clientSize, scrollSize } = agnosticValues(vertical, this.container.rect);
 		const offsetStart = triggerStart(clientSize);
 		const offsetEnd = triggerEnd(clientSize);
 		this.containerBoundsCache = {
@@ -178,7 +178,7 @@ export class ScrollMagic {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
-		const { start: containerPosition } = agonosticValues(this.optionsPrivate.vertical, this.container.rect);
+		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.container.rect);
 
 		const elementStart = elementPosition + elementOffset;
 		const containerStart = containerPosition + containerOffset;
@@ -210,10 +210,11 @@ export class ScrollMagic {
 	}
 
 	protected updateViewportObserver(): void {
-		const { scrollParent } = this.optionsPrivate;
+		const { scrollParent, vertical } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.getViewportMargin(),
 			root: isWindow(scrollParent) ? null : scrollParent,
+			vertical,
 		};
 		this.viewportObserver.modify(observerOptions);
 	}
@@ -302,7 +303,7 @@ export class ScrollMagic {
 		 * updateViewportObserver => 	never
 		 * updateProgress =>			schedule if currently intersecting or potentially skipped, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
-		const { scrollDelta } = agonosticValues(this.optionsPrivate.vertical, e.scrollDelta);
+		const { scrollDelta } = agnosticValues(this.optionsPrivate.vertical, e.scrollDelta);
 		if (0 === scrollDelta) {
 			return; // scroll was in other direction
 		}
@@ -420,8 +421,9 @@ export class ScrollMagic {
 	public get progress(): number {
 		return this.currentProgress;
 	}
+	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read. */
 	public get scrollOffset(): { start: number; end: number } {
-		this.updateElementBoundsCache(); // need to get frash position
+		this.updateElementBoundsCache(); // need to get fresh position
 		const { scrollParent, vertical } = this.optionsPrivate;
 		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
 		const {
@@ -429,7 +431,7 @@ export class ScrollMagic {
 			offsetStart: containerOffsetStart,
 			offsetEnd: containerOffsetEnd,
 		} = this.containerBoundsCache;
-		const { start: scrollOffset } = agonosticValues(vertical, getScrollPos(scrollParent));
+		const { start: scrollOffset } = agnosticValues(vertical, getScrollPos(scrollParent));
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;
@@ -462,7 +464,7 @@ export class ScrollMagic {
 	 * add an event listener
 	 * @param type ScrollMagic Event Type
 	 * @param cb callback
-	 * @returns ScorllMagic instance
+	 * @returns ScrollMagic instance
 	 */
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		this.dispatcher.addEventListener(type, cb);
@@ -478,6 +480,9 @@ export class ScrollMagic {
 	}
 
 	public destroy(): void {
+		if (isSSR) {
+			return;
+		}
 		this.executionQueue.cancel();
 		this.resizeObserver.disconnect();
 		this.viewportObserver.disconnect();
@@ -500,6 +505,6 @@ export class ScrollMagic {
 	public static readonly EventLocation = EventLocation;
 	public static readonly EventScrollDirection = ScrollDirection;
 	public static readonly util = {
-		agonosticValues,
+		agnosticValues,
 	};
 }
