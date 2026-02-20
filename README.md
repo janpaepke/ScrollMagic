@@ -1,8 +1,13 @@
 # ScrollMagic 3
 
-![npm version](https://img.shields.io/npm/v/scrollmagic/next)
+<!--
+TODO: Replace static shields (license, bundle, dependencies) once published
 ![license](https://img.shields.io/npm/l/scrollmagic)
-![bundle size](https://img.shields.io/badge/gzip-~6kb-brightgreen) <!-- TODO: replace with bundlephobia badge once stable release is published -->
+-->
+
+![npm version](https://img.shields.io/npm/v/scrollmagic/next)
+![license](https://img.shields.io/badge/license-MIT-lightgrey)
+![bundle size](https://img.shields.io/badge/gzip-~6kb-brightgreen)
 ![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-native-blue)
 
