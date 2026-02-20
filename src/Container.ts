@@ -1,5 +1,4 @@
 import { DispatchableEvent, EventDispatcher } from './EventDispatcher';
-import { debounce } from './util/debounce';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { getScrollPos } from './util/getScrollPos';
 import { registerEvent } from './util/registerEvent';
@@ -60,19 +59,19 @@ export class Container {
 			this.updateScrollPos();
 			rafQueue.flush();
 		});
-		const debouncedResize = debounce(() => {
+		const throttledResize = throttleRaf(() => {
 			this.updateDimensions();
 			rafQueue.flush();
-		}, 100);
+		});
 		if (!isWindow(scrollParent)) {
 			const throttledMove = throttleRaf(this.updatePosition.bind(this));
 			this.cleanups.push(throttledMove.cancel, this.subscribeMove(throttledMove));
 		}
 		this.cleanups.push(
 			throttledScroll.cancel,
-			debouncedResize.cancel,
+			throttledResize.cancel,
 			this.subscribeScroll(throttledScroll),
-			this.subscribeResize(debouncedResize)
+			this.subscribeResize(throttledResize)
 		);
 		this.updateScrollPos();
 		this.updateDimensions();

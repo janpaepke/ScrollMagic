@@ -134,7 +134,7 @@ describe('PixelConverter caching', () => {
 		const callsAfterInit = triggerStartCalls;
 
 		await page.viewport(1024, 500);
-		await wait(200); // container resize is debounced at 100ms
+		await wait(50); // give ResizeObserver a moment to fire
 		await waitForFrames();
 
 		expect(triggerStartCalls).toBeGreaterThan(callsAfterInit);

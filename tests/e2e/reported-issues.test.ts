@@ -237,7 +237,7 @@ describe('Edge cases: viewport resize (#883, #372)', () => {
 
 		// Shrink viewport (simulates mobile address bar appearing)
 		await page.viewport(1024, 400);
-		await wait(200); // Container resize is debounced at 100ms
+		await wait(50); // give ResizeObserver / window resize event a moment to fire
 		await waitForFrames(5);
 
 		// Progress should have changed since viewport size affects the tracking calculation
