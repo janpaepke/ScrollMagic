@@ -76,9 +76,7 @@ export class ScrollMagic {
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
-	// TODO: correctly take into account container position, if not window
 	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
-	// TODO: fix if container size is 0
 	constructor(options: Options.Public = {}) {
 		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,
@@ -178,6 +176,9 @@ export class ScrollMagic {
 
 	protected updateProgress(): void {
 		// console.log(this.optionsPrivate.element.id, 'progress', new Date().getMilliseconds());
+		if (this.containerBoundsCache.clientSize <= 0) {
+			return; // container has no visible area, progress is meaningless
+		}
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
 		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.container.rect);
@@ -212,6 +213,10 @@ export class ScrollMagic {
 	}
 
 	protected updateViewportObserver(): void {
+		if (this.containerBoundsCache.clientSize <= 0) {
+			this.updateIntersectingState(undefined); // reset so intersection re-evaluates when container becomes visible
+			return;
+		}
 		const { scrollParent, vertical } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.getViewportMargin(),

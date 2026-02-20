@@ -66,6 +66,7 @@ export class Container {
 		if (!isWindow(scrollParent)) {
 			const throttledMove = throttleRaf(this.updatePosition.bind(this));
 			this.cleanups.push(throttledMove.cancel, this.subscribeMove(throttledMove));
+			this.updatePosition(); // initialize synchronously; subsequent updates are throttled via subscribeMove
 		}
 		this.cleanups.push(
 			throttledScroll.cancel,
