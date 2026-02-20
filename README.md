@@ -1,4 +1,4 @@
-# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.8</a>
+# ScrollMagic <a href='https://github.com/janpaepke/ScrollMagic/blob/master/CHANGELOG.md' class='version' title='Whats New?'>v2.0.9</a>
 
 ### The javascript library for magical scroll interactions.
 
@@ -80,15 +80,15 @@ npm install scrollmagic
 If you don't want to host ScrollMagic yourself, you can include it from [cdnjs](https://cdnjs.com/libraries/ScrollMagic):
 
 ```
-https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js
+https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.9/ScrollMagic.min.js
 ```
 
 All plugins and uncompressed files are also available on cdnjs.  
 For example:
 
 ```
-https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/debug.addIndicators.js
-https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/debug.addIndicators.min.js
+https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.9/plugins/debug.addIndicators.js
+https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.9/plugins/debug.addIndicators.min.js
 ```
 
 ## Installation
