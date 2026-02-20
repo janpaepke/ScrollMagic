@@ -40,9 +40,9 @@ export interface Plugin {
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
+	private resizeCleanup?: () => void;
 	private readonly dispatcher = new EventDispatcher<ScrollMagicEvent>();
 	private readonly container = new ContainerProxy(this);
-	private resizeCleanup?: () => void;
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -53,11 +53,7 @@ export class ScrollMagic {
 	});
 	private readonly update = this.executionQueue.commands;
 	private readonly plugins = new Set<Plugin>();
-
-	// all below options should only ever be changed by a dedicated method
-	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
-	protected optionsPrivate!: Options.Private; // set in modify in constructor
-	protected elementBoundsCache: ElementBounds = {
+	protected readonly elementBoundsCache: ElementBounds = {
 		// see typedef for details
 		start: 0,
 		size: 0,
@@ -65,7 +61,7 @@ export class ScrollMagic {
 		offsetEnd: 0,
 		trackSize: 0,
 	};
-	protected containerBoundsCache: ContainerBounds = {
+	protected readonly containerBoundsCache: ContainerBounds = {
 		// see typedef for details
 		clientSize: 0,
 		offsetStart: 0,
@@ -73,6 +69,10 @@ export class ScrollMagic {
 		trackSize: 0,
 		scrollSize: 0,
 	};
+
+	// all below options should only ever be changed by a dedicated method
+	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
+	protected optionsPrivate!: Options.Private; // set in modify in constructor
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
@@ -146,15 +146,18 @@ export class ScrollMagic {
 		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
 		const { start, size } = agnosticValues(vertical, element.getBoundingClientRect());
-		const offsetStart = elementStart(size);
-		const offsetEnd = elementEnd(size);
-		this.elementBoundsCache = {
-			start,
-			size,
-			offsetStart,
-			offsetEnd,
-			trackSize: size - offsetStart - offsetEnd,
-		};
+		this.elementBoundsCache.start = start;
+		// only update if size has changed, otherwise we're recalculating the offsetStart and offsetEnd for no reason
+		if (size !== this.elementBoundsCache.size) {
+			const offsetStart = elementStart(size);
+			const offsetEnd = elementEnd(size);
+			Object.assign(this.elementBoundsCache, {
+				size,
+				offsetStart,
+				offsetEnd,
+				trackSize: size - offsetStart - offsetEnd,
+			});
+		}
 	}
 
 	protected updateContainerBoundsCache(): void {
@@ -164,13 +167,13 @@ export class ScrollMagic {
 		const { clientSize, scrollSize } = agnosticValues(vertical, this.container.rect);
 		const offsetStart = triggerStart(clientSize);
 		const offsetEnd = triggerEnd(clientSize);
-		this.containerBoundsCache = {
+		Object.assign(this.containerBoundsCache, {
 			clientSize,
 			scrollSize,
 			offsetStart,
 			offsetEnd,
 			trackSize: -(clientSize - offsetStart - offsetEnd), // container track is inverted (start is usually below end)
-		};
+		});
 	}
 
 	protected updateProgress(): void {
@@ -233,6 +236,9 @@ export class ScrollMagic {
 		const directionChanged = isChanged('vertical');
 
 		if (elementStartChanged || elementEndChanged || elementChanged) {
+			if (elementStartChanged || elementEndChanged) {
+				this.elementBoundsCache.size = NaN; // force converter recalculation (size guard in updateElementBoundsCache)
+			}
 			this.update.elementBounds.schedule();
 			if (elementChanged) {
 				this.updateIntersectingState(undefined);
@@ -244,9 +250,9 @@ export class ScrollMagic {
 			}
 		}
 		if (scrollParentChanged || triggerStartChanged || triggerEndChanged || directionChanged) {
+			this.update.containerBounds.schedule();
 			this.update.viewportObserver.schedule();
 			if (scrollParentChanged) {
-				this.update.containerBounds.schedule();
 				this.updateIntersectingState(undefined);
 				this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 			}
