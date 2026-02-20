@@ -1,37 +1,35 @@
+import { positionShorthands } from '../Options';
 import { ScrollMagicError } from '../ScrollMagicError';
 import { isHTMLElement, isSVGElement, isWindow } from './typeguards';
 
 type PixelConverter = (size: number) => number;
-type UnitString = `${number}px` | `${number}%`;
-
-const centerShorthand = 'center';
+type UnitTuple = [number, 'px' | '%'];
 
 export const numberToPercString = (val: number, decimals: number): string => `${(val * 100).toFixed(decimals)}%`;
 
-const unitTupleToPixelConverter = ([value, unit]: [number, 'px' | '%']): PixelConverter => {
-	return unit === 'px' ? () => value : (size: number) => (value / 100) * size;
+const unitTupleToPixelConverter = ([value, unit]: UnitTuple): PixelConverter => {
+	return 'px' === unit || 0 === value ? () => value : (size: number) => (value / 100) * size;
 };
 
-export const unitStringToPixelConverter = (val: UnitString): PixelConverter => {
+export const unitStringToPixelConverter = (val: string): PixelConverter => {
 	const match = val.match(/^([+-])?(\d+|\d*[.]\d+)(%|px)$/);
 	if (null === match) {
-		throw new ScrollMagicError(`String value must be number with unit, i.e. 20px or 80% or '${centerShorthand}' (equal to 50%)`);
+		const names = Object.keys(positionShorthands).join(', ');
+		throw new ScrollMagicError(
+			`String value must be a number with unit (e.g. 20px, 80%) or a named position (${names})`
+		);
 	}
 	const [, sign, digits, unit] = match as [string, '+' | '-' | null, string, 'px' | '%'];
 	return unitTupleToPixelConverter([parseFloat(`${sign ?? ''}${digits}`), unit]);
 };
 
-export const toPixelConverter = (
-	val: number | UnitString | typeof centerShorthand | PixelConverter
-): PixelConverter => {
+export const toPixelConverter = (val: number | string | PixelConverter): PixelConverter => {
 	if ('number' === typeof val) {
 		return () => val;
 	}
 	if ('string' === typeof val) {
-		if (centerShorthand === val) {
-			return unitTupleToPixelConverter([50, '%']);
-		}
-		return unitStringToPixelConverter(val);
+		const unitString = val in positionShorthands ? positionShorthands[val as keyof typeof positionShorthands] : val;
+		return unitStringToPixelConverter(unitString);
 	}
 	// ok, user passed in a function, let's see if it works.
 	let returnsNumber: boolean;
@@ -79,4 +77,3 @@ export const skipNull =
 	<T, R>(fn: (val: T) => R) =>
 	(val: T | null): R | null =>
 		null === val ? null : fn(val);
-

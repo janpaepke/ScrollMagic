@@ -2,7 +2,7 @@ type SameProperties<T extends { [K in keyof T]: unknown }, R extends { [K in key
 type ExtendProperty<T extends { [K in keyof T]: unknown }, K extends keyof T, E> = Omit<T, K> & { [X in K]: T[X] | E };
 type ModifyProperty<T extends { [K in keyof T]: unknown }, K extends keyof T, E> = Omit<T, K> & { [X in K]: E };
 type UnitString = `${number}px` | `${number}%`;
-type CenterShorthand = 'center';
+type PositionShorthand = keyof typeof positionShorthands;
 type CssSelector = string;
 
 // takes the width or height of an element and returns the value that is used for position calculations
@@ -12,10 +12,10 @@ export type Public = {
 	element?: Element | CssSelector | null;
 	scrollParent?: Window | Element | CssSelector | null;
 	vertical?: boolean;
-	triggerStart?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
-	triggerEnd?: number | UnitString | CenterShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
-	elementStart?: number | UnitString | CenterShorthand | PixelConverter;
-	elementEnd?: number | UnitString | CenterShorthand | PixelConverter;
+	triggerStart?: number | UnitString | PositionShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
+	triggerEnd?: number | UnitString | PositionShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
+	elementStart?: number | UnitString | PositionShorthand | PixelConverter;
+	elementEnd?: number | UnitString | PositionShorthand | PixelConverter;
 };
 
 // basically a normalized version of the options
@@ -44,6 +44,13 @@ export type PrivateComputed = ModifyProperty<
 	'triggerStart' | 'triggerEnd' | 'elementStart' | 'elementEnd',
 	number
 >;
+
+// shorthand values for bound position values
+export const positionShorthands = {
+	here: '0%',
+	center: '50%',
+	opposite: '100%',
+} as const satisfies Record<string, UnitString>;
 
 // default options
 export const defaults: Required<Public> = {

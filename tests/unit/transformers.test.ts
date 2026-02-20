@@ -37,7 +37,6 @@ describe('unitStringToPixelConverter', () => {
 	});
 
 	test('throws on invalid string', () => {
-		// @ts-expect-error testing invalid input
 		expect(() => unitStringToPixelConverter('abc')).toThrow();
 	});
 });
@@ -54,10 +53,22 @@ describe('toPixelConverter', () => {
 		expect(conv(200)).toBe(50);
 	});
 
-	test('handles center shorthand', () => {
+	test('handles "here" shorthand (0%)', () => {
+		const conv = toPixelConverter('here');
+		expect(conv(200)).toBe(0);
+		expect(conv(400)).toBe(0);
+	});
+
+	test('handles "center" shorthand (50%)', () => {
 		const conv = toPixelConverter('center');
 		expect(conv(200)).toBe(100);
 		expect(conv(400)).toBe(200);
+	});
+
+	test('handles "opposite" shorthand (100%)', () => {
+		const conv = toPixelConverter('opposite');
+		expect(conv(200)).toBe(200);
+		expect(conv(400)).toBe(400);
 	});
 
 	test('accepts valid function', () => {
