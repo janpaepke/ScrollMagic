@@ -261,14 +261,18 @@ export class ScrollMagic {
 		 * updateContainerBounds => 	never
 		 * updateElementBounds =>		schedule always (obviously),		execute regardless.
 		 * updateViewportObserver => 	schedule always, 					execute if start or end offset changed in trigger bounds update above
-		 * updateProgress => 			schedule if currently intersecting,	execute if start or end offset changed in trigger bounds update above
+		 * updateProgress => 			schedule if currently intersecting,	execute if bounds changed (offsets or size, since size affects trackSize)
 		 */
-		const { update, elementBoundsCache } = this;
-		const { offsetStart: startPrevious, offsetEnd: endPrevious } = elementBoundsCache;
-		const isBoundsChanged = () =>
-			startPrevious !== elementBoundsCache.offsetStart || endPrevious !== elementBoundsCache.offsetEnd;
+		const { update } = this;
+		// Capture previous values for lazy condition checks.
+		// IMPORTANT: closures must reference `this.elementBoundsCache` (not a destructured local)
+		// because `updateElementBoundsCache()` replaces the entire object reference.
+		const { offsetStart: startPrevious, offsetEnd: endPrevious, size: sizePrevious } = this.elementBoundsCache;
+		const isOffsetChanged = () =>
+			startPrevious !== this.elementBoundsCache.offsetStart || endPrevious !== this.elementBoundsCache.offsetEnd;
+		const isBoundsChanged = () => isOffsetChanged() || sizePrevious !== this.elementBoundsCache.size;
 		update.elementBounds.schedule();
-		update.viewportObserver.schedule(isBoundsChanged);
+		update.viewportObserver.schedule(isOffsetChanged);
 		if (this.intersecting) {
 			update.progress.schedule(isBoundsChanged);
 		}
@@ -290,8 +294,10 @@ export class ScrollMagic {
 			}
 			update.viewportObserver.schedule();
 			const { start: startPrevious } = this.elementBoundsCache;
-			const isPositionChanged = () => startPrevious !== this.elementBoundsCache.start;
-			update.progress.schedule(isPositionChanged);
+			const { clientSize: sizePrevious } = this.containerBoundsCache;
+			const isChanged = () =>
+				startPrevious !== this.elementBoundsCache.start || sizePrevious !== this.containerBoundsCache.clientSize;
+			update.progress.schedule(isChanged);
 			return;
 		}
 		/**
