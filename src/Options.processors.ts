@@ -59,7 +59,15 @@ const infer = (options: PrivateUninferred): Private => {
 
 // checks if the options the user entered actually make sense
 const sanityCheck = (options: Private): void => {
-	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent } = options;
+	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent, element } = options;
+
+	if (!isWindow(scrollParent) && !scrollParent.contains(element)) {
+		console?.error(
+			'ScrollMagic: element is not a descendant of scrollParent. The IntersectionObserver requires an ancestor relationship to function correctly.',
+			{ element, scrollParent }
+		);
+	}
+
 	const { size: elementSize } = getElementSize(options);
 	const { clientSize: containerSize } = agnosticValues(vertical, getScrollContainerDimensions(scrollParent));
 
