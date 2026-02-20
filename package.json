@@ -19,22 +19,22 @@
 		"dist"
 	],
 	"devDependencies": {
-		"@eslint/js": "^9.39.2",
+		"@eslint/js": "^10.0.1",
 		"@rollup/plugin-terser": "^0.4.4",
 		"@rollup/plugin-typescript": "^12.3.0",
 		"@vitest/browser-playwright": "^4.0.18",
-		"eslint": "^9.39.2",
-		"eslint-plugin-compat": "^6.1.0",
+		"eslint": "^10.0.0",
+		"eslint-plugin-compat": "^6.2.0",
 		"globals": "^17.3.0",
 		"jsdom": "^28.1.0",
 		"prettier": "^3.8.1",
 		"rollup": "^4.57.1",
 		"rollup-plugin-bundle-size": "^1.0.3",
 		"rollup-plugin-delete": "^3.0.2",
-		"rollup-plugin-license": "^3.6.0",
+		"rollup-plugin-license": "^3.7.0",
 		"tslib": "^2.8.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.55.0",
+		"typescript-eslint": "^8.56.0",
 		"vitest": "^4.0.18"
 	},
 	"engines": {
