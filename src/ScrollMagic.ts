@@ -227,35 +227,34 @@ export class ScrollMagic {
 			return;
 		}
 		const isChanged = changes.includes.bind(changes);
-		const elementStartChanged = isChanged('elementStart');
-		const elementEndChanged = isChanged('elementEnd');
 		const elementChanged = isChanged('element');
 		const scrollParentChanged = isChanged('scrollParent');
-		const triggerStartChanged = isChanged('triggerStart');
-		const triggerEndChanged = isChanged('triggerEnd');
 		const directionChanged = isChanged('vertical');
+		const elementBoundsInvalidated = directionChanged || isChanged('elementStart') || isChanged('elementEnd');
+		const containerBoundsInvalidated =
+			scrollParentChanged || directionChanged || isChanged('triggerStart') || isChanged('triggerEnd');
 
-		if (elementStartChanged || elementEndChanged || elementChanged) {
-			if (elementStartChanged || elementEndChanged) {
-				this.elementBoundsCache.size = NaN; // force converter recalculation (size guard in updateElementBoundsCache)
-			}
-			this.update.elementBounds.schedule();
-			if (elementChanged) {
-				this.updateIntersectingState(undefined);
-				const { element } = this.optionsPrivate;
-				this.viewportObserver.disconnect();
-				this.viewportObserver.observe(element);
-				this.resizeCleanup?.();
-				this.resizeCleanup = observeResize(element, this.onElementResize.bind(this));
-			}
+		if (elementBoundsInvalidated) {
+			this.elementBoundsCache.size = NaN; // force converter recalculation (size guard in updateElementBoundsCache)
 		}
-		if (scrollParentChanged || triggerStartChanged || triggerEndChanged || directionChanged) {
+		if (elementBoundsInvalidated || elementChanged) {
+			this.update.elementBounds.schedule();
+		}
+		if (elementChanged) {
+			this.updateIntersectingState(undefined);
+			const { element } = this.optionsPrivate;
+			this.viewportObserver.disconnect();
+			this.viewportObserver.observe(element);
+			this.resizeCleanup?.();
+			this.resizeCleanup = observeResize(element, this.onElementResize.bind(this));
+		}
+		if (containerBoundsInvalidated) {
 			this.update.containerBounds.schedule();
 			this.update.viewportObserver.schedule();
-			if (scrollParentChanged) {
-				this.updateIntersectingState(undefined);
-				this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
-			}
+		}
+		if (scrollParentChanged) {
+			this.updateIntersectingState(undefined);
+			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
 		// if any options changes we always have to refresh the progress
 		this.update.progress.schedule();
