@@ -183,12 +183,47 @@ scene.progress; // 0–1, how far through the active zone
 scene.scrollOffset; // { start, end } absolute scroll positions
 scene.computedOptions; // resolved option values after computation
 
+// Refresh — recalculate bounds after external layout changes
+scene.refresh();
+
 // Lifecycle
 scene.destroy();
 
 // Static
 ScrollMagic.defaultOptions({ vertical: false }); // get/set defaults for new instances
+ScrollMagic.refreshAll(); // refresh every active instance
+ScrollMagic.destroyAll(); // destroy every active instance
 ```
+
+## When to use `refresh()`
+
+ScrollMagic automatically tracks element size changes (via `ResizeObserver`) and scroll position changes. But some layout changes are invisible to these observers — they change an element's **position** without changing its **size** or triggering a scroll event.
+
+Call `refresh()` (or `ScrollMagic.refreshAll()`) after:
+
+- **CSS position/margin/padding changes** — `element.style.marginTop = '20px'`
+- **CSS class toggles that affect layout** — `element.classList.add('expanded')`
+- **DOM structure changes** — siblings added/removed above the element, shifting its position
+- **Images loading without explicit dimensions** — an `<img>` above the tracked element loads and expands, pushing it down
+- **Font loading** — `document.fonts.ready.then(() => ScrollMagic.refreshAll())`
+- **Route changes in SPAs** — content swap changes scroll height
+- **Dynamic content loading** — CMS-injected content, third-party widgets
+
+```js
+// After changing a style that affects position
+element.style.marginTop = '100px';
+scene.refresh();
+
+// After fonts finish loading (affects text reflow)
+document.fonts.ready.then(() => ScrollMagic.refreshAll());
+
+// After a framework re-render that changes layout
+onRouteChange(() => ScrollMagic.refreshAll());
+```
+
+Note that `refresh()` is only needed if you want bounds to update **before the next scroll event**. If the user keeps scrolling, element positions are re-read on every scroll frame anyway. `refresh()` matters when layout changes while the scene is active and the scroll position stays the same — e.g. toggling a class or injecting content without any scrolling.
+
+`refresh()` is asynchronous — it schedules recalculation for the next animation frame and returns immediately. Multiple `refresh()` calls within the same frame are batched automatically.
 
 ## Plugins
 

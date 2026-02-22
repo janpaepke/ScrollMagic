@@ -76,8 +76,8 @@ export class ScrollMagic {
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
 
-	// TODO: consider using MutationObserver to check if style of triggerElement or DOM element scrollParent are modified, which should trigger bounds recaluclations
 	constructor(options: Options.Public = {}) {
+		ScrollMagic.instances.add(this);
 		const initOptions: Required<Options.Public> = {
 			...ScrollMagic.defaultOptionsPublic,
 			...options,
@@ -494,10 +494,23 @@ export class ScrollMagic {
 		return this.dispatcher.addEventListener(type, cb);
 	}
 
+	/** Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress. */
+	public refresh(): ScrollMagic {
+		if (!isBrowser) {
+			return this;
+		}
+		this.update.elementBounds.schedule();
+		this.update.containerBounds.schedule();
+		this.update.viewportObserver.schedule();
+		this.update.progress.schedule();
+		return this;
+	}
+
 	public destroy(): void {
 		if (!isBrowser) {
 			return;
 		}
+		ScrollMagic.instances.delete(this);
 		this.executionQueue.cancel();
 		this.resizeCleanup?.();
 		this.viewportObserver.disconnect();
@@ -506,6 +519,16 @@ export class ScrollMagic {
 	}
 
 	// static options/methods
+
+	private static readonly instances = new Set<ScrollMagic>();
+	/** Schedule a full recalculation on all active ScrollMagic instances. */
+	public static refreshAll(): void {
+		ScrollMagic.instances.forEach(instance => instance.refresh());
+	}
+	/** Destroy all active ScrollMagic instances. */
+	public static destroyAll(): void {
+		ScrollMagic.instances.forEach(instance => instance.destroy());
+	}
 
 	protected static defaultOptionsPublic = Options.defaults;
 	// get or change default options
