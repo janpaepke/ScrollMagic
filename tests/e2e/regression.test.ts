@@ -94,11 +94,11 @@ describe('PixelConverter caching', () => {
 		let elementEndCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			elementStart: size => {
+			elementStart: () => {
 				elementStartCalls++;
 				return 0;
 			},
-			elementEnd: size => {
+			elementEnd: () => {
 				elementEndCalls++;
 				return 0;
 			},
@@ -126,7 +126,7 @@ describe('PixelConverter caching', () => {
 		let elementStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			elementStart: size => {
+			elementStart: () => {
 				elementStartCalls++;
 				return 0;
 			},
@@ -151,11 +151,11 @@ describe('PixelConverter caching', () => {
 		let triggerEndCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: size => {
+			triggerStart: () => {
 				triggerStartCalls++;
 				return 0;
 			},
-			triggerEnd: size => {
+			triggerEnd: () => {
 				triggerEndCalls++;
 				return 0;
 			},
@@ -182,7 +182,7 @@ describe('PixelConverter caching', () => {
 		let triggerStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: size => {
+			triggerStart: () => {
 				triggerStartCalls++;
 				return 0;
 			},
@@ -226,7 +226,7 @@ describe('PixelConverter caching', () => {
 		let elementStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			elementStart: size => {
+			elementStart: () => {
 				elementStartCalls++;
 				return 0;
 			},
@@ -249,7 +249,7 @@ describe('PixelConverter caching', () => {
 		let triggerStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: size => {
+			triggerStart: () => {
 				triggerStartCalls++;
 				return 0;
 			},
