@@ -34,7 +34,6 @@ Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then E
 - **toggleClass** — auto add/remove CSS class on enter/leave. The most common scroll use case — nearly every library has it. Usage-specific, so better as a bundled plugin than core API.
 - **CSS variable output** — expose `--progress`, `--visible` etc. as CSS custom properties on elements. Enables pure-CSS scroll effects with zero JS callbacks.
 - **Batch coordination** — when N elements enter the viewport in the same frame, fire one coordinated callback with stagger support. Essential for grid/list reveals.
-- **Velocity tracking** — per-instance or global scroll velocity (px/s). Useful for velocity-dependent behaviors.
 
 ## Plugin Ideas
 

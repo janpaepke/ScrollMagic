@@ -10,10 +10,11 @@ import { isWindow } from './util/typeguards';
 export type ScrollParent = HTMLElement | Window;
 
 type CleanUpFunction = () => void;
-type ScrollDelta = {
-	deltaX: number;
-	deltaY: number;
+type Vector = {
+	x: number;
+	y: number;
 };
+const ZERO_VECTOR: Readonly<Vector> = Object.freeze({ x: 0, y: 0 });
 
 // type EventType = 'scroll' | 'resize';
 enum EventType {
@@ -24,11 +25,13 @@ export class ContainerEvent implements DispatchableEvent {
 	constructor(
 		public readonly target: Container,
 		public readonly type: `${EventType}`,
-		public readonly scrollDelta: ScrollDelta = { deltaX: 0, deltaY: 0 } // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize events...
+		public readonly scrollDelta: Readonly<Vector> = ZERO_VECTOR // I could make an additional EventType only for Scroll Events, but we'll just ignore these for resize events...
 	) {}
 }
 
 export class Container {
+	/** Time in milliseconds after which the scroll velocity is considered stale. */
+	private static readonly VELOCITY_STALE_MS = 100;
 	private dimensions = {
 		// inner size excluding scrollbars
 		clientWidth: 0,
@@ -46,9 +49,11 @@ export class Container {
 		top: 0,
 		left: 0,
 	};
-	private dispatcher = new EventDispatcher<ContainerEvent>();
-	private cleanups: CleanUpFunction[] = [];
 	private destroyed = false;
+	private lastScrollTime: number | undefined;
+	private readonly scrollVelocityCache: Vector = { x: 0, y: 0 };
+	private readonly dispatcher = new EventDispatcher<ContainerEvent>();
+	private readonly cleanups: CleanUpFunction[] = [];
 	/**
 	 * TODO: Currently we have no way of detecting, when physical scrollbars appear or disappear, which should technically trigger a resize event.
 	 * One potential way of getting around this would be to add an additional resize observer to the documentElement and detect when it crosses 100% of the container's client size (either in or out)
@@ -83,7 +88,16 @@ export class Container {
 		this.scrollPos = getScrollPos(this.scrollParent);
 		const deltaY = this.scrollPos.top - prevScrollPos.top;
 		const deltaX = this.scrollPos.left - prevScrollPos.left;
-		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Scroll, { deltaX, deltaY }));
+		const now = performance.now();
+		if (undefined !== this.lastScrollTime) {
+			const dt = now - this.lastScrollTime;
+			if (dt > 0) {
+				this.scrollVelocityCache.x = (deltaX / dt) * 1000;
+				this.scrollVelocityCache.y = (deltaY / dt) * 1000;
+			}
+		}
+		this.lastScrollTime = now;
+		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Scroll, { x: deltaX, y: deltaY }));
 	}
 
 	private updateDimensions() {
@@ -124,12 +138,19 @@ export class Container {
 		return this.dispatcher.addEventListener(type, cb);
 	}
 
-	public get size(): Container['dimensions'] {
+	public get size(): Readonly<Container['dimensions']> {
 		return this.dimensions;
 	}
 
-	public get position(): Container['positionCache'] {
+	public get position(): Readonly<Container['positionCache']> {
 		return this.positionCache;
+	}
+
+	public get scrollVelocity(): Readonly<Vector> {
+		if (undefined === this.lastScrollTime || performance.now() - this.lastScrollTime > Container.VELOCITY_STALE_MS) {
+			return ZERO_VECTOR;
+		}
+		return this.scrollVelocityCache;
 	}
 
 	public destroy(): void {
@@ -138,6 +159,6 @@ export class Container {
 		}
 		this.destroyed = true;
 		this.cleanups.forEach(cleanup => cleanup());
-		this.cleanups = [];
+		this.cleanups.length = 0;
 	}
 }

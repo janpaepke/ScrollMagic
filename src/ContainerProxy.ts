@@ -3,6 +3,10 @@ import { ScrollMagic } from './ScrollMagic';
 import { ScrollMagicInternalError } from './ScrollMagicError';
 type EventCallback = (e: ContainerEvent) => void;
 type CleanUpFunction = () => void;
+type Velocity = {
+	x: number;
+	y: number;
+};
 
 export class ContainerProxy {
 	private static cache = new WeakMap<ScrollParent, [Container, Set<ScrollMagic>]>();
@@ -55,5 +59,12 @@ export class ContainerProxy {
 			...this.container.position,
 			...this.container.size,
 		};
+	}
+
+	public get scrollVelocity(): Velocity {
+		if (undefined === this.container) {
+			return { x: 0, y: 0 };
+		}
+		return this.container.scrollVelocity;
 	}
 }

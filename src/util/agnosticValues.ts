@@ -7,7 +7,7 @@ const translationMap = {
 	size: ['height', 'width'],
 	clientSize: ['clientHeight', 'clientWidth'],
 	scrollSize: ['scrollHeight', 'scrollWidth'],
-	scrollDelta: ['deltaY', 'deltaX'],
+	axis: ['y', 'x'],
 } as const;
 
 type TranslationMap = typeof translationMap;

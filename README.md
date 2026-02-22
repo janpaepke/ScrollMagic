@@ -183,6 +183,7 @@ scene.triggerStart = 'center'; // set individual options
 // Read-only getters
 scene.progress; // 0–1, how far through the active zone
 scene.scrollOffset; // { start, end } absolute scroll positions
+scene.scrollVelocity; // px/s along tracked axis, 0 when idle
 scene.computedOptions; // resolved option values after computation
 
 // Refresh — recalculate bounds after external layout changes

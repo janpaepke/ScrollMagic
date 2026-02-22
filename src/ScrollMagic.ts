@@ -330,7 +330,7 @@ export class ScrollMagic {
 		 * updateViewportObserver => 	never
 		 * updateProgress =>			schedule if currently intersecting or potentially skipped, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
-		const { scrollDelta } = agnosticValues(this.optionsPrivate.vertical, e.scrollDelta);
+		const { axis: scrollDelta } = agnosticValues(this.optionsPrivate.vertical, e.scrollDelta);
 		if (0 === scrollDelta) {
 			return; // scroll was in other direction
 		}
@@ -453,6 +453,14 @@ export class ScrollMagic {
 	/** Current scroll progress through the active zone, from 0 (before) to 1 (past). */
 	public get progress(): number {
 		return this.currentProgress;
+	}
+	/** Raw scroll velocity in pixels per second along the tracked axis (no smoothing). Returns 0 when disabled or not scrolling. */
+	public get scrollVelocity(): number {
+		if (this.disabled) {
+			return 0;
+		}
+		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.container.scrollVelocity);
+		return axis;
 	}
 	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
 	public get scrollOffset(): { start: number; end: number } {

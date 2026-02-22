@@ -9,7 +9,7 @@ describe('agnosticProps', () => {
 		expect(props.size).toBe('height');
 		expect(props.clientSize).toBe('clientHeight');
 		expect(props.scrollSize).toBe('scrollHeight');
-		expect(props.scrollDelta).toBe('deltaY');
+		expect(props.axis).toBe('y');
 	});
 
 	test('returns horizontal props when vertical=false', () => {
@@ -19,7 +19,7 @@ describe('agnosticProps', () => {
 		expect(props.size).toBe('width');
 		expect(props.clientSize).toBe('clientWidth');
 		expect(props.scrollSize).toBe('scrollWidth');
-		expect(props.scrollDelta).toBe('deltaX');
+		expect(props.axis).toBe('x');
 	});
 });
 
