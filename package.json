@@ -12,6 +12,11 @@
 			"types": "./dist/types/index.d.ts",
 			"import": "./dist/scrollmagic.esm.js",
 			"require": "./dist/scrollmagic.umd.js"
+		},
+		"./util": {
+			"types": "./dist/types/util.d.ts",
+			"import": "./dist/scrollmagic.util.esm.js",
+			"require": "./dist/scrollmagic.util.umd.js"
 		}
 	},
 	"sideEffects": false,

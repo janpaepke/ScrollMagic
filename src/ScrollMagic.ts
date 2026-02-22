@@ -629,7 +629,4 @@ export class ScrollMagic {
 	public static readonly EventType = EventType;
 	public static readonly EventLocation = EventLocation;
 	public static readonly EventScrollDirection = ScrollDirection;
-	public static readonly util = {
-		agnosticValues,
-	};
 }
