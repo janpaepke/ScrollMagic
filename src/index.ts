@@ -12,6 +12,7 @@ export { ScrollMagic as default } from './ScrollMagic';
 // relevant types
 export type { ScrollMagicError } from './ScrollMagicError';
 export type { ScrollMagicEvent } from './ScrollMagicEvent';
+export type { ListenerOptions } from './EventDispatcher';
 export type { ScrollMagicPlugin };
 export type { ScrollMagicOptions };
 

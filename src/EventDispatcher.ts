@@ -4,38 +4,63 @@ export interface DispatchableEvent {
 	readonly type: EventType;
 }
 
+export type ListenerOptions = { once?: boolean };
 type Callback<E extends DispatchableEvent> = (event: E) => void;
+type ListenerEntry<E extends DispatchableEvent> = { cb: Callback<E>; options: ListenerOptions };
+
 export class EventDispatcher<E extends DispatchableEvent = DispatchableEvent> {
-	private callbacks = new Map<string, Callback<E>[]>();
+	private listeners = new Map<string, Set<ListenerEntry<E>>>();
 
 	// adds a listener to the dispatcher. returns a function to reverse the effect.
-	public addEventListener(type: E['type'], cb: Callback<E>): () => void {
-		let list = this.callbacks.get(type);
-		if (!list) {
-			list = [];
-			this.callbacks.set(type, list);
+	public addEventListener(type: E['type'], cb: Callback<E>, options: ListenerOptions = {}): () => void {
+		let set = this.listeners.get(type);
+		if (!set) {
+			set = new Set();
+			this.listeners.set(type, set);
 		}
-		list.push(cb);
-		return () => this.removeEventListener(type, cb);
+		// fresh object per registration — Set identity keeps duplicate registrations of the same callback distinct
+		const entry: ListenerEntry<E> = { cb, options };
+		set.add(entry);
+		return () => this.removeEntry(type, entry);
 	}
 
 	// removes a listener from the dispatcher
 	public removeEventListener(type: E['type'], cb: Callback<E>): void {
-		const list = this.callbacks.get(type);
-		if (!list) {
+		const set = this.listeners.get(type);
+		if (!set) {
 			return;
 		}
-		const index = list.indexOf(cb);
-		if (index !== -1) {
-			list.splice(index, 1);
-		}
-		if (0 === list.length) {
-			this.callbacks.delete(type);
+		for (const entry of set) {
+			if (entry.cb === cb) {
+				this.removeEntry(type, entry);
+				break;
+			}
 		}
 	}
 
 	// dispatches an event
 	public dispatchEvent(event: E): void {
-		this.callbacks.get(event.type)?.forEach(cb => cb(event));
+		const set = this.listeners.get(event.type);
+		if (!set) {
+			return;
+		}
+		// iterate a copy so listeners added during dispatch don't fire in the same cycle
+		for (const entry of [...set]) {
+			if (entry.options.once) {
+				this.removeEntry(event.type, entry);
+			}
+			entry.cb(event);
+		}
+	}
+
+	private removeEntry(type: string, entry: ListenerEntry<E>): void {
+		const set = this.listeners.get(type);
+		if (!set) {
+			return;
+		}
+		set.delete(entry);
+		if (0 === set.size) {
+			this.listeners.delete(type);
+		}
 	}
 }

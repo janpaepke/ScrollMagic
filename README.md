@@ -98,7 +98,7 @@ For `triggerStart`/`triggerEnd` the inferred values depend on the `element` opti
 
 ## Events
 
-Subscribe with `.on()`, `.off()`, or `.subscribe()` (returns an unsubscribe function).
+Subscribe with `.on()`, `.off()`, or `.subscribe()` (returns an unsubscribe function). Pass `{ once: true }` to auto-remove the listener after its first invocation. Calling `.off()` or the unsubscribe function after the listener has already been removed (e.g. after a `once` listener fires) is a safe no-op.
 
 | Event      | When                                                     |
 | ---------- | -------------------------------------------------------- |
@@ -168,8 +168,10 @@ const scene = new ScrollMagic(options);
 
 // Event listeners
 scene.on(type, callback); // add listener, returns scene (chainable)
+scene.on(type, callback, { once: true }); // listener auto-removes after first invocation
 scene.off(type, callback); // remove listener, returns scene (chainable)
 scene.subscribe(type, callback); // add listener, returns unsubscribe function
+scene.subscribe(type, callback, { once: true }); // both auto-removes and returns unsubscribe
 
 // Modify options after creation
 scene.modify({ triggerStart: 'center' });

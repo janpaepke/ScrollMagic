@@ -1,7 +1,8 @@
 /**
  * Core scroll progress tracking and event behavior.
  * Tests for: progress 0→1 lifecycle, enter/leave/progress events, event direction,
- * fast scrolling, programmatic scroll jumps, scroll state initialization, destroy.
+ * fast scrolling, programmatic scroll jumps, scroll state initialization, destroy,
+ * on() with { once: true }.
  */
 import { describe, test, expect, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
@@ -242,6 +243,130 @@ describe('event direction', () => {
 
 		expect(enterDirections).toContain('reverse');
 		expect(leaveDirections).toContain('reverse');
+
+		scene.destroy();
+	});
+});
+
+describe('on with { once: true }', () => {
+	afterEach(cleanup);
+
+	test('once listener fires exactly once then auto-removes', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
+
+		let enterCount = 0;
+		const scene = new ScrollMagic({ element: target });
+		scene.on('enter', () => enterCount++, { once: true });
+
+		// Scroll forward past element → enter fires
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+		expect(enterCount).toBe(1);
+
+		// Scroll back to top → element leaves, then scroll past again
+		window.scrollTo(0, 0);
+		await waitForFrames(3);
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+
+		// Still 1 — listener was auto-removed after first fire
+		expect(enterCount).toBe(1);
+
+		scene.destroy();
+	});
+
+	test('off() cancels a once listener before it fires', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
+
+		let enterCount = 0;
+		const handler = () => enterCount++;
+		const scene = new ScrollMagic({ element: target });
+		scene.on('enter', handler, { once: true });
+		scene.off('enter', handler);
+
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+
+		expect(enterCount).toBe(0);
+
+		scene.destroy();
+	});
+
+	test('on with { once: true } is chainable', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const result = scene.on('enter', () => {}, { once: true });
+		expect(result).toBe(scene);
+		scene.destroy();
+	});
+
+	test('once on different event types works independently', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
+
+		let enterCount = 0;
+		let leaveCount = 0;
+		const scene = new ScrollMagic({ element: target });
+		scene.on('enter', () => enterCount++, { once: true });
+		scene.on('leave', () => leaveCount++, { once: true });
+
+		// Scroll forward past → enter + leave fire
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+		expect(enterCount).toBe(1);
+		expect(leaveCount).toBe(1);
+
+		// Scroll back and forward again → neither fires again
+		window.scrollTo(0, 0);
+		await waitForFrames(3);
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+
+		expect(enterCount).toBe(1);
+		expect(leaveCount).toBe(1);
+
+		scene.destroy();
+	});
+
+	test('subscribe with { once: true } fires once and returns working unsubscribe', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
+
+		let enterCount = 0;
+		const scene = new ScrollMagic({ element: target });
+		const unsub = scene.subscribe('enter', () => enterCount++, { once: true });
+		expect(typeof unsub).toBe('function');
+
+		// Scroll forward past element → enter fires
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+		expect(enterCount).toBe(1);
+
+		// Scroll back and forward again → auto-removed, doesn't fire
+		window.scrollTo(0, 0);
+		await waitForFrames(3);
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+		expect(enterCount).toBe(1);
+
+		scene.destroy();
+	});
+
+	test('subscribe with { once: true } can be cancelled via unsubscribe before firing', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
+
+		let enterCount = 0;
+		const scene = new ScrollMagic({ element: target });
+		const unsub = scene.subscribe('enter', () => enterCount++, { once: true });
+		unsub(); // cancel before it fires
+
+		window.scrollTo(0, 2000);
+		await waitForFrames(3);
+		expect(enterCount).toBe(0);
 
 		scene.destroy();
 	});

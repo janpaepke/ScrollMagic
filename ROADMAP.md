@@ -22,6 +22,21 @@ Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then E
 - Bounds caches (`elementBoundsCache`, `containerBoundsCache`) use `Object.assign` — could mutate fields in place.
 - Container event objects are created per dispatch — could reuse a single event object.
 
+## API Gaps
+
+### Core candidates
+
+- **`enable()` / `disable()`** — temporarily pause/resume tracking without destroying. Useful for tab switching, conditional behavior, off-screen content.
+- **`signal` option for `on()`** — `on(type, cb, { signal: AbortSignal })` for lifecycle-bound bulk listener cleanup via `AbortController`. Matches DOM `addEventListener` pattern. Lower priority since `subscribe()` already returns an unsubscribe function.
+- **Separate trigger element** — track one element's position but define the trigger range based on another element. Decouples "what to watch" from "when to activate." I don't think we want to implement this, since there might be a workaround using the pixelConverter function. If this turns out to be not true, we might consider a tuple as a valid value for element?
+
+### Plugin candidates
+
+- **toggleClass** — auto add/remove CSS class on enter/leave. The most common scroll use case — nearly every library has it. Usage-specific, so better as a bundled plugin than core API.
+- **CSS variable output** — expose `--progress`, `--visible` etc. as CSS custom properties on elements. Enables pure-CSS scroll effects with zero JS callbacks.
+- **Batch coordination** — when N elements enter the viewport in the same frame, fire one coordinated callback with stagger support. Essential for grid/list reveals.
+- **Velocity tracking** — per-instance or global scroll velocity (px/s). Useful for velocity-dependent behaviors.
+
 ## Plugin Ideas
 
 ### Auto-refresh (MutationObserver + PositionObserver)

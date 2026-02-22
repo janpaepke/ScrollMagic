@@ -1,6 +1,6 @@
 import { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
-import { EventDispatcher } from './EventDispatcher';
+import { EventDispatcher, ListenerOptions } from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { processOptions, sanitizeOptions } from './Options.processors';
@@ -496,13 +496,14 @@ export class ScrollMagic {
 	 * add an event listener
 	 * @param type ScrollMagic Event Type
 	 * @param cb callback
+	 * @param options optional settings, e.g. { once: true } to auto-remove after first invocation
 	 * @returns ScrollMagic instance
 	 */
-	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void, options?: ListenerOptions): ScrollMagic {
 		if (this.guardInert()) {
 			return this;
 		}
-		this.dispatcher.addEventListener(type, cb);
+		this.dispatcher.addEventListener(type, cb, options);
 		return this;
 	}
 	public off(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
@@ -513,11 +514,11 @@ export class ScrollMagic {
 		return this;
 	}
 	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
-	public subscribe(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): () => void {
+	public subscribe(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void, options?: ListenerOptions): () => void {
 		if (this.guardInert()) {
 			return () => {};
 		}
-		return this.dispatcher.addEventListener(type, cb);
+		return this.dispatcher.addEventListener(type, cb, options);
 	}
 
 	/** Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress. */
