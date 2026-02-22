@@ -52,8 +52,8 @@
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "prettier --check .",
 		"prettier:fix": "prettier --write .",
-		"prepublishOnly": "npm run build",
-		"release:pre": "npm version prerelease --preid='alpha' && npm publish --tag next"
+		"preversion": "npm run build && npm run test",
+		"prepublishOnly": "npm run build"
 	},
 	"repository": {
 		"type": "git",
