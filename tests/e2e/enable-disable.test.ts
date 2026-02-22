@@ -89,6 +89,49 @@ describe('enable/disable: state & guards', () => {
 		scene.destroy();
 	});
 
+	test('disable() calls onDisable on all plugins', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const plugin = { name: 'test', onDisable: vi.fn() };
+		scene.addPlugin(plugin);
+
+		scene.disable();
+		expect(plugin.onDisable).toHaveBeenCalledOnce();
+		scene.destroy();
+	});
+
+	test('enable() calls onEnable on all plugins', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const plugin = { name: 'test', onEnable: vi.fn() };
+		scene.addPlugin(plugin);
+
+		scene.disable();
+		scene.enable();
+		expect(plugin.onEnable).toHaveBeenCalledOnce();
+		scene.destroy();
+	});
+
+	test('onDisable/onEnable are not called on idempotent calls', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const plugin = { name: 'test', onEnable: vi.fn(), onDisable: vi.fn() };
+		scene.addPlugin(plugin);
+
+		// already enabled — enable() should no-op
+		scene.enable();
+		expect(plugin.onEnable).not.toHaveBeenCalled();
+
+		scene.disable();
+		expect(plugin.onDisable).toHaveBeenCalledOnce();
+
+		// already disabled — disable() should no-op
+		scene.disable();
+		expect(plugin.onDisable).toHaveBeenCalledOnce(); // still just once
+
+		scene.destroy();
+	});
+
 	test('progress getter returns last known value when disabled', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });

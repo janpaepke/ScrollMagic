@@ -238,25 +238,11 @@ Note that `refresh()` is only needed if you want bounds to update **before the n
 ScrollMagic has a plugin system for extending instance behaviour.
 
 ```ts
-const myPlugin: ScrollMagicPlugin = {
-	name: 'my-plugin',
-	onAdd() {
-		// `this` is the ScrollMagic instance
-		this.on('enter', () => {
-			/* ... */
-		});
-	},
-	onRemove() {
-		this.off('enter' /* ... */);
-	},
-	onModify(changedOptions) {
-		// react to option changes
-	},
-};
-
 scene.addPlugin(myPlugin);
 scene.removePlugin(myPlugin);
 ```
+
+See [PLUGINS.md](PLUGINS.md) for the full plugin authoring guide.
 
 ## Browser Support
 

@@ -94,19 +94,56 @@ describe('destroy: post-destroy dev warnings', () => {
 });
 
 describe('destroy: plugin cleanup', () => {
-	test('destroy() calls onRemove on all plugins', () => {
+	test('destroy() calls onDestroy (not onRemove) on all plugins', () => {
 		const { target } = setupWindow();
 		const scene = new ScrollMagic({ element: target });
-		const plugin1 = { name: 'p1', onRemove: vi.fn() };
-		const plugin2 = { name: 'p2', onRemove: vi.fn() };
+		const plugin1 = { name: 'p1', onRemove: vi.fn(), onDestroy: vi.fn() };
+		const plugin2 = { name: 'p2', onRemove: vi.fn(), onDestroy: vi.fn() };
 		scene.addPlugin(plugin1);
 		scene.addPlugin(plugin2);
 
 		scene.destroy();
 
-		expect(plugin1.onRemove).toHaveBeenCalledOnce();
-		expect(plugin2.onRemove).toHaveBeenCalledOnce();
+		expect(plugin1.onDestroy).toHaveBeenCalledOnce();
+		expect(plugin2.onDestroy).toHaveBeenCalledOnce();
+		expect(plugin1.onRemove).not.toHaveBeenCalled();
+		expect(plugin2.onRemove).not.toHaveBeenCalled();
 		expect(scene.pluginList).toHaveLength(0);
+	});
+
+	test('destroy() calls onDisable before onDestroy (when enabled)', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const order: string[] = [];
+		const plugin = {
+			name: 'order-test',
+			onDisable: vi.fn(() => order.push('disable')),
+			onDestroy: vi.fn(() => order.push('destroy')),
+		};
+		scene.addPlugin(plugin);
+
+		scene.destroy();
+
+		expect(order).toEqual(['disable', 'destroy']);
+	});
+
+	test('destroy() skips onDisable when already disabled', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const plugin = {
+			name: 'test',
+			onDisable: vi.fn(),
+			onDestroy: vi.fn(),
+		};
+		scene.addPlugin(plugin);
+
+		scene.disable();
+		plugin.onDisable.mockClear(); // reset from the explicit disable() call
+
+		scene.destroy();
+
+		expect(plugin.onDisable).not.toHaveBeenCalled();
+		expect(plugin.onDestroy).toHaveBeenCalledOnce();
 	});
 });
 

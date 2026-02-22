@@ -51,6 +51,9 @@ export interface Plugin {
 	name: string;
 	onAdd?(this: ScrollMagic): void;
 	onRemove?(this: ScrollMagic): void;
+	onEnable?(this: ScrollMagic): void;
+	onDisable?(this: ScrollMagic): void;
+	onDestroy?(this: ScrollMagic): void;
 	onModify?(this: ScrollMagic, changesPublic: Options.Public): void;
 }
 
@@ -574,6 +577,7 @@ export class ScrollMagic {
 		this.resizeCleanup = undefined;
 		this.viewportObserver.disconnect();
 		this.container.detach();
+		this.plugins.forEach(plugin => plugin.onDisable?.call(this));
 		return this;
 	}
 
@@ -591,6 +595,7 @@ export class ScrollMagic {
 		this.update.containerBounds.schedule();
 		this.update.viewportObserver.schedule();
 		this.update.progress.schedule();
+		this.plugins.forEach(plugin => plugin.onEnable?.call(this));
 		return this;
 	}
 
@@ -598,10 +603,10 @@ export class ScrollMagic {
 		if (this.destroyed || !isBrowser) {
 			return;
 		}
-		this.disable(); // tear down observers (no-ops if already disabled)
+		this.disable(); // tear down observers (no-ops if already disabled), fires onDisable
 		this.destroyed = true;
 		ScrollMagic.instances.delete(this);
-		this.plugins.forEach(plugin => plugin.onRemove?.call(this));
+		this.plugins.forEach(plugin => plugin.onDestroy?.call(this));
 		this.plugins.clear();
 	}
 
