@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### 3.0.0-beta.2
+
+#### Breaking Changes
+
+- **`destroy()` calls `onDestroy` instead of `onRemove` on plugins** — `onRemove` now only fires via `removePlugin()`. Plugins that used `onRemove` for destroy cleanup should add `onDestroy` (or assign the same function to both).
+- **`computedOptions` removed** — replaced by `resolvedBounds`, which returns `{ element: ElementBounds, scrollParent: ContainerBounds }` (cached layout bounds only, no longer leaks the full internal options structure).
+- **Getter return types narrowed** — `element`, `scrollParent`, and `vertical` getters now return resolved types (`Element`, `Window | Element`, `boolean`) instead of the raw public input union. Setters still accept the full public types.
+
+#### New Features
+
+- **Plugin lifecycle hooks: `onEnable`, `onDisable`, `onDestroy`** — plugins can react to enable/disable transitions and distinguish manual removal from instance teardown. `destroy()` on an enabled instance fires `onDisable` → `onDestroy` in sequence.
+- **`scrollmagic/util` subpath export** — exposes `agnosticValues` and `agnosticProps` via `import { ... } from 'scrollmagic/util'` for plugin authors working with direction-agnostic bounds.
+- **`ElementBounds`, `ContainerBounds`, `ResolvedBounds` types exported** — available from the main entry point for plugin and integration authors.
+
 ## 3.0.0-beta.1
 
 ### New Features
