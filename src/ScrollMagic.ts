@@ -15,19 +15,36 @@ import { ViewportObserver } from './ViewportObserver';
 
 const isBrowser = 'undefined' !== typeof window;
 
-type ElementBounds = {
-	start: number; //		position relative to viewport
-	size: number; // 		outer visible size of element (excluding margins)
-	offsetStart: number; // offset relative to top/left of element
-	offsetEnd: number; // 	offset relative to bottom/right of element
-	trackSize: number; // 	effective track size including offsets
+export type ElementBounds = {
+	/** Position relative to viewport. */
+	start: number;
+	/** Outer visible size of element (excluding margins). */
+	size: number;
+	/** Offset relative to top/left of element. */
+	offsetStart: number;
+	/** Offset relative to bottom/right of element. */
+	offsetEnd: number;
+	/** Effective track size including offsets. */
+	trackSize: number;
 };
-type ContainerBounds = {
-	clientSize: number; //	inner visible area of scroll container (excluding scrollbars)
-	offsetStart: number; // offset relative to top/left of container
-	offsetEnd: number; // 	offset relative to bottom/right of container
-	trackSize: number; // 	effective track size including offsets
-	scrollSize: number; //	total size of content of container
+export type ContainerBounds = {
+	/** Inner visible area of scroll container (excluding scrollbars). */
+	clientSize: number;
+	/** Offset relative to top/left of container. */
+	offsetStart: number;
+	/** Offset relative to bottom/right of container. */
+	offsetEnd: number;
+	/** Effective track size including offsets. */
+	trackSize: number;
+	/** Total size of content of container. */
+	scrollSize: number;
+};
+
+export type ResolvedBounds = {
+	/** Cached bounds of the tracked element. */
+	element: Readonly<ElementBounds>;
+	/** Cached bounds of the scroll container. */
+	scrollParent: Readonly<ContainerBounds>;
 };
 
 export interface Plugin {
@@ -410,20 +427,20 @@ export class ScrollMagic {
 	public set element(element: Required<Options.Public>['element']) {
 		this.modify({ element });
 	}
-	public get element(): Required<Options.Public>['element'] {
-		return this.optionsPublic.element;
+	public get element(): Options.Private['element'] {
+		return this.optionsPrivate.element;
 	}
 	public set scrollParent(scrollParent: Required<Options.Public>['scrollParent']) {
 		this.modify({ scrollParent });
 	}
-	public get scrollParent(): Required<Options.Public>['scrollParent'] {
-		return this.optionsPublic.scrollParent;
+	public get scrollParent(): Options.Private['scrollParent'] {
+		return this.optionsPrivate.scrollParent;
 	}
 	public set vertical(vertical: Required<Options.Public>['vertical']) {
 		this.modify({ vertical });
 	}
-	public get vertical(): Required<Options.Public>['vertical'] {
-		return this.optionsPublic.vertical;
+	public get vertical(): Options.Private['vertical'] {
+		return this.optionsPrivate.vertical;
 	}
 	public set triggerStart(triggerStart: Required<Options.Public>['triggerStart']) {
 		this.modify({ triggerStart });
@@ -487,16 +504,11 @@ export class ScrollMagic {
 			end: Math.ceil(end - containerSize + containerOffsetEnd),
 		};
 	}
-	/** Resolved option values after processing, including computed trigger and element offsets in pixels. */
-	public get computedOptions(): Options.PrivateComputed {
-		const { offsetStart: triggerStart, offsetEnd: triggerEnd } = this.containerBoundsCache;
-		const { offsetStart: elementStart, offsetEnd: elementEnd } = this.elementBoundsCache;
+	/** Resolved pixel offsets for trigger zone and element boundaries, based on current layout. */
+	public get resolvedBounds(): Readonly<ResolvedBounds> {
 		return {
-			...this.optionsPrivate,
-			triggerStart,
-			triggerEnd,
-			elementStart,
-			elementEnd,
+			element: { ...this.elementBoundsCache },
+			scrollParent: { ...this.containerBoundsCache },
 		};
 	}
 	/** Snapshot of all currently registered plugins. */

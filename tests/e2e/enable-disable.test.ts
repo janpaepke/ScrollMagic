@@ -353,8 +353,8 @@ describe('enable/disable: tracking behavior', () => {
 		await waitForFrames(3);
 
 		expect(scene.triggerStart).toBe(0.5);
-		// Verify the new triggerStart is actually in effect by checking computed options
-		expect(scene.computedOptions.triggerStart).toBeGreaterThan(0);
+		// Verify the new triggerStart is actually in effect by checking resolved offsets
+		expect(scene.resolvedBounds.scrollParent.offsetStart).toBeGreaterThan(0);
 
 		scene.destroy();
 	});

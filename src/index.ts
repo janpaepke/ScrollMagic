@@ -15,6 +15,7 @@ export type { ScrollMagicEvent } from './ScrollMagicEvent';
 export type { ListenerOptions } from './EventDispatcher';
 export type { ScrollMagicPlugin };
 export type { ScrollMagicOptions };
+export type { ElementBounds, ContainerBounds, ResolvedBounds } from './ScrollMagic';
 
 // less relevant enum types as literals
 export type {

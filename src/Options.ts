@@ -1,6 +1,6 @@
-type SameProperties<T extends { [K in keyof T]: unknown }, R extends { [K in keyof T]: unknown }> = R;
-type ExtendProperty<T extends { [K in keyof T]: unknown }, K extends keyof T, E> = Omit<T, K> & { [X in K]: T[X] | E };
-type ModifyProperty<T extends { [K in keyof T]: unknown }, K extends keyof T, E> = Omit<T, K> & { [X in K]: E };
+type NullableProperties<T extends object, K extends keyof T> = Omit<T, K> & {
+	[X in K]: T[X] | null;
+};
 type UnitString = `${number}px` | `${number}%`;
 type PositionShorthand = keyof typeof positionShorthands;
 type CssSelector = string;
@@ -19,31 +19,18 @@ export type Public = {
 };
 
 // basically a normalized version of the options
-export type Private = SameProperties<
-	Public,
-	{
-		element: Element;
-		scrollParent: Window | HTMLElement;
-		vertical: boolean;
-		triggerStart: PixelConverter;
-		triggerEnd: PixelConverter;
-		elementStart: PixelConverter;
-		elementEnd: PixelConverter;
-	}
->;
+export type Private = {
+	element: Element;
+	scrollParent: Window | HTMLElement;
+	vertical: boolean;
+	triggerStart: PixelConverter;
+	triggerEnd: PixelConverter;
+	elementStart: PixelConverter;
+	elementEnd: PixelConverter;
+};
 
 // values that can be null after processing and need to be inferred, if still null
-export type PrivateUninferred = ExtendProperty<
-	Private,
-	'triggerStart' | 'triggerEnd' | 'element' | 'scrollParent',
-	null
->;
-// PixelConverters are executed and their values returned during computation
-export type PrivateComputed = ModifyProperty<
-	Private,
-	'triggerStart' | 'triggerEnd' | 'elementStart' | 'elementEnd',
-	number
->;
+export type PrivateUninferred = NullableProperties<Private, 'element' | 'scrollParent' | 'triggerStart' | 'triggerEnd'>;
 
 // shorthand values for bound position values
 export const positionShorthands = {
