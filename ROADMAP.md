@@ -22,6 +22,16 @@ Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then E
 - Bounds caches (`elementBoundsCache`, `containerBoundsCache`) use `Object.assign` — could mutate fields in place.
 - Container event objects are created per dispatch — could reuse a single event object.
 
+## Plugin Interface
+
+### Missing lifecycle hooks
+
+The `Plugin` interface is missing hooks for lifecycle events added after the initial design. Should be added before v3 stable to avoid breaking the plugin contract later.
+
+- **`onEnable`** — called when `enable()` resumes tracking. Plugins like toggleClass or debug indicators need to know when to start/resume their effects.
+- **`onDisable`** — called when `disable()` pauses tracking. Counterpart to `onEnable` — plugins need to suspend their effects (e.g. hide debug overlays, remove toggled classes).
+- **`onDestroy`** — called when `destroy()` tears down the instance. Currently `onRemove` is reused during destroy, but plugins can't distinguish "manually removed from a living instance" from "instance is dying." Lets plugins skip re-add preparation logic.
+
 ## API Gaps
 
 ### Core candidates
