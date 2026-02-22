@@ -25,7 +25,7 @@ It's a convenience wrapper around [IntersectionObserver](https://developer.mozil
 
 By itself, ScrollMagic doesn't animate anything. It provides precise scroll-position data and events — what you do with them is up to you. If you're looking for a ready-made scroll animation solution, check out [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [Motion](https://motion.dev/docs/scroll), or [anime.js](https://animejs.com/).
 
-ScrollMagic is the foundation, tools like these can be built upon: framework-agnostic, zero-dependency, and usable for any scroll-related UX — class toggles, progress-driven animations, lazy loading, parallax, scroll-linked video, behavioural tracking, or anything else.
+ScrollMagic is a general-purpose, framework-agnostic, zero-dependency foundation for scroll-driven UX — what you do with it is entirely up to you: class toggles, animations, lazy loading, parallax, scroll-linked video, behavioural tracking, or anything else.
 
 ### Why ScrollMagic?
 
