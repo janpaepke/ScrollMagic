@@ -70,6 +70,14 @@ export class ScrollMagic {
 		scrollSize: 0,
 	};
 
+	private _destroyed = false;
+	private guardInert(): boolean {
+		if (this._destroyed && (typeof process === 'undefined' || process.env.NODE_ENV !== 'production')) {
+			console?.warn('ScrollMagic Warning: Method called on a destroyed instance.');
+		}
+		return this._destroyed || !isBrowser;
+	}
+
 	// all below options should only ever be changed by a dedicated method
 	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
 	protected optionsPrivate!: Options.Private; // set in modify in constructor
@@ -356,8 +364,8 @@ export class ScrollMagic {
 	}
 
 	public modify(options: Options.Public): ScrollMagic {
-		if (!isBrowser) {
-			return this; // no browser APIs available
+		if (this.guardInert()) {
+			return this;
 		}
 		const { sanitized, processed } = processOptions(options, this.optionsPrivate);
 
@@ -377,12 +385,18 @@ export class ScrollMagic {
 	}
 
 	public addPlugin(plugin: Plugin): ScrollMagic {
+		if (this.guardInert()) {
+			return this;
+		}
 		this.plugins.add(plugin);
 		plugin.onAdd?.call(this);
 		return this;
 	}
 
 	public removePlugin(plugin: Plugin): ScrollMagic {
+		if (this.guardInert()) {
+			return this;
+		}
 		this.plugins.delete(plugin);
 		plugin.onRemove?.call(this);
 		return this;
@@ -438,6 +452,9 @@ export class ScrollMagic {
 	}
 	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read. */
 	public get scrollOffset(): { start: number; end: number } {
+		if (this.guardInert()) {
+			return { start: 0, end: 0 };
+		}
 		this.updateElementBoundsCache(); // need to get fresh position
 		const { scrollParent, vertical } = this.optionsPrivate;
 		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
@@ -482,21 +499,30 @@ export class ScrollMagic {
 	 * @returns ScrollMagic instance
 	 */
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+		if (this.guardInert()) {
+			return this;
+		}
 		this.dispatcher.addEventListener(type, cb);
 		return this;
 	}
 	public off(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
+		if (this.guardInert()) {
+			return this;
+		}
 		this.dispatcher.removeEventListener(type, cb);
 		return this;
 	}
 	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
 	public subscribe(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): () => void {
+		if (this.guardInert()) {
+			return () => {};
+		}
 		return this.dispatcher.addEventListener(type, cb);
 	}
 
 	/** Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress. */
 	public refresh(): ScrollMagic {
-		if (!isBrowser) {
+		if (this.guardInert()) {
 			return this;
 		}
 		this.update.elementBounds.schedule();
@@ -507,9 +533,10 @@ export class ScrollMagic {
 	}
 
 	public destroy(): void {
-		if (!isBrowser) {
+		if (this._destroyed || !isBrowser) {
 			return;
 		}
+		this._destroyed = true;
 		ScrollMagic.instances.delete(this);
 		this.executionQueue.cancel();
 		this.resizeCleanup?.();
