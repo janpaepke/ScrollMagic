@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import { EventDispatcher, DispatchableEvent } from '../../src/EventDispatcher';
+import { EventDispatcher, type DispatchableEvent } from '../../src/EventDispatcher';
 
 interface TestEvent extends DispatchableEvent {
 	readonly target: unknown;

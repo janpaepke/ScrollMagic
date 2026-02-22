@@ -1,4 +1,4 @@
-import { Container, ContainerEvent, ScrollParent } from './Container';
+import { Container, type ContainerEvent, type ScrollParent } from './Container';
 import { ScrollMagic } from './ScrollMagic';
 import { ScrollMagicInternalError } from './ScrollMagicError';
 type EventCallback = (e: ContainerEvent) => void;

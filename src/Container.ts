@@ -1,4 +1,4 @@
-import { DispatchableEvent, EventDispatcher } from './EventDispatcher';
+import { type DispatchableEvent, EventDispatcher } from './EventDispatcher';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { getScrollPos } from './util/getScrollPos';
 import { registerEvent } from './util/registerEvent';

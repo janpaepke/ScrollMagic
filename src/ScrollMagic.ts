@@ -1,6 +1,6 @@
-import { ContainerEvent } from './Container';
+import type { ContainerEvent } from './Container';
 import { ContainerProxy } from './ContainerProxy';
-import { EventDispatcher, ListenerOptions } from './EventDispatcher';
+import { EventDispatcher, type ListenerOptions } from './EventDispatcher';
 import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { processOptions, sanitizeOptions } from './Options.processors';

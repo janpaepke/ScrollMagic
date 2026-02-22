@@ -1,5 +1,5 @@
-import { DispatchableEvent } from './EventDispatcher';
-import { ScrollMagic } from './ScrollMagic';
+import type { DispatchableEvent } from './EventDispatcher';
+import type { ScrollMagic } from './ScrollMagic';
 
 export enum EventType {
 	Enter = 'enter',
