@@ -112,6 +112,42 @@ describe('refresh', () => {
 		scene2.destroy();
 	});
 
+	test('refreshAll() skips disabled instances while refreshing enabled ones', async () => {
+		await page.viewport(1024, 768);
+		const { spacer, target } = setupWindow({ elementTop: 550, elementHeight: 100 });
+
+		const target2 = document.createElement('div');
+		target2.style.position = 'absolute';
+		target2.style.top = '650px';
+		target2.style.height = '100px';
+		target2.style.width = '100%';
+		spacer.appendChild(target2);
+
+		const scene1 = new ScrollMagic({ element: target });
+		const scene2 = new ScrollMagic({ element: target2 });
+		window.scrollTo(0, 400);
+		await waitForFrames();
+		const p1Before = scene1.progress;
+		const p2Before = scene2.progress;
+
+		scene1.disable();
+
+		// small shifts — stay within viewport
+		target.style.top = '500px';
+		target2.style.top = '600px';
+
+		ScrollMagic.refreshAll();
+		await waitForFrames();
+
+		// disabled instance: progress frozen
+		expect(scene1.progress).toBe(p1Before);
+		// enabled instance: progress updated
+		expect(scene2.progress).not.toBe(p2Before);
+
+		scene1.destroy();
+		scene2.destroy();
+	});
+
 	test('destroyed instances are excluded from refreshAll()', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 550, elementHeight: 100 });

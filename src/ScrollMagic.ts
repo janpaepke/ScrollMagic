@@ -70,19 +70,13 @@ export class ScrollMagic {
 		scrollSize: 0,
 	};
 
-	private _destroyed = false;
-	private guardInert(): boolean {
-		if (this._destroyed && (typeof process === 'undefined' || process.env.NODE_ENV !== 'production')) {
-			console?.warn('ScrollMagic Warning: Method called on a destroyed instance.');
-		}
-		return this._destroyed || !isBrowser;
-	}
-
 	// all below options should only ever be changed by a dedicated method
 	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
 	protected optionsPrivate!: Options.Private; // set in modify in constructor
 	protected currentProgress = 0;
 	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
+	private destroyed = false; // instance is destroyed and cannot be used anymore, true if destroy() was called
+	private enabled = true; // instance is enabled and can be used, false if disable() was called
 
 	constructor(options: Options.Public = {}) {
 		ScrollMagic.instances.add(this);
@@ -91,6 +85,13 @@ export class ScrollMagic {
 			...options,
 		};
 		this.modify(initOptions);
+	}
+
+	private guardInert(): boolean {
+		if (this.destroyed && (typeof process === 'undefined' || process.env.NODE_ENV !== 'production')) {
+			console?.warn('ScrollMagic Warning: Method called on a destroyed instance.');
+		}
+		return this.destroyed || !isBrowser;
 	}
 
 	protected getViewportMargin(): { top: string; left: string; right: string; bottom: string } {
@@ -240,16 +241,19 @@ export class ScrollMagic {
 			return;
 		}
 		const isChanged = changes.includes.bind(changes);
-		const elementChanged = isChanged('element');
-		const scrollParentChanged = isChanged('scrollParent');
 		const directionChanged = isChanged('vertical');
 		const elementBoundsInvalidated = directionChanged || isChanged('elementStart') || isChanged('elementEnd');
-		const containerBoundsInvalidated =
-			scrollParentChanged || directionChanged || isChanged('triggerStart') || isChanged('triggerEnd');
 
 		if (elementBoundsInvalidated) {
 			this.elementBoundsCache.size = NaN; // force converter recalculation (size guard in updateElementBoundsCache)
 		}
+		if (this.disabled) return;
+
+		const elementChanged = isChanged('element');
+		const scrollParentChanged = isChanged('scrollParent');
+		const containerBoundsInvalidated =
+			scrollParentChanged || directionChanged || isChanged('triggerStart') || isChanged('triggerEnd');
+
 		if (elementBoundsInvalidated || elementChanged) {
 			this.update.elementBounds.schedule();
 		}
@@ -446,16 +450,18 @@ export class ScrollMagic {
 		return this.optionsPublic.elementEnd;
 	}
 
-	// not an option -> getter only
+	/** Current scroll progress through the active zone, from 0 (before) to 1 (past). */
 	public get progress(): number {
 		return this.currentProgress;
 	}
-	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read. */
+	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
 	public get scrollOffset(): { start: number; end: number } {
 		if (this.guardInert()) {
 			return { start: 0, end: 0 };
 		}
-		this.updateElementBoundsCache(); // need to get fresh position
+		if (!this.disabled) {
+			this.updateElementBoundsCache(); // need to get fresh position — skip when disabled to avoid mixing fresh element bounds with stale container bounds
+		}
 		const { scrollParent, vertical } = this.optionsPrivate;
 		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
 		const {
@@ -473,6 +479,7 @@ export class ScrollMagic {
 			end: Math.ceil(end - containerSize + containerOffsetEnd),
 		};
 	}
+	/** Resolved option values after processing, including computed trigger and element offsets in pixels. */
 	public get computedOptions(): Options.PrivateComputed {
 		const { offsetStart: triggerStart, offsetEnd: triggerEnd } = this.containerBoundsCache;
 		const { offsetStart: elementStart, offsetEnd: elementEnd } = this.elementBoundsCache;
@@ -484,8 +491,13 @@ export class ScrollMagic {
 			elementEnd,
 		};
 	}
+	/** Snapshot of all currently registered plugins. */
 	public get pluginList(): Array<Plugin> {
 		return [...this.plugins];
+	}
+	/** Whether tracking is currently paused (via `disable()`) or the instance has been destroyed. */
+	public get disabled(): boolean {
+		return !this.enabled || this.destroyed;
 	}
 
 	public get [Symbol.toStringTag](): string {
@@ -523,7 +535,7 @@ export class ScrollMagic {
 
 	/** Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress. */
 	public refresh(): ScrollMagic {
-		if (this.guardInert()) {
+		if (this.guardInert() || this.disabled) {
 			return this;
 		}
 		this.update.elementBounds.schedule();
@@ -533,17 +545,44 @@ export class ScrollMagic {
 		return this;
 	}
 
-	public destroy(): void {
-		if (this._destroyed || !isBrowser) {
-			return;
-		}
-		this._destroyed = true;
-		ScrollMagic.instances.delete(this);
+	/** Pause tracking — disconnects all observers and freezes progress. Options can still be modified while disabled. */
+	public disable(): ScrollMagic {
+		if (this.guardInert() || this.disabled) return this;
+		this.enabled = false;
 		this.executionQueue.cancel();
 		this.resizeCleanup?.();
+		this.resizeCleanup = undefined;
 		this.viewportObserver.disconnect();
 		this.container.detach();
-		this.plugins.forEach(this.removePlugin.bind(this));
+		return this;
+	}
+
+	/** Resume tracking — reconnects all observers and recalculates from current state. */
+	public enable(): ScrollMagic {
+		if (this.guardInert() || this.enabled) return this;
+		this.enabled = true;
+		const { element, scrollParent } = this.optionsPrivate;
+		this.updateIntersectingState(undefined);
+		this.viewportObserver.observe(element);
+		this.resizeCleanup = observeResize(element, this.onElementResize.bind(this));
+		this.container.attach(scrollParent, this.onContainerUpdate.bind(this));
+		this.elementBoundsCache.size = NaN; // force converter recalculation
+		this.update.elementBounds.schedule();
+		this.update.containerBounds.schedule();
+		this.update.viewportObserver.schedule();
+		this.update.progress.schedule();
+		return this;
+	}
+
+	public destroy(): void {
+		if (this.destroyed || !isBrowser) {
+			return;
+		}
+		this.disable(); // tear down observers (no-ops if already disabled)
+		this.destroyed = true;
+		ScrollMagic.instances.delete(this);
+		this.plugins.forEach(plugin => plugin.onRemove?.call(this));
+		this.plugins.clear();
 	}
 
 	// static options/methods

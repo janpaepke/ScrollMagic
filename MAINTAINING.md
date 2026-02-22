@@ -165,3 +165,4 @@ Quick reference for assessing whether a v2 request or bug is addressed in v3:
 - **MIT license only** (v2 was dual MIT/GPL-3.0+)
 - **Events:** `enter`, `leave`, `progress` — each with `direction`, `location`, `event.target`
 - **Getters/setters** for all options; `modify()` for batch updates
+- **`enable()` / `disable()`** — pause/resume tracking without destroying; `modify()` works while disabled

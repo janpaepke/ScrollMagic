@@ -188,6 +188,11 @@ scene.computedOptions; // resolved option values after computation
 // Refresh — recalculate bounds after external layout changes
 scene.refresh();
 
+// Pause / resume tracking without destroying
+scene.disable(); // disconnects all observers, freezes progress
+scene.enable(); // reconnects observers, recalculates from current state
+scene.disabled; // read-only, true when disabled or destroyed
+
 // Lifecycle
 scene.destroy();
 

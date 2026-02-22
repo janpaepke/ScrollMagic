@@ -93,6 +93,23 @@ describe('destroy: post-destroy dev warnings', () => {
 	});
 });
 
+describe('destroy: plugin cleanup', () => {
+	test('destroy() calls onRemove on all plugins', () => {
+		const { target } = setupWindow();
+		const scene = new ScrollMagic({ element: target });
+		const plugin1 = { name: 'p1', onRemove: vi.fn() };
+		const plugin2 = { name: 'p2', onRemove: vi.fn() };
+		scene.addPlugin(plugin1);
+		scene.addPlugin(plugin2);
+
+		scene.destroy();
+
+		expect(plugin1.onRemove).toHaveBeenCalledOnce();
+		expect(plugin2.onRemove).toHaveBeenCalledOnce();
+		expect(scene.pluginList).toHaveLength(0);
+	});
+});
+
 describe('destroy: post-destroy no-op behaviour', () => {
 	test('modify() does not change options', () => {
 		const { target } = setupWindow();

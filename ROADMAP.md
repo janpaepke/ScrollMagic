@@ -26,7 +26,6 @@ Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then E
 
 ### Core candidates
 
-- **`enable()` / `disable()`** — temporarily pause/resume tracking without destroying. Useful for tab switching, conditional behavior, off-screen content.
 - **`signal` option for `on()`** — `on(type, cb, { signal: AbortSignal })` for lifecycle-bound bulk listener cleanup via `AbortController`. Matches DOM `addEventListener` pattern. Lower priority since `subscribe()` already returns an unsubscribe function.
 - **Separate trigger element** — track one element's position but define the trigger range based on another element. Decouples "what to watch" from "when to activate." I don't think we want to implement this, since there might be a workaround using the pixelConverter function. If this turns out to be not true, we might consider a tuple as a valid value for element?
 
