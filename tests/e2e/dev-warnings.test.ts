@@ -7,8 +7,8 @@ afterEach(() => {
 	vi.restoreAllMocks();
 });
 
-describe('Dev warnings: element / scrollParent relationship', () => {
-	test('logs error when element is not a descendant of scrollParent', () => {
+describe('Dev warnings: element / container relationship', () => {
+	test('logs error when element is not a descendant of container', () => {
 		const container = document.createElement('div');
 		container.style.height = '400px';
 		container.style.overflow = 'auto';
@@ -21,14 +21,14 @@ describe('Dev warnings: element / scrollParent relationship', () => {
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element: outsideElement, scrollParent: container });
+		const scene = new ScrollMagic({ element: outsideElement, container });
 		scene.destroy(); // destroy before rAF fires to prevent IntersectionObserver errors from invalid config
 
 		expect(errorSpy).toHaveBeenCalledOnce();
 		expect(errorSpy.mock.calls[0][0]).toContain('not a descendant');
 	});
 
-	test('does not log error when element is a descendant of scrollParent', () => {
+	test('does not log error when element is a descendant of container', () => {
 		const container = document.createElement('div');
 		container.style.height = '400px';
 		container.style.overflow = 'auto';
@@ -41,13 +41,13 @@ describe('Dev warnings: element / scrollParent relationship', () => {
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element: innerElement, scrollParent: container });
+		const scene = new ScrollMagic({ element: innerElement, container });
 		scene.destroy();
 
 		expect(errorSpy).not.toHaveBeenCalled();
 	});
 
-	test('does not log error when scrollParent is window (default)', () => {
+	test('does not log error when container is window (default)', () => {
 		const element = document.createElement('div');
 		element.style.height = '100px';
 		document.body.appendChild(element);
@@ -61,7 +61,7 @@ describe('Dev warnings: element / scrollParent relationship', () => {
 		expect(errorSpy).not.toHaveBeenCalled();
 	});
 
-	test('logs error when scrollParent is updated via modify and element is not a descendant', () => {
+	test('logs error when container is updated via modify and element is not a descendant', () => {
 		const container = document.createElement('div');
 		container.style.height = '400px';
 		container.style.overflow = 'auto';
@@ -76,7 +76,7 @@ describe('Dev warnings: element / scrollParent relationship', () => {
 		const scene = new ScrollMagic({ element: outsideElement }); // window — ok
 
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-		scene.modify({ scrollParent: container }); // now non-descendant
+		scene.modify({ container }); // now non-descendant
 		scene.destroy();
 
 		expect(errorSpy).toHaveBeenCalledOnce();

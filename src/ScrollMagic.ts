@@ -44,7 +44,7 @@ export type ResolvedBounds = {
 	/** Cached bounds of the tracked element. */
 	element: Readonly<ElementBounds>;
 	/** Cached bounds of the scroll container. */
-	scrollParent: Readonly<ContainerBounds>;
+	container: Readonly<ContainerBounds>;
 };
 
 export interface Plugin {
@@ -62,7 +62,7 @@ export class ScrollMagic {
 
 	private resizeCleanup?: () => void;
 	private readonly dispatcher = new EventDispatcher<ScrollMagicEvent>();
-	private readonly container = new ContainerProxy(this);
+	private readonly containerProxy = new ContainerProxy(this);
 	private readonly viewportObserver = new ViewportObserver(this.onIntersectionChange.bind(this));
 	private readonly executionQueue = new ExecutionQueue({
 		// The order is important here! They will always be executed in exactly this order when scheduled for the same animation frame
@@ -120,7 +120,7 @@ export class ScrollMagic {
 		const { start: oppositeStartProp, end: oppositeEndProp } = agnosticProps(!vertical);
 		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agnosticValues(
 			!vertical, // retrieving the opposites
-			this.container.rect // this is cached, so ok to get
+			this.containerProxy.rect // this is cached, so ok to get
 		);
 		const {
 			clientSize: containerSize,
@@ -136,7 +136,7 @@ export class ScrollMagic {
 		 ** so we'll have to flip the signs here.
 		 ** Additionally we convert it to percentages and round, as this means they are less likely to change, meaning less refreshes for the observer
 		 ** (as the observer internally compares old values to new ones)
-		 ** This way it won't have to internally create new IntersectionObservers, just because the scrollparent's size changes.
+		 ** This way it won't have to internally create new IntersectionObservers, just because the container's size changes.
 		 */
 		const decimals = 10;
 		const noSize = containerSize <= 0;
@@ -170,7 +170,6 @@ export class ScrollMagic {
 	protected updateElementBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'bounds', new Date().getMilliseconds());
 		// this should be called cautiously, getBoundingClientRect costs...
-		// check variable initialisation for property description
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
 		const { start, size } = agnosticValues(vertical, element.getBoundingClientRect());
 		this.elementBoundsCache.start = start;
@@ -189,11 +188,10 @@ export class ScrollMagic {
 
 	protected updateContainerBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
-		// check variable initialisation for property description
-		const { triggerStart, triggerEnd, vertical } = this.optionsPrivate;
-		const { clientSize, scrollSize } = agnosticValues(vertical, this.container.rect);
-		const offsetStart = triggerStart(clientSize);
-		const offsetEnd = triggerEnd(clientSize);
+		const { containerStart, containerEnd, vertical } = this.optionsPrivate;
+		const { clientSize, scrollSize } = agnosticValues(vertical, this.containerProxy.rect);
+		const offsetStart = containerStart(clientSize);
+		const offsetEnd = containerEnd(clientSize);
 		Object.assign(this.containerBoundsCache, {
 			clientSize,
 			scrollSize,
@@ -210,7 +208,7 @@ export class ScrollMagic {
 		}
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
-		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.container.rect);
+		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.rect);
 
 		const elementStart = elementPosition + elementOffset;
 		const containerStart = containerPosition + containerOffset;
@@ -246,10 +244,10 @@ export class ScrollMagic {
 			this.updateIntersectingState(undefined); // reset so intersection re-evaluates when container becomes visible
 			return;
 		}
-		const { scrollParent, vertical } = this.optionsPrivate;
+		const { container, vertical } = this.optionsPrivate;
 		const observerOptions = {
 			margin: this.getViewportMargin(),
-			root: isWindow(scrollParent) ? null : scrollParent,
+			root: isWindow(container) ? null : container,
 			vertical,
 		};
 		this.viewportObserver.modify(observerOptions);
@@ -270,9 +268,9 @@ export class ScrollMagic {
 		if (this.disabled) return;
 
 		const elementChanged = isChanged('element');
-		const scrollParentChanged = isChanged('scrollParent');
+		const containerChanged = isChanged('container');
 		const containerBoundsInvalidated =
-			scrollParentChanged || directionChanged || isChanged('triggerStart') || isChanged('triggerEnd');
+			containerChanged || directionChanged || isChanged('containerStart') || isChanged('containerEnd');
 
 		if (elementBoundsInvalidated || elementChanged) {
 			this.update.elementBounds.schedule();
@@ -289,9 +287,9 @@ export class ScrollMagic {
 			this.update.containerBounds.schedule();
 			this.update.viewportObserver.schedule();
 		}
-		if (scrollParentChanged) {
+		if (containerChanged) {
 			this.updateIntersectingState(undefined);
-			this.container.attach(this.optionsPrivate.scrollParent, this.onContainerUpdate.bind(this)); // container updates are already throttled
+			this.containerProxy.attach(this.optionsPrivate.container, this.onContainerUpdate.bind(this)); // container updates are already throttled
 		}
 		// if any options changes we always have to refresh the progress
 		this.update.progress.schedule();
@@ -433,30 +431,6 @@ export class ScrollMagic {
 	public get element(): Options.Private['element'] {
 		return this.optionsPrivate.element;
 	}
-	public set scrollParent(scrollParent: Required<Options.Public>['scrollParent']) {
-		this.modify({ scrollParent });
-	}
-	public get scrollParent(): Options.Private['scrollParent'] {
-		return this.optionsPrivate.scrollParent;
-	}
-	public set vertical(vertical: Required<Options.Public>['vertical']) {
-		this.modify({ vertical });
-	}
-	public get vertical(): Options.Private['vertical'] {
-		return this.optionsPrivate.vertical;
-	}
-	public set triggerStart(triggerStart: Required<Options.Public>['triggerStart']) {
-		this.modify({ triggerStart });
-	}
-	public get triggerStart(): Required<Options.Public>['triggerStart'] {
-		return this.optionsPublic.triggerStart;
-	}
-	public set triggerEnd(triggerEnd: Required<Options.Public>['triggerEnd']) {
-		this.modify({ triggerEnd });
-	}
-	public get triggerEnd(): Required<Options.Public>['triggerEnd'] {
-		return this.optionsPublic.triggerEnd;
-	}
 	public set elementStart(elementStart: Required<Options.Public>['elementStart']) {
 		this.modify({ elementStart });
 	}
@@ -469,6 +443,30 @@ export class ScrollMagic {
 	public get elementEnd(): Required<Options.Public>['elementEnd'] {
 		return this.optionsPublic.elementEnd;
 	}
+	public set container(container: Required<Options.Public>['container']) {
+		this.modify({ container });
+	}
+	public get container(): Options.Private['container'] {
+		return this.optionsPrivate.container;
+	}
+	public set containerStart(containerStart: Required<Options.Public>['containerStart']) {
+		this.modify({ containerStart });
+	}
+	public get containerStart(): Required<Options.Public>['containerStart'] {
+		return this.optionsPublic.containerStart;
+	}
+	public set containerEnd(containerEnd: Required<Options.Public>['containerEnd']) {
+		this.modify({ containerEnd });
+	}
+	public get containerEnd(): Required<Options.Public>['containerEnd'] {
+		return this.optionsPublic.containerEnd;
+	}
+	public set vertical(vertical: Required<Options.Public>['vertical']) {
+		this.modify({ vertical });
+	}
+	public get vertical(): Options.Private['vertical'] {
+		return this.optionsPrivate.vertical;
+	}
 
 	/** Current scroll progress through the active zone, from 0 (before) to 1 (past). */
 	public get progress(): number {
@@ -479,7 +477,7 @@ export class ScrollMagic {
 		if (this.disabled) {
 			return 0;
 		}
-		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.container.scrollVelocity);
+		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.scrollVelocity);
 		return axis;
 	}
 	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
@@ -490,14 +488,14 @@ export class ScrollMagic {
 		if (!this.disabled) {
 			this.updateElementBoundsCache(); // need to get fresh position — skip when disabled to avoid mixing fresh element bounds with stale container bounds
 		}
-		const { scrollParent, vertical } = this.optionsPrivate;
+		const { container, vertical } = this.optionsPrivate;
 		const { start: elementPosition, offsetStart, trackSize } = this.elementBoundsCache;
 		const {
 			clientSize: containerSize,
 			offsetStart: containerOffsetStart,
 			offsetEnd: containerOffsetEnd,
 		} = this.containerBoundsCache;
-		const { start: scrollOffset } = agnosticValues(vertical, getScrollPos(scrollParent));
+		const { start: scrollOffset } = agnosticValues(vertical, getScrollPos(container));
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;
@@ -507,11 +505,11 @@ export class ScrollMagic {
 			end: Math.ceil(end - containerSize + containerOffsetEnd),
 		};
 	}
-	/** Resolved pixel offsets for trigger zone and element boundaries, based on current layout. */
+	/** Resolved pixel offsets for container zone and element boundaries, based on current layout. */
 	public get resolvedBounds(): Readonly<ResolvedBounds> {
 		return {
 			element: { ...this.elementBoundsCache },
-			scrollParent: { ...this.containerBoundsCache },
+			container: { ...this.containerBoundsCache },
 		};
 	}
 	/** Snapshot of all currently registered plugins. */
@@ -576,7 +574,7 @@ export class ScrollMagic {
 		this.resizeCleanup?.();
 		this.resizeCleanup = undefined;
 		this.viewportObserver.disconnect();
-		this.container.detach();
+		this.containerProxy.detach();
 		this.plugins.forEach(plugin => plugin.onDisable?.call(this));
 		return this;
 	}
@@ -585,11 +583,11 @@ export class ScrollMagic {
 	public enable(): ScrollMagic {
 		if (this.guardInert() || this.enabled) return this;
 		this.enabled = true;
-		const { element, scrollParent } = this.optionsPrivate;
+		const { element, container } = this.optionsPrivate;
 		this.updateIntersectingState(undefined);
 		this.viewportObserver.observe(element);
 		this.resizeCleanup = observeResize(element, this.onElementResize.bind(this));
-		this.container.attach(scrollParent, this.onContainerUpdate.bind(this));
+		this.containerProxy.attach(container, this.onContainerUpdate.bind(this));
 		this.elementBoundsCache.size = NaN; // force converter recalculation
 		this.update.elementBounds.schedule();
 		this.update.containerBounds.schedule();

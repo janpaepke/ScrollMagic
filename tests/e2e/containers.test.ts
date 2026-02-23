@@ -18,7 +18,7 @@ describe('non-window scroll containers', () => {
 		const { container, target } = setupContainer();
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target, scrollParent: container });
+		const scene = new ScrollMagic({ element: target, container });
 		scene.on('enter', () => events.push('enter'));
 		scene.on('progress', () => events.push('progress'));
 		scene.on('leave', () => events.push('leave'));
@@ -41,7 +41,7 @@ describe('non-window scroll containers', () => {
 		const { container, target } = setupContainer();
 
 		const directions: Array<{ type: string; direction: string }> = [];
-		const scene = new ScrollMagic({ element: target, scrollParent: container });
+		const scene = new ScrollMagic({ element: target, container });
 		scene.on('enter', (e: ScrollMagicEvent) => directions.push({ type: 'enter', direction: e.direction }));
 		scene.on('leave', (e: ScrollMagicEvent) => directions.push({ type: 'leave', direction: e.direction }));
 
@@ -80,7 +80,7 @@ describe('non-window scroll containers', () => {
 			},
 		});
 
-		const scene = new ScrollMagic({ element: target, scrollParent: container });
+		const scene = new ScrollMagic({ element: target, container });
 
 		container.scrollTop = 700;
 		await waitForFrames(3);
@@ -117,7 +117,7 @@ describe('container position initialization', () => {
 		// Container is now at y=300, height=400; element at contentTop=800, height=100
 		const { container, target } = setupContainer({ elementTop: 800, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target, scrollParent: container });
+		const scene = new ScrollMagic({ element: target, container });
 		await waitForFrames(3); // let initialization settle
 
 		// Scroll without triggering any window scroll/resize (which would fix positionCache via subscribeMove)
@@ -142,7 +142,7 @@ describe('zero-size scroll container', () => {
 		await page.viewport(1024, 768);
 		const { container, target } = setupContainer({ elementTop: 800, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target, scrollParent: container });
+		const scene = new ScrollMagic({ element: target, container });
 		await waitForFrames(3);
 
 		container.scrollTop = 850;

@@ -88,16 +88,16 @@ this.progress; // 0–1
 this.disabled; // true when disabled or destroyed
 this.scrollVelocity; // px/s along tracked axis
 this.scrollOffset; // { start, end } absolute scroll positions
-this.resolvedBounds; // { element, scrollParent } cached layout bounds
+this.resolvedBounds; // { element, container } cached layout bounds
 
 // Read/write options
 this.element;
-this.scrollParent;
-this.vertical;
-this.triggerStart;
-this.triggerEnd;
 this.elementStart;
 this.elementEnd;
+this.container;
+this.containerStart;
+this.containerEnd;
+this.vertical;
 
 // Actions
 this.modify(options); // update multiple options at once

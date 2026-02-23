@@ -61,13 +61,13 @@ export const toSvgOrHtmlElement = (reference: Element | string): HTMLElement | S
 	return elem;
 };
 
-export const toValidScrollParent = (container: Window | Element | string): HTMLElement | Window => {
+export const toValidContainer = (container: Window | Element | string): HTMLElement | Window => {
 	if (isWindow(container)) {
 		return container;
 	}
 	const elem = toSvgOrHtmlElement(container);
 	if (isSVGElement(elem)) {
-		throw new ScrollMagicError(`Can't use SVG as scrollParent`);
+		throw new ScrollMagicError(`Can't use SVG as container`);
 	}
 	return elem;
 };

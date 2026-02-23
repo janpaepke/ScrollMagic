@@ -1,4 +1,4 @@
-import { Container, type ContainerEvent, type ScrollParent } from './Container';
+import { Container, type ContainerEvent, type ScrollContainer } from './Container';
 import { ScrollMagic } from './ScrollMagic';
 import { ScrollMagicInternalError } from './ScrollMagicError';
 type EventCallback = (e: ContainerEvent) => void;
@@ -9,20 +9,20 @@ type Velocity = {
 };
 
 export class ContainerProxy {
-	private static cache = new WeakMap<ScrollParent, [Container, Set<ScrollMagic>]>();
+	private static cache = new WeakMap<ScrollContainer, [Container, Set<ScrollMagic>]>();
 
 	private container?: Container;
 	constructor(private readonly scene: ScrollMagic) {}
 	private unsubscribers: CleanUpFunction[] = [];
 
-	public attach(scrollParent: ScrollParent, onUpdate: EventCallback): void {
+	public attach(containerElement: ScrollContainer, onUpdate: EventCallback): void {
 		if (undefined !== this.container) {
 			this.detach();
 		}
-		let cache = ContainerProxy.cache.get(scrollParent);
+		let cache = ContainerProxy.cache.get(containerElement);
 		if (undefined === cache) {
-			cache = [new Container(scrollParent), new Set()];
-			ContainerProxy.cache.set(scrollParent, cache);
+			cache = [new Container(containerElement), new Set()];
+			ContainerProxy.cache.set(containerElement, cache);
 		}
 		const [container, scenes] = cache;
 		scenes.add(this.scene);
@@ -34,10 +34,10 @@ export class ContainerProxy {
 		if (undefined === this.container) {
 			return;
 		}
-		const { scrollParent } = this.container;
-		const cache = ContainerProxy.cache.get(scrollParent);
+		const { containerElement } = this.container;
+		const cache = ContainerProxy.cache.get(containerElement);
 		if (undefined === cache) {
-			throw new ScrollMagicInternalError('No cache info for scrollParent');
+			throw new ScrollMagicInternalError('No cache info for container');
 		}
 		const [container, scenes] = cache;
 		scenes.delete(this.scene);
@@ -46,7 +46,7 @@ export class ContainerProxy {
 		if (scenes.size === 0) {
 			// no more attached scenes
 			container.destroy();
-			ContainerProxy.cache.delete(scrollParent);
+			ContainerProxy.cache.delete(containerElement);
 		}
 		this.container = undefined;
 	}

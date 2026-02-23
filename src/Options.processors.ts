@@ -3,7 +3,7 @@ import {
 	Private,
 	PrivateUninferred,
 	Public,
-	inferredTriggers,
+	inferredContainerDefaults,
 	defaults as optionDefaults,
 } from './Options';
 import { ScrollMagicError } from './ScrollMagicError';
@@ -11,17 +11,17 @@ import { agnosticValues } from './util/agnosticValues';
 import { getScrollContainerDimensions } from './util/getScrollContainerDimensions';
 import { PropertyProcessors, processProperties } from './util/processProperties';
 import { sanitizeProperties } from './util/sanitizeProperties';
-import { skipNull, toPixelConverter, toSvgOrHtmlElement, toValidScrollParent } from './util/transformers';
+import { skipNull, toPixelConverter, toSvgOrHtmlElement, toValidContainer } from './util/transformers';
 import { isHTMLElement, isSVGElement, isWindow } from './util/typeguards';
 
 const transformers: PropertyProcessors<Required<Public>, PrivateUninferred> = {
 	element: skipNull(toSvgOrHtmlElement),
-	scrollParent: skipNull(toValidScrollParent),
-	vertical: Boolean,
-	triggerStart: skipNull(toPixelConverter),
-	triggerEnd: skipNull(toPixelConverter),
 	elementStart: toPixelConverter,
 	elementEnd: toPixelConverter,
+	container: skipNull(toValidContainer),
+	containerStart: skipNull(toPixelConverter),
+	containerEnd: skipNull(toPixelConverter),
+	vertical: Boolean,
 };
 
 // removes unknown properties from supplied options
@@ -32,47 +32,47 @@ const transform = (options: Public): Partial<PrivateUninferred> => processProper
 
 // processes remaining null values
 const infer = (options: PrivateUninferred): Private => {
-	const inferScrollParent = (container: Window | HTMLElement | null): Window | HTMLElement => container ?? window;
+	const inferContainer = (container: Window | HTMLElement | null): Window | HTMLElement => container ?? window;
 
 	const inferElement = (elem: Element | null): HTMLElement | SVGElement => {
 		if (null !== elem) {
 			return elem as HTMLElement | SVGElement;
 		}
-		const container = inferScrollParent(options.scrollParent);
-		const child = isWindow(container) ? document.body : container.firstElementChild;
+		const resolved = inferContainer(options.container);
+		const child = isWindow(resolved) ? document.body : resolved.firstElementChild;
 		if (null === child || !(isHTMLElement(child) || isSVGElement(child))) {
-			throw new ScrollMagicError(`Could not autodetect element, as scrollParent has no valid children.`);
+			throw new ScrollMagicError(`Could not autodetect element, as container has no valid children.`);
 		}
 		return child;
 	};
 
-	const inferTrigger = (val: PixelConverter | null): PixelConverter =>
-		val ?? (null === options.element ? inferredTriggers.fallback : inferredTriggers.default);
+	const inferContainerOffset = (val: PixelConverter | null): PixelConverter =>
+		val ?? (null === options.element ? inferredContainerDefaults.fallback : inferredContainerDefaults.default);
 
 	return processProperties(options, {
-		scrollParent: inferScrollParent,
+		container: inferContainer,
 		element: inferElement,
-		triggerStart: inferTrigger,
-		triggerEnd: inferTrigger,
+		containerStart: inferContainerOffset,
+		containerEnd: inferContainerOffset,
 	});
 };
 
 // checks if the options the user entered actually make sense
 const sanityCheck = (options: Private): void => {
-	const { triggerStart, triggerEnd, elementStart, elementEnd, vertical, scrollParent, element } = options;
+	const { containerStart, containerEnd, elementStart, elementEnd, vertical, container, element } = options;
 
-	if (!isWindow(scrollParent) && !scrollParent.contains(element)) {
+	if (!isWindow(container) && !container.contains(element)) {
 		console?.error(
-			'ScrollMagic: element is not a descendant of scrollParent. The IntersectionObserver requires an ancestor relationship to function correctly.',
-			{ element, scrollParent }
+			'ScrollMagic: element is not a descendant of container. The IntersectionObserver requires an ancestor relationship to function correctly.',
+			{ element, container }
 		);
 	}
 
 	const { size: elementSize } = getElementSize(options);
-	const { clientSize: containerSize } = agnosticValues(vertical, getScrollContainerDimensions(scrollParent));
+	const { clientSize: containerSize } = agnosticValues(vertical, getScrollContainerDimensions(container));
 
 	const elementDistance = elementSize - elementStart(elementSize) - elementEnd(elementSize);
-	const trackDistance = -(containerSize - triggerStart(containerSize) - triggerEnd(containerSize));
+	const trackDistance = -(containerSize - containerStart(containerSize) - containerEnd(containerSize));
 
 	const total = elementDistance + trackDistance;
 	if (total < 0) {
@@ -80,8 +80,8 @@ const sanityCheck = (options: Private): void => {
 			'ScrollMagic Warning: Detected no overlap with the configured track options. This means ScrollMagic will not trigger unless this changes later on (i.e. due to resizes).',
 			{
 				...options,
-				triggerStart: triggerStart(containerSize),
-				triggerEnd: triggerEnd(containerSize),
+				containerStart: containerStart(containerSize),
+				containerEnd: containerEnd(containerSize),
 				elementStart: elementStart(elementSize),
 				elementEnd: elementEnd(elementSize),
 			}

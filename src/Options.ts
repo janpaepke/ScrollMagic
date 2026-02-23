@@ -9,28 +9,35 @@ type CssSelector = string;
 export type PixelConverter = (size: number) => number;
 
 export type Public = {
+	/** The tracked element (or CSS selector). Defaults to the first child of `container`. Set to `null` to reset. */
 	element?: Element | CssSelector | null;
-	scrollParent?: Window | Element | CssSelector | null;
-	vertical?: boolean;
-	triggerStart?: number | UnitString | PositionShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
-	triggerEnd?: number | UnitString | PositionShorthand | PixelConverter | null; // null means infer default values based on whether or not an element is supplied
+	/** Start **inset** on the element. Positive values shrink the tracked region from the leading edge. @default 0 */
 	elementStart?: number | UnitString | PositionShorthand | PixelConverter;
+	/** End **inset** on the element. Positive values shrink the tracked region from the trailing edge. @default 0 */
 	elementEnd?: number | UnitString | PositionShorthand | PixelConverter;
+	/** The scroll container (or CSS selector). Defaults to `window`. Set to `null` to reset. */
+	container?: Window | Element | CssSelector | null;
+	/** Start **inset** on the scroll container. Set to `null` to infer based on `element`. @default null (inferred) */
+	containerStart?: number | UnitString | PositionShorthand | PixelConverter | null;
+	/** End **inset** on the scroll container. Set to `null` to infer based on `element`. @default null (inferred) */
+	containerEnd?: number | UnitString | PositionShorthand | PixelConverter | null;
+	/** Scroll axis. `true` = vertical, `false` = horizontal. @default true */
+	vertical?: boolean;
 };
 
 // basically a normalized version of the options
 export type Private = {
 	element: Element;
-	scrollParent: Window | HTMLElement;
-	vertical: boolean;
-	triggerStart: PixelConverter;
-	triggerEnd: PixelConverter;
 	elementStart: PixelConverter;
 	elementEnd: PixelConverter;
+	container: Window | HTMLElement;
+	containerStart: PixelConverter;
+	containerEnd: PixelConverter;
+	vertical: boolean;
 };
 
 // values that can be null after processing and need to be inferred, if still null
-export type PrivateUninferred = NullableProperties<Private, 'element' | 'scrollParent' | 'triggerStart' | 'triggerEnd'>;
+export type PrivateUninferred = NullableProperties<Private, 'element' | 'container' | 'containerStart' | 'containerEnd'>;
 
 // shorthand values for bound position values
 export const positionShorthands = {
@@ -42,16 +49,16 @@ export const positionShorthands = {
 // default options
 export const defaults: Required<Public> = {
 	element: null,
-	scrollParent: null,
-	vertical: true,
-	triggerStart: null,
-	triggerEnd: null,
 	elementStart: 0,
 	elementEnd: 0,
+	container: null,
+	containerStart: null,
+	containerEnd: null,
+	vertical: true,
 };
 
-// applied during fallback inference. if triggerStart or triggerEnd is null this will apply default if element is present and fallback otherwise
-export const inferredTriggers: Record<string, PixelConverter> = {
-	default: (scrollParentSize: number) => scrollParentSize, // default 100%, starts at bottom, ends at top
-	fallback: () => 0, // if no element is supplied, it will fall back to the first child of scroll parent (usually the body), so it starts at the top and ends at the bottom
+// applied during fallback inference. if containerStart or containerEnd is null this will apply default if element is present and fallback otherwise
+export const inferredContainerDefaults: Record<string, PixelConverter> = {
+	default: (containerSize: number) => containerSize, // default 100%, starts at bottom, ends at top
+	fallback: () => 0, // if no element is supplied, it will fall back to the first child of the container (usually the body), so it starts at the top and ends at the bottom
 };

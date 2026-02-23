@@ -23,7 +23,7 @@ It's a convenience wrapper around [IntersectionObserver](https://developer.mozil
 
 ### Not an animation library – unless you want it to be
 
-By itself, ScrollMagic doesn't animate anything. It provides precise scroll-position data and events — what you do with them is up to you. If you're looking for a ready-made scroll animation solution, check out [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [Motion](https://motion.dev/docs/scroll), or [anime.js](https://animejs.com/).
+By itself, ScrollMagic doesn't animate anything. It provides precise scroll-position data and events — what you do with them is up to you. If you're looking for a ready-made scroll animation solution, check out [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [Motion](https://motion.dev/docs/scroll), [anime.js](https://animejs.com/), or native [ScrollTimeline](https://developer.mozilla.org/en-US/docs/Web/API/ScrollTimeline).
 
 ScrollMagic is a general-purpose, framework-agnostic, zero-dependency foundation for scroll-driven UX — what you do with it is entirely up to you: class toggles, animations, lazy loading, parallax, scroll-linked video, behavioural tracking, or anything else.
 
@@ -61,40 +61,40 @@ new ScrollMagic({ element: '#my-element' })
 
 ScrollMagic uses two sets of bounds to define when a scene is active:
 
-- **Trigger bounds** — a zone on the scroll container, defined by `triggerStart` and `triggerEnd`
+- **Container bounds** — a zone on the scroll container, defined by `containerStart` and `containerEnd`
 - **Element bounds** — a zone on the tracked element, defined by `elementStart` and `elementEnd`
 
-Progress goes from `0` to `1` as the element bounds pass through the trigger bounds. Events fire on enter, leave, and progress change.
+Progress goes from `0` to `1` as the element bounds pass through the container bounds. Events fire on enter, leave, and progress change.
 
-<!-- TODO: add diagram illustrating trigger bounds and element bounds -->
+<!-- TODO: add diagram illustrating container bounds and element bounds -->
 
 ## Options
 
 All options are optional. They can be passed to the constructor and updated at any time via setters or `.modify()`.
 
-| Option         | Type                                   | Default                       | Description                                           |
-| -------------- | -------------------------------------- | ----------------------------- | ----------------------------------------------------- |
-| `element`      | `Element \| string \| null`            | first child of `scrollParent` | The tracked element (or CSS selector).                |
-| `scrollParent` | `Window \| Element \| string \| null`  | `window`                      | The scroll container.                                 |
-| `vertical`     | `boolean`                              | `true`                        | Scroll axis. `true` = vertical, `false` = horizontal. |
-| `triggerStart` | `number \| string \| function \| null` | inferred (see below)          | Start inset on the scroll container.                  |
-| `triggerEnd`   | `number \| string \| function \| null` | inferred (see below)          | End inset on the scroll container.                    |
-| `elementStart` | `number \| string \| function`         | `0`                           | Start inset on the element.                           |
-| `elementEnd`   | `number \| string \| function`         | `0`                           | End inset on the element.                             |
+| Option           | Type                                   | Default                    | Description                                           |
+| ---------------- | -------------------------------------- | -------------------------- | ----------------------------------------------------- |
+| `element`        | `Element \| string \| null`            | first child of `container` | The tracked element (or CSS selector).                |
+| `elementStart`   | `number \| string \| function`         | `0`                        | Start **inset** on the element.                       |
+| `elementEnd`     | `number \| string \| function`         | `0`                        | End **inset** on the element.                         |
+| `container`      | `Window \| Element \| string \| null`  | `window`                   | The scroll container.                                 |
+| `containerStart` | `number \| string \| function \| null` | inferred (see below)       | Start **inset** on the scroll container.              |
+| `containerEnd`   | `number \| string \| function \| null` | inferred (see below)       | End **inset** on the scroll container.                |
+| `vertical`       | `boolean`                              | `true`                     | Scroll axis. `true` = vertical, `false` = horizontal. |
 
-**Inset values** work like CSS `top`/`bottom`: positive values offset inward from the respective edge. Accepted value types:
+**Inset values** work like CSS `top`/`bottom`: positive values offset inward from the respective edge in the tracked direction. Accepted value types:
 
 - **Numbers** — pixel values (e.g. `50`)
-- **Strings** — percentage or pixel strings (e.g. `'50%'`, `'20px'`), relative to the parent size (scroll container for trigger options, element for element options)
+- **Strings** — percentage or pixel strings (e.g. `'50%'`, `'20px'`), relative to the parent size (scroll container for container options, element for element options)
 - **Named positions** — `'here'` (0%), `'center'` (50%), `'opposite'` (100%)
 - **Functions** — `(size) => number` for dynamic computation
 
-**`null` means infer:** For `element`, `scrollParent`, `triggerStart`, or `triggerEnd`, setting it to `null` resets them to their inferred default.
+**`null` means infer:** For `element`, `container`, `containerStart`, or `containerEnd`, setting it to `null` resets them to their inferred default.
 
-For `triggerStart`/`triggerEnd` the inferred values depend on the `element` option value:
+For `containerStart`/`containerEnd` the inferred values depend on the `element` option value:
 
-- **`element` is `null`** → the element defaults to the first child of the scroll container (for `window` this is `document.body`), which is expected to define the full scrollable height. Triggers default to `'here'` (0%), so progress maps to the overall scroll position within the container, going from 0 at the top to 1 at the bottom.
-- **`element` is not `null`** → triggers default to `'opposite'` (100%), making the entire scroll container the trigger zone. Progress goes from 0 to 1 as the element scrolls through the container — entering from one edge and leaving through the other.
+- **`element` is `null`** → the element defaults to the first child of the scroll container (for `window` this is `document.body`), which is expected to define the full scrollable height. Container offsets default to `'here'` (0%), so progress maps to the overall scroll position within the container, going from 0 at the top to 1 at the bottom.
+- **`element` is not `null`** → container offsets default to `'opposite'` (100%), making the entire scroll container the active zone. Progress goes from 0 to 1 as the element scrolls through the container — entering from one edge and leaving through the other.
 
 ## Events
 
@@ -127,16 +127,16 @@ new ScrollMagic({
 // Active while the element passes through the center line
 new ScrollMagic({
 	element: '#b',
-	triggerStart: 'center',
-	triggerEnd: 'center',
+	containerStart: 'center',
+	containerEnd: 'center',
 });
 
 // Same as above, but with element offsets:
 // starts 50px before the element, ends 100px after it
 new ScrollMagic({
 	element: '#c',
-	triggerStart: 'center',
-	triggerEnd: 'center',
+	containerStart: 'center',
+	containerEnd: 'center',
 	elementStart: -50,
 	elementEnd: -100,
 });
@@ -147,8 +147,8 @@ new ScrollMagic({
 // the bottom — (size - 150) leaves only 150px of track.
 new ScrollMagic({
 	element: '#d',
-	triggerStart: 'center',
-	triggerEnd: 'center',
+	containerStart: 'center',
+	containerEnd: 'center',
 	elementEnd: size => size - 150,
 });
 
@@ -174,17 +174,17 @@ scene.subscribe(type, callback); // add listener, returns unsubscribe function
 scene.subscribe(type, callback, { once: true }); // both auto-removes and returns unsubscribe
 
 // Modify options after creation
-scene.modify({ triggerStart: 'center' });
+scene.modify({ containerStart: 'center' });
 
 // All options can also be directly read and written
 const elem = scene.element; // get the tracked element
-scene.triggerStart = 'center'; // set individual options
+scene.containerStart = 'center'; // set individual options
 
 // Read-only getters
 scene.progress; // 0–1, how far through the active zone
 scene.scrollOffset; // { start, end } absolute scroll positions
 scene.scrollVelocity; // px/s along tracked axis, 0 when idle
-scene.resolvedBounds; // { element, scrollParent } cached layout bounds
+scene.resolvedBounds; // { element, container } cached layout bounds
 
 // Refresh — recalculate bounds after external layout changes
 scene.refresh();

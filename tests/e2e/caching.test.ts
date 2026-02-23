@@ -1,7 +1,7 @@
 /**
  * PixelConverter caching and bounds invalidation.
  * Tests for: converters not re-called on scroll (only on resize), modify() forcing recalculation,
- * direction changes invalidating caches, stale containerBoundsCache after trigger option changes.
+ * direction changes invalidating caches, stale containerBoundsCache after container option changes.
  */
 import { describe, test, expect, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
@@ -68,27 +68,27 @@ describe('PixelConverter caching', () => {
 		scene.destroy();
 	});
 
-	test('triggerStart/triggerEnd are not called on scroll', async () => {
+	test('containerStart/containerEnd are not called on scroll', async () => {
 		await page.viewport(1024, 768);
-		// element taller than viewport so triggerStart/End returning 0 doesn't cause a no-overlap warning
+		// element taller than viewport so containerStart/End returning 0 doesn't cause a no-overlap warning
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 900 });
 
-		let triggerStartCalls = 0;
-		let triggerEndCalls = 0;
+		let containerStartCalls = 0;
+		let containerEndCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: () => {
-				triggerStartCalls++;
+			containerStart: () => {
+				containerStartCalls++;
 				return 0;
 			},
-			triggerEnd: () => {
-				triggerEndCalls++;
+			containerEnd: () => {
+				containerEndCalls++;
 				return 0;
 			},
 		});
 
 		await waitForFrames();
-		const callsAfterInit = triggerStartCalls + triggerEndCalls;
+		const callsAfterInit = containerStartCalls + containerEndCalls;
 
 		window.scrollTo(0, 100);
 		await waitForFrames();
@@ -97,31 +97,31 @@ describe('PixelConverter caching', () => {
 		window.scrollTo(0, 300);
 		await waitForFrames();
 
-		expect(triggerStartCalls + triggerEndCalls).toBe(callsAfterInit);
+		expect(containerStartCalls + containerEndCalls).toBe(callsAfterInit);
 		scene.destroy();
 	});
 
-	test('triggerStart/triggerEnd are called when container resizes', async () => {
+	test('containerStart/containerEnd are called when container resizes', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300 });
 
-		let triggerStartCalls = 0;
+		let containerStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: () => {
-				triggerStartCalls++;
+			containerStart: () => {
+				containerStartCalls++;
 				return 0;
 			},
 		});
 
 		await waitForFrames();
-		const callsAfterInit = triggerStartCalls;
+		const callsAfterInit = containerStartCalls;
 
 		await page.viewport(1024, 500);
 		await wait(50); // give ResizeObserver a moment to fire
 		await waitForFrames();
 
-		expect(triggerStartCalls).toBeGreaterThan(callsAfterInit);
+		expect(containerStartCalls).toBeGreaterThan(callsAfterInit);
 		scene.destroy();
 	});
 
@@ -172,37 +172,37 @@ describe('PixelConverter caching', () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
-		let triggerStartCalls = 0;
+		let containerStartCalls = 0;
 		const scene = new ScrollMagic({
 			element: target,
-			triggerStart: () => {
-				triggerStartCalls++;
+			containerStart: () => {
+				containerStartCalls++;
 				return 0;
 			},
 		});
 
 		await waitForFrames();
-		const callsAfterInit = triggerStartCalls;
+		const callsAfterInit = containerStartCalls;
 
 		scene.modify({ vertical: false });
 		await waitForFrames();
 
-		expect(triggerStartCalls).toBeGreaterThan(callsAfterInit);
+		expect(containerStartCalls).toBeGreaterThan(callsAfterInit);
 		scene.destroy();
 	});
 
-	test('triggerStart/triggerEnd take effect after modify() — stale containerBoundsCache', async () => {
-		// Bug: containerBounds was not rescheduled when trigger options changed via modify(),
+	test('containerStart/containerEnd take effect after modify() — stale containerBoundsCache', async () => {
+		// Bug: containerBounds was not rescheduled when container options changed via modify(),
 		// leaving stale offsetStart/offsetEnd in the cache.
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
-		const scene = new ScrollMagic({ element: target, triggerStart: '0%' });
+		const scene = new ScrollMagic({ element: target, containerStart: '0%' });
 		window.scrollTo(0, 200);
 		await waitForFrames();
 		const progressBefore = scene.progress;
 
-		scene.modify({ triggerStart: '50%' });
+		scene.modify({ containerStart: '50%' });
 		await waitForFrames();
 		const progressAfter = scene.progress;
 

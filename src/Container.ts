@@ -7,7 +7,7 @@ import { observeResize } from './util/sharedResizeObserver';
 import { throttleRaf } from './util/throttleRaf';
 import { isWindow } from './util/typeguards';
 
-export type ScrollParent = HTMLElement | Window;
+export type ScrollContainer = HTMLElement | Window;
 
 type CleanUpFunction = () => void;
 type Vector = {
@@ -59,7 +59,7 @@ export class Container {
 	 * One potential way of getting around this would be to add an additional resize observer to the documentElement and detect when it crosses 100% of the container's client size (either in or out)
 	 * But this seems quite hacky and code intense for this edge case scenario. It would also work for document scrolls, not for Element scrolls.
 	 */
-	constructor(public readonly scrollParent: ScrollParent) {
+	constructor(public readonly containerElement: ScrollContainer) {
 		const throttledScroll = throttleRaf(() => {
 			this.updateScrollPos();
 			rafQueue.flush();
@@ -68,7 +68,7 @@ export class Container {
 			this.updateDimensions();
 			rafQueue.flush();
 		});
-		if (!isWindow(scrollParent)) {
+		if (!isWindow(containerElement)) {
 			const throttledMove = throttleRaf(this.updatePosition.bind(this));
 			this.cleanups.push(throttledMove.cancel, this.subscribeMove(throttledMove));
 			this.updatePosition(); // initialize synchronously; subsequent updates are throttled via subscribeMove
@@ -85,7 +85,7 @@ export class Container {
 
 	private updateScrollPos() {
 		const prevScrollPos = this.scrollPos;
-		this.scrollPos = getScrollPos(this.scrollParent);
+		this.scrollPos = getScrollPos(this.containerElement);
 		const deltaY = this.scrollPos.top - prevScrollPos.top;
 		const deltaX = this.scrollPos.left - prevScrollPos.left;
 		const now = performance.now();
@@ -101,28 +101,28 @@ export class Container {
 	}
 
 	private updateDimensions() {
-		this.dimensions = getScrollContainerDimensions(this.scrollParent);
+		this.dimensions = getScrollContainerDimensions(this.containerElement);
 		this.dispatcher.dispatchEvent(new ContainerEvent(this, EventType.Resize));
 	}
 
 	private updatePosition() {
-		// this should only be executed, when scrollParent is NOT window
-		const { top, left } = (this.scrollParent as HTMLElement).getBoundingClientRect();
+		// this should only be executed, when containerElement is NOT window
+		const { top, left } = (this.containerElement as HTMLElement).getBoundingClientRect();
 		this.positionCache = { top, left };
 	}
 
-	// subscribes to resize events of scrollParent and returns a function to reverse the effect
+	// subscribes to resize events of containerElement and returns a function to reverse the effect
 	private subscribeResize(onResize: () => void) {
-		const { scrollParent } = this;
-		if (isWindow(scrollParent)) {
-			return registerEvent(scrollParent, EventType.Resize, onResize);
+		const { containerElement } = this;
+		if (isWindow(containerElement)) {
+			return registerEvent(containerElement, EventType.Resize, onResize);
 		}
-		return observeResize(scrollParent, onResize);
+		return observeResize(containerElement, onResize);
 	}
 
-	// subscribes to scroll events of scrollParent and returns a function to reverse the effect
+	// subscribes to scroll events of containerElement and returns a function to reverse the effect
 	private subscribeScroll(onScroll: () => void) {
-		return registerEvent(this.scrollParent, EventType.Scroll, onScroll, { passive: true });
+		return registerEvent(this.containerElement, EventType.Scroll, onScroll, { passive: true });
 	}
 
 	private subscribeMove(onMove: () => void) {

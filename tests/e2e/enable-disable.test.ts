@@ -58,8 +58,8 @@ describe('enable/disable: state & guards', () => {
 		const { target } = setupWindow();
 		const scene = new ScrollMagic({ element: target });
 		scene.disable();
-		scene.modify({ triggerStart: 0.5 });
-		expect(scene.triggerStart).toBe(0.5);
+		scene.modify({ containerStart: 0.5 });
+		expect(scene.containerStart).toBe(0.5);
 		scene.destroy();
 	});
 
@@ -364,19 +364,19 @@ describe('enable/disable: tracking behavior', () => {
 		scene.destroy();
 	});
 
-	test('modify({ scrollParent }) while disabled takes effect on enable()', async () => {
+	test('modify({ container }) while disabled takes effect on enable()', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 		const scene = new ScrollMagic({ element: target });
 
 		scene.disable();
-		scene.modify({ scrollParent: window }); // same parent in this case, but exercises the code path
-		expect(scene.scrollParent).toBe(window);
+		scene.modify({ container: window }); // same container in this case, but exercises the code path
+		expect(scene.container).toBe(window);
 
 		scene.enable();
 		await waitForFrames(3);
 
-		// Scene should be tracking normally after re-enable with new scrollParent
+		// Scene should be tracking normally after re-enable with new container
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
 		expect(scene.progress).toBe(1);
@@ -390,14 +390,14 @@ describe('enable/disable: tracking behavior', () => {
 		const scene = new ScrollMagic({ element: target });
 
 		scene.disable();
-		scene.modify({ triggerStart: 0.5 });
+		scene.modify({ containerStart: 0.5 });
 
 		scene.enable();
 		await waitForFrames(3);
 
-		expect(scene.triggerStart).toBe(0.5);
-		// Verify the new triggerStart is actually in effect by checking resolved offsets
-		expect(scene.resolvedBounds.scrollParent.offsetStart).toBeGreaterThan(0);
+		expect(scene.containerStart).toBe(0.5);
+		// Verify the new containerStart is actually in effect by checking resolved offsets
+		expect(scene.resolvedBounds.container.offsetStart).toBeGreaterThan(0);
 
 		scene.destroy();
 	});
