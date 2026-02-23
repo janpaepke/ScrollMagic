@@ -5,11 +5,11 @@ TODO: Replace static shields (license, bundle, dependencies) once published
 ![license](https://img.shields.io/npm/l/scrollmagic)
 -->
 
-![npm version](https://img.shields.io/npm/v/scrollmagic/next)
-![license](https://img.shields.io/badge/license-MIT-lightgrey)
-![bundle size](https://img.shields.io/badge/gzip-~6kb-brightgreen)
-![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
-![TypeScript](https://img.shields.io/badge/TypeScript-native-blue)
+[![npm version](https://img.shields.io/npm/v/scrollmagic/next)](https://www.npmjs.com/package/scrollmagic/v/next)
+[![license](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE.md)
+[![bundle size](https://img.shields.io/badge/gzip-~6kb-brightgreen)](https://bundlephobia.com/package/scrollmagic)
+[![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://npmgraph.js.org/?q=scrollmagic)
+[![TypeScript](https://img.shields.io/badge/TypeScript-native-blue)](https://www.typescriptlang.org/)
 
 ### The lightweight library for magical scroll interactions
 
