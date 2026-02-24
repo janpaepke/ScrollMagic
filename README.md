@@ -23,7 +23,9 @@ It's a convenience wrapper around [IntersectionObserver](https://developer.mozil
 
 ### Not an animation library – unless you want it to be
 
-By itself, ScrollMagic doesn't animate anything. It provides precise scroll-position data and events — what you do with them is up to you. If you're looking for a ready-made scroll animation solution, check out [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [Motion](https://motion.dev/docs/scroll), [anime.js](https://animejs.com/), or native [ScrollTimeline](https://developer.mozilla.org/en-US/docs/Web/API/ScrollTimeline).
+By itself, ScrollMagic doesn't animate anything. It provides precise scroll-position data and events — what you do with them is up to you. If you're looking for a ready-made scroll animation solution, check out [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [Motion](https://motion.dev/docs/scroll), or [anime.js](https://animejs.com/).
+
+For pure CSS-driven scroll animations, see native [scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations) (not yet supported in all browsers). ScrollMagic complements them by providing cross-browser support, event callbacks, progress values, and state management that the native API doesn't cover.
 
 ScrollMagic is a general-purpose, framework-agnostic, zero-dependency foundation for scroll-driven UX — what you do with it is entirely up to you: class toggles, animations, lazy loading, parallax, scroll-linked video, behavioural tracking, or anything else.
 
@@ -93,6 +95,19 @@ Typical uses: enter/leave animations, lazy loading, class toggles, visibility tr
 #### Not just defaults
 
 While _contain_ and _intersect_ are the inferred defaults, you can also configure them explicitly — for example setting `containerStart: 0, containerEnd: 0` on an instance that has an element to get contain behaviour, or mixing container and element insets for custom tracking zones. The two configurations are **useful mental models, not rigid modes**.
+
+#### Native scroll-driven animation ranges
+
+If you're familiar with [CSS scroll-driven animations](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations), here's how the native `view()` timeline ranges map to ScrollMagic configurations:
+
+| Native range | ScrollMagic equivalent |
+| ------------ | ---------------------- |
+| `cover`      | _intersect_ default — `containerStart: 'opposite', containerEnd: 'opposite'` |
+| `contain`    | _contain_ default — `containerStart: 0, containerEnd: 0` |
+| `entry`      | `containerStart: 'opposite', containerEnd: 0` — container zone collapses to the trailing edge |
+| `exit`       | `containerStart: 0, containerEnd: 'opposite'` — container zone collapses to the leading edge |
+
+The native `entry-crossing` and `exit-crossing` ranges are equivalent to `entry` and `exit` above — the distinction only applies when subdividing a single native timeline, not when defining standalone tracking ranges.
 
 ## Options
 

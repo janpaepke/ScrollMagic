@@ -13,6 +13,7 @@ API docs and interactive demos for v3. (Highest priority)
 - **toggleClass** — auto add/remove CSS class on enter/leave. The most common scroll use case — nearly every library has it. Usage-specific, so better as a bundled plugin than core API.
 - **CSS variable output** — expose `--progress`, `--visible` etc. as CSS custom properties on elements. Enables pure-CSS scroll effects with zero JS callbacks.
 - **Batch coordination** — when N elements enter the viewport in the same frame, fire one coordinated callback with stagger support. Essential for grid/list reveals.
+- **Web Animation API bridge** — drive `element.animate()` keyframes from ScrollMagic progress. Use native `ScrollTimeline` when available (compositor-thread performance for `transform`/`opacity`/`filter`) and fall back to SM-driven progress updates when not. Gives SM users native animation performance without leaving SM's event/callback model.
 
 ## Plugin Ideas
 
