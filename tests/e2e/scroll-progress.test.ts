@@ -372,6 +372,68 @@ describe('on with { once: true }', () => {
 	});
 });
 
+// Anchor links / scrollTo can skip the active range entirely in a single frame.
+// The element may never have intersected — progress must still settle at 0 or 1.
+describe('anchor-link style jumps', () => {
+	afterEach(cleanup);
+
+	test('progress reaches 1 when scrollTo jumps past a never-intersected element', async () => {
+		await page.viewport(1024, 768);
+		// Element well below viewport — not visible at scroll=0
+		const { target } = setupWindow({ elementTop: 1500, elementHeight: 100 });
+		const sm = new ScrollMagic({ element: target });
+
+		// Element has never been intersecting — jump straight past it
+		await waitForFrames(3);
+		expect(sm.progress).toBe(0);
+
+		window.scrollTo(0, 2500);
+		await waitForFrames(3);
+
+		expect(sm.progress).toBe(1);
+		sm.destroy();
+	});
+
+	test('enter and leave both fire when jumping over a never-intersected element', async () => {
+		await page.viewport(1024, 768);
+		// Element well below viewport — not visible at scroll=0
+		const { target } = setupWindow({ elementTop: 1500, elementHeight: 100 });
+
+		const events: string[] = [];
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('leave', () => events.push('leave'));
+
+		await waitForFrames(3);
+		expect(events).toHaveLength(0);
+
+		window.scrollTo(0, 2500);
+		await waitForFrames(3);
+
+		expect(events).toContain('enter');
+		expect(events).toContain('leave');
+		sm.destroy();
+	});
+
+	test('progress reaches 0 when jumping back before a previously-passed element', async () => {
+		await page.viewport(1024, 768);
+		const { target } = setupWindow({ elementTop: 1500, elementHeight: 100 });
+		const sm = new ScrollMagic({ element: target });
+
+		// First jump past
+		window.scrollTo(0, 2500);
+		await waitForFrames(3);
+		expect(sm.progress).toBe(1);
+
+		// Jump all the way back — element now entirely below viewport
+		window.scrollTo(0, 0);
+		await waitForFrames(3);
+		expect(sm.progress).toBe(0);
+
+		sm.destroy();
+	});
+});
+
 // #397: Browser find (Cmd+F) triggers scroll-to-element — verify progress after programmatic scrolls.
 describe('programmatic scroll jumps', () => {
 	afterEach(cleanup);

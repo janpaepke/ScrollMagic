@@ -2,3 +2,4 @@
 node_modules
 /dist
 /docs/tsdoc
+__screenshots__
