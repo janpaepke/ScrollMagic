@@ -6,12 +6,6 @@ Ideas and future directions for ScrollMagic v3. Nothing here is committed, just 
 
 API docs and interactive demos for v3. (Highest priority)
 
-## Performance
-
-### Shared rAF scheduler / eliminate extra frame latency
-
-Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then ExecutionQueue schedules its own rAF for frame N+1. Container could flush instance queues directly in the same frame, consolidating N rAF registrations into 1.
-
 ## API Gaps
 
 ### Core candidates
