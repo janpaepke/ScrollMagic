@@ -87,7 +87,7 @@ this.subscribe(type, callback); // returns unsubscribe function
 this.progress; // 0–1
 this.disabled; // true when disabled or destroyed
 this.scrollVelocity; // px/s along tracked axis
-this.scrollOffset; // { start, end } absolute scroll positions
+this.activeRange; // { start, end } container scroll positions where the scene is active
 this.resolvedBounds; // { element, container } cached layout bounds
 
 // Read/write options

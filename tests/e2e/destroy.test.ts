@@ -84,10 +84,10 @@ describe('destroy: post-destroy dev warnings', () => {
 		expect(warnSpy.mock.calls[0][0]).toContain('destroyed');
 	});
 
-	test('scrollOffset warns', () => {
+	test('activeRange warns', () => {
 		const { scene } = makeScene();
 		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-		void scene.scrollOffset;
+		void scene.activeRange;
 		expect(warnSpy).toHaveBeenCalledOnce();
 		expect(warnSpy.mock.calls[0][0]).toContain('destroyed');
 	});
@@ -185,12 +185,12 @@ describe('destroy: post-destroy no-op behaviour', () => {
 		expect(() => unsub()).not.toThrow();
 	});
 
-	test('scrollOffset returns { start: 0, end: 0 }', () => {
+	test('activeRange returns { start: 0, end: 0 }', () => {
 		const { target } = setupWindow();
 		const scene = new ScrollMagic({ element: target });
 		scene.destroy();
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		expect(scene.scrollOffset).toEqual({ start: 0, end: 0 });
+		expect(scene.activeRange).toEqual({ start: 0, end: 0 });
 	});
 });

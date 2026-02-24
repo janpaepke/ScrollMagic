@@ -211,7 +211,7 @@ scene.containerStart = 'center'; // set individual options
 
 // Read-only getters
 scene.progress; // 0–1, how far through the active zone
-scene.scrollOffset; // { start, end } absolute scroll positions
+scene.activeRange; // { start, end } container scroll positions where the scene is active
 scene.scrollVelocity; // px/s along tracked axis, 0 when idle
 scene.resolvedBounds; // { element, container } cached layout bounds
 

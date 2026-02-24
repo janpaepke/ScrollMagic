@@ -562,8 +562,8 @@ export class ScrollMagic {
 		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.scrollVelocity);
 		return axis;
 	}
-	/** Returns the absolute scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
-	public get scrollOffset(): { start: number; end: number } {
+	/** Returns the scroll container's scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
+	public get activeRange(): { start: number; end: number } {
 		if (this.guardInert()) {
 			return { start: 0, end: 0 };
 		}

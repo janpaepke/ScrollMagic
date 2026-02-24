@@ -147,16 +147,16 @@ describe('enable/disable: state & guards', () => {
 		scene.destroy();
 	});
 
-	test('scrollOffset still works when disabled', async () => {
+	test('activeRange still works when disabled', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 		const scene = new ScrollMagic({ element: target });
 
 		await waitForFrames(3);
-		const offsetBefore = scene.scrollOffset;
+		const offsetBefore = scene.activeRange;
 
 		scene.disable();
-		const offsetWhileDisabled = scene.scrollOffset;
+		const offsetWhileDisabled = scene.activeRange;
 
 		expect(offsetWhileDisabled).toEqual(offsetBefore);
 		scene.destroy();
