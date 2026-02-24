@@ -4,6 +4,8 @@ import {
 	unitStringToPixelConverter,
 	toPixelConverter,
 	selectorToSingleElement,
+	toSvgOrHtmlElement,
+	toValidContainer,
 	skipNull,
 } from '../../src/util/transformers';
 
@@ -126,6 +128,75 @@ describe('selectorToSingleElement', () => {
 		document.body.innerHTML = '<div id="unique"></div>';
 		selectorToSingleElement('#unique');
 		expect(warnSpy).not.toHaveBeenCalled();
+	});
+});
+
+describe('toSvgOrHtmlElement', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '';
+	});
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	test('accepts an HTMLElement that is in the document', () => {
+		const div = document.createElement('div');
+		document.body.appendChild(div);
+		expect(toSvgOrHtmlElement(div)).toBe(div);
+	});
+
+	test('accepts an SVGElement that is in the document', () => {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		document.body.appendChild(svg);
+		expect(toSvgOrHtmlElement(svg)).toBe(svg);
+	});
+
+	test('resolves a CSS selector to the matching element', () => {
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const div = document.createElement('div');
+		div.id = 'target';
+		document.body.appendChild(div);
+		expect(toSvgOrHtmlElement('#target')).toBe(div);
+	});
+
+	test('throws for an element not in the document', () => {
+		const detached = document.createElement('div');
+		expect(() => toSvgOrHtmlElement(detached)).toThrow('Invalid element');
+	});
+
+	test('throws for a non-HTML/SVG element', () => {
+		// Comment nodes, etc. — anything not HTML or SVG
+		const comment = document.createComment('hi') as unknown as Element;
+		expect(() => toSvgOrHtmlElement(comment)).toThrow('Invalid element');
+	});
+});
+
+describe('toValidContainer', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '';
+	});
+
+	// NOTE: window pass-through relies on `instanceof Window` which fails in jsdom.
+	// That path is covered by e2e tests.
+
+	test('accepts an HTMLElement in the document', () => {
+		const div = document.createElement('div');
+		document.body.appendChild(div);
+		expect(toValidContainer(div)).toBe(div);
+	});
+
+	test('rejects an SVGElement as container', () => {
+		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+		document.body.appendChild(svg);
+		expect(() => toValidContainer(svg)).toThrow("Can't use SVG as container");
+	});
+
+	test('resolves a CSS selector to the container element', () => {
+		vi.spyOn(console, 'warn').mockImplementation(() => {});
+		const div = document.createElement('div');
+		div.id = 'container';
+		document.body.appendChild(div);
+		expect(toValidContainer('#container')).toBe(div);
 	});
 });
 

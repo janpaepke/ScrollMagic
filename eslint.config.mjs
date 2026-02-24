@@ -7,7 +7,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-	{ ignores: ['dist/'] },
+	{ ignores: ['dist/', 'docs/tsdoc'] },
 	eslint.configs.recommended,
 	tseslint.configs.recommendedTypeChecked,
 	compat.configs['flat/recommended'],
@@ -35,6 +35,12 @@ export default defineConfig(
 			globals: {
 				...globals.node,
 			},
+		},
+	},
+	{
+		files: ['scripts/*.mjs'],
+		rules: {
+			'compat/compat': 'off',
 		},
 	}
 );
