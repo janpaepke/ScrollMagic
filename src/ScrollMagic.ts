@@ -5,7 +5,7 @@ import { ExecutionQueue } from './ExecutionQueue';
 import * as Options from './Options';
 import { processOptions, sanitizeOptions } from './Options.processors';
 import { EventLocation, EventType, ScrollDirection, ScrollMagicEvent } from './ScrollMagicEvent';
-import { agnosticProps, agnosticValues } from './util/agnosticValues';
+import { agnosticProps } from './util/agnosticValues';
 import { getScrollPos } from './util/getScrollPos';
 import { pickDifferencesFlat } from './util/pickDifferencesFlat';
 import { observeResize } from './util/sharedResizeObserver';
@@ -160,12 +160,10 @@ export class ScrollMagic {
 
 	protected getViewportMargin(): { top: string; left: string; right: string; bottom: string } {
 		const { vertical } = this.optionsPrivate;
-		const { start: startProp, end: endProp } = agnosticProps(vertical);
-		const { start: oppositeStartProp, end: oppositeEndProp } = agnosticProps(!vertical);
-		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agnosticValues(
-			!vertical, // retrieving the opposites
-			this.containerProxy.size
-		);
+		const axis = agnosticProps(vertical);
+		const cross = agnosticProps(!vertical);
+		const crossScrollSize = this.containerProxy.size[cross.scrollSize];
+		const crossClientSize = this.containerProxy.size[cross.clientSize];
 		const {
 			clientSize: containerSize,
 			offsetStart: containerOffsetStart,
@@ -187,16 +185,16 @@ export class ScrollMagic {
 		const relMarginStart = noSize ? 0 : -marginStart / containerSize;
 		const relMarginEnd = noSize ? 0 : -marginEnd / containerSize;
 
-		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertically tracked element
-		const noOppositeSize = oppositeClientSize <= 0;
-		const scrollableOpposite =
-			noOppositeSize ? 0 : numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize, decimals);
+		// adding available scrollspace in cross direction, so element never moves out of trackable area, even when scrolling horizontally on a vertically tracked element
+		const noCrossSize = crossClientSize <= 0;
+		const scrollableCross =
+			noCrossSize ? 0 : numberToPercString((crossScrollSize - crossClientSize) / crossClientSize, decimals);
 		return {
 			// the start and end values are intentionally flipped here (start value defines end margin and vice versa)
-			[endProp]: numberToPercString(relMarginStart, decimals),
-			[startProp]: numberToPercString(relMarginEnd, decimals),
-			[oppositeStartProp]: scrollableOpposite,
-			[oppositeEndProp]: scrollableOpposite,
+			[axis.start]: numberToPercString(relMarginEnd, decimals),
+			[axis.end]: numberToPercString(relMarginStart, decimals),
+			[cross.start]: scrollableCross,
+			[cross.end]: scrollableCross,
 		} as Record<'top' | 'left' | 'bottom' | 'right', string>;
 	}
 
@@ -215,7 +213,10 @@ export class ScrollMagic {
 		// console.log(this.optionsPrivate.element.id, 'bounds', new Date().getMilliseconds());
 		// this should be called cautiously, getBoundingClientRect costs...
 		const { elementStart, elementEnd, element, vertical } = this.optionsPrivate;
-		const { start, size } = agnosticValues(vertical, element.getBoundingClientRect());
+		const props = agnosticProps(vertical);
+		const rect = element.getBoundingClientRect();
+		const start = rect[props.start];
+		const size = rect[props.size];
 		this.elementBoundsCache.start = start;
 		// only update if size has changed, otherwise we're recalculating the offsetStart and offsetEnd for no reason
 		if (size !== this.elementBoundsCache.size) {
@@ -233,7 +234,9 @@ export class ScrollMagic {
 	protected updateContainerBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
 		const { containerStart, containerEnd, vertical } = this.optionsPrivate;
-		const { clientSize, scrollSize } = agnosticValues(vertical, this.containerProxy.size);
+		const containerProps = agnosticProps(vertical);
+		const clientSize = this.containerProxy.size[containerProps.clientSize];
+		const scrollSize = this.containerProxy.size[containerProps.scrollSize];
 		const offsetStart = containerStart(clientSize);
 		const offsetEnd = containerEnd(clientSize);
 		Object.assign(this.containerBoundsCache, {
@@ -252,7 +255,7 @@ export class ScrollMagic {
 		}
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
-		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.position);
+		const containerPosition = this.containerProxy.position[agnosticProps(this.optionsPrivate.vertical).start];
 
 		const elementStart = elementPosition + elementOffset;
 		const containerStart = containerPosition + containerOffset;
@@ -392,7 +395,7 @@ export class ScrollMagic {
 		 * updateViewportObserver => 	never
 		 * updateProgress =>			schedule if currently intersecting or potentially skipped, 	execute regardless (technically only execute if triggerBounds returned a new position, but that's implied, if there was a scoll move in the relevant direction)
 		 */
-		const { axis: scrollDelta } = agnosticValues(this.optionsPrivate.vertical, e.scrollDelta);
+		const scrollDelta = e.scrollDelta[agnosticProps(this.optionsPrivate.vertical).axis];
 		if (0 === scrollDelta) {
 			return; // scroll was in other direction
 		}
@@ -559,8 +562,7 @@ export class ScrollMagic {
 		if (this.disabled) {
 			return 0;
 		}
-		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.scrollVelocity);
-		return axis;
+		return this.containerProxy.scrollVelocity[agnosticProps(this.optionsPrivate.vertical).axis];
 	}
 	/** Returns the scroll container's scroll positions at which tracking starts and ends. Triggers a synchronous layout read (cached values when disabled). */
 	public get activeRange(): { start: number; end: number } {
@@ -577,7 +579,7 @@ export class ScrollMagic {
 			offsetStart: containerOffsetStart,
 			offsetEnd: containerOffsetEnd,
 		} = this.containerBoundsCache;
-		const { start: scrollOffset } = agnosticValues(vertical, getScrollPos(container));
+		const scrollOffset = getScrollPos(container)[agnosticProps(vertical).start];
 
 		const absolutePosition = elementPosition + scrollOffset;
 		const start = absolutePosition + offsetStart;

@@ -26,7 +26,12 @@ const propsH = flat(1) as Horizontal;
  * @param vertical - Scroll direction (`true` = vertical, `false` = horizontal).
  * @returns A mapping like `{ start: 'top', size: 'height', ... }` for vertical, or `{ start: 'left', size: 'width', ... }` for horizontal.
  */
-export const agnosticProps = (vertical: boolean): Vertical | Horizontal => (vertical ? propsV : propsH);
+export function agnosticProps(vertical: true): Vertical;
+export function agnosticProps(vertical: false): Horizontal;
+export function agnosticProps(vertical: boolean): Vertical | Horizontal;
+export function agnosticProps(vertical: boolean): Vertical | Horizontal {
+	return vertical ? propsV : propsH;
+}
 
 type MatchProp<K extends string, T extends Record<string, unknown>> = K extends keyof T ? T[K] : never;
 type GetType<V extends boolean, T extends Record<string, unknown>> = {

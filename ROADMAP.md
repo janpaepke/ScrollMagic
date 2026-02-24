@@ -12,12 +12,6 @@ API docs and interactive demos for v3. (Highest priority)
 
 Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then ExecutionQueue schedules its own rAF for frame N+1. Container could flush instance queues directly in the same frame, consolidating N rAF registrations into 1.
 
-### Hot-path allocation reduction
-
-- `agnosticValues` allocates a new object on every call in the scroll/resize hot path — could mutate a reusable object instead.
-- Bounds caches (`elementBoundsCache`, `containerBoundsCache`) use `Object.assign` — could mutate fields in place.
-- Container event objects are created per dispatch — could reuse a single event object.
-
 ## API Gaps
 
 ### Core candidates
