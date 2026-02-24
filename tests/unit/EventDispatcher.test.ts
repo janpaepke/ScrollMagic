@@ -164,4 +164,89 @@ describe('EventDispatcher', () => {
 		d.dispatchEvent(event('foo'));
 		expect(cb).toHaveBeenCalledOnce(); // then auto-removed
 	});
+
+	test('signal: listener is removed when signal aborts', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb = vi.fn();
+		d.addEventListener('foo', cb, { signal: ac.signal });
+		d.dispatchEvent(event('foo'));
+		expect(cb).toHaveBeenCalledOnce();
+		ac.abort();
+		d.dispatchEvent(event('foo'));
+		expect(cb).toHaveBeenCalledOnce(); // not called again
+	});
+
+	test('signal: listener not added if signal already aborted', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		ac.abort();
+		const cb = vi.fn();
+		d.addEventListener('foo', cb, { signal: ac.signal });
+		d.dispatchEvent(event('foo'));
+		expect(cb).not.toHaveBeenCalled();
+	});
+
+	test('signal: multiple listeners removed by single abort', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb1 = vi.fn();
+		const cb2 = vi.fn();
+		d.addEventListener('foo', cb1, { signal: ac.signal });
+		d.addEventListener('bar', cb2, { signal: ac.signal });
+		ac.abort();
+		d.dispatchEvent(event('foo'));
+		d.dispatchEvent(event('bar'));
+		expect(cb1).not.toHaveBeenCalled();
+		expect(cb2).not.toHaveBeenCalled();
+	});
+
+	test('signal + once: both mechanisms coexist', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb = vi.fn();
+		d.addEventListener('foo', cb, { once: true, signal: ac.signal });
+		d.dispatchEvent(event('foo'));
+		expect(cb).toHaveBeenCalledOnce();
+		// once already removed it — abort is a safe no-op
+		expect(() => ac.abort()).not.toThrow();
+	});
+
+	test('signal: abort before dispatch, once listener never fires', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb = vi.fn();
+		d.addEventListener('foo', cb, { once: true, signal: ac.signal });
+		ac.abort();
+		d.dispatchEvent(event('foo'));
+		expect(cb).not.toHaveBeenCalled();
+	});
+
+	test('signal: abort during dispatch still fires remaining listeners in snapshot', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb1 = vi.fn(() => ac.abort());
+		const cb2 = vi.fn();
+		d.addEventListener('foo', cb1, { signal: ac.signal });
+		d.addEventListener('foo', cb2, { signal: ac.signal });
+		d.dispatchEvent(event('foo'));
+		// both fire in the current cycle (snapshot iteration)
+		expect(cb1).toHaveBeenCalledOnce();
+		expect(cb2).toHaveBeenCalledOnce();
+		// but neither fires again — abort removed them
+		d.dispatchEvent(event('foo'));
+		expect(cb1).toHaveBeenCalledOnce();
+		expect(cb2).toHaveBeenCalledOnce();
+	});
+
+	test('signal: manual removal then abort is safe', () => {
+		const d = new EventDispatcher<TestEvent>();
+		const ac = new AbortController();
+		const cb = vi.fn();
+		const unsub = d.addEventListener('foo', cb, { signal: ac.signal });
+		unsub();
+		expect(() => ac.abort()).not.toThrow();
+		d.dispatchEvent(event('foo'));
+		expect(cb).not.toHaveBeenCalled();
+	});
 });

@@ -614,7 +614,7 @@ export class ScrollMagic {
 	 *
 	 * @param type - The event type to listen for.
 	 * @param cb - Callback invoked with a {@link ScrollMagicEvent}.
-	 * @param options - Optional settings, e.g. `{ once: true }` to auto-remove after first invocation.
+	 * @param options - Optional settings. `once` auto-removes the listener after its first invocation; `signal` removes it when the given {@link AbortSignal} aborts. Both can be combined.
 	 * @returns The instance, for chaining.
 	 *
 	 * @example
@@ -625,6 +625,12 @@ export class ScrollMagic {
 	 *
 	 * // Fire only once
 	 * sm.on('enter', (e) => console.log('entered!'), { once: true });
+	 *
+	 * // Remove all listeners at once via AbortController
+	 * const ac = new AbortController();
+	 * sm.on('enter', onEnter, { signal: ac.signal });
+	 * sm.on('leave', onLeave, { signal: ac.signal });
+	 * // Later: ac.abort();
 	 * ```
 	 */
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void, options?: ListenerOptions): ScrollMagic {
@@ -654,7 +660,7 @@ export class ScrollMagic {
 	 *
 	 * @param type - The event type to listen for.
 	 * @param cb - Callback invoked with a {@link ScrollMagicEvent}.
-	 * @param options - Optional settings, e.g. `{ once: true }`.
+	 * @param options - Optional settings. `once` auto-removes the listener after its first invocation; `signal` removes it when the given {@link AbortSignal} aborts. Both can be combined.
 	 * @returns A function that removes the listener when called.
 	 *
 	 * @example

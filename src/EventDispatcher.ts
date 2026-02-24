@@ -1,3 +1,4 @@
+const noop = () => {};
 type EventType = string;
 export interface DispatchableEvent {
 	readonly target: unknown;
@@ -8,6 +9,8 @@ export interface DispatchableEvent {
 export type ListenerOptions = {
 	/** If `true`, the listener is automatically removed after its first invocation. */
 	once?: boolean;
+	/** An {@link AbortSignal} — when aborted, the listener is automatically removed. Matches the DOM `addEventListener` pattern. */
+	signal?: AbortSignal;
 };
 type Callback<E extends DispatchableEvent> = (event: E) => void;
 type ListenerEntry<E extends DispatchableEvent> = { cb: Callback<E>; options: ListenerOptions };
@@ -17,6 +20,10 @@ export class EventDispatcher<E extends DispatchableEvent = DispatchableEvent> {
 
 	// adds a listener to the dispatcher. returns a function to reverse the effect.
 	public addEventListener(type: E['type'], cb: Callback<E>, options: ListenerOptions = {}): () => void {
+		// Match DOM spec: if signal already aborted, don't register
+		if (options.signal?.aborted) {
+			return noop;
+		}
 		let set = this.listeners.get(type);
 		if (!set) {
 			set = new Set();
@@ -25,7 +32,11 @@ export class EventDispatcher<E extends DispatchableEvent = DispatchableEvent> {
 		// fresh object per registration — Set identity keeps duplicate registrations of the same callback distinct
 		const entry: ListenerEntry<E> = { cb, options };
 		set.add(entry);
-		return () => this.removeEntry(type, entry);
+		const remove = () => this.removeEntry(type, entry);
+		if (options.signal) {
+			options.signal.addEventListener('abort', remove, { once: true });
+		}
+		return remove;
 	}
 
 	// removes a listener from the dispatcher

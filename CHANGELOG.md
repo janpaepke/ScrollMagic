@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+#### New Features
+
+- **`{ signal: AbortSignal }` event listener option** — follows the DOM `addEventListener` pattern. Pass an `AbortController`'s signal to `on()` or `subscribe()` to remove one or many listeners with a single `abort()` call.
+
 ### 3.0.0-beta.4
 
 #### Internal

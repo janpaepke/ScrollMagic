@@ -8,11 +8,6 @@ API docs and interactive demos for v3. (Highest priority)
 
 ## API Gaps
 
-### Core candidates
-
-- **`signal` option for `on()`** — `on(type, cb, { signal: AbortSignal })` for lifecycle-bound bulk listener cleanup via `AbortController`. Matches DOM `addEventListener` pattern. Lower priority since `subscribe()` already returns an unsubscribe function.
-- **Separate trigger element** — track one element's position but define the trigger range based on another element. Decouples "what to watch" from "when to activate." I don't think we want to implement this, since there might be a workaround using the pixelConverter function. If this turns out to be not true, we might consider a tuple as a valid value for element?
-
 ### Plugin candidates
 
 - **toggleClass** — auto add/remove CSS class on enter/leave. The most common scroll use case — nearly every library has it. Usage-specific, so better as a bundled plugin than core API.
