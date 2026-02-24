@@ -49,6 +49,14 @@ export const selectorToSingleElement = (selector: string): Element => {
 	if (null === elem) {
 		throw new ScrollMagicError(`No element found for selector ${selector}`);
 	}
+	if (typeof process === 'undefined' || process.env.NODE_ENV !== 'production') {
+		const all = document.querySelectorAll(selector);
+		if (all.length > 1) {
+			console?.warn(
+				`ScrollMagic Warning: Selector "${selector}" matched ${all.length} elements, using only the first. Create one ScrollMagic instance per element to track all of them.`
+			);
+		}
+	}
 	return elem;
 };
 

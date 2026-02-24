@@ -1,8 +1,9 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
 	numberToPercString,
 	unitStringToPixelConverter,
 	toPixelConverter,
+	selectorToSingleElement,
 	skipNull,
 } from '../../src/util/transformers';
 
@@ -87,6 +88,44 @@ describe('toPixelConverter', () => {
 			throw new Error('boom');
 		};
 		expect(() => toPixelConverter(fn)).toThrow('Unsupported value type');
+	});
+});
+
+describe('selectorToSingleElement', () => {
+	beforeEach(() => {
+		document.body.innerHTML = '';
+	});
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	test('returns the first matching element', () => {
+		const div = document.createElement('div');
+		div.className = 'target';
+		document.body.appendChild(div);
+		expect(selectorToSingleElement('.target')).toBe(div);
+	});
+
+	test('throws when no element matches', () => {
+		expect(() => selectorToSingleElement('.nonexistent')).toThrow('No element found for selector .nonexistent');
+	});
+
+	test('warns when selector matches multiple elements', () => {
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		document.body.innerHTML = '<div class="multi"></div><div class="multi"></div><div class="multi"></div>';
+		const result = selectorToSingleElement('.multi');
+		expect(result).toBe(document.querySelector('.multi'));
+		expect(warnSpy).toHaveBeenCalledOnce();
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('matched 3 elements, using only the first')
+		);
+	});
+
+	test('does not warn when selector matches exactly one element', () => {
+		const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+		document.body.innerHTML = '<div id="unique"></div>';
+		selectorToSingleElement('#unique');
+		expect(warnSpy).not.toHaveBeenCalled();
 	});
 });
 

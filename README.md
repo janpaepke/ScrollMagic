@@ -100,10 +100,10 @@ All options are optional. They can be passed to the constructor and updated at a
 
 | Option           | Type                                   | Default                    | Description                                           |
 | ---------------- | -------------------------------------- | -------------------------- | ----------------------------------------------------- |
-| `element`        | `Element \| string \| null`            | first child of `container` | The tracked element (or CSS selector).                |
+| `element`        | `Element \| string \| null`            | first child of `container` | The tracked element (or CSS selector). Selectors match only the first element — create one instance per element to track multiple. |
 | `elementStart`   | `number \| string \| function`         | `0`                        | Start **inset** on the element.                       |
 | `elementEnd`     | `number \| string \| function`         | `0`                        | End **inset** on the element.                         |
-| `container`      | `Window \| Element \| string \| null`  | `window`                   | The scroll container (or CSS selector).               |
+| `container`      | `Window \| Element \| string \| null`  | `window`                   | The scroll container (or CSS selector). Selectors use the first match. |
 | `containerStart` | `number \| string \| function \| null` | inferred (see below)       | Start **inset** on the scroll container.              |
 | `containerEnd`   | `number \| string \| function \| null` | inferred (see below)       | End **inset** on the scroll container.                |
 | `vertical`       | `boolean`                              | `true`                     | Scroll axis. `true` = vertical, `false` = horizontal. |
