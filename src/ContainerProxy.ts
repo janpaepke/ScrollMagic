@@ -51,14 +51,18 @@ export class ContainerProxy {
 		this.container = undefined;
 	}
 
-	public get rect(): Container['size'] & Container['position'] {
+	public get size(): Container['size'] {
 		if (undefined === this.container) {
 			throw new ScrollMagicInternalError(`Can't get size when not attached to a container`);
 		}
-		return {
-			...this.container.position,
-			...this.container.size,
-		};
+		return this.container.size;
+	}
+
+	public get position(): Container['position'] {
+		if (undefined === this.container) {
+			throw new ScrollMagicInternalError(`Can't get position when not attached to a container`);
+		}
+		return this.container.position;
 	}
 
 	public get scrollVelocity(): Velocity {

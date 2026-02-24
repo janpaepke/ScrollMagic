@@ -12,10 +12,6 @@ API docs and interactive demos for v3. (Highest priority)
 
 Currently a 2-frame pipeline: Container's `throttleRaf` fires in frame N, then ExecutionQueue schedules its own rAF for frame N+1. Container could flush instance queues directly in the same frame, consolidating N rAF registrations into 1.
 
-### Cache ContainerProxy.rect
-
-`ContainerProxy.rect` rebuilds the rect object on every access. Could cache and invalidate on resize/scroll.
-
 ### Hot-path allocation reduction
 
 - `agnosticValues` allocates a new object on every call in the scroll/resize hot path — could mutate a reusable object instead.

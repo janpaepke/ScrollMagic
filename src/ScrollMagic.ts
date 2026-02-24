@@ -164,7 +164,7 @@ export class ScrollMagic {
 		const { start: oppositeStartProp, end: oppositeEndProp } = agnosticProps(!vertical);
 		const { scrollSize: oppositeScrollSize, clientSize: oppositeClientSize } = agnosticValues(
 			!vertical, // retrieving the opposites
-			this.containerProxy.rect // this is cached, so ok to get
+			this.containerProxy.size
 		);
 		const {
 			clientSize: containerSize,
@@ -233,7 +233,7 @@ export class ScrollMagic {
 	protected updateContainerBoundsCache(): void {
 		// console.log(this.optionsPrivate.element.id, 'container', new Date().getMilliseconds());
 		const { containerStart, containerEnd, vertical } = this.optionsPrivate;
-		const { clientSize, scrollSize } = agnosticValues(vertical, this.containerProxy.rect);
+		const { clientSize, scrollSize } = agnosticValues(vertical, this.containerProxy.size);
 		const offsetStart = containerStart(clientSize);
 		const offsetEnd = containerEnd(clientSize);
 		Object.assign(this.containerBoundsCache, {
@@ -252,7 +252,7 @@ export class ScrollMagic {
 		}
 		const { offsetStart: elementOffset, start: elementPosition } = this.elementBoundsCache;
 		const { offsetStart: containerOffset } = this.containerBoundsCache;
-		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.rect);
+		const { start: containerPosition } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.position);
 
 		const elementStart = elementPosition + elementOffset;
 		const containerStart = containerPosition + containerOffset;
