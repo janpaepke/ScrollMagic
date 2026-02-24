@@ -1,0 +1,9 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["src/index.ts", "src/util.ts"],
+	"out": "docs/tsdoc",
+	"tsconfig": "./tsconfig.json",
+	"name": "ScrollMagic",
+	"excludePrivate": true,
+	"excludeInternal": true
+}
