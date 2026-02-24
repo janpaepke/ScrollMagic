@@ -18,22 +18,22 @@ describe('non-window scroll containers', () => {
 		const { container, target } = setupContainer();
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target, container });
-		scene.on('enter', () => events.push('enter'));
-		scene.on('progress', () => events.push('progress'));
-		scene.on('leave', () => events.push('leave'));
+		const sm = new ScrollMagic({ element: target, container });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('progress', () => events.push('progress'));
+		sm.on('leave', () => events.push('leave'));
 
 		container.scrollTop = 700;
 		await waitForFrames(3);
 		expect(events).toContain('enter');
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
 		container.scrollTop = 1500;
 		await waitForFrames(3);
 		expect(events).toContain('leave');
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('scroll direction is correct in non-window container', async () => {
@@ -41,9 +41,9 @@ describe('non-window scroll containers', () => {
 		const { container, target } = setupContainer();
 
 		const directions: Array<{ type: string; direction: string }> = [];
-		const scene = new ScrollMagic({ element: target, container });
-		scene.on('enter', (e: ScrollMagicEvent) => directions.push({ type: 'enter', direction: e.direction }));
-		scene.on('leave', (e: ScrollMagicEvent) => directions.push({ type: 'leave', direction: e.direction }));
+		const sm = new ScrollMagic({ element: target, container });
+		sm.on('enter', (e: ScrollMagicEvent) => directions.push({ type: 'enter', direction: e.direction }));
+		sm.on('leave', (e: ScrollMagicEvent) => directions.push({ type: 'leave', direction: e.direction }));
 
 		// Scroll forward past element
 		container.scrollTop = 1500;
@@ -65,7 +65,7 @@ describe('non-window scroll containers', () => {
 		expect(reverseEnter).toBeDefined();
 		expect(reverseLeave).toBeDefined();
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	// #905: position:fixed containers as IO root.
@@ -80,21 +80,21 @@ describe('non-window scroll containers', () => {
 			},
 		});
 
-		const scene = new ScrollMagic({ element: target, container });
+		const sm = new ScrollMagic({ element: target, container });
 
 		container.scrollTop = 700;
 		await waitForFrames(3);
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
 		container.scrollTop = 1500;
 		await waitForFrames(3);
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
 		container.scrollTop = 0;
 		await waitForFrames(3);
-		expect(scene.progress).toBe(0);
+		expect(sm.progress).toBe(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -117,7 +117,7 @@ describe('container position initialization', () => {
 		// Container is now at y=300, height=400; element at contentTop=800, height=100
 		const { container, target } = setupContainer({ elementTop: 800, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target, container });
+		const sm = new ScrollMagic({ element: target, container });
 		await waitForFrames(3); // let initialization settle
 
 		// Scroll without triggering any window scroll/resize (which would fix positionCache via subscribeMove)
@@ -126,9 +126,9 @@ describe('container position initialization', () => {
 
 		// With fix: containerPosition=300, containerStart=700, elementStart=500, passed=200, progress=0.4
 		// Without fix: containerPosition=0, containerStart=400, elementStart=500, passed=-100, progress=0
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -142,19 +142,19 @@ describe('zero-size scroll container', () => {
 		await page.viewport(1024, 768);
 		const { container, target } = setupContainer({ elementTop: 800, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target, container });
+		const sm = new ScrollMagic({ element: target, container });
 		await waitForFrames(3);
 
 		container.scrollTop = 850;
 		await waitForFrames(5);
 
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 		expect(progressBefore).toBeGreaterThan(0); // sanity check
 
 		const events: string[] = [];
-		scene.on('enter', () => events.push('enter'));
-		scene.on('leave', () => events.push('leave'));
-		scene.on('progress', () => events.push('progress'));
+		sm.on('enter', () => events.push('enter'));
+		sm.on('leave', () => events.push('leave'));
+		sm.on('progress', () => events.push('progress'));
 
 		// Collapse the container
 		container.style.height = '0px';
@@ -163,12 +163,12 @@ describe('zero-size scroll container', () => {
 
 		// Without fix: updateProgress() ran with containerSize=0, computed a different value
 		// and fired a spurious 'progress' event.
-		expect(Number.isNaN(scene.progress)).toBe(false);
-		expect(isFinite(scene.progress)).toBe(true);
+		expect(Number.isNaN(sm.progress)).toBe(false);
+		expect(isFinite(sm.progress)).toBe(true);
 		expect(events).toHaveLength(0);
-		expect(scene.progress).toBe(progressBefore);
+		expect(sm.progress).toBe(progressBefore);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -181,12 +181,12 @@ describe('viewport resize', () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 600, elementHeight: 200 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Scroll so element is partially in view
 		window.scrollTo(0, 500);
 		await waitForFrames(3);
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 		expect(progressBefore).toBeGreaterThan(0);
 		expect(progressBefore).toBeLessThan(1);
 
@@ -196,8 +196,8 @@ describe('viewport resize', () => {
 		await waitForFrames(5);
 
 		// Progress should have changed since viewport size affects the tracking calculation
-		expect(scene.progress).not.toBe(progressBefore);
+		expect(sm.progress).not.toBe(progressBefore);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });

@@ -119,7 +119,7 @@ export class ScrollMagic {
 	protected optionsPublic!: Required<Options.Public>; // set in modify in constructor
 	protected optionsPrivate!: Options.Private; // set in modify in constructor
 	protected currentProgress = 0;
-	protected intersecting?: boolean; // is the scene currently intersecting with the ViewportObserver?
+	protected intersecting?: boolean; // currently intersecting with the ViewportObserver?
 	private destroyed = false; // instance is destroyed and cannot be used anymore, true if destroy() was called
 	private enabled = true; // instance is enabled and can be used, false if disable() was called
 
@@ -187,7 +187,7 @@ export class ScrollMagic {
 		const relMarginStart = noSize ? 0 : -marginStart / containerSize;
 		const relMarginEnd = noSize ? 0 : -marginEnd / containerSize;
 
-		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertical scene
+		// adding available scrollspace in opposite direction, so element never moves out of trackable area, even when scrolling horizontally on a vertically tracked element
 		const noOppositeSize = oppositeClientSize <= 0;
 		const scrollableOpposite =
 			noOppositeSize ? 0 : numberToPercString((oppositeScrollSize - oppositeClientSize) / oppositeClientSize, decimals);
@@ -401,7 +401,7 @@ export class ScrollMagic {
 		const potentiallySkipped = Math.abs(scrollDelta) > this.getTrackSize();
 
 		if (!this.intersecting && !potentiallySkipped) {
-			// if we're not intersecting and there's no danger we skipped the scene, we don't have to do anything...
+			// if we're not intersecting and there's no danger we skipped the active range, we don't have to do anything...
 			return;
 		}
 		update.elementBounds.schedule();
@@ -562,7 +562,7 @@ export class ScrollMagic {
 		const { axis } = agnosticValues(this.optionsPrivate.vertical, this.containerProxy.scrollVelocity);
 		return axis;
 	}
-	/** Returns the scroll container's scroll positions at which the scene starts and ends. Triggers a synchronous layout read (cached values when disabled). */
+	/** Returns the scroll container's scroll positions at which tracking starts and ends. Triggers a synchronous layout read (cached values when disabled). */
 	public get activeRange(): { start: number; end: number } {
 		if (this.guardInert()) {
 			return { start: 0, end: 0 };

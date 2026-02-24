@@ -18,10 +18,10 @@ describe('progress lifecycle', () => {
 		const { target } = setupWindow();
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', () => events.push('enter'));
-		scene.on('progress', () => events.push('progress'));
-		scene.on('leave', () => events.push('leave'));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('progress', () => events.push('progress'));
+		sm.on('leave', () => events.push('leave'));
 
 		// Scroll to a position where the element should be intersecting
 		window.scrollTo(0, 600);
@@ -29,36 +29,36 @@ describe('progress lifecycle', () => {
 
 		expect(events).toContain('enter');
 		expect(events).toContain('progress');
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('progress reaches 1 when fully scrolled past', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Scroll well past the element
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
 
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('progress is 0 before element enters viewport', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 2000 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		await waitForFrames(3);
 
-		expect(scene.progress).toBe(0);
+		expect(sm.progress).toBe(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('fires leave event when scrolling past', async () => {
@@ -66,15 +66,15 @@ describe('progress lifecycle', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('leave', () => events.push('leave'));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('leave', () => events.push('leave'));
 
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
 
 		expect(events).toContain('leave');
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('destroy stops event processing', async () => {
@@ -82,10 +82,10 @@ describe('progress lifecycle', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('progress', () => events.push('progress'));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('progress', () => events.push('progress'));
 
-		scene.destroy();
+		sm.destroy();
 
 		window.scrollTo(0, 1000);
 		await waitForFrames(3);
@@ -102,19 +102,19 @@ describe('fast scrolling', () => {
 		await page.viewport(1024, 768);
 		// Element at 1500px — well below 768px viewport when scrolled to 0
 		const { target } = setupWindow({ elementTop: 1500, elementHeight: 100 });
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Instant scroll well past element
 		window.scrollTo(0, 2500);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
 		// Instant scroll back to top — element now below viewport
 		window.scrollTo(0, 0);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(0);
+		expect(sm.progress).toBe(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('all enter/leave events fire during instant scroll through', async () => {
@@ -122,9 +122,9 @@ describe('fast scrolling', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', () => events.push('enter'));
-		scene.on('leave', () => events.push('leave'));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('leave', () => events.push('leave'));
 
 		// Single scroll that jumps completely past the element
 		window.scrollTo(0, 2000);
@@ -132,9 +132,9 @@ describe('fast scrolling', () => {
 
 		expect(events).toContain('enter');
 		expect(events).toContain('leave');
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -151,12 +151,12 @@ describe('scroll state initialization', () => {
 		await waitForFrames(3);
 
 		// Now create instance — should detect current position
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		await waitForFrames(3);
 
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('correct initial progress when element is partially visible on creation', async () => {
@@ -167,13 +167,13 @@ describe('scroll state initialization', () => {
 		window.scrollTo(0, 500);
 		await waitForFrames(3);
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		await waitForFrames(3);
 
-		expect(scene.progress).toBeGreaterThan(0);
-		expect(scene.progress).toBeLessThan(1);
+		expect(sm.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeLessThan(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('fires enter event when created at position where element is visible', async () => {
@@ -185,15 +185,15 @@ describe('scroll state initialization', () => {
 		await waitForFrames(3);
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', () => events.push('enter'));
-		scene.on('progress', () => events.push('progress'));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('progress', () => events.push('progress'));
 		await waitForFrames(3);
 
 		expect(events).toContain('enter');
 		expect(events).toContain('progress');
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -207,9 +207,9 @@ describe('event direction', () => {
 
 		const enterDirections: string[] = [];
 		const leaveDirections: string[] = [];
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', (e: ScrollMagicEvent) => enterDirections.push(e.direction));
-		scene.on('leave', (e: ScrollMagicEvent) => leaveDirections.push(e.direction));
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', (e: ScrollMagicEvent) => enterDirections.push(e.direction));
+		sm.on('leave', (e: ScrollMagicEvent) => leaveDirections.push(e.direction));
 
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
@@ -217,7 +217,7 @@ describe('event direction', () => {
 		expect(enterDirections).toContain('forward');
 		expect(leaveDirections).toContain('forward');
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('direction is reverse when scrolling back up past element', async () => {
@@ -225,17 +225,17 @@ describe('event direction', () => {
 		// Element below viewport when scrolled to 0, so reverse scroll exits fully
 		const { target } = setupWindow({ elementTop: 1500, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// First scroll past
 		window.scrollTo(0, 2500);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
 		const enterDirections: string[] = [];
 		const leaveDirections: string[] = [];
-		scene.on('enter', (e: ScrollMagicEvent) => enterDirections.push(e.direction));
-		scene.on('leave', (e: ScrollMagicEvent) => leaveDirections.push(e.direction));
+		sm.on('enter', (e: ScrollMagicEvent) => enterDirections.push(e.direction));
+		sm.on('leave', (e: ScrollMagicEvent) => leaveDirections.push(e.direction));
 
 		// Scroll back to top — element now below viewport
 		window.scrollTo(0, 0);
@@ -244,7 +244,7 @@ describe('event direction', () => {
 		expect(enterDirections).toContain('reverse');
 		expect(leaveDirections).toContain('reverse');
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -256,8 +256,8 @@ describe('on with { once: true }', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		let enterCount = 0;
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', () => enterCount++, { once: true });
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => enterCount++, { once: true });
 
 		// Scroll forward past element → enter fires
 		window.scrollTo(0, 2000);
@@ -273,7 +273,7 @@ describe('on with { once: true }', () => {
 		// Still 1 — listener was auto-removed after first fire
 		expect(enterCount).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('off() cancels a once listener before it fires', async () => {
@@ -282,25 +282,25 @@ describe('on with { once: true }', () => {
 
 		let enterCount = 0;
 		const handler = () => enterCount++;
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', handler, { once: true });
-		scene.off('enter', handler);
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', handler, { once: true });
+		sm.off('enter', handler);
 
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
 
 		expect(enterCount).toBe(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('on with { once: true } is chainable', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow();
-		const scene = new ScrollMagic({ element: target });
-		const result = scene.on('enter', () => {}, { once: true });
-		expect(result).toBe(scene);
-		scene.destroy();
+		const sm = new ScrollMagic({ element: target });
+		const result = sm.on('enter', () => {}, { once: true });
+		expect(result).toBe(sm);
+		sm.destroy();
 	});
 
 	test('once on different event types works independently', async () => {
@@ -309,9 +309,9 @@ describe('on with { once: true }', () => {
 
 		let enterCount = 0;
 		let leaveCount = 0;
-		const scene = new ScrollMagic({ element: target });
-		scene.on('enter', () => enterCount++, { once: true });
-		scene.on('leave', () => leaveCount++, { once: true });
+		const sm = new ScrollMagic({ element: target });
+		sm.on('enter', () => enterCount++, { once: true });
+		sm.on('leave', () => leaveCount++, { once: true });
 
 		// Scroll forward past → enter + leave fire
 		window.scrollTo(0, 2000);
@@ -328,7 +328,7 @@ describe('on with { once: true }', () => {
 		expect(enterCount).toBe(1);
 		expect(leaveCount).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('subscribe with { once: true } fires once and returns working unsubscribe', async () => {
@@ -336,8 +336,8 @@ describe('on with { once: true }', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		let enterCount = 0;
-		const scene = new ScrollMagic({ element: target });
-		const unsub = scene.subscribe('enter', () => enterCount++, { once: true });
+		const sm = new ScrollMagic({ element: target });
+		const unsub = sm.subscribe('enter', () => enterCount++, { once: true });
 		expect(typeof unsub).toBe('function');
 
 		// Scroll forward past element → enter fires
@@ -352,7 +352,7 @@ describe('on with { once: true }', () => {
 		await waitForFrames(3);
 		expect(enterCount).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('subscribe with { once: true } can be cancelled via unsubscribe before firing', async () => {
@@ -360,15 +360,15 @@ describe('on with { once: true }', () => {
 		const { target } = setupWindow({ elementTop: 500, elementHeight: 100 });
 
 		let enterCount = 0;
-		const scene = new ScrollMagic({ element: target });
-		const unsub = scene.subscribe('enter', () => enterCount++, { once: true });
+		const sm = new ScrollMagic({ element: target });
+		const unsub = sm.subscribe('enter', () => enterCount++, { once: true });
 		unsub(); // cancel before it fires
 
 		window.scrollTo(0, 2000);
 		await waitForFrames(3);
 		expect(enterCount).toBe(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -380,29 +380,29 @@ describe('programmatic scroll jumps', () => {
 		await page.viewport(1024, 768);
 		// Element below viewport when at scroll=0
 		const { target } = setupWindow({ elementTop: 1500, elementHeight: 200 });
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Jump to where element is partially visible
 		window.scrollTo(0, 1200);
 		await waitForFrames(3);
-		expect(scene.progress).toBeGreaterThan(0);
-		expect(scene.progress).toBeLessThan(1);
+		expect(sm.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeLessThan(1);
 
 		// Jump far past
 		window.scrollTo(0, 2500);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
 		// Jump back to before element (element below viewport)
 		window.scrollTo(0, 0);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(0);
+		expect(sm.progress).toBe(0);
 
 		// Jump directly into element again
 		window.scrollTo(0, 1300);
 		await waitForFrames(3);
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });

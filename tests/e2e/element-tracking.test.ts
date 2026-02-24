@@ -15,12 +15,12 @@ describe('element resize / layout shifts', () => {
 	test('progress recalculates when tracked element changes size', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Scroll and wait for IO to fire and set intersecting=true
 		window.scrollTo(0, 200);
 		await waitForFrames(3);
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 		expect(progressBefore).toBeGreaterThan(0);
 
 		// Simulate lazy image loading — element grows taller
@@ -30,9 +30,9 @@ describe('element resize / layout shifts', () => {
 		await waitForFrames(5);
 
 		// Track size changed, so progress should differ
-		expect(scene.progress).not.toBe(progressBefore);
+		expect(sm.progress).not.toBe(progressBefore);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -65,23 +65,23 @@ describe('DOM mutation', () => {
 		wrapper.appendChild(belowBlock);
 		document.body.appendChild(wrapper);
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 
 		// Scroll to see the target
 		window.scrollTo(0, 500);
 		await waitForFrames(3);
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
 		// Remove the 800px block above — target shifts up in layout
 		aboveBlock.remove();
 		await waitForFrames(5);
 
 		// Should not crash; progress should be a valid number
-		expect(scene.progress).toBeGreaterThanOrEqual(0);
-		expect(scene.progress).toBeLessThanOrEqual(1);
-		expect(Number.isNaN(scene.progress)).toBe(false);
+		expect(sm.progress).toBeGreaterThanOrEqual(0);
+		expect(sm.progress).toBeLessThanOrEqual(1);
+		expect(Number.isNaN(sm.progress)).toBe(false);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });
 
@@ -116,21 +116,21 @@ describe('SVG elements', () => {
 		document.body.appendChild(spacer);
 
 		const events: string[] = [];
-		const scene = new ScrollMagic({ element: svg });
-		scene.on('enter', () => events.push('enter'));
-		scene.on('leave', () => events.push('leave'));
+		const sm = new ScrollMagic({ element: svg });
+		sm.on('enter', () => events.push('enter'));
+		sm.on('leave', () => events.push('leave'));
 
 		// Scroll into view
 		window.scrollTo(0, 800);
 		await waitForFrames(3);
 		expect(events).toContain('enter');
-		expect(scene.progress).toBeGreaterThan(0);
+		expect(sm.progress).toBeGreaterThan(0);
 
 		// Scroll past
 		window.scrollTo(0, 1500);
 		await waitForFrames(3);
-		expect(scene.progress).toBe(1);
+		expect(sm.progress).toBe(1);
 
-		scene.destroy();
+		sm.destroy();
 	});
 });

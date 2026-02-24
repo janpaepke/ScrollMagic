@@ -59,7 +59,7 @@ new ScrollMagic({ element: '#my-element' })
 
 ## How It Works
 
-ScrollMagic uses two sets of bounds to define when a scene is active:
+ScrollMagic uses two sets of bounds to define the active range:
 
 - **Container bounds** — a zone on the scroll container, defined by `containerStart` and `containerEnd`
 - **Element bounds** — a zone on the tracked element, defined by `elementStart` and `elementEnd`
@@ -92,7 +92,7 @@ Typical uses: enter/leave animations, lazy loading, class toggles, visibility tr
 
 #### Not just defaults
 
-While _contain_ and _intersect_ are the inferred defaults, you can also configure them explicitly — for example setting `containerStart: 0, containerEnd: 0` on a scene that has an element to get contain behaviour, or mixing container and element insets for custom tracking zones. The two configurations are **useful mental models, not rigid modes**.
+While _contain_ and _intersect_ are the inferred defaults, you can also configure them explicitly — for example setting `containerStart: 0, containerEnd: 0` on an instance that has an element to get contain behaviour, or mixing container and element insets for custom tracking zones. The two configurations are **useful mental models, not rigid modes**.
 
 ## Options
 
@@ -193,38 +193,38 @@ new ScrollMagic();
 ## API
 
 ```ts
-const scene = new ScrollMagic(options);
+const sm = new ScrollMagic(options);
 
 // Event listeners
-scene.on(type, callback); // add listener, returns scene (chainable)
-scene.on(type, callback, { once: true }); // listener auto-removes after first invocation
-scene.off(type, callback); // remove listener, returns scene (chainable)
-scene.subscribe(type, callback); // add listener, returns unsubscribe function
-scene.subscribe(type, callback, { once: true }); // both auto-removes and returns unsubscribe
+sm.on(type, callback); // add listener, returns instance (chainable)
+sm.on(type, callback, { once: true }); // listener auto-removes after first invocation
+sm.off(type, callback); // remove listener, returns instance (chainable)
+sm.subscribe(type, callback); // add listener, returns unsubscribe function
+sm.subscribe(type, callback, { once: true }); // both auto-removes and returns unsubscribe
 
 // Modify options after creation
-scene.modify({ containerStart: 'center' });
+sm.modify({ containerStart: 'center' });
 
 // All options can also be directly read and written
-const elem = scene.element; // get the tracked element
-scene.containerStart = 'center'; // set individual options
+const elem = sm.element; // get the tracked element
+sm.containerStart = 'center'; // set individual options
 
 // Read-only getters
-scene.progress; // 0–1, how far through the active zone
-scene.activeRange; // { start, end } container scroll positions where the scene is active
-scene.scrollVelocity; // px/s along tracked axis, 0 when idle
-scene.resolvedBounds; // { element, container } cached layout bounds
+sm.progress; // 0–1, how far through the active zone
+sm.activeRange; // { start, end } container scroll positions where tracking is active
+sm.scrollVelocity; // px/s along tracked axis, 0 when idle
+sm.resolvedBounds; // { element, container } cached layout bounds
 
 // Refresh — recalculate bounds after external layout changes
-scene.refresh();
+sm.refresh();
 
 // Pause / resume tracking without destroying
-scene.disable(); // disconnects all observers, freezes progress
-scene.enable(); // reconnects observers, recalculates from current state
-scene.disabled; // read-only, true when disabled or destroyed
+sm.disable(); // disconnects all observers, freezes progress
+sm.enable(); // reconnects observers, recalculates from current state
+sm.disabled; // read-only, true when disabled or destroyed
 
 // Lifecycle
-scene.destroy();
+sm.destroy();
 
 // Static
 ScrollMagic.defaultOptions({ vertical: false }); // get/set defaults for new instances
@@ -249,7 +249,7 @@ Call `refresh()` (or `ScrollMagic.refreshAll()`) after:
 ```js
 // After changing a style that affects position
 element.style.marginTop = '100px';
-scene.refresh();
+sm.refresh();
 
 // After fonts finish loading (affects text reflow)
 document.fonts.ready.then(() => ScrollMagic.refreshAll());
@@ -258,7 +258,7 @@ document.fonts.ready.then(() => ScrollMagic.refreshAll());
 onRouteChange(() => ScrollMagic.refreshAll());
 ```
 
-Note that `refresh()` is only needed if you want bounds to update **before the next scroll event**. If the user keeps scrolling, element positions are re-read on every scroll frame anyway. `refresh()` matters when layout changes while the scene is active and the scroll position stays the same — e.g. toggling a class or injecting content without any scrolling.
+Note that `refresh()` is only needed if you want bounds to update **before the next scroll event**. If the user keeps scrolling, element positions are re-read on every scroll frame anyway. `refresh()` matters when layout changes while tracking is active and the scroll position stays the same — e.g. toggling a class or injecting content without any scrolling.
 
 `refresh()` is asynchronous — it schedules recalculation for the next animation frame and returns immediately. Multiple `refresh()` calls within the same frame are batched automatically.
 
@@ -267,8 +267,8 @@ Note that `refresh()` is only needed if you want bounds to update **before the n
 ScrollMagic has a plugin system for extending instance behaviour.
 
 ```ts
-scene.addPlugin(myPlugin);
-scene.removePlugin(myPlugin);
+sm.addPlugin(myPlugin);
+sm.removePlugin(myPlugin);
 ```
 
 See [PLUGINS.md](PLUGINS.md) for the full plugin authoring guide.

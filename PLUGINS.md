@@ -20,9 +20,9 @@ const myPlugin: ScrollMagicPlugin = {
 	},
 };
 
-const scene = new ScrollMagic({ element: '#target' });
-scene.addPlugin(myPlugin);
-scene.removePlugin(myPlugin); // or let destroy() handle cleanup
+const sm = new ScrollMagic({ element: '#target' });
+sm.addPlugin(myPlugin);
+sm.removePlugin(myPlugin); // or let destroy() handle cleanup
 ```
 
 ## Lifecycle Hooks
@@ -87,7 +87,7 @@ this.subscribe(type, callback); // returns unsubscribe function
 this.progress; // 0–1
 this.disabled; // true when disabled or destroyed
 this.scrollVelocity; // px/s along tracked axis
-this.activeRange; // { start, end } container scroll positions where the scene is active
+this.activeRange; // { start, end } container scroll positions where tracking is active
 this.resolvedBounds; // { element, container } cached layout bounds
 
 // Read/write options

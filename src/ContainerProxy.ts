@@ -12,7 +12,7 @@ export class ContainerProxy {
 	private static cache = new WeakMap<ScrollContainer, [Container, Set<ScrollMagic>]>();
 
 	private container?: Container;
-	constructor(private readonly scene: ScrollMagic) {}
+	constructor(private readonly sm: ScrollMagic) {}
 	private unsubscribers: CleanUpFunction[] = [];
 
 	public attach(containerElement: ScrollContainer, onUpdate: EventCallback): void {
@@ -24,8 +24,8 @@ export class ContainerProxy {
 			cache = [new Container(containerElement), new Set()];
 			ContainerProxy.cache.set(containerElement, cache);
 		}
-		const [container, scenes] = cache;
-		scenes.add(this.scene);
+		const [container, instances] = cache;
+		instances.add(this.sm);
 		this.container = container;
 		this.unsubscribers = [container.subscribe('resize', onUpdate), container.subscribe('scroll', onUpdate)];
 	}
@@ -39,12 +39,12 @@ export class ContainerProxy {
 		if (undefined === cache) {
 			throw new ScrollMagicInternalError('No cache info for container');
 		}
-		const [container, scenes] = cache;
-		scenes.delete(this.scene);
+		const [container, instances] = cache;
+		instances.delete(this.sm);
 		this.unsubscribers.forEach(unsubscribe => unsubscribe());
 		this.unsubscribers = [];
-		if (scenes.size === 0) {
-			// no more attached scenes
+		if (instances.size === 0) {
+			// no more attached instances
 			container.destroy();
 			ContainerProxy.cache.delete(containerElement);
 		}

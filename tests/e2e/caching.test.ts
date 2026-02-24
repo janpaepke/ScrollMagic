@@ -18,7 +18,7 @@ describe('PixelConverter caching', () => {
 
 		let elementStartCalls = 0;
 		let elementEndCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			elementStart: () => {
 				elementStartCalls++;
@@ -42,7 +42,7 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 
 		expect(elementStartCalls + elementEndCalls).toBe(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('elementStart/elementEnd are called when element resizes', async () => {
@@ -50,7 +50,7 @@ describe('PixelConverter caching', () => {
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
 		let elementStartCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			elementStart: () => {
 				elementStartCalls++;
@@ -65,7 +65,7 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 
 		expect(elementStartCalls).toBeGreaterThan(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('containerStart/containerEnd are not called on scroll', async () => {
@@ -75,7 +75,7 @@ describe('PixelConverter caching', () => {
 
 		let containerStartCalls = 0;
 		let containerEndCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			containerStart: () => {
 				containerStartCalls++;
@@ -98,7 +98,7 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 
 		expect(containerStartCalls + containerEndCalls).toBe(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('containerStart/containerEnd are called when container resizes', async () => {
@@ -106,7 +106,7 @@ describe('PixelConverter caching', () => {
 		const { target } = setupWindow({ elementTop: 300 });
 
 		let containerStartCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			containerStart: () => {
 				containerStartCalls++;
@@ -122,18 +122,18 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 
 		expect(containerStartCalls).toBeGreaterThan(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('elementStart/elementEnd are re-called after modify() even if element size is unchanged', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		await waitForFrames();
 
 		let newConverterCalls = 0;
-		scene.modify({
+		sm.modify({
 			elementStart: size => {
 				newConverterCalls++;
 				return size * 0.1;
@@ -142,7 +142,7 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 
 		expect(newConverterCalls).toBeGreaterThan(0);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('elementBounds are recalculated when direction changes via modify()', async () => {
@@ -150,7 +150,7 @@ describe('PixelConverter caching', () => {
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
 		let elementStartCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			elementStart: () => {
 				elementStartCalls++;
@@ -161,11 +161,11 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 		const callsAfterInit = elementStartCalls;
 
-		scene.modify({ vertical: false });
+		sm.modify({ vertical: false });
 		await waitForFrames();
 
 		expect(elementStartCalls).toBeGreaterThan(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('containerBounds are recalculated when direction changes via modify()', async () => {
@@ -173,7 +173,7 @@ describe('PixelConverter caching', () => {
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
 		let containerStartCalls = 0;
-		const scene = new ScrollMagic({
+		const sm = new ScrollMagic({
 			element: target,
 			containerStart: () => {
 				containerStartCalls++;
@@ -184,11 +184,11 @@ describe('PixelConverter caching', () => {
 		await waitForFrames();
 		const callsAfterInit = containerStartCalls;
 
-		scene.modify({ vertical: false });
+		sm.modify({ vertical: false });
 		await waitForFrames();
 
 		expect(containerStartCalls).toBeGreaterThan(callsAfterInit);
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('containerStart/containerEnd take effect after modify() — stale containerBoundsCache', async () => {
@@ -197,16 +197,16 @@ describe('PixelConverter caching', () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 300, elementHeight: 200 });
 
-		const scene = new ScrollMagic({ element: target, containerStart: '0%' });
+		const sm = new ScrollMagic({ element: target, containerStart: '0%' });
 		window.scrollTo(0, 200);
 		await waitForFrames();
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 
-		scene.modify({ containerStart: '50%' });
+		sm.modify({ containerStart: '50%' });
 		await waitForFrames();
-		const progressAfter = scene.progress;
+		const progressAfter = sm.progress;
 
 		expect(progressAfter).not.toBe(progressBefore);
-		scene.destroy();
+		sm.destroy();
 	});
 });

@@ -21,27 +21,27 @@ describe('refresh', () => {
 		// element at visual ~150px after scroll — centered in viewport
 		const { target } = setupWindow({ elementTop: 550, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		window.scrollTo(0, 400);
 		await waitForFrames();
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 		expect(progressBefore).toBeGreaterThan(0);
 
 		// small shift (50px) keeps element well within viewport (visual 150px → 100px)
 		// ResizeObserver won't fire (size unchanged), IO margins aren't crossed
 		target.style.top = '500px';
 		await waitForFrames();
-		const progressWithoutRefresh = scene.progress;
+		const progressWithoutRefresh = sm.progress;
 
-		scene.refresh();
+		sm.refresh();
 		await waitForFrames();
-		const progressAfterRefresh = scene.progress;
+		const progressAfterRefresh = sm.progress;
 
 		// element moved closer to top → progress should increase
 		expect(progressAfterRefresh).toBeGreaterThan(progressBefore);
 		expect(progressAfterRefresh).not.toBe(progressWithoutRefresh);
 
-		scene.destroy();
+		sm.destroy();
 	});
 
 	test('refresh() picks up class-based position changes', async () => {
@@ -54,29 +54,29 @@ describe('refresh', () => {
 		style.textContent = '.shifted { top: 500px !important; }';
 		document.head.appendChild(style);
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		window.scrollTo(0, 400);
 		await waitForFrames();
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 		expect(progressBefore).toBeGreaterThan(0);
 
 		target.classList.add('shifted');
-		scene.refresh();
+		sm.refresh();
 		await waitForFrames();
 
-		expect(scene.progress).not.toBe(progressBefore);
+		expect(sm.progress).not.toBe(progressBefore);
 
-		scene.destroy();
+		sm.destroy();
 		style.remove();
 	});
 
 	test('refresh() is chainable', async () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow();
-		const scene = new ScrollMagic({ element: target });
-		const result = scene.refresh();
-		expect(result).toBe(scene);
-		scene.destroy();
+		const sm = new ScrollMagic({ element: target });
+		const result = sm.refresh();
+		expect(result).toBe(sm);
+		sm.destroy();
 	});
 
 	test('refreshAll() updates all active instances', async () => {
@@ -152,19 +152,19 @@ describe('refresh', () => {
 		await page.viewport(1024, 768);
 		const { target } = setupWindow({ elementTop: 550, elementHeight: 100 });
 
-		const scene = new ScrollMagic({ element: target });
+		const sm = new ScrollMagic({ element: target });
 		window.scrollTo(0, 400);
 		await waitForFrames();
-		const progressBefore = scene.progress;
+		const progressBefore = sm.progress;
 
-		scene.destroy();
+		sm.destroy();
 
 		target.style.top = '500px';
 		ScrollMagic.refreshAll();
 		await waitForFrames();
 
 		// progress is frozen at whatever it was before destroy
-		expect(scene.progress).toBe(progressBefore);
+		expect(sm.progress).toBe(progressBefore);
 	});
 
 	test('destroyAll() destroys all active instances', async () => {

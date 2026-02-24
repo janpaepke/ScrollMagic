@@ -21,8 +21,8 @@ describe('Dev warnings: element / container relationship', () => {
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element: outsideElement, container });
-		scene.destroy(); // destroy before rAF fires to prevent IntersectionObserver errors from invalid config
+		const sm = new ScrollMagic({ element: outsideElement, container });
+		sm.destroy(); // destroy before rAF fires to prevent IntersectionObserver errors from invalid config
 
 		expect(errorSpy).toHaveBeenCalledOnce();
 		expect(errorSpy.mock.calls[0][0]).toContain('not a descendant');
@@ -41,8 +41,8 @@ describe('Dev warnings: element / container relationship', () => {
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element: innerElement, container });
-		scene.destroy();
+		const sm = new ScrollMagic({ element: innerElement, container });
+		sm.destroy();
 
 		expect(errorSpy).not.toHaveBeenCalled();
 	});
@@ -55,8 +55,8 @@ describe('Dev warnings: element / container relationship', () => {
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element });
-		scene.destroy();
+		const sm = new ScrollMagic({ element });
+		sm.destroy();
 
 		expect(errorSpy).not.toHaveBeenCalled();
 	});
@@ -73,11 +73,11 @@ describe('Dev warnings: element / container relationship', () => {
 
 		vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		const scene = new ScrollMagic({ element: outsideElement }); // window — ok
+		const sm = new ScrollMagic({ element: outsideElement }); // window — ok
 
 		const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-		scene.modify({ container }); // now non-descendant
-		scene.destroy();
+		sm.modify({ container }); // now non-descendant
+		sm.destroy();
 
 		expect(errorSpy).toHaveBeenCalledOnce();
 		expect(errorSpy.mock.calls[0][0]).toContain('not a descendant');
