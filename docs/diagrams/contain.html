@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>ScrollMagic – Contain Diagram</title>
+		<link rel="stylesheet" href="shared.css" />
+		<style>
+			/*
+			 * Contain mode: element taller than container.
+			 * containerStart at top edge, containerEnd at bottom edge.
+			 * No approach/exit — starts at progress 0%, ends at 100%.
+			 *
+			 * Layout geometry (all relative to stage top):
+			 *   stage-padding-top = 120px
+			 *   viewport-height = 174px
+			 *   element-height = 260px
+			 *
+			 * Progress 0% (element top at viewport top): top = 120px
+			 * Progress 100% (element bottom at viewport bottom): top = 294 - 260 = 34px
+			 *
+			 * Total travel: 86px. 5% pause at each end.
+			 */
+
+			:root {
+				--element-height: 260px;
+				--element-width: calc(var(--viewport-width) - 6px);
+				--anim-duration: 4s;
+			}
+
+			.element {
+				height: var(--element-height);
+				width: var(--element-width);
+				animation: scroll-element var(--anim-duration) linear infinite;
+			}
+
+			@keyframes scroll-element {
+				0%,
+				5% {
+					top: 120px;
+				}
+				95%,
+				100% {
+					top: 34px;
+				}
+			}
+
+			/* markers at viewport edges */
+			.marker-start {
+				top: var(--stage-padding-top);
+			}
+			.marker-end {
+				top: calc(
+					var(--stage-padding-top) + var(--viewport-height) - 1px
+				);
+			}
+
+			/* progress track spans viewport height, fill grows bottom→up */
+			.progress-track {
+				top: var(--stage-padding-top);
+				height: var(--viewport-height);
+			}
+			.progress-fill {
+				height: 0%;
+				animation: fill-progress var(--anim-duration) linear infinite;
+			}
+
+			@keyframes fill-progress {
+				0%,
+				5% {
+					height: 0%;
+				}
+				95%,
+				100% {
+					height: 100%;
+				}
+			}
+
+			/* progress label tracks the fill top, bottom→up — stays visible at 100% */
+			.progress-label {
+				animation: label-pos var(--anim-duration) linear infinite;
+			}
+
+			@keyframes label-pos {
+				0%,
+				4% {
+					top: calc(var(--stage-padding-top) + var(--viewport-height));
+					opacity: 0;
+				}
+				5% {
+					top: calc(var(--stage-padding-top) + var(--viewport-height));
+					opacity: 1;
+				}
+				95%,
+				100% {
+					top: var(--stage-padding-top);
+					opacity: 1;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="mask-top"></div>
+			<div class="mask-bottom"></div>
+
+			<div class="viewport">
+				<span class="viewport-label">Container</span>
+			</div>
+
+			<div class="element">Element</div>
+
+			<div class="marker marker-start">
+				<div class="marker-label-group">
+					<span class="marker-name">containerStart</span>
+					<span class="marker-value">'here' (0%)</span>
+				</div>
+				<div class="marker-line"></div>
+			</div>
+			<div class="marker marker-end">
+				<div class="marker-label-group">
+					<span class="marker-name">containerEnd</span>
+					<span class="marker-value">'here' (0%)</span>
+				</div>
+				<div class="marker-line"></div>
+			</div>
+
+			<div class="progress-track">
+				<div class="progress-fill"></div>
+			</div>
+			<div class="progress-label">
+				<span class="progress-counter">0%</span>
+			</div>
+		</div>
+
+		<script>
+			// Progress calculation exposed as global for both live preview and export.
+			// Motion and progress both: 5%→95%
+			window.getProgress = function (frac) {
+				if (frac < 0.05) return 0;
+				if (frac >= 0.95) return 100;
+				return Math.round(((frac - 0.05) / 0.9) * 100);
+			};
+
+			const label = document.querySelector('.progress-counter');
+			const duration = 4000;
+			const start = performance.now();
+			(function update(now) {
+				const frac = ((now - start) % duration) / duration;
+				label.textContent = window.getProgress(frac) + '%';
+				requestAnimationFrame(update);
+			})(start);
+		</script>
+	</body>
+</html>

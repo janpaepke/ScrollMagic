@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>ScrollMagic – Intersect Diagram</title>
+		<link rel="stylesheet" href="shared.css" />
+		<style>
+			/*
+			 * Intersect mode: element shorter than container.
+			 * Element enters from below, exits above.
+			 *
+			 * Layout geometry (all relative to stage top):
+			 *   stage-padding-top = 120px
+			 *   viewport-height = 174px
+			 *   element-height = 100px
+			 *   stage-padding-bottom = 120px
+			 *
+			 * containerStart = viewport bottom edge = 294px
+			 * containerEnd = viewport top edge = 120px
+			 *
+			 * Element-top positions:
+			 *   start (below): 354px
+			 *   progress 0% (elem top at viewport bottom): 294px
+			 *   progress 100% (elem bottom at viewport top): 20px
+			 *   end (above): -40px
+			 *
+			 * Total travel: 394px. Constant speed.
+			 * With 5% pause at each end, motion: 5% → 95%
+			 *   progress 0% at: 5% + (60/394)*90% ≈ 18.7%
+			 *   progress 100% at: 5% + (334/394)*90% ≈ 81.3%
+			 */
+
+			:root {
+				--element-height: 100px;
+				--anim-duration: 4s;
+			}
+
+			.element {
+				height: var(--element-height);
+				animation: scroll-element var(--anim-duration) linear infinite;
+			}
+
+			@keyframes scroll-element {
+				0%,
+				5% {
+					top: 354px;
+				}
+				95%,
+				100% {
+					top: -40px;
+				}
+			}
+
+			/* markers at viewport edges */
+			.marker-start {
+				top: calc(
+					var(--stage-padding-top) + var(--viewport-height) - 1px
+				);
+			}
+			.marker-end {
+				top: var(--stage-padding-top);
+			}
+
+			/* progress track spans viewport height, fill grows bottom→up */
+			.progress-track {
+				top: var(--stage-padding-top);
+				height: var(--viewport-height);
+			}
+			.progress-fill {
+				height: 0%;
+				animation: fill-progress var(--anim-duration) linear infinite;
+			}
+
+			@keyframes fill-progress {
+				0%,
+				18.7% {
+					height: 0%;
+				}
+				81.3%,
+				100% {
+					height: 100%;
+				}
+			}
+
+			/* progress label tracks the fill top, bottom→up — stays visible at 100% */
+			.progress-label {
+				animation: label-pos var(--anim-duration) linear infinite;
+			}
+
+			@keyframes label-pos {
+				0%,
+				17.7% {
+					top: calc(var(--stage-padding-top) + var(--viewport-height));
+					opacity: 0;
+				}
+				18.7% {
+					top: calc(var(--stage-padding-top) + var(--viewport-height));
+					opacity: 1;
+				}
+				81.3%,
+				95%,
+				100% {
+					top: var(--stage-padding-top);
+					opacity: 1;
+				}
+			}
+
+			/* event badges — flash at enter/leave moments */
+			.event-badge {
+				position: absolute;
+				z-index: 5;
+				left: calc(
+					var(--viewport-left) + var(--viewport-width) / 2
+				);
+				transform: translateX(-50%);
+				padding: 3px 12px;
+				border-radius: 10px;
+				font-size: 12px;
+				font-weight: 600;
+				white-space: nowrap;
+				color: #fff;
+				opacity: 0;
+			}
+			.event-enter {
+				top: calc(
+					var(--stage-padding-top) + var(--viewport-height) - 32px
+				);
+				background: #27ae60;
+				animation: flash-enter var(--anim-duration) linear infinite;
+			}
+			.event-leave {
+				top: calc(var(--stage-padding-top) + 12px);
+				background: #e67e22;
+				animation: flash-leave var(--anim-duration) linear infinite;
+			}
+
+			@keyframes flash-enter {
+				0%,
+				17% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+				18.7% {
+					opacity: 1;
+					transform: translateX(-50%) scale(1);
+				}
+				27% {
+					opacity: 1;
+					transform: translateX(-50%) scale(1);
+				}
+				30% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+				100% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+			}
+
+			@keyframes flash-leave {
+				0%,
+				79.5% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+				81.3% {
+					opacity: 1;
+					transform: translateX(-50%) scale(1);
+				}
+				89% {
+					opacity: 1;
+					transform: translateX(-50%) scale(1);
+				}
+				92% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+				100% {
+					opacity: 0;
+					transform: translateX(-50%) scale(0.8);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="mask-top"></div>
+			<div class="mask-bottom"></div>
+
+			<div class="viewport">
+				<span class="viewport-label">Container</span>
+			</div>
+
+			<div class="element">Element</div>
+
+			<div class="event-badge event-enter">enter</div>
+			<div class="event-badge event-leave">leave</div>
+
+			<div class="marker marker-start">
+				<div class="marker-label-group">
+					<span class="marker-name">containerStart</span>
+					<span class="marker-value">'opposite' (100%)</span>
+				</div>
+				<div class="marker-line"></div>
+			</div>
+			<div class="marker marker-end">
+				<div class="marker-label-group">
+					<span class="marker-name">containerEnd</span>
+					<span class="marker-value">'opposite' (100%)</span>
+				</div>
+				<div class="marker-line"></div>
+			</div>
+
+			<div class="progress-track">
+				<div class="progress-fill"></div>
+			</div>
+			<div class="progress-label">
+				<span class="progress-counter">0%</span>
+			</div>
+		</div>
+
+		<script>
+			// Progress calculation exposed as global for both live preview and export.
+			// Motion: 5%→95%, progress active: 18.7%→81.3%
+			window.getProgress = function (frac) {
+				if (frac < 0.187) return 0;
+				if (frac >= 0.813) return 100;
+				return Math.round(
+					((frac - 0.187) / (0.813 - 0.187)) * 100
+				);
+			};
+
+			const label = document.querySelector('.progress-counter');
+			const duration = 4000;
+			const start = performance.now();
+			(function update(now) {
+				const frac = ((now - start) % duration) / duration;
+				label.textContent = window.getProgress(frac) + '%';
+				requestAnimationFrame(update);
+			})(start);
+		</script>
+	</body>
+</html>

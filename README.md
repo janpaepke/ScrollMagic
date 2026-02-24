@@ -66,7 +66,33 @@ ScrollMagic uses two sets of bounds to define when a scene is active:
 
 Progress goes from `0` to `1` as the element bounds pass through the container bounds. Events fire on enter, leave, and progress change.
 
-<!-- TODO: add diagram illustrating container bounds and element bounds -->
+### Contain and Intersect
+
+The two most common configurations are **contain** and **intersect**. They differ in where the container bounds are positioned:
+
+#### Contain (default when `element` is `null`)
+
+<img align="right" src="docs/dist/gfx/contain.gif" alt="Contain mode animation: tall element scrolls through viewport, progress tracks from 0% to 100%" width="260" />
+
+The container bounds match the viewport edges — `containerStart` and `containerEnd` are both at `'here'` (`0%`). Progress goes from 0 to 1 while one fully **contains** the other: either the element is fully visible inside the viewport, or the element fully covers the viewport.
+
+Typical uses: scroll progress bars, parallax, scroll-linked video, scroll-driven storytelling.
+
+<br clear="both" />
+
+#### Intersect (default when `element` is set)
+
+<img align="right" src="docs/dist/gfx/intersect.gif" alt="Intersect mode animation: element scrolls through the viewport, progress tracks from 0% to 100%" width="260" />
+
+The container bounds span the full viewport — `containerStart` and `containerEnd` are at `'opposite'` edges (`100%`). Progress goes from 0 to 1 while the element **intersects** with the viewport: starting when its leading edge enters and ending when its trailing edge leaves.
+
+Typical uses: enter/leave animations, lazy loading, class toggles, visibility tracking.
+
+<br clear="both" />
+
+#### Not just defaults
+
+While _contain_ and _intersect_ are the inferred defaults, you can also configure them explicitly — for example setting `containerStart: 0, containerEnd: 0` on a scene that has an element to get contain behaviour, or mixing container and element insets for custom tracking zones. The two configurations are **useful mental models, not rigid modes**.
 
 ## Options
 
@@ -77,7 +103,7 @@ All options are optional. They can be passed to the constructor and updated at a
 | `element`        | `Element \| string \| null`            | first child of `container` | The tracked element (or CSS selector).                |
 | `elementStart`   | `number \| string \| function`         | `0`                        | Start **inset** on the element.                       |
 | `elementEnd`     | `number \| string \| function`         | `0`                        | End **inset** on the element.                         |
-| `container`      | `Window \| Element \| string \| null`  | `window`                   | The scroll container.                                 |
+| `container`      | `Window \| Element \| string \| null`  | `window`                   | The scroll container (or CSS selector).               |
 | `containerStart` | `number \| string \| function \| null` | inferred (see below)       | Start **inset** on the scroll container.              |
 | `containerEnd`   | `number \| string \| function \| null` | inferred (see below)       | End **inset** on the scroll container.                |
 | `vertical`       | `boolean`                              | `true`                     | Scroll axis. `true` = vertical, `false` = horizontal. |
@@ -91,10 +117,10 @@ All options are optional. They can be passed to the constructor and updated at a
 
 **`null` means infer:** For `element`, `container`, `containerStart`, or `containerEnd`, setting it to `null` resets them to their inferred default.
 
-For `containerStart`/`containerEnd` the inferred values depend on the `element` option value:
+For `containerStart`/`containerEnd` the inferred values depend on `element`:
 
-- **`element` is `null`** → the element defaults to the first child of the scroll container (for `window` this is `document.body`), which is expected to define the full scrollable height. Container offsets default to `'here'` (0%), so progress maps to the overall scroll position within the container, going from 0 at the top to 1 at the bottom.
-- **`element` is not `null`** → container offsets default to `'opposite'` (100%), making the entire scroll container the active zone. Progress goes from 0 to 1 as the element scrolls through the container — entering from one edge and leaving through the other.
+- **`element` is `null`** → defaults to [**contain**](#contain-default-when-element-is-null): the element is inferred as the first child of the container (for `window` this is `document.body`), container offsets are `'here'` (0%), mapping progress to overall scroll position.
+- **`element` is not `null`** → defaults to [**intersect**](#intersect-default-when-element-is-set): container offsets are `'opposite'` (100%), tracking the element as it scrolls through the full viewport.
 
 ## Events
 
@@ -118,13 +144,14 @@ event.location; // 'start' | 'inside' | 'end'
 ## Examples
 
 ```js
-// Default: active from the moment any part of the element
-// enters the viewport until it fully leaves it
+// Intersect (default): active while any part of the element
+// is visible in the viewport
 new ScrollMagic({
 	element: '#a',
 });
 
-// Active while the element passes through the center line
+// Intersect with narrowed container zone:
+// active while the element passes through the center line
 new ScrollMagic({
 	element: '#b',
 	containerStart: 'center',
@@ -141,8 +168,7 @@ new ScrollMagic({
 	elementEnd: -100,
 });
 
-// Active while passing center, but with a fixed scroll
-// distance of 150px, regardless of element height.
+// Fixed scroll distance of 150px, regardless of element height.
 // elementEnd receives the element's size and offsets from
 // the bottom — (size - 150) leaves only 150px of track.
 new ScrollMagic({
@@ -152,13 +178,16 @@ new ScrollMagic({
 	elementEnd: size => size - 150,
 });
 
-// Active only while the element is fully visible
-// (both offsets pushed to the opposite edge = full element height)
+// Contain: active only while the element is fully visible
+// (element insets pushed to opposite edges = full element height)
 new ScrollMagic({
 	element: '#e',
 	elementStart: 'opposite', // same as '100%'
 	elementEnd: 'opposite', // same as '100%'
 });
+
+// Contain (default when no element): track overall scroll progress
+new ScrollMagic();
 ```
 
 ## API

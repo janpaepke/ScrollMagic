@@ -1,0 +1,175 @@
+/* shared styles for ScrollMagic animated diagrams */
+:root {
+	--viewport-width: 260px;
+	--viewport-height: 174px;
+	--viewport-left: 170px;
+	--element-width: 100px;
+	--stage-padding-top: 120px;
+	--stage-padding-bottom: 120px;
+
+	--color-viewport: #e74c3c;
+	--color-element: #3498db;
+	--color-marker: #888;
+	--color-progress: #2ecc71;
+	--color-bg: #fff;
+	--color-label: #555;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background: var(--color-bg);
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	overflow: hidden;
+}
+
+.stage {
+	position: relative;
+	/* viewport-left + viewport + gap + progress track + label */
+	width: calc(var(--viewport-left) + var(--viewport-width) + 80px);
+	height: calc(var(--viewport-height) + var(--stage-padding-top) + var(--stage-padding-bottom));
+}
+
+/* mask overlays — white semi-transparent, dims the element outside the container */
+.mask-top,
+.mask-bottom {
+	position: absolute;
+	left: var(--viewport-left);
+	width: var(--viewport-width);
+	background: rgba(255, 255, 255, 0.7);
+	z-index: 2;
+}
+.mask-top {
+	top: 0;
+	height: var(--stage-padding-top);
+}
+.mask-bottom {
+	bottom: 0;
+	height: var(--stage-padding-bottom);
+}
+
+/* container box */
+.viewport {
+	position: absolute;
+	left: var(--viewport-left);
+	top: var(--stage-padding-top);
+	width: var(--viewport-width);
+	height: var(--viewport-height);
+	border: 3px solid var(--color-viewport);
+	border-radius: 6px;
+	background: transparent;
+	z-index: 3;
+}
+.viewport-label {
+	position: absolute;
+	top: -22px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-viewport);
+	white-space: nowrap;
+}
+
+/* element (moves via animation) */
+.element {
+	position: absolute;
+	left: calc(var(--viewport-left) + var(--viewport-width) / 2);
+	transform: translateX(-50%);
+	width: var(--element-width);
+	background: var(--color-element);
+	border-radius: 5px;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+/* container markers — left side, with arrow pointing to container edge */
+.marker {
+	position: absolute;
+	z-index: 4;
+	display: flex;
+	align-items: center;
+	right: calc(100% - var(--viewport-left) + 10px);
+	flex-direction: row;
+	gap: 6px;
+	transform: translateY(-50%);
+}
+.marker-label-group {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 1px;
+}
+.marker-name {
+	font-size: 11px;
+	color: var(--color-label);
+	white-space: nowrap;
+	font-weight: 500;
+}
+.marker-value {
+	font-size: 10px;
+	font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+	color: #999;
+	white-space: nowrap;
+}
+.marker-line {
+	position: relative;
+	height: 0;
+	width: 40px;
+	border-top: 2px dashed var(--color-marker);
+	flex-shrink: 0;
+}
+/* arrowhead pointing right toward the container edge */
+.marker-line::after {
+	content: '';
+	position: absolute;
+	right: -7px;
+	top: -5px;
+	width: 0;
+	height: 0;
+	border-left: 7px solid var(--color-marker);
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+}
+
+/* progress indicator — right side of container */
+.progress-track {
+	position: absolute;
+	z-index: 4;
+	left: calc(var(--viewport-left) + var(--viewport-width) + 20px);
+	width: 4px;
+	background: #e0e0e0;
+	border-radius: 2px;
+}
+.progress-fill {
+	position: absolute;
+	top: auto;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: var(--color-progress);
+	border-radius: 2px;
+}
+.progress-label {
+	position: absolute;
+	z-index: 4;
+	left: calc(var(--viewport-left) + var(--viewport-width) + 32px);
+	font-size: 14px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: var(--color-progress);
+	white-space: nowrap;
+}

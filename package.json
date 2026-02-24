@@ -30,8 +30,10 @@
 		"@vitest/browser-playwright": "^4.0.18",
 		"eslint": "^10.0.0",
 		"eslint-plugin-compat": "^6.2.0",
+		"gifenc": "^1.0.3",
 		"globals": "^17.3.0",
 		"jsdom": "^28.1.0",
+		"pngjs": "^7.0.0",
 		"prettier": "^3.8.1",
 		"rollup": "^4.57.1",
 		"rollup-plugin-bundle-size": "^1.0.3",
@@ -58,7 +60,8 @@
 		"prettier": "prettier --check .",
 		"prettier:fix": "prettier --write .",
 		"preversion": "npm run build && npm run test",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"doces:export-diagrams": "node scripts/export-diagrams.mjs"
 	},
 	"repository": {
 		"type": "git",
