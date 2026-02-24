@@ -11,7 +11,9 @@
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
 		"declaration": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"inlineSources": true
 	},
 	"include": ["src/**/*", "tests/**/*"]
 }
