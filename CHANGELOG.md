@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### 3.0.0-beta.4
+
+#### Internal
+
+- Codebase terminology cleanup (remove legacy "scene" naming, rename `scrollOffset` → `activeRange`).
+- ContainerProxy: separate `size`/`position` getters replace combined `rect`.
+- Unit test coverage expanded from 84 to 164 tests.
+
 ### 3.0.0-beta.3
 
 #### Breaking Changes
