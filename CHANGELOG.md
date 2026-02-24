@@ -8,6 +8,14 @@
 
 - **Options renamed** — `scrollParent` → `container`, `triggerStart` → `containerStart`, `triggerEnd` → `containerEnd`. This groups container-related options under a shared prefix and avoids confusion with GSAP's `trigger` (which refers to the element, not the container). The `resolvedBounds` getter now returns `{ element, container }` instead of `{ element, scrollParent }`.
 
+#### New Features
+
+- **Multi-match selector warning** (dev mode) — when a CSS selector passed to `element` or `container` matches more than one DOM element, a warning advises creating one instance per element instead.
+
+#### Build
+
+- **Original sources embedded in source maps** — published `.map` files now contain the actual TypeScript source via `inlineSources`, making them useful for debugging without the `src/` directory.
+
 ### 3.0.0-beta.2
 
 #### Breaking Changes
