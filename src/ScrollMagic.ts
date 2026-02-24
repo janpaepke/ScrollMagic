@@ -15,6 +15,7 @@ import { ViewportObserver } from './ViewportObserver';
 
 const isBrowser = 'undefined' !== typeof window;
 
+/** Cached layout measurements for the tracked element along the scroll axis. */
 export type ElementBounds = {
 	/** Position relative to viewport. */
 	start: number;
@@ -27,6 +28,7 @@ export type ElementBounds = {
 	/** Effective track size including offsets. */
 	trackSize: number;
 };
+/** Cached layout measurements for the scroll container along the scroll axis. */
 export type ContainerBounds = {
 	/** Inner visible area of scroll container (excluding scrollbars). */
 	clientSize: number;
@@ -40,6 +42,7 @@ export type ContainerBounds = {
 	scrollSize: number;
 };
 
+/** Combined cached bounds for both the tracked element and its scroll container. */
 export type ResolvedBounds = {
 	/** Cached bounds of the tracked element. */
 	element: Readonly<ElementBounds>;
@@ -47,16 +50,38 @@ export type ResolvedBounds = {
 	container: Readonly<ContainerBounds>;
 };
 
+/**
+ * A ScrollMagic plugin. Plugins receive lifecycle callbacks bound to the ScrollMagic instance they are added to.
+ *
+ * All callbacks are optional. The `this` context inside each callback is the owning ScrollMagic instance.
+ */
 export interface Plugin {
+	/** Unique name identifying this plugin. */
 	name: string;
+	/** Called when the plugin is added via {@link ScrollMagic.addPlugin}. */
 	onAdd?(this: ScrollMagic): void;
+	/** Called when the plugin is removed via {@link ScrollMagic.removePlugin}. */
 	onRemove?(this: ScrollMagic): void;
+	/** Called when the instance is enabled via {@link ScrollMagic.enable}. */
 	onEnable?(this: ScrollMagic): void;
+	/** Called when the instance is disabled via {@link ScrollMagic.disable}. */
 	onDisable?(this: ScrollMagic): void;
+	/** Called when the instance is destroyed via {@link ScrollMagic.destroy}. */
 	onDestroy?(this: ScrollMagic): void;
+	/** Called when options change via {@link ScrollMagic.modify}. Receives only the changed options. */
 	onModify?(this: ScrollMagic, changesPublic: Options.Public): void;
 }
 
+/**
+ * Core class for scroll-based animations. Each instance tracks a single DOM element
+ * within a scroll container and reports scroll progress (0–1) through events.
+ *
+ * @example
+ * ```js
+ * const sm = new ScrollMagic({ element: '#hero' });
+ * sm.on('progress', (e) => console.log(e.target.progress));
+ * ```
+ */
 export class ScrollMagic {
 	public readonly name = 'ScrollMagic';
 
@@ -98,6 +123,25 @@ export class ScrollMagic {
 	private destroyed = false; // instance is destroyed and cannot be used anymore, true if destroy() was called
 	private enabled = true; // instance is enabled and can be used, false if disable() was called
 
+	/**
+	 * Create a new ScrollMagic instance.
+	 *
+	 * @param options - Configuration for the tracked element, scroll container, offsets, and axis.
+	 *
+	 * @example
+	 * ```js
+	 * // Track vertical scroll progress for an element
+	 * const sm = new ScrollMagic({ element: '.section', container: '#scroller' });
+	 *
+	 * // Horizontal scroll with custom offsets
+	 * const sm = new ScrollMagic({
+	 *   element: '.panel',
+	 *   vertical: false,
+	 *   elementStart: '50%',
+	 *   containerStart: 'center',
+	 * });
+	 * ```
+	 */
 	constructor(options: Options.Public = {}) {
 		ScrollMagic.instances.add(this);
 		const initOptions: Required<Options.Public> = {
@@ -385,6 +429,17 @@ export class ScrollMagic {
 		this.dispatcher.dispatchEvent(new ScrollMagicEvent(this, type, forward));
 	}
 
+	/**
+	 * Update one or more options on this instance. Only changed values trigger internal recalculations.
+	 *
+	 * @param options - Partial set of public options to merge.
+	 * @returns The instance, for chaining.
+	 *
+	 * @example
+	 * ```js
+	 * sm.modify({ elementStart: '25%', containerEnd: 100 });
+	 * ```
+	 */
 	public modify(options: Options.Public): ScrollMagic {
 		if (this.guardInert()) {
 			return this;
@@ -406,6 +461,12 @@ export class ScrollMagic {
 		return this;
 	}
 
+	/**
+	 * Register a plugin on this instance. The plugin's `onAdd` callback is invoked immediately.
+	 *
+	 * @param plugin - The plugin to add.
+	 * @returns The instance, for chaining.
+	 */
 	public addPlugin(plugin: Plugin): ScrollMagic {
 		if (this.guardInert()) {
 			return this;
@@ -415,6 +476,12 @@ export class ScrollMagic {
 		return this;
 	}
 
+	/**
+	 * Unregister a plugin from this instance. The plugin's `onRemove` callback is invoked immediately.
+	 *
+	 * @param plugin - The plugin to remove.
+	 * @returns The instance, for chaining.
+	 */
 	public removePlugin(plugin: Plugin): ScrollMagic {
 		if (this.guardInert()) {
 			return this;
@@ -425,45 +492,60 @@ export class ScrollMagic {
 	}
 
 	// getter/setter public
+
+	/** Set the tracked element. Accepts an `Element`, a CSS selector, or `null` to reset. */
 	public set element(element: Required<Options.Public>['element']) {
 		this.modify({ element });
 	}
+	/** The resolved tracked DOM element. */
 	public get element(): Options.Private['element'] {
 		return this.optionsPrivate.element;
 	}
+	/** Set the start inset on the tracked element. Positive values shrink the tracked region from the leading edge. */
 	public set elementStart(elementStart: Required<Options.Public>['elementStart']) {
 		this.modify({ elementStart });
 	}
+	/** The current start inset value for the tracked element (as originally provided). */
 	public get elementStart(): Required<Options.Public>['elementStart'] {
 		return this.optionsPublic.elementStart;
 	}
+	/** Set the end inset on the tracked element. Positive values shrink the tracked region from the trailing edge. */
 	public set elementEnd(elementEnd: Required<Options.Public>['elementEnd']) {
 		this.modify({ elementEnd });
 	}
+	/** The current end inset value for the tracked element (as originally provided). */
 	public get elementEnd(): Required<Options.Public>['elementEnd'] {
 		return this.optionsPublic.elementEnd;
 	}
+	/** Set the scroll container. Accepts a `Window`, `Element`, CSS selector, or `null` to reset. */
 	public set container(container: Required<Options.Public>['container']) {
 		this.modify({ container });
 	}
+	/** The resolved scroll container (`Window` or `HTMLElement`). */
 	public get container(): Options.Private['container'] {
 		return this.optionsPrivate.container;
 	}
+	/** Set the start inset on the scroll container. Set to `null` to infer based on `element`. */
 	public set containerStart(containerStart: Required<Options.Public>['containerStart']) {
 		this.modify({ containerStart });
 	}
+	/** The current start inset value for the scroll container (as originally provided). */
 	public get containerStart(): Required<Options.Public>['containerStart'] {
 		return this.optionsPublic.containerStart;
 	}
+	/** Set the end inset on the scroll container. Set to `null` to infer based on `element`. */
 	public set containerEnd(containerEnd: Required<Options.Public>['containerEnd']) {
 		this.modify({ containerEnd });
 	}
+	/** The current end inset value for the scroll container (as originally provided). */
 	public get containerEnd(): Required<Options.Public>['containerEnd'] {
 		return this.optionsPublic.containerEnd;
 	}
+	/** Set the scroll axis. `true` = vertical, `false` = horizontal. */
 	public set vertical(vertical: Required<Options.Public>['vertical']) {
 		this.modify({ vertical });
 	}
+	/** Whether this instance tracks vertical (`true`) or horizontal (`false`) scroll. */
 	public get vertical(): Options.Private['vertical'] {
 		return this.optionsPrivate.vertical;
 	}
@@ -526,11 +608,22 @@ export class ScrollMagic {
 	}
 
 	/**
-	 * add an event listener
-	 * @param type ScrollMagic Event Type
-	 * @param cb callback
-	 * @param options optional settings, e.g. { once: true } to auto-remove after first invocation
-	 * @returns ScrollMagic instance
+	 * Add an event listener.
+	 *
+	 * @param type - The event type to listen for.
+	 * @param cb - Callback invoked with a {@link ScrollMagicEvent}.
+	 * @param options - Optional settings, e.g. `{ once: true }` to auto-remove after first invocation.
+	 * @returns The instance, for chaining.
+	 *
+	 * @example
+	 * ```js
+	 * sm.on('progress', (e) => {
+	 *   console.log(e.target.progress); // 0–1
+	 * });
+	 *
+	 * // Fire only once
+	 * sm.on('enter', (e) => console.log('entered!'), { once: true });
+	 * ```
 	 */
 	public on(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void, options?: ListenerOptions): ScrollMagic {
 		if (this.guardInert()) {
@@ -539,6 +632,13 @@ export class ScrollMagic {
 		this.dispatcher.addEventListener(type, cb, options);
 		return this;
 	}
+	/**
+	 * Remove a previously registered event listener.
+	 *
+	 * @param type - The event type the listener was registered for.
+	 * @param cb - The exact callback reference passed to {@link on}.
+	 * @returns The instance, for chaining.
+	 */
 	public off(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void): ScrollMagic {
 		if (this.guardInert()) {
 			return this;
@@ -546,7 +646,22 @@ export class ScrollMagic {
 		this.dispatcher.removeEventListener(type, cb);
 		return this;
 	}
-	// same as on, but returns a function to reverse the effect (remove the listener), so not chainable.
+	/**
+	 * Add an event listener and receive a disposer function to remove it.
+	 * Unlike {@link on}, this is not chainable — it returns the unsubscribe function instead.
+	 *
+	 * @param type - The event type to listen for.
+	 * @param cb - Callback invoked with a {@link ScrollMagicEvent}.
+	 * @param options - Optional settings, e.g. `{ once: true }`.
+	 * @returns A function that removes the listener when called.
+	 *
+	 * @example
+	 * ```js
+	 * const unsub = sm.subscribe('enter', (e) => console.log('entered!'));
+	 * // Later:
+	 * unsub();
+	 * ```
+	 */
 	public subscribe(type: `${EventType}`, cb: (e: ScrollMagicEvent) => void, options?: ListenerOptions): () => void {
 		if (this.guardInert()) {
 			return () => {};
@@ -554,7 +669,12 @@ export class ScrollMagic {
 		return this.dispatcher.addEventListener(type, cb, options);
 	}
 
-	/** Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress. */
+	/**
+	 * Schedule a full recalculation of element bounds, container bounds, viewport observer, and progress.
+	 *
+	 * @remarks Updates run asynchronously on the next animation frame.
+	 * @returns The instance, for chaining.
+	 */
 	public refresh(): ScrollMagic {
 		if (this.guardInert() || this.disabled) {
 			return this;
@@ -566,7 +686,20 @@ export class ScrollMagic {
 		return this;
 	}
 
-	/** Pause tracking — disconnects all observers and freezes progress. Options can still be modified while disabled. */
+	/**
+	 * Pause tracking — disconnects all observers and freezes progress.
+	 * Options can still be modified while disabled.
+	 *
+	 * @returns The instance, for chaining.
+	 * @see {@link enable} to resume tracking.
+	 *
+	 * @example
+	 * ```js
+	 * sm.disable();
+	 * // progress and events are frozen
+	 * sm.enable(); // resume
+	 * ```
+	 */
 	public disable(): ScrollMagic {
 		if (this.guardInert() || this.disabled) return this;
 		this.enabled = false;
@@ -579,7 +712,17 @@ export class ScrollMagic {
 		return this;
 	}
 
-	/** Resume tracking — reconnects all observers and recalculates from current state. */
+	/**
+	 * Resume tracking — reconnects all observers and recalculates from current state.
+	 *
+	 * @returns The instance, for chaining.
+	 * @see {@link disable} to pause tracking.
+	 *
+	 * @example
+	 * ```js
+	 * sm.enable();
+	 * ```
+	 */
 	public enable(): ScrollMagic {
 		if (this.guardInert() || this.enabled) return this;
 		this.enabled = true;
@@ -597,6 +740,11 @@ export class ScrollMagic {
 		return this;
 	}
 
+	/**
+	 * Permanently tear down this instance — disconnects all observers, removes all plugins,
+	 * and deregisters from {@link ScrollMagic.refreshAll} / {@link ScrollMagic.destroyAll}.
+	 * The instance cannot be used after calling this method.
+	 */
 	public destroy(): void {
 		if (this.destroyed || !isBrowser) {
 			return;
@@ -621,7 +769,21 @@ export class ScrollMagic {
 	}
 
 	protected static defaultOptionsPublic = Options.defaults;
-	// get or change default options
+	/**
+	 * Get or update the default options applied to all future ScrollMagic instances.
+	 *
+	 * @param options - Partial options to merge into the current defaults.
+	 * @returns The full set of current default options.
+	 *
+	 * @example
+	 * ```js
+	 * // Set a global default container
+	 * ScrollMagic.defaultOptions({ container: '#main-scroller' });
+	 *
+	 * // Read current defaults
+	 * const defaults = ScrollMagic.defaultOptions();
+	 * ```
+	 */
 	public static defaultOptions(options: Options.Public = {}): Required<Options.Public> {
 		this.defaultOptionsPublic = {
 			...this.defaultOptionsPublic,
@@ -629,7 +791,10 @@ export class ScrollMagic {
 		};
 		return this.defaultOptionsPublic;
 	}
+	/** Enum of event types: `Enter`, `Leave`, `Progress`. @see {@link EventType} */
 	public static readonly EventType = EventType;
+	/** Enum of event locations: `Start`, `Inside`, `End`. @see {@link EventLocation} */
 	public static readonly EventLocation = EventLocation;
+	/** Enum of scroll directions: `Forward`, `Reverse`. @see {@link ScrollDirection} */
 	public static readonly EventScrollDirection = ScrollDirection;
 }

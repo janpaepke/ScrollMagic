@@ -22,8 +22,9 @@ const propsV = flat(0) as Vertical;
 const propsH = flat(1) as Horizontal;
 
 /**
- * Returns a map of agnostic props and their translation depending on vertical or horizontal orientation.
- * @param vertical scroll direction (true = vertical)
+ * Returns a map of direction-agnostic property names to their orientation-specific counterparts.
+ * @param vertical - Scroll direction (`true` = vertical, `false` = horizontal).
+ * @returns A mapping like `{ start: 'top', size: 'height', ... }` for vertical, or `{ start: 'left', size: 'width', ... }` for horizontal.
  */
 export const agnosticProps = (vertical: boolean): Vertical | Horizontal => (vertical ? propsV : propsH);
 
@@ -32,11 +33,14 @@ type GetType<V extends boolean, T extends Record<string, unknown>> = {
 	[K in AgnosticProps]: MatchProp<TranslateProp<K, V>, T>;
 };
 /**
- * Returns the relevant boundary values depending on vertical or horizontal orientation.
- * I.E. top or left value => start, width / height => size.
- * The equivalent return value (start) is dependent on whether or not the respective source prop (top / left) is present in the source object
- * @param vertical scroll direction (true = vertical)
- * @param obj Object to retrieve the values from
+ * Extracts direction-relevant values from an object using orientation-aware property names.
+ *
+ * For vertical: `top` → `start`, `height` → `size`, `y` → `axis`, etc.
+ * For horizontal: `left` → `start`, `width` → `size`, `x` → `axis`, etc.
+ *
+ * @param vertical - Scroll direction (`true` = vertical, `false` = horizontal).
+ * @param obj - Source object to extract values from (e.g. a `DOMRect` or scroll delta).
+ * @returns An object with agnostic keys (`start`, `end`, `size`, `clientSize`, `scrollSize`, `axis`) mapped to the corresponding values.
  */
 export const agnosticValues = <V extends boolean, T extends { [key: string]: any }>(
 	vertical: V,

@@ -5,9 +5,10 @@ type UnitString = `${number}px` | `${number}%`;
 type PositionShorthand = keyof typeof positionShorthands;
 type CssSelector = string;
 
-// takes the width or height of an element and returns the value that is used for position calculations
+/** Converts an element's or container's current size (in pixels) to a pixel offset used for position calculations. */
 export type PixelConverter = (size: number) => number;
 
+/** Public configuration options accepted by the ScrollMagic constructor and `modify()`. */
 export type Public = {
 	/** The tracked element (or CSS selector). Defaults to the first child of `container`. Set to `null` to reset. */
 	element?: Element | CssSelector | null;
@@ -37,16 +38,19 @@ export type Private = {
 };
 
 // values that can be null after processing and need to be inferred, if still null
-export type PrivateUninferred = NullableProperties<Private, 'element' | 'container' | 'containerStart' | 'containerEnd'>;
+export type PrivateUninferred = NullableProperties<
+	Private,
+	'element' | 'container' | 'containerStart' | 'containerEnd'
+>;
 
-// shorthand values for bound position values
+/** Named position shorthands that resolve to percentage strings for element and container offsets. */
 export const positionShorthands = {
 	here: '0%',
 	center: '50%',
 	opposite: '100%',
 } as const satisfies Record<string, UnitString>;
 
-// default options
+/** Default values for all public options. Returned (and optionally overridden) by `ScrollMagic.defaultOptions()`. */
 export const defaults: Required<Public> = {
 	element: null,
 	elementStart: 0,

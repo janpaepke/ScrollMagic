@@ -4,7 +4,11 @@ export interface DispatchableEvent {
 	readonly type: EventType;
 }
 
-export type ListenerOptions = { once?: boolean };
+/** Options for event listener registration. */
+export type ListenerOptions = {
+	/** If `true`, the listener is automatically removed after its first invocation. */
+	once?: boolean;
+};
 type Callback<E extends DispatchableEvent> = (event: E) => void;
 type ListenerEntry<E extends DispatchableEvent> = { cb: Callback<E>; options: ListenerOptions };
 
