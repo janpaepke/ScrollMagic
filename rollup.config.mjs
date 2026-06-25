@@ -10,6 +10,7 @@ import cfg from './tsconfig.json' with { type: 'json' };
 const createCommonPlugins = () => [
 	bundleSize(),
 	typescript({
+		rootDir: 'src',
 		declarationDir: './dist/types',
 		exclude: ['tests/**/*'],
 	}),
